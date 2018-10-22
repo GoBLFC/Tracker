@@ -10,6 +10,9 @@
 setcookie("badge", $badgeID);
 setcookie("session", session_id());
 updateSession($badgeID, session_id());
+
+// Load department list
+$departments = getDepartments(0);
 ?>
 
 <div class='logo'>
@@ -18,7 +21,68 @@ updateSession($badgeID, session_id());
     if (isset($action) && $action == "new") {
         echo "<h2>Welcome $badgeID, glad you're on board! Here you'll be able to check in and out.</h2>";
     } else {
-        echo "<h2>Good login. Show landing page. $badgeID</h2>";
+        echo "<h2>Welcome $badgeID!</h2>";
     }
     ?>
 </div>
+
+<div class="box">
+    <div class="box__header">
+        <h3 class="box__header-title">Volunteer Panel</h3>
+    </div>
+    <div class="box__body">
+        <div class="stats stats--main">
+            <div class="stats__amount">0</div>
+            <div class="stats__caption">hours</div>
+            <div class="stats__change">
+                <div class="stats__value stats__value--positive">0</div>
+                <div class="stats__period">today</div>
+            </div>
+        </div>
+
+        <!--
+        <div class="stats">
+            <div class="stats__amount">87359</div>
+            <div class="stats__caption">visitors</div>
+            <div class="stats__change">
+                <div class="stats__value stats__value--negative">-12%</div>
+                <div class="stats__period">this week</div>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stats__amount">6302</div>
+            <div class="stats__caption">comments</div>
+            <div class="stats__change">
+                <div class="stats__value">+78</div>
+                <div class="stats__period">this week</div>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stats__amount">268</div>
+            <div class="stats__caption">posts</div>
+            <div class="stats__change">
+                <div class="stats__value">+3</div>
+                <div class="stats__period">this week</div>
+            </div>
+        </div>
+        -->
+    </div>
+
+    <span class="custom-dropdown big">
+        <select>
+            <option disabled selected hidden>Select Department</option>
+            <?php foreach ($departments as $dept) echo "<option value='" . $dept['id'] . "'>" . $dept['name'] . "</option>"; ?>
+        </select>
+    </span>
+    <a href="#" class="button"><span>Check-In</span></a>
+
+</div>
+
+
+<script>
+    $('.button').mouseup(function () {
+        $(this).toggleClass("button-loading");
+    });
+</script>

@@ -20,5 +20,6 @@ if (isset($_COOKIE["badge"])) {
 <html>
 <head>
     <link rel="stylesheet" media="all" href="css/style.css">
+    <link rel="stylesheet" media="all" href="css/landing.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>

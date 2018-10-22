@@ -14,6 +14,11 @@ if (!isset($action)) {
         if ($_POST['lname1'] == "" || $_POST['lname2'] == "") {
             $message = "Last name cannot be blank!";
         } else if ($_POST['lname1'] == $_POST['lname2']) {
+            // Use this code if there aren't going to be public terminals as a basic rate limiting mechanism.
+            //if (getUserSessionCount($session) >= 3) {
+            // Display a cryptic error for too many users under same session.
+            //    $message = "User creation error. Contact staff!";
+            //} else {
             $message = "VALIDATED. CREATE USER AND GO TO LANDING PAGE.";
             $lastName = $_POST['lname1'];
 
@@ -22,6 +27,7 @@ if (!isset($action)) {
             $action = "new";
             include('landing.php');
             die();
+            //}
         } else {
             $message = "Names do not match!";
         }

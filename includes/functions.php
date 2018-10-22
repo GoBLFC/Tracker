@@ -54,13 +54,31 @@ function getUserBySession($session)
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+function getUserSessionCount($session)
+{
+    global $db;
+    $stmt = $db->prepare("SELECT COUNT('id') as 'count' FROM `users` WHERE last_session = :lastsession");
+    $stmt->bindValue(':lastsession', $session, PDO::PARAM_STR);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC)[0]['count'];
+}
+
+function getDepartments($hidden)
+{
+    global $db;
+    $stmt = $db->prepare("SELECT * FROM `departments` WHERE `hidden` = $hidden");
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
 function createUser($id, $lName, $session)
 {
     global $db;
-    $stmt = $db->prepare("INSERT INTO `users` (`id`, `last_name`, `usergroups`, `last_session`, `staff_salt`, `staff_pass`) VALUES (:id, :lName, 1, :lastsession, '', '')");
+    $stmt = $db->prepare("INSERT INTO `users` (`id`, `last_name`, `usergroups`, `last_session`, `staff_salt`, `staff_pass`, `registered`, `reg_ua`) VALUES (:id, :lName, 1, :lastsession, '', '', NOW(), :regua)");
     $stmt->bindValue(':id', $id, PDO::PARAM_INT);
     $stmt->bindValue(':lName', $lName, PDO::PARAM_STR);
     $stmt->bindValue(':lastsession', $session, PDO::PARAM_STR);
+    $stmt->bindValue(':regua', $_SERVER['HTTP_USER_AGENT'], PDO::PARAM_STR);
     $stmt->execute();
     //return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
