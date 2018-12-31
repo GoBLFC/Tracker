@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" autoUpload="Always" serverName="Joan SF">
+    <serverData>
+      <paths name="Joan SF">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/web/html/Joan/BLFC/tracker" local="$PROJECT_DIR$" web="tracker" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+    <option name="myAutoUpload" value="ALWAYS" />
+  </component>
+</project>

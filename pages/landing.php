@@ -80,9 +80,31 @@ $departments = getDepartments(0);
 
 </div>
 
+<div class="autologout">Auto logout in <span id="lsec">60</span> <span id="gram">seconds</span>...</div>
 
 <script>
     $('.button').mouseup(function () {
         $(this).toggleClass("button-loading");
     });
+
+    let logoutTime = 60;
+
+    $(document).ready(function () {
+        decrementLogout();
+    })
+
+    function decrementLogout() {
+        if (logoutTime === 1) $('#gram').text("second");
+        if (logoutTime === 0) $('.autologout').html("Goodbye!");
+        if (logoutTime === -1) {
+            window.location.href = "/tracker/?logout=timeout";
+            return;
+        }
+
+        setTimeout(function () {
+            logoutTime--;
+            if (logoutTime > 0) $('#lsec').text(logoutTime);
+            decrementLogout();
+        }, 1000);
+    }
 </script>

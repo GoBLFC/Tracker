@@ -91,3 +91,22 @@ function updateSession($id, $session)
     $stmt->bindValue(':lastsession', $session, PDO::PARAM_STR);
     $stmt->execute();
 }
+
+function checkKiosk($session)
+{
+    global $db;
+    $stmt = $db->prepare("SELECT * FROM `kiosks` WHERE session = :sess");
+    $stmt->bindValue(':sess', $session, PDO::PARAM_STR);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function authorizeKiosk($session)
+{
+    setcookie("kiosk", session_id());
+
+    global $db;
+    $stmt = $db->prepare("INSERT INTO `kiosks` (`session`, `authorized`) VALUES (:sess, CURRENT_TIMESTAMP)");
+    $stmt->bindValue(':sess', $session, PDO::PARAM_STR);
+    $stmt->execute();
+}

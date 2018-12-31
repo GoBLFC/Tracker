@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="97db3da4-1de7-4238-908e-5aa6dcec7afa" name="Joan SF" url="https://blfc.zilyin.com">
+        <fileTransfer host="sf.gld.bz" port="22" privateKey="C:\Users\joann\Documents\ChampionRealms\stuff\champions.ppk" accessType="SFTP" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" shareSSLContext="true" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

@@ -6,6 +6,8 @@
  * Time: 11:07 PM
  */
 
+$kiosk = checkKiosk($kiosksession);
+
 // Validate posted login details
 $lastName = $badgeID = "";
 if (isset($_POST['badgeID']) || isset($_POST['lastName'])) {
@@ -16,32 +18,49 @@ if (isset($_POST['badgeID']) || isset($_POST['lastName'])) {
     if ($lastName == "") $message = "Please enter your last name.";
     if ($badgeID == "" && $lastName == "") $message = "Please enter the information below.";
 
-    // Basic badge validation
-    if ($badgeID != "" && $lastName != "") {
-        $badgeIDclean = str_replace(["-", "–"], '', $badgeID);
-        if (!is_numeric($badgeIDclean) || strlen($badgeIDclean) != 4) {
-            $message = "Invalid badge ID.";
+    // Kiosk Authorization
+    if ($badgeID == "owo" && $lastName == "IAMAKIOSK") {
+        if (!empty($kiosk)) {
+            $message = "Kiosk already authorized!";
         } else {
-            // Check and or create user
-
-            // Badge ID found
-            if (getUserByID($badgeID)) {
-                // Name matches?
-                if (validateUser($badgeIDclean, $lastName)) {
-                    // Good login -- update session
-                    $message = "Good login!";
-                    include('landing.php');
-                    die();
+            $message = "KIOSK AUTHORIZED!<br><small>Refreshing...</small><script>
+                            setTimeout(function () {
+                                window.location.href = \"/tracker/\";
+                            }, 2000);</script>";
+            authorizeKiosk($session);
+        }
+    } else {
+        if (empty($kiosk)) {
+            $message = "Session not authorized.";
+        } else {
+            // Basic badge validation
+            if ($badgeID != "" && $lastName != "") {
+                $badgeIDclean = str_replace(["-", "–"], '', $badgeID);
+                if (!is_numeric($badgeIDclean) || strlen($badgeIDclean) != 4) {
+                    $message = "Invalid badge ID.";
                 } else {
-                    // Bad name
-                    $message = "Details do not match.";
+                    // Check and or create user
+
+                    // Badge ID found
+                    if (getUserByID($badgeID)) {
+                        // Name matches?
+                        if (validateUser($badgeIDclean, $lastName)) {
+                            // Good login -- update session
+                            $message = "Good login!";
+                            include('landing.php');
+                            die();
+                        } else {
+                            // Bad name
+                            $message = "Details do not match.";
+                        }
+                    } else {
+                        // Not found
+                        $message = "User not found... creating. (go to landing page with double auth)";
+                        if (!isset($_POST['lname1']) && !isset($_POST['lname2'])) $action = "new";
+                        include('newuser.php');
+                        die();
+                    }
                 }
-            } else {
-                // Not found
-                $message = "User not found... creating. (go to landing page with double auth)";
-                if (!isset($_POST['lname1']) && !isset($_POST['lname2'])) $action = "new";
-                include('newuser.php');
-                die();
             }
         }
     }
@@ -53,7 +72,7 @@ if (isset($_POST['badgeID']) || isset($_POST['lastName'])) {
 </div>
 <div class='login'>
     <?php if (isset($message)) echo "<h2 class='error'>$message</h2>" ?>
-    <h2>BLFC Volunteer Sign-In</h2>
+    <h2>BLFC Volunteer Check-In</h2>
     <form name="login" method="post" action="">
         <input id='badgeID' name='badgeID' placeholder='Badge ID' value='<?php echo $badgeID ?>' type='text'/>
         <input id='lastName' name='lastName' placeholder='Last Name' value='<?php echo $lastName ?>' type='text'/>

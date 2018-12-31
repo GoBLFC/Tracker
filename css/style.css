@@ -6,7 +6,7 @@ body {
 
 h2 {
     color: #ffffff;
-    font-size: 15px;
+    font-size: 25px;
     font-weight: 600;
     text-align: center;
     margin-bottom: 10px;
@@ -18,7 +18,8 @@ a {
 }
 
 .login {
-    left: 38%;
+    left: 40%;
+    right: 40%;
     width: 20%;
     top: 20%;
     padding: 1% 2%;
@@ -49,6 +50,20 @@ a {
     background-color: #cc3a26;
     padding: 2px;
     border-radius: 5px;
+}
+
+.autologout {
+    background-color: #29292d;
+    padding: 2px;
+    border-radius: 5px;
+    bottom: 0px;
+    position: absolute;
+    width: 10%;
+    left: 45%;
+    text-align: center;
+    right: 45%;
+    font-size: 0.8em;
+    color: darkgrey;
 }
 
 input[type="text"] {
@@ -186,6 +201,7 @@ input[type="submit"]:hover {
     position: absolute;
     text-align: left;
     padding: 0 0 0 15px;
+    font-size: 15px;
 }
 
 .active {
@@ -201,7 +217,8 @@ input[type="submit"]:hover {
 
 @media only screen and (max-width: 1000px) {
     .login {
-        left: 0%;
+        left: 2%;
+        right: 2%;
         width: 96%;
         top: 20%;
         padding: 1% 2%;

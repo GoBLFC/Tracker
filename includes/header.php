@@ -2,18 +2,31 @@
 include('sql.php');
 include('functions.php');
 
-session_start();
-
-$session = "";
-if (!isset($_COOKIE["session"])) {
-    setcookie("session", session_id());
-    $session = session_id();
+if (isset($_GET['logout'])) {
+    session_destroy();
+    setcookie("session", '');
+    setcookie("badge", '');
+    header('Location: /tracker/');
 } else {
-    $session = $_COOKIE["session"];
-}
+    session_start();
 
-if (isset($_COOKIE["badge"])) {
-    $badgeID = $_COOKIE["badge"];
+    $session = "";
+    if (!isset($_COOKIE["session"])) {
+        setcookie("session", session_id());
+        $session = session_id();
+    } else {
+        $session = $_COOKIE["session"];
+    }
+
+    if (isset($_COOKIE["badge"])) {
+        $badgeID = $_COOKIE["badge"];
+    }
+
+    if (isset($_COOKIE["kiosk"])) {
+        $kiosksession = $_COOKIE["kiosk"];
+    } else {
+        $kiosksession = "UNAUTHORIZED";
+    }
 }
 ?>
 
