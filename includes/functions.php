@@ -26,6 +26,16 @@ function validateUser($id, $lName)
     return true;
 }
 
+function logout($session)
+{
+    if (empty($session)) return;
+
+    global $db;
+    $stmt = $db->prepare("UPDATE `users` SET `last_session` = '' WHERE `users`.`last_session` = :lastsession");
+    $stmt->bindValue(':lastsession', $session, PDO::PARAM_STR);
+    $stmt->execute();
+}
+
 function getUser($id, $session)
 {
     global $db;

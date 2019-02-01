@@ -1,4 +1,6 @@
 <?php
+if (!defined('TRACKER')) die('No.');
+
 /*---------------Start of SQL Config---------------*/
 $host = "localhost";
 $user = "blfc";
