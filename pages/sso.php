@@ -10,7 +10,8 @@ if (!defined('TRACKER')) die('No.');
 header("Refresh:2; url=/tracker", true, 303);
 
 //SSO Placeholder
-$badgeID = 1234;
+$_SESSION['badgeid'] = 1234;
+$badgeID = $_SESSION['badgeid'];
 
 session_regenerate_id();
 

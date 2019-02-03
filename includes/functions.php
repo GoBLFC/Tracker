@@ -78,7 +78,11 @@ function getDepartments($hidden)
     global $db;
     $stmt = $db->prepare("SELECT * FROM `departments` WHERE `hidden` = $hidden");
     $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $departments = [];
+    foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $dept) $departments[$dept['id']] = $dept;
+
+    return $departments;
 }
 
 function createUser($id, $lName, $session)
@@ -96,9 +100,10 @@ function createUser($id, $lName, $session)
 function updateSession($id, $session)
 {
     global $db;
-    $stmt = $db->prepare("UPDATE `users` SET `last_session` = :lastsession WHERE `users`.`id` = :id");
+    $stmt = $db->prepare("UPDATE `users` SET `last_session` = :lastsession, `last_ip` = :lastip WHERE `users`.`id` = :id");
     $stmt->bindValue(':id', $id, PDO::PARAM_INT);
     $stmt->bindValue(':lastsession', $session, PDO::PARAM_STR);
+    $stmt->bindValue(':lastip', $_SERVER["HTTP_CF_CONNECTING_IP"], PDO::PARAM_STR);
     $stmt->execute();
 }
 
@@ -119,4 +124,32 @@ function authorizeKiosk($session)
     $stmt = $db->prepare("INSERT INTO `kiosks` (`session`, `authorized`) VALUES (:sess, CURRENT_TIMESTAMP)");
     $stmt->bindValue(':sess', $session, PDO::PARAM_STR);
     $stmt->execute();
+}
+
+function checkIn($uid, $dept)
+{
+    global $db;
+    $stmt = $db->prepare("INSERT INTO `tracker` (`uid`, `checkin`, `dept`, `notes`, `addedby`) VALUES (:uid, CURRENT_TIMESTAMP, :dept, '', :uid2)");
+    $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
+    $stmt->bindValue(':uid2', $uid, PDO::PARAM_INT);
+    $stmt->bindValue(':dept', $dept, PDO::PARAM_INT);
+    $stmt->execute();
+}
+
+function checkOut($uid)
+{
+    global $db;
+
+    $stmt = $db->prepare("UPDATE `tracker` SET `checkout` = CURRENT_TIMESTAMP WHERE `uid` = :uid AND `checkout` IS NULL");
+    $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
+    $stmt->execute();
+}
+
+function isCheckedIn($uid)
+{
+    global $db;
+    $stmt = $db->prepare("SELECT `id`, `dept` FROM `tracker` WHERE `uid` = :uid AND `checkout` IS NULL");
+    $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }

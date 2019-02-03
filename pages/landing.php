@@ -10,35 +10,43 @@ if (!defined('TRACKER')) die('No.');
 
 // Load department list
 $departments = getDepartments(0);
+$cDept = isCheckedIn($badgeID)[0];
 ?>
 <div class="container" style="top: 5em;position: relative;">
     <div class="card">
         <div class="card-header">
-            Check-In / Check-Out
+            <?php echo 'Check-' . ($cDept ? "Out" : "In") ?>
         </div>
 
         <div class="container">
             <div class="row">
                 <div class="col-sm">
                     <div class="card-body">
-                        <div class="alert alert-danger" style="padding: 0.4rem 1rem; margin: 0;" role="alert">Not
-                            currently checked
-                            in.
+                        <div id="checkstatus" class="alert alert-<?php echo($cDept ? "success" : "danger") ?>"
+                             style="padding: 0.4rem 1rem; margin: 0>" role="alert">
+                            You are currently <?php echo($cDept ? "" : "not") ?> checked in.
                         </div>
+
                         <!--<p class="card-text">Select a department from the list on the right.</p>-->
                     </div>
                 </div>
                 <div class="col-sm">
                     <div class="card-body">
-                        <select id="dept" class="custom-select custom-select-lg mb-3" style="margin-bottom: 0 !important;">
-                            <option value="-1" disabled selected hidden>Select Department </option>
-                            <?php foreach ($departments as $dept) echo "<option value='" . $dept['id'] . "'>" . $dept['name'] . "</option>"; ?>
+                        <select <?php echo($cDept ? "disabled " : "") ?> id="dept" class="custom-select custom-select-lg mb-3"
+                                style="margin-bottom: 0 !important;">
+
+                            <?php if (!$cDept) { ?>
+                                <option value="-1" disabled selected hidden>Select Department</option>
+                            <?php } ?>
+                            <?php foreach ($departments as $dept) echo "<option " . ($cDept['dept'] == $dept['id'] ? "selected" : "") . " value='" . $dept['id'] . "'>" . $dept['name'] . "</option>"; ?>
+
                         </select>
                     </div>
                 </div>
                 <div class="col-sm">
                     <div class="card-body">
-                        <a href="#" id="checkin" class="btn btn-block btn-primary">Check-In</a>
+                        <a href="#" id="checkinout" class="btn btn-block btn-primary"
+                           data-value="<?php echo($cDept ? "out" : "in") ?>"><?php echo 'Check-' . ($cDept ? "Out" : "In") ?></a>
                     </div>
                 </div>
             </div>

@@ -30,9 +30,17 @@ if ($user == null) {
             $ret['code'] = 0;
             $ret['msg'] = "Invalid department specified.";
         } else {
-            $ret['code'] = 0;
-            $ret['msg'] = "Not Implemented ...YET!\nBUT HEY LOOK THERE'S A JSON \"API\" CALLBACK AT LEAST! \xF0\x9F\x98\x81";
+            checkIn($badgeID, $dept);
+
+            $ret['code'] = 1;
+            $ret['msg'] = "Clocked in.";
+            //$ret['msg'] = "Not Implemented ...YET!\nBUT HEY LOOK THERE'S A JSON \"API\" CALLBACK AT LEAST! \xF0\x9F\x98\x81";
         }
+    } else if ($action == "checkOut") {
+        checkOut($badgeID);
+
+        $ret['code'] = 1;
+        $ret['msg'] = "Clocked out.";
     }
 }
 

@@ -7,6 +7,7 @@ include('functions.php');
 $session = "";
 
 session_start();
+$badgeID = $_SESSION['badgeid'];
 
 if (!isset($_COOKIE["session"])) {
     setcookie("session", session_id());
@@ -15,9 +16,6 @@ if (!isset($_COOKIE["session"])) {
     $session = $_COOKIE["session"];
 }
 
-if (isset($_COOKIE["badge"])) {
-    $badgeID = $_COOKIE["badge"];
-}
 
 if (isset($_COOKIE["kiosk"])) {
     $kiosksession = $_COOKIE["kiosk"];
