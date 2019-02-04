@@ -145,11 +145,122 @@ function checkOut($uid)
     $stmt->execute();
 }
 
-function isCheckedIn($uid)
+function getCheckIn($uid)
 {
     global $db;
-    $stmt = $db->prepare("SELECT `id`, `dept` FROM `tracker` WHERE `uid` = :uid AND `checkout` IS NULL");
+    $stmt = $db->prepare("SELECT `id`, `dept`, `checkin` FROM `tracker` WHERE `uid` = :uid AND `checkout` IS NULL");
     $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function getClockTime($uid)
+{
+    $in = getCheckIn($uid);
+    if (count($in) == 0) return -1;
+    return time() - strtotime($in[0]['checkin']);
+}
+
+function getMinutesToday($uid)
+{
+    global $db;
+    $stmt = $db->prepare("SELECT id,checkin,checkout FROM `tracker` WHERE `uid` = :uid AND (DATE(`checkin`) = CURDATE() OR DATE(`checkout`) = CURDATE())");
+    $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
+    $stmt->execute();
+    $periods = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $time = 0;
+    foreach ($periods as $period) {
+        $checkout = $period['checkout'];
+        if ($checkout == null) {
+            $checkout = date("Y-m-d h:i:sa", time());
+            //echo "Null: " . $period['id'] . ":" . $checkout;
+        }
+        $overlap = overlapInMinutes(date("Y-m-d 00:00:01"), date("Y-m-d 23:59:59"), $period['checkin'], $checkout);
+        //echo $period['id'] . ":" . $overlap . "\n";
+        $time = $time + $overlap;
+    }
+
+    return $time;
+}
+
+function getMinutesTotal($uid)
+{
+    global $db;
+    $stmt = $db->prepare("SELECT id,checkin,checkout FROM `tracker` WHERE `uid` = :uid");
+    $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
+    $stmt->execute();
+    $periods = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $time = 0;
+    foreach ($periods as $period) {
+        $checkout = $period['checkout'];
+        if ($checkout == null) $checkout = date("Y-m-d h:i:sa", time());
+        $start_date = new DateTime($period['checkin']);
+        $since_start = $start_date->diff(new DateTime($checkout));
+        $minutes = $since_start->days * 24 * 60;
+        $minutes += $since_start->h * 60;
+        $minutes += $since_start->i;
+
+        $time = $time + $minutes;
+    }
+
+    return $time;
+}
+
+// Somewhat inefficient O(N2) queries to get all bonus periods and find all time entries that reside within them.
+function calculateBonusTime($uid)
+{
+    global $db;
+    $stmt = $db->prepare("SELECT * FROM `time_mod`");
+    $stmt->execute();
+    $periods = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $bonus = 0;
+    $trackers = [];
+    $debug = [];
+
+    foreach ($periods as $period) {
+        $stmt = $db->prepare("SELECT * FROM `tracker` WHERE `uid` = :uid ");
+        //$stmt = $db->prepare("SELECT * FROM `tracker` WHERE `dept` = :dept AND `uid` = :uid AND (`checkin` BETWEEN :start1 AND :stop1 OR `checkout` BETWEEN :start2 AND :stop2)");
+        $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
+        //$stmt->bindValue(':dept', $period['dept'], PDO::PARAM_INT);
+        //$stmt->bindValue(':start1', $period['start'], PDO::PARAM_STR);
+        //$stmt->bindValue(':start2', $period['start'], PDO::PARAM_STR);
+        //$stmt->bindValue(':stop1', $period['stop'], PDO::PARAM_STR);
+        //$stmt->bindValue(':stop2', $period['stop'], PDO::PARAM_STR);
+        $stmt->execute();
+
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($results as $result) {
+            // Department check
+            $departments = explode(",", $period['dept']);
+            if (!in_array($result['dept'], $departments)) continue;
+
+            $overlap = overlapInMinutes($period['start'], $period['stop'], $result['checkin'], $result['checkout']);
+            $result['overlap'] = $overlap;
+            $result['bonus'] = ($period['modifier'] * $overlap) - $overlap;
+            $debug[$result['id']] = $result;
+            $bonus = $bonus + $result['bonus'];
+            $trackers[$period['dept']][] = $result;
+        }
+    }
+
+    //echo json_encode($debug);
+
+    return $bonus;
+}
+
+function overlapInMinutes($startDate1, $endDate1, $startDate2, $endDate2)
+{
+    $lastStart = $startDate1 >= $startDate2 ? $startDate1 : $startDate2;
+    $lastStart = strtotime($lastStart);
+
+    $firstEnd = $endDate1 <= $endDate2 ? $endDate1 : $endDate2;
+    $firstEnd = strtotime($firstEnd);
+
+    $overlap = floor(($firstEnd - $lastStart) / 60);
+
+    return $overlap > 0 ? $overlap : 0;
 }

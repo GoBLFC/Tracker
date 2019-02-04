@@ -14,7 +14,7 @@ include('../includes/header.php');
 $user = isValidSession($session, $badgeID);
 
 $ret['code'] = 0;
-$ret['msg'] = "Unknown Action.";
+//$ret['msg'] = "Unknown Action.";
 
 if ($user == null) {
     $ret['msg'] = "Not authenticated.";
@@ -41,6 +41,15 @@ if ($user == null) {
 
         $ret['code'] = 1;
         $ret['msg'] = "Clocked out.";
+    } else if ($action == "getClockTime") {
+        $ret['code'] = 1;
+        $ret['val'] = getClockTime($badgeID);
+    } else if ($action == "getMinutesToday") {
+        $ret['code'] = 1;
+        $ret['val'] = getMinutesToday($badgeID);
+    } else if ($action == "getEarnedTime") {
+        $ret['code'] = 1;
+        $ret['val'] = calculateBonusTime($badgeID) + getMinutesTotal($badgeID);
     }
 }
 
