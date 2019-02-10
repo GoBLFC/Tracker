@@ -7,10 +7,11 @@ include('functions.php');
 $session = "";
 
 session_start();
-$badgeID = $_SESSION['badgeid'];
+$badgeID = "";
+if (isset($_SESSION['badgeid'])) $badgeID = $_SESSION['badgeid'];
 
 if (!isset($_COOKIE["session"])) {
-    setcookie("session", session_id());
+    setcookie("session", session_id(), 0, "/");
     $session = session_id();
 } else {
     $session = $_COOKIE["session"];
@@ -29,7 +30,7 @@ if (isset($_GET['logout'])) {
     session_unset();
     session_regenerate_id();
 
-    setcookie("session", '');
-    setcookie("badge", '');
+    setcookie("session", '', 0, "/");
+    setcookie("badge", '', 0, "/");
     header('Location: /tracker/');
 }

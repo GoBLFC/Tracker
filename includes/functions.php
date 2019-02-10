@@ -8,6 +8,7 @@
 
 function isValidSession($session, $badge)
 {
+    if ($badge == "") return false;
     $user = getUser($badge, $session);
     if ($user == null) return false;
     if ($user[0]['id'] != $badge) return false;
@@ -85,25 +86,24 @@ function getDepartments($hidden)
     return $departments;
 }
 
-function createUser($id, $lName, $session)
+//Insert or update - excessive binds are because you can't re-use values, silly.
+function updateSession($id, $fName, $lName, $nName, $session)
 {
     global $db;
-    $stmt = $db->prepare("INSERT INTO `users` (`id`, `last_name`, `usergroups`, `last_session`, `staff_salt`, `staff_pass`, `registered`, `reg_ua`) VALUES (:id, :lName, 1, :lastsession, '', '', NOW(), :regua)");
+    $stmt = $db->prepare("INSERT INTO `users` (`id`, `first_name`, `last_name`, `nickname`, `usergroups`, `last_session`, `last_ip`, `staff_salt`, `staff_pass`, `registered`, `reg_ua`) VALUES (:id, :fName, :lName, :nName, 1, :lastsession, :lastip, '', '', NOW(), :regua) ON DUPLICATE KEY UPDATE `first_name` = :fName2, `last_name` = :lName2, `nickname` = :nName2, `last_session` = :lastsession2, `last_ip` = :lastip2");
+    //$stmt = $db->prepare("UPDATE `users` SET `last_session` = :lastsession, `last_ip` = :lastip WHERE `users`.`id` = :id");
     $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+    $stmt->bindValue(':fName', $fName, PDO::PARAM_STR);
+    $stmt->bindValue(':fName2', $fName, PDO::PARAM_STR);
     $stmt->bindValue(':lName', $lName, PDO::PARAM_STR);
+    $stmt->bindValue(':lName2', $lName, PDO::PARAM_STR);
+    $stmt->bindValue(':nName', $nName, PDO::PARAM_STR);
+    $stmt->bindValue(':nName2', $nName, PDO::PARAM_STR);
     $stmt->bindValue(':lastsession', $session, PDO::PARAM_STR);
+    $stmt->bindValue(':lastsession2', $session, PDO::PARAM_STR);
     $stmt->bindValue(':regua', $_SERVER['HTTP_USER_AGENT'], PDO::PARAM_STR);
-    $stmt->execute();
-    //return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
-
-function updateSession($id, $session)
-{
-    global $db;
-    $stmt = $db->prepare("UPDATE `users` SET `last_session` = :lastsession, `last_ip` = :lastip WHERE `users`.`id` = :id");
-    $stmt->bindValue(':id', $id, PDO::PARAM_INT);
-    $stmt->bindValue(':lastsession', $session, PDO::PARAM_STR);
     $stmt->bindValue(':lastip', $_SERVER["HTTP_CF_CONNECTING_IP"], PDO::PARAM_STR);
+    $stmt->bindValue(':lastip2', $_SERVER["HTTP_CF_CONNECTING_IP"], PDO::PARAM_STR);
     $stmt->execute();
 }
 
@@ -263,4 +263,17 @@ function overlapInMinutes($startDate1, $endDate1, $startDate2, $endDate2)
     $overlap = floor(($firstEnd - $lastStart) / 60);
 
     return $overlap > 0 ? $overlap : 0;
+}
+
+// Jank-ass permission check until we can do it via API somehow
+function isAdmin($id)
+{
+    $ids = array(5867, 13685);
+    return in_array($id, $ids);
+}
+
+function isManager($id)
+{
+    $ids = array(5867, 13685);
+    return in_array($id, $ids);
 }

@@ -1,0 +1,15 @@
+{
+  "name": "blfc/vtracker",
+  "description": "Volunteer Tracking System",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Ghost",
+      "email": "Johnny@zilyin.com"
+    }
+  ],
+  "require": {
+    "league/oauth2-client": "2.4.1"
+  }
+}

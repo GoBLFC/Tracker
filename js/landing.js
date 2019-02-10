@@ -24,12 +24,6 @@ let logoutTime = 600;
 let onClock = false;
 let shiftTime = 0;
 
-$(document).ready(function () {
-    initData();
-    clockCycle();
-    decrementLogout();
-});
-
 function initData() {
     getClockTime(function (data) {
         if (data.val === -1) return;

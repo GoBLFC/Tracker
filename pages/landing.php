@@ -10,12 +10,14 @@ if (!defined('TRACKER')) die('No.');
 
 // Load department list
 $departments = getDepartments(0);
-$cDept = getCheckIn($badgeID)[0];
+$cDept = getCheckIn($badgeID);
+if ($cDept) $cDept = $cDept[0];
 ?>
     <div class="container" style="top: 5em;position: relative;">
         <div class="card">
             <div class="card-header">
-                <?php echo 'Check-' . ($cDept ? "Out" : "In") ?>
+                <?php //echo 'Check-' . ($cDept ? "Out" : "In") ?>
+                <?php echo "Welcome " . $user[0]['nickname'] . "!" ?>
             </div>
 
             <div class="container">
@@ -39,7 +41,7 @@ $cDept = getCheckIn($badgeID)[0];
                                 <?php if (!$cDept) { ?>
                                     <option value="-1" disabled selected hidden>Select Department</option>
                                 <?php } ?>
-                                <?php foreach ($departments as $dept) echo "<option " . ($cDept['dept'] == $dept['id'] ? "selected" : "") . " value='" . $dept['id'] . "'>" . $dept['name'] . "</option>"; ?>
+                                <?php foreach ($departments as $dept) echo "<option " . (($cDept && $cDept['dept'] == $dept['id']) ? "selected" : "") . " value='" . $dept['id'] . "'>" . $dept['name'] . "</option>"; ?>
 
                             </select>
                         </div>
@@ -51,10 +53,41 @@ $cDept = getCheckIn($badgeID)[0];
                         </div>
                     </div>
                 </div>
+                <?php
+                if (isManager($badgeID) || isAdmin($badgeID)) {
+                    ?>
+                    <div class="card">
+                        <div class="card-header">
+                            Your Functions
+                        </div>
+                        <div class="row">
+                            <?php
+                            if (isManager($badgeID) || isAdmin($badgeID)) {
+                                ?>
+                                <div class="col-sm">
+                                    <a role="button" class="btn btn-light" href="manage" style="width:100%">Management
+                                        Panel
+                                    </a>
+                                </div>
+                                <?php
+                            }
+                            if (isAdmin($badgeID)) {
+                                ?>
+                                <div class="col-sm">
+                                    <a role="button" class="btn btn-light" href="admin" style="width:100%">Admin
+                                        Panel
+                                    </a>
+                                </div>
+                                <?php
+                            } ?>
+                        </div>
+                    </div>
+                    <?php
+                }
+                ?>
             </div>
         </div>
     </div>
-
 
     <div class="container" style="top: 5em;position: relative;">
         <div class="card">
@@ -66,7 +99,7 @@ $cDept = getCheckIn($badgeID)[0];
                 <div class="col-sm" id="currdurr" style="display: none">
                     <div class="card-body">
                         <div class="statistic">
-                            <div class="value"><img src="/tracker/assets/img/clock-circular-outline.png"
+                            <div class="value"><img src="assets/img/clock-circular-outline.png"
                                                     class="img-circle inline image"> <span
                                         id="durrval" style="text-transform: none">Loading</span>
                             </div>
@@ -77,7 +110,7 @@ $cDept = getCheckIn($badgeID)[0];
                 <div class="col-sm">
                     <div class="card-body">
                         <div class="statistic">
-                            <div class="value"><img src="/tracker/assets/img/clock-circular-outline.png"
+                            <div class="value"><img src="assets/img/clock-circular-outline.png"
                                                     class="img-circle inline image"> <span
                                         id="hourstoday" style="text-transform: none">Loading</span>
                             </div>
@@ -88,7 +121,7 @@ $cDept = getCheckIn($badgeID)[0];
                 <div class="col-sm">
                     <div class="card-body">
                         <div class="statistic">
-                            <div class="value"><img src="/tracker/assets/img/clock-circular-outline.png"
+                            <div class="value"><img src="assets/img/clock-circular-outline.png"
                                                     class="img-circle inline image"> <span
                                         id="earnedtime" style="text-transform: none">Loading</span>
                             </div>
@@ -97,10 +130,23 @@ $cDept = getCheckIn($badgeID)[0];
                     </div>
                 </div>
             </div>
-
-            <div class="autologout">Auto logout in <span id="lsec">60</span> <span id="gram">seconds</span>...</div>
         </div>
     </div>
-    <script src="js/landing.js"></script>
 
-<?php //echo calculateBonusTime(1234); ?>
+    <div class="container" style="top: 5em;position: relative;">
+        <div class="card novis">
+            <div class="autologout">Auto logout in <span id="lsec">60</span> <span id="gram">seconds</span>...
+            </div>
+        </div>
+    </div>
+
+    <script src="js/landing.js"></script>
+    <script>$(document).ready(function () {
+            initData();
+            clockCycle();
+            decrementLogout();
+        });
+    </script>
+
+<?php //echo calculateBonusTime(1234);
+?>

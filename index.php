@@ -6,11 +6,18 @@ include('pages/headerhtml.php');
 
 // Check session
 $user = isValidSession($session, $badgeID);
+$page = "landing";
+if (isset($_GET['page'])) $page = $_GET['page'];
 
-if ($user != null || isset($_GET['dev'])) {
-    include('pages/landing.php');
-} else if (isset($_GET['sso'])) {
+if ($page == "admin" && isAdmin($badgeID)) {
+    include('pages/admin.php');
+} else if ($page == "manage" && isManager($badgeID)) {
+    include('pages/manage.php');
+} else if ($page == "sso") {
+    require_once('vendor/autoload.php');
     include('pages/sso.php');
+} else if ($user != null) {
+    include('pages/landing.php');
 } else {
     include('pages/login.php');
 }
