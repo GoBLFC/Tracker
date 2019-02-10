@@ -15,6 +15,9 @@ function isValidSession($session, $badge)
     return $user;
 }
 
+// TODO: Return method specific results instead of arrays
+// TODO: Clock people out if site is disabled??
+
 /* SQL Queries */
 function validateUser($id, $lName)
 {
@@ -118,10 +121,16 @@ function checkKiosk($session)
 
 function authorizeKiosk($session)
 {
-    setcookie("kiosk", session_id());
-
     global $db;
     $stmt = $db->prepare("INSERT INTO `kiosks` (`session`, `authorized`) VALUES (:sess, CURRENT_TIMESTAMP)");
+    $stmt->bindValue(':sess', $session, PDO::PARAM_STR);
+    $stmt->execute();
+}
+
+function deauthorizeKiosk($session)
+{
+    global $db;
+    $stmt = $db->prepare("DELETE FROM `kiosks` WHERE `session` = :sess");
     $stmt->bindValue(':sess', $session, PDO::PARAM_STR);
     $stmt->execute();
 }
@@ -152,6 +161,24 @@ function getCheckIn($uid)
     $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function getSiteStatus()
+{
+    global $db;
+    $stmt = $db->prepare("SELECT `site_status` FROM `settings`");
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC)[0]['site_status'];
+}
+
+function setSiteStatus($status)
+{
+    global $db;
+
+    $stmt = $db->prepare("UPDATE `settings` SET `site_status` = :status");
+    $stmt->bindValue(':status', $status, PDO::PARAM_INT);
+    $stmt->execute();
+    return true;
 }
 
 function getClockTime($uid)

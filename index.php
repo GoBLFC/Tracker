@@ -17,7 +17,14 @@ if ($page == "admin" && isAdmin($badgeID)) {
     require_once('vendor/autoload.php');
     include('pages/sso.php');
 } else if ($user != null) {
-    include('pages/landing.php');
+    $kioskStatus = sizeof(checkKiosk(session_id()));
+    $siteStatus = getSiteStatus();
+
+    if ($siteStatus !== 1 || $kioskStatus == 0) {
+        include('pages/disabled.php');
+    } else {
+        include('pages/landing.php');
+    }
 } else {
     include('pages/login.php');
 }

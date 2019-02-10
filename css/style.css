@@ -79,6 +79,25 @@ a {
     border: none !important;
 }
 
+.noKiosk {
+    background-blend-mode: darken !important;
+    background-color: orangered !important;
+    background-size: 57% !important;
+}
+
+.siteDisabled {
+    background-blend-mode: darken !important;
+    background-color: red !important;
+    background-size: 35% !important;
+}
+
+.onFire {
+    background-image: url("/tracker/assets/img/onfire.jpg");
+    font-size: 60pt;
+    color: #f9ff00;
+    text-shadow: 8px 8px 13px #ff0000;
+}
+
 input[type="text"] {
     width: 100%;
     padding: 25px 0px;

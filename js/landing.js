@@ -1,12 +1,8 @@
 $(document).ready(function () {
     $('#checkinout').on('click', function () {
         const $this = $(this);
-        const loadingText = '<i class="fa fa-circle-o-notch fa-spin"></i> Checking ' + $this.data('value') + '...';
 
-        if ($(this).html() !== loadingText) {
-            $this.data('original-text', $(this).html());
-            $this.html(loadingText);
-        }
+        applyLoading($this, 'Checking ' + $this.data('value') + '...');
 
         if ($this.data('value') === "in") {
             checkIn(function (data) {
@@ -44,6 +40,15 @@ function initData() {
     });
 }
 
+function applyLoading(elem, text) {
+    const loadingText = '<i class="fa fa-circle-o-notch fa-spin"></i> ' + text;
+
+    if ($(elem).html() !== loadingText) {
+        $(elem).data('original-text', $(elem).html());
+        $(elem).html(loadingText);
+    }
+}
+
 function toggleStatus(status, data) {
     const $dept = $('#dept');
     const $checkstatus = $('#checkstatus');
@@ -58,31 +63,27 @@ function toggleStatus(status, data) {
     $button.html('Check-' + status);
     $button.data('value', status.toLowerCase());
     $button.data(status.toLowerCase());
-
     let opposite = "Out";
     if (status === "Out") {
+        onClock = true;
+
         opposite = "In";
         $dept.prop("disabled", true);
         $checkstatus.html('You are currently checked in.');
         $checkstatus.attr('class', 'alert alert-success');
         $shiftclock.show();
     } else {
+        shiftTime = 0;
+        updateClock();
+        onClock = false;
+
         $dept.prop("disabled", false);
         $checkstatus.html('You are currently not checked in.');
         $checkstatus.attr('class', 'alert alert-danger');
         $shiftclock.hide();
     }
 
-    $.notify({
-        message: 'Checked ' + opposite + '!'
-    }, {
-        type: 'success',
-        delay: 1500,
-        animate: {
-            enter: 'animated bounceInRight',
-            exit: 'animated bounceOutRight'
-        },
-    });
+    toastNotify('Checked ' + opposite + '!', 'success')
 }
 
 function clockCycle() {
@@ -122,18 +123,12 @@ function decrementLogout() {
 function checkIn(callback) {
     const dept = $("#dept").children("option:selected").val();
     postAction({action: "checkIn", dept: dept}, function (data) {
-        onClock = true;
         callback(data);
     });
 }
 
 function checkOut(callback) {
     postAction({action: "checkOut"}, function (data) {
-        // Submit times, reset clock
-        onClock = false;
-        shiftTime = 0;
-        updateClock();
-
         callback(data);
     });
 }
@@ -161,8 +156,22 @@ function postAction(data, callback) {
         .done(function (data) {
             if (data.code === 0) alert('Error: ' + data.msg);
             callback(data);
-            console.log(data);
+            console.log(data.msg);
         }).fail(function (data) {
         alert('Internal error, please contact a staff member for assistance.');
+        console.log(data.msg);
+    });
+}
+
+function toastNotify(message, type) {
+    $.notify({
+        message: message
+    }, {
+        type: type,
+        delay: 1500,
+        animate: {
+            enter: 'animated bounceInRight',
+            exit: 'animated bounceOutRight'
+        },
     });
 }
