@@ -30,7 +30,7 @@ function validateUser($id, $lName)
     return true;
 }
 
-function logout($session)
+function logoutSession($session)
 {
     if (empty($session)) return;
 

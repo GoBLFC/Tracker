@@ -18,10 +18,12 @@ $ret['code'] = -1;
 //$ret['msg'] = "Unknown Action.";
 
 if ($user == null) {
+    $ret['code'] = 0;
     $ret['msg'] = "Not authenticated.";
 } elseif (!isset($_POST['action'])) {
+    $ret['code'] = 0;
     $ret['msg'] = "No data provided.";
-} else if (!$isAdmin && sizeof(checkKiosk(session_id())) == 0) {
+} else if (!$isAdmin && sizeof(checkKiosk($_COOKIE['kiosknonce'])) == 0) {
     $ret['code'] = 0;
     $ret['msg'] = "Kiosk not authorized.";
 } else if (!$isAdmin && getSiteStatus() == 0) {
@@ -69,17 +71,25 @@ if ($user == null) {
         $ret['code'] = 0;
         $ret['msg'] = "Unauthorized.";
     } else {
-        $status = $_POST['status'];
-
         if ($action == "setSiteStatus") {
+            $status = $_POST['status'];
             $ret['code'] = 1;
             $ret['val'] = setSiteStatus($status);
         } else if ($action == "setKioskAuth") {
-            if ($status == 1) authorizeKiosk(session_id());
-            if ($status == 0) deauthorizeKiosk(session_id());
+            $status = $_POST['status'];
+
+            if ($status == 1) {
+                $kioskNonce = md5(rand());
+                authorizeKiosk($kioskNonce);
+                $ret['val'] = $kioskNonce;
+            }
+
+            if ($status == 0) {
+                deauthorizeKiosk($_COOKIE['kiosknonce']);
+                $ret['val'] = 1;
+            }
 
             $ret['code'] = 1;
-            $ret['val'] = 1;
         }
     }
 }

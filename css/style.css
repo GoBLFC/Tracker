@@ -68,7 +68,7 @@ a {
 .highvis {
     background-image: url("/tracker/assets/img/highvis.png");
     background-blend-mode: darken;
-    color: black;
+    color: #ffffff;
     font-size: large;
     font-weight: bold;
     font-variant: all-petite-caps;
@@ -82,13 +82,11 @@ a {
 .noKiosk {
     background-blend-mode: darken !important;
     background-color: orangered !important;
-    background-size: 57% !important;
 }
 
 .siteDisabled {
     background-blend-mode: darken !important;
     background-color: red !important;
-    background-size: 35% !important;
 }
 
 .onFire {
@@ -98,6 +96,43 @@ a {
     text-shadow: 8px 8px 13px #ff0000;
 }
 
+.vistext {
+    background-color: #000000ab;
+    padding: 5px;
+    width: fit-content;
+    min-width: 20%;
+}
+
+.bootstrap-select .btn {
+    background-color: #25262f;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.bootstrap-select .dropdown-menu {
+    background-color: #25262f;
+}
+
+.bootstrap-select.show-tick .dropdown-menu li a span.text {
+    color: #a0a0a0;
+}
+
+.form-control {
+    background-color: #1f1f1f !important;
+}
+
+.inputDark {
+    background-color: #25262f !important;
+}
+
+.cadHeader {
+    background-color: #1f1f1f !important;
+}
+
+.cadBody {
+    background-color: #272727 !important;
+}
+
+/*
 input[type="text"] {
     width: 100%;
     padding: 25px 0px;
@@ -117,6 +152,7 @@ input[type="password"] {
     outline: none;
     color: #ffffff;
 }
+*/
 
 input[type=checkbox] {
     display: none;
@@ -255,55 +291,6 @@ input[type="submit"]:hover {
     visibility: visible;
     opacity: 1;
     transform: translateY(0);
-}
-
-@media only screen and (max-width: 1000px) {
-    .login {
-        left: 2%;
-        right: 2%;
-        width: 96%;
-        top: 20%;
-        padding: 1% 2%;
-    }
-
-    .logo {
-        max-width: 500px;
-    }
-
-    h2 {
-        font-size: 30px;
-    }
-
-    input[type="text"] {
-        font-size: 2em;
-    }
-
-    input[type="submit"] {
-        height: 3em;
-        font-size: 2em;
-    }
-
-    .badgehelp {
-        font-size: 2em;
-        padding: 10px 0px 25px 0px;
-    }
-
-    .badgehelp:hover {
-        font-size: 2em;
-        padding: 10px 0px 25px 0px;
-    }
-
-    .modal {
-        left: 0%;
-        width: 100%;
-        margin-left: 0px;
-    }
-
-    .close {
-        width: 70px;
-        height: 60px;
-        font-size: 2em;
-    }
 }
 
 /* Additional Bootstrap Overrides */

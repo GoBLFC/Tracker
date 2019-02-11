@@ -1,4 +1,4 @@
-function toggleSetting(button, off, on, offLoad, onLoad, setting, method, toggle) {
+function toggleSetting(button, off, on, offLoad, onLoad, setting, method, toggle, callback) {
     const status = $(button).data('status');
     const opposite = !Number(status);
 
@@ -15,7 +15,20 @@ function toggleSetting(button, off, on, offLoad, onLoad, setting, method, toggle
             $(button).html(statusText + ' ' + setting);
             $(button).toggleClass(toggle);
 
-            toastNotify(setting + ' ' + statusTextOpposite + 'd!')
+            toastNotify(setting + ' ' + statusTextOpposite + 'd!');
+            if (callback !== null) callback(data);
         }
     });
+}
+
+function toggleSite(button) {
+    toggleSetting(button, 'Disable', 'Enable', 'Disabling', 'Enabling', 'Site', 'setSiteStatus', 'btn-success btn-danger', function (data) {
+        console.log("Site status changed.")
+    })
+}
+
+function toggleKiosk(button) {
+    toggleSetting(button, 'Deauthorize', 'Authorize', 'Deauthorizing', 'Authorizing', 'Kiosk', 'setKioskAuth', 'btn-warning btn-danger', function (data) {
+        $.cookie("kiosknonce", data.val);
+    })
 }

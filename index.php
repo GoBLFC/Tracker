@@ -7,6 +7,9 @@ include('pages/headerhtml.php');
 // Check session
 $user = isValidSession($session, $badgeID);
 $page = "landing";
+$siteStatus = getSiteStatus();
+$kioskAuth = (isset($_COOKIE['kiosknonce']) && sizeof(checkKiosk($_COOKIE['kiosknonce']))) >= 1 ? 1 : 0;
+
 if (isset($_GET['page'])) $page = $_GET['page'];
 
 if ($page == "admin" && isAdmin($badgeID)) {
@@ -17,10 +20,7 @@ if ($page == "admin" && isAdmin($badgeID)) {
     require_once('vendor/autoload.php');
     include('pages/sso.php');
 } else if ($user != null) {
-    $kioskStatus = sizeof(checkKiosk(session_id()));
-    $siteStatus = getSiteStatus();
-
-    if ($siteStatus !== 1 || $kioskStatus == 0) {
+    if ($siteStatus !== 1 || $kioskAuth == 0) {
         include('pages/disabled.php');
     } else {
         include('pages/landing.php');

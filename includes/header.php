@@ -25,7 +25,7 @@ if (isset($_COOKIE["kiosk"])) {
 }
 
 if (isset($_GET['logout'])) {
-    logout($session);
+    logoutSession($session);
 
     session_unset();
     session_regenerate_id();

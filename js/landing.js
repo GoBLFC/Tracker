@@ -156,7 +156,7 @@ function postAction(data, callback) {
         .done(function (data) {
             if (data.code === 0) alert('Error: ' + data.msg);
             callback(data);
-            console.log(data.msg);
+            if (data.msg !== undefined) console.log(data.msg);
         }).fail(function (data) {
         alert('Internal error, please contact a staff member for assistance.');
         console.log(data.msg);
