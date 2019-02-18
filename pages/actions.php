@@ -90,6 +90,74 @@ if ($user == null) {
             }
 
             $ret['code'] = 1;
+        } else if ($action == "setAdmin") {
+            $badgeID = $_POST['badgeid'];
+            $value = $_POST['value'];
+
+            $user = getUserByID($badgeID);
+
+            if ($_SESSION['badgeid'] == $badgeID) {
+                $ret['code'] = 0;
+                $ret['msg'] = "You can't remove yourself!!";
+            } else if (!isset($user[0])) {
+                $ret['code'] = 0;
+                $ret['msg'] = "User with ID '$badgeID' not found!";
+            } else {
+                setAdmin($value, $badgeID);
+                $ret['name'] = $user[0]['nickname'];
+                $ret['code'] = 1;
+            }
+        } else if ($action == "setManager") {
+            $badgeID = $_POST['badgeid'];
+            $value = $_POST['value'];
+
+            $user = getUserByID($badgeID);
+            if (!isset($user[0])) {
+                $ret['code'] = 0;
+                $ret['msg'] = "User with ID '$badgeID' not found!";
+            } else {
+                setManager($value, $badgeID);
+                $ret['name'] = $user[0]['nickname'];
+                $ret['code'] = 1;
+            }
+        } else if ($action == "getAdmins") {
+            $ret['val'] = getAdmins();
+            $ret['code'] = 1;
+        } else if ($action == "getManagers") {
+            $ret['val'] = getManagers();
+            $ret['code'] = 1;
+        } else if ($action == "getDepts") {
+            $ret['val'] = getDepts();
+            $ret['code'] = 1;
+        } else if ($action == "getBonuses") {
+            $ret['val'] = getBonuses();
+            $ret['code'] = 1;
+        } else if ($action == "addDept") {
+            $name = $_POST['name'];
+            $hidden = $_POST['hidden'];
+
+            $ret['val'] = addDept($name, $hidden);
+            $ret['code'] = 1;
+        } else if ($action == "updateDept") {
+            $id = $_POST['id'];
+            $name = $_POST['name'];
+            $hidden = $_POST['hidden'];
+
+            $ret['val'] = updateDept($id, $name, $hidden);
+            $ret['code'] = 1;
+        } else if ($action == "removeBonus") {
+            $id = $_POST['id'];
+
+            $ret['val'] = removeBonus($id);
+            $ret['code'] = 1;
+        } else if ($action == "addBonus") {
+            $start = $_POST['start'];
+            $stop = $_POST['stop'];
+            $depts = $_POST['depts'];
+            $modifier = $_POST['modifier'];
+
+            $ret['val'] = addBonus($start, $stop, $depts, $modifier);
+            $ret['code'] = 1;
         }
     }
 }

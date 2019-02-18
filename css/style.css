@@ -116,6 +116,18 @@ a {
     color: #a0a0a0;
 }
 
+.bootstrap-select .dropdown-toggle .filter-option-inner-inner {
+    color: #868e96;
+}
+
+.bootstrap-select.show-tick .dropdown-menu .selected span.check-mark {
+    color: #ffffff;
+}
+
+.wt {
+    color: #ffffff !important;
+}
+
 .form-control {
     background-color: #1f1f1f !important;
 }

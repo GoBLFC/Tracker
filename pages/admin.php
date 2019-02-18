@@ -56,24 +56,11 @@ if (!isAdmin($badgeID)) die('Unauthorized.');
                                             <tr>
                                                 <th scope="col">Badge</th>
                                                 <th scope="col">Name</th>
-                                                <th scope="col">Properties</th>
+                                                <!--<th scope="col">Properties</th>-->
                                                 <th scope="col">Actions</th>
                                             </tr>
                                             </thead>
-                                            <tbody>
-                                            <tr id="p22">
-                                                <th scope="row">1234</th>
-                                                <td>Billy Bob</td>
-                                                <td>
-                                                    <span class="badge badge-pill badge-danger">Tag 1</span>
-                                                    <span class="badge badge-pill badge-info">123</span>
-                                                    <span class="badge badge-pill badge-info">456</span>
-                                                </td>
-                                                <td>
-                                                    <button id="22" type="button" class="btn btn-sm btn-danger">Remove
-                                                    </button>
-                                                </td>
-                                            </tr>
+                                            <tbody id="uRowAdmin">
                                             </tbody>
                                         </table>
                                     </div>
@@ -86,37 +73,29 @@ if (!isAdmin($badgeID)) die('Unauthorized.');
                                             <tr>
                                                 <th scope="col">Badge</th>
                                                 <th scope="col">Name</th>
-                                                <th scope="col">Properties</th>
+                                                <!--<th scope="col">Properties</th>-->
                                                 <th scope="col">Actions</th>
                                             </tr>
                                             </thead>
-                                            <tbody>
-                                            <tr id="p22">
-                                                <th scope="row">1234</th>
-                                                <td>Billy Bob</td>
-                                                <td>
-                                                    <span class="badge badge-pill badge-danger">Tag 1</span>
-                                                    <span class="badge badge-pill badge-info">123</span>
-                                                    <span class="badge badge-pill badge-info">456</span>
-                                                </td>
-                                                <td>
-                                                    <button id="22" type="button" class="btn btn-sm btn-danger">Remove
-                                                    </button>
-                                                </td>
-                                            </tr>
+                                            <tbody id="uRowManager">
                                             </tbody>
                                         </table>
                                     </div>
                                     <div class="card">
                                         <div class="input-group">
-                                            <input type="text" class="form-control inputDark" placeholder="Badge Number"
+                                            <input id="" type="text" class="form-control inputDark"
+                                                   placeholder="Badge Number"
                                                    aria-label="Recipient's username" aria-describedby="basic-addon2">
                                             <div class="input-group-append">
                                                 <button class="btn btn-outline-secondary" type="button"
-                                                        style="background-color: #400000; color: #ffffff">Make Admin
+                                                        onClick="setAdmin(1, getButtonInput(this))"
+                                                        style="background-color: #400000; color: #ffffff; border: 1px solid rgba(0, 0, 0, 0.15)">
+                                                    Make Admin
                                                 </button>
                                                 <button class="btn btn-outline-secondary" type="button"
-                                                        style="background-color: #402300; color: #ffffff">Make Manager
+                                                        onClick="setManager(1, getButtonInput(this))"
+                                                        style="background-color: #402300; color: #ffffff; border: 1px solid rgba(0, 0, 0, 0.15)">
+                                                    Make Manager
                                                 </button>
                                             </div>
                                         </div>
@@ -138,21 +117,10 @@ if (!isAdmin($badgeID)) die('Unauthorized.');
                                             <th scope="col">ID</th>
                                             <th scope="col">Department</th>
                                             <th scope="col">Hidden</th>
-                                            <th scope="col">Actions</th>
+                                            <!--<th scope="col">Actions</th>-->
                                         </tr>
                                         </thead>
-                                        <tbody>
-                                        <tr id="p22">
-                                            <th scope="row">99</th>
-                                            <td>Other/Unknown</td>
-                                            <td>No</td>
-                                            <td>
-                                                <button id="22" type="button" class="btn btn-sm btn-danger">Remove
-                                                </button>
-                                                <button id="22" type="button" class="btn btn-sm btn-warning">Rename
-                                                </button>
-                                            </td>
-                                        </tr>
+                                        <tbody id="dRow">
                                         </tbody>
                                     </table>
                                     <div class="input-group">
@@ -165,7 +133,9 @@ if (!isAdmin($badgeID)) die('Unauthorized.');
                                         </select>
                                         <div class="input-group-append">
                                             <button class="btn btn-outline-secondary" type="button"
-                                                    style="background-color: #004014; color: #ffffff">Add Dept
+                                                    style="background-color: #004014; color: #ffffff; border: 1px solid rgba(0, 0, 0, 0.15)"
+                                                    onclick="addDept(this)">
+                                                Add Dept
                                             </button>
                                         </div>
                                     </div>
@@ -190,39 +160,43 @@ if (!isAdmin($badgeID)) die('Unauthorized.');
                                             <th scope="col">Actions</th>
                                         </tr>
                                         </thead>
-                                        <tbody>
-                                        <tr id="p22">
-                                            <td>2019-02-03 18:00:00</td>
-                                            <td>2019-02-03 18:00:00</td>
-                                            <td>1, 2, 3</td>
-                                            <td>2x</td>
-                                            <td>
-                                                <button id="22" type="button" class="btn btn-sm btn-danger">Remove
-                                                </button>
-                                            </td>
-                                        </tr>
+                                        <tbody id="bRow">
                                         </tbody>
                                     </table>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control inputDark" placeholder="Start"
-                                               aria-label="Recipient's username" aria-describedby="basic-addon2"
-                                               style="width: 25%;">
-                                        <input type="text" class="form-control inputDark" placeholder="Stop"
-                                               aria-label="Recipient's username" aria-describedby="basic-addon2"
-                                               style="width: 25%;">
-                                        <select style="width: 25%" class="selectpicker"
+
+                                    <div class="form-group" style="display: flex">
+                                        <div class="input-group date" id="bonusstart"
+                                             data-target-input="nearest" style="width: 25%">
+                                            <input type="text" class="form-control datetimepicker-input"
+                                                   placeholder="Start" data-target="#bonusstart"/>
+                                            <div class="input-group-append" data-target="#bonusstart"
+                                                 data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="input-group date" id="bonusstop"
+                                             data-target-input="nearest" style="width: 25%">
+                                            <input type="text" class="form-control datetimepicker-input"
+                                                   placeholder="Stop" data-target="#bonusstop"/>
+                                            <div class="input-group-append" data-target="#bonusstop"
+                                                 data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <select style="min-width: 15%" class="selectpicker"
                                                 title="Departments" multiple
-                                                data-live-search="true">
-                                            <option>Dept 1</option>
-                                            <option>Dept 2</option>
-                                            <option>Dept 3</option>
+                                                data-live-search="true" id="depts">
                                         </select>
                                         <input type="text" class="form-control inputDark" placeholder="Modifier"
-                                               aria-label="Recipient's username" aria-describedby="basic-addon2"
-                                               style="width: 15%;">
+                                               aria-label="Modifier" aria-describedby="basic-addon2"
+                                               style="width: 20%;" id="bonusmod">
                                         <div class="input-group-append">
                                             <button class="btn btn-outline-secondary" type="button"
-                                                    style="background-color: #004014; color: #ffffff;">Add Bonus
+                                                    style="background-color: #004014; color: #ffffff; border: 1px solid rgba(0, 0, 0, 0.15)"
+                                                    onClick="addBonus(this)">
+                                                Add Bonus
                                             </button>
                                         </div>
                                     </div>
@@ -264,7 +238,8 @@ if (!isAdmin($badgeID)) die('Unauthorized.');
                                                aria-label="Recipient's username" aria-describedby="basic-addon2">
                                         <div class="input-group-append">
                                             <button class="btn btn-outline-secondary" type="button"
-                                                    style="background-color: #000840; color: #ffffff">Volunteer
+                                                    style="background-color: #000840; color: #ffffff; border: 1px solid rgba(0, 0, 0, 0.15)">
+                                                Volunteer
                                             </button>
                                         </div>
                                     </div>
@@ -295,7 +270,9 @@ if (!isAdmin($badgeID)) die('Unauthorized.');
 
 <script src="js/landing.js"></script>
 <script src="js/admin.js"></script>
+
 <script>$(document).ready(function () {
+        initData();
         decrementLogout();
     });
 </script>

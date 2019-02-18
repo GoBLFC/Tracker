@@ -16,7 +16,6 @@ function isValidSession($session, $badge)
 }
 
 // TODO: Return method specific results instead of arrays
-// TODO: Clock people out if site is disabled??
 
 /* SQL Queries */
 function validateUser($id, $lName)
@@ -93,7 +92,7 @@ function getDepartments($hidden)
 function updateSession($id, $fName, $lName, $nName, $session)
 {
     global $db;
-    $stmt = $db->prepare("INSERT INTO `users` (`id`, `first_name`, `last_name`, `nickname`, `usergroups`, `last_session`, `last_ip`, `staff_salt`, `staff_pass`, `registered`, `reg_ua`) VALUES (:id, :fName, :lName, :nName, 1, :lastsession, :lastip, '', '', NOW(), :regua) ON DUPLICATE KEY UPDATE `first_name` = :fName2, `last_name` = :lName2, `nickname` = :nName2, `last_session` = :lastsession2, `last_ip` = :lastip2");
+    $stmt = $db->prepare("INSERT INTO `users` (`id`, `first_name`, `last_name`, `nickname`, `admin`, `manager`, `last_session`, `last_ip`, `staff_salt`, `staff_pass`, `registered`, `reg_ua`) VALUES (:id, :fName, :lName, :nName, 0, 0, :lastsession, :lastip, '', '', NOW(), :regua) ON DUPLICATE KEY UPDATE `first_name` = :fName2, `last_name` = :lName2, `nickname` = :nName2, `last_session` = :lastsession2, `last_ip` = :lastip2");
     //$stmt = $db->prepare("UPDATE `users` SET `last_session` = :lastsession, `last_ip` = :lastip WHERE `users`.`id` = :id");
     $stmt->bindValue(':id', $id, PDO::PARAM_INT);
     $stmt->bindValue(':fName', $fName, PDO::PARAM_STR);
@@ -133,6 +132,97 @@ function deauthorizeKiosk($session)
     $stmt = $db->prepare("DELETE FROM `kiosks` WHERE `session` = :sess");
     $stmt->bindValue(':sess', $session, PDO::PARAM_STR);
     $stmt->execute();
+}
+
+function setAdmin($value, $badgeID)
+{
+    global $db;
+    $stmt = $db->prepare("UPDATE `users` SET `admin` = :value WHERE `users`.`id` = :id");
+    $stmt->bindValue(':id', $badgeID, PDO::PARAM_INT);
+    $stmt->bindValue(':value', $value, PDO::PARAM_INT);
+    $stmt->execute();
+}
+
+function setManager($value, $badgeID)
+{
+    global $db;
+    $stmt = $db->prepare("UPDATE `users` SET `manager` = :value WHERE `users`.`id` = :id");
+    $stmt->bindValue(':id', $badgeID, PDO::PARAM_INT);
+    $stmt->bindValue(':value', $value, PDO::PARAM_INT);
+    $stmt->execute();
+}
+
+function addDept($name, $hidden)
+{
+    global $db;
+    $stmt = $db->prepare("INSERT INTO `departments` (`id`, `name`, `hidden`) VALUES (NULL, :name, :hidden);");
+    $stmt->bindValue(':name', $name, PDO::PARAM_STR);
+    $stmt->bindValue(':hidden', $hidden, PDO::PARAM_INT);
+    $stmt->execute();
+    return $db->lastInsertId();
+}
+
+function updateDept($id, $name, $hidden)
+{
+    global $db;
+    $stmt = $db->prepare("UPDATE `departments` SET `name` = :name, `hidden` = :hidden WHERE `departments`.`id` = :id");
+    $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+    $stmt->bindValue(':name', $name, PDO::PARAM_STR);
+    $stmt->bindValue(':hidden', $hidden, PDO::PARAM_INT);
+    $stmt->execute();
+    return $db->lastInsertId();
+}
+
+function addBonus($start, $stop, $depts, $modifier)
+{
+    global $db;
+    $stmt = $db->prepare("INSERT INTO `time_mod` (`id`, `start`, `stop`, `dept`, `modifier`) VALUES (NULL, :start, :stop, :depts, :mod)");
+    $stmt->bindValue(':start', $start, PDO::PARAM_STR);
+    $stmt->bindValue(':stop', $stop, PDO::PARAM_STR);
+    $stmt->bindValue(':depts', $depts, PDO::PARAM_STR);
+    $stmt->bindValue(':mod', $modifier, PDO::PARAM_STR);
+    $stmt->execute();
+    return $db->lastInsertId();
+}
+
+function removeBonus($id)
+{
+    global $db;
+    $stmt = $db->prepare("DELETE FROM `time_mod` WHERE `id` = :id");
+    $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+}
+
+function getAdmins()
+{
+    global $db;
+    $stmt = $db->prepare("SELECT * FROM `users` WHERE `admin` = 1");
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function getManagers()
+{
+    global $db;
+    $stmt = $db->prepare("SELECT * FROM `users` WHERE `manager` = 1");
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function getDepts()
+{
+    global $db;
+    $stmt = $db->prepare("SELECT * FROM `departments`");
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function getBonuses()
+{
+    global $db;
+    $stmt = $db->prepare("SELECT * FROM `time_mod`");
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 function checkIn($uid, $dept)
@@ -295,12 +385,15 @@ function overlapInMinutes($startDate1, $endDate1, $startDate2, $endDate2)
 // Jank-ass permission check until we can do it via API somehow
 function isAdmin($id)
 {
-    $ids = array(5867, 13685);
-    return in_array($id, $ids);
+    $user = getUserByID($id);
+    if ($user[0]['admin'] == 1) return true;
+    return false;
 }
 
 function isManager($id)
 {
-    $ids = array(5867, 13685);
-    return in_array($id, $ids);
+    $user = getUserByID($id);
+    if ($user[0]['manager'] == 1) return true;
+    return false;
 }
+
