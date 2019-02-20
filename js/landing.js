@@ -38,6 +38,18 @@ function initData() {
         if (data.val === -1) return;
         $('#earnedtime').html(Math.round((data.val / 60) * 10) / 10);
     });
+
+    getNotifications(function (data) {
+        if (data.val === -1) return;
+        let time = 0;
+        $.each(data['val'], function (index, n) {
+            setTimeout(function () {
+                toastNotify(n['message'], n['type'], 30000);
+            }, time);
+            time += 500;
+            postAction({action: "readNotification", id: n['id']});
+        });
+    });
 }
 
 function applyLoading(elem, text) {
@@ -83,7 +95,7 @@ function toggleStatus(status, data) {
         $shiftclock.hide();
     }
 
-    toastNotify('Checked ' + opposite + '!', 'success')
+    toastNotify('Checked ' + opposite + '!', 'success', 1500)
 }
 
 function clockCycle() {
@@ -151,11 +163,17 @@ function getEarnedTime(callback) {
     });
 }
 
+function getNotifications(callback) {
+    postAction({action: "getNotifications"}, function (data) {
+        callback(data);
+    });
+}
+
 function postAction(data, callback) {
     $.post("pages/actions.php", data)
         .done(function (data) {
             if (data.code === 0) alert('Error: ' + data.msg);
-            callback(data);
+            if (callback) callback(data);
             if (data.msg !== undefined) console.log(data.msg);
         }).fail(function (data) {
         alert('Internal error, please contact a staff member for assistance.');
@@ -163,12 +181,12 @@ function postAction(data, callback) {
     });
 }
 
-function toastNotify(message, type) {
+function toastNotify(message, type, delay) {
     $.notify({
         message: message
     }, {
         type: type,
-        delay: 1500,
+        delay: delay,
         animate: {
             enter: 'animated bounceInRight',
             exit: 'animated bounceOutRight'

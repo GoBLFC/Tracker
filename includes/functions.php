@@ -76,6 +76,14 @@ function getUserSessionCount($session)
     return $stmt->fetchAll(PDO::FETCH_ASSOC)[0]['count'];
 }
 
+function getActiveClockins()
+{
+    global $db;
+    $stmt = $db->prepare("SELECT * FROM `tracker` WHERE checkout IS NULL");
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
 function getDepartments($hidden)
 {
     global $db;
@@ -225,6 +233,34 @@ function getBonuses()
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+function getNotifications($uid)
+{
+    global $db;
+    $stmt = $db->prepare("SELECT * FROM `notifications` WHERE `uid` = :uid AND `hasread` = 0");
+    $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function markNotificationRead($id)
+{
+    global $db;
+    $stmt = $db->prepare("UPDATE `notifications` SET `hasread` = '1' WHERE `notifications`.`id` = :id");
+    $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function createNotification($uid, $type, $msg)
+{
+    global $db;
+    $stmt = $db->prepare("INSERT INTO `notifications` (`uid`, `type`, `message`) VALUES (:uid, :type, :msg)");
+    $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
+    $stmt->bindValue(':type', $type, PDO::PARAM_STR);
+    $stmt->bindValue(':msg', $msg, PDO::PARAM_STR);
+    $stmt->execute();
+}
+
 function checkIn($uid, $dept)
 {
     global $db;
@@ -235,12 +271,17 @@ function checkIn($uid, $dept)
     $stmt->execute();
 }
 
-function checkOut($uid)
+function checkOut($uid, $autoTime)
 {
     global $db;
 
-    $stmt = $db->prepare("UPDATE `tracker` SET `checkout` = CURRENT_TIMESTAMP WHERE `uid` = :uid AND `checkout` IS NULL");
+    $time = date("Y-m-d H:i:s");
+    if ($autoTime) $time = $autoTime->format('Y-m-d H:i:s');
+
+    $stmt = $db->prepare("UPDATE `tracker` SET `checkout` = :time, `auto` = :auto WHERE `uid` = :uid AND `checkout` IS NULL");
     $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
+    $stmt->bindValue(':time', $time, PDO::PARAM_STR);
+    $stmt->bindValue(':auto', isset($autoTime), PDO::PARAM_INT);
     $stmt->execute();
 }
 

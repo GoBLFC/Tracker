@@ -46,7 +46,7 @@ if ($user == null) {
             //$ret['msg'] = "Not Implemented ...YET!\nBUT HEY LOOK THERE'S A JSON \"API\" CALLBACK AT LEAST! \xF0\x9F\x98\x81";
         }
     } else if ($action == "checkOut") {
-        checkOut($badgeID);
+        checkOut($badgeID, null);
 
         $ret['code'] = 1;
         $ret['msg'] = "Clocked out.";
@@ -59,6 +59,12 @@ if ($user == null) {
     } else if ($action == "getEarnedTime") {
         $ret['code'] = 1;
         $ret['val'] = calculateBonusTime($badgeID) + getMinutesTotal($badgeID);
+    } else if ($action == "getNotifications") {
+        $ret['code'] = 1;
+        $ret['val'] = getNotifications($badgeID);
+    } else if ($action == "readNotification") {
+        $ret['code'] = 1;
+        $ret['val'] = markNotificationRead($_POST['id']);
     }
 
     // MANAGER FUNCTIONS

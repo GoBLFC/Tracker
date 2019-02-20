@@ -63,7 +63,7 @@ function toggleSetting(button, off, on, offLoad, onLoad, setting, method, toggle
             $(button).html(statusText + ' ' + setting);
             $(button).toggleClass(toggle);
 
-            toastNotify(setting + ' ' + statusTextOpposite + 'd!');
+            toastNotify(setting + ' ' + statusTextOpposite + 'd!', 'success', 1500);
             if (callback !== null) callback(data);
         }
     });
@@ -85,9 +85,9 @@ function setAdmin(value, badgeid, callback) {
     postAction({action: 'setAdmin', badgeid: badgeid, value: value}, function (data) {
         if (data['code'] === 0) return;
         if (value === 0) {
-            toastNotify('Admin removed.');
+            toastNotify('Admin removed.', 'success', 1500);
         } else {
-            toastNotify('Made ' + data['name'] + ' admin!');
+            toastNotify('Made ' + data['name'] + ' admin!', 'success', 1500);
             addUserRow("Admin", badgeid, data['name']);
         }
         if (callback) callback();
@@ -98,9 +98,9 @@ function setManager(value, badgeid, callback) {
     postAction({action: 'setManager', badgeid: badgeid, value: value}, function (data) {
         if (data['code'] === 0) return;
         if (value === 0) {
-            toastNotify('Manager removed.');
+            toastNotify('Manager removed.', 'success', 'success', 1500);
         } else {
-            toastNotify('Made ' + data['name'] + ' manager!');
+            toastNotify('Made ' + data['name'] + ' manager!', 'success', 1500);
             addUserRow("Manager", badgeid, data['name']);
         }
         if (callback) callback();
@@ -112,7 +112,7 @@ function addDept(elem) {
     const hidden = parseInt(getButtonSelect(elem));
     postAction({action: 'addDept', name: name, hidden: hidden}, function (data) {
         if (data['code'] === 0) return;
-        toastNotify('Department created.');
+        toastNotify('Department created.', 'success', 1500);
         addDeptRow(data['val'], name, hidden);
         addListeners();
     });
@@ -138,14 +138,14 @@ function addBonus() {
     }, function (data) {
         if (data['code'] === 0) return;
         addBonusRow(data['val'], start, stop, depts, modifier);
-        toastNotify('Bonus added!');
+        toastNotify('Bonus added!', 'success', 1500);
     });
 }
 
 function updateDept(id, name, hidden) {
     postAction({action: 'updateDept', id: id, name: name, hidden: hidden}, function (data) {
         if (data['code'] === 0) return;
-        toastNotify('Department updated.');
+        toastNotify('Department updated.', 'success', 1500);
     });
 }
 
@@ -165,7 +165,7 @@ function removeBonus(elem) {
     postAction({action: 'removeBonus', id: $(elem).data("id")}, function (data) {
         if (data['code'] === 0) return;
         $(elem).parent().parent().remove();
-        toastNotify('Bonus removed.');
+        toastNotify('Bonus removed.', 'success', 1500);
     });
 }
 
@@ -177,7 +177,9 @@ function toggleSite(button) {
 
 function toggleKiosk(button) {
     toggleSetting(button, 'Deauthorize', 'Authorize', 'Deauthorizing', 'Authorizing', 'Kiosk', 'setKioskAuth', 'btn-warning btn-danger', function (data) {
-        $.cookie("kiosknonce", data.val);
+        var expireDate = new Date;
+        expireDate.setDate(expireDate.getDate() + 30);
+        $.cookie("kiosknonce", data.val, {expires: expireDate});
     })
 }
 
