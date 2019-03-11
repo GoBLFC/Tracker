@@ -6,7 +6,11 @@
  * Time: 3:57 AM
  */
 
-if ($siteStatus == 0) {
+if ($isBanned) {
+    $statusClass = "siteDisabled";
+    $message = "Not Permitted.";
+    $description = "You are not permitted to volunteer on behalf of BLFC. If any questions, please contact hr@goblfc.org";
+} else if ($siteStatus == 0) {
     $statusClass = "siteDisabled";
     $message = "Site disabled.";
     $description = "Site is disabled for maintenance.";

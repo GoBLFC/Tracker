@@ -16,11 +16,27 @@ $(document).ready(function () {
     });
 });
 
-let logoutTime = 600;
+let logoutTime = 60;
 let onClock = false;
 let shiftTime = 0;
 
 function initData() {
+    initClock();
+
+    getNotifications(function (data) {
+        if (data.val === -1) return;
+        let time = 0;
+        $.each(data['val'], function (index, n) {
+            setTimeout(function () {
+                toastNotify(n['message'], n['type'], 30000);
+            }, time);
+            time += 500;
+            postAction({action: "readNotification", id: n['id']});
+        });
+    });
+}
+
+function initClock() {
     getClockTime(function (data) {
         if (data.val === -1) return;
         shiftTime = data.val;
@@ -37,18 +53,6 @@ function initData() {
     getEarnedTime(function (data) {
         if (data.val === -1) return;
         $('#earnedtime').html(Math.round((data.val / 60) * 10) / 10);
-    });
-
-    getNotifications(function (data) {
-        if (data.val === -1) return;
-        let time = 0;
-        $.each(data['val'], function (index, n) {
-            setTimeout(function () {
-                toastNotify(n['message'], n['type'], 30000);
-            }, time);
-            time += 500;
-            postAction({action: "readNotification", id: n['id']});
-        });
     });
 }
 
@@ -110,11 +114,7 @@ function clockCycle() {
 }
 
 function updateClock() {
-    let measuredTime = new Date(null);
-    let cutStart = 12, cutEnd = 7;
-    if (shiftTime >= 36000) cutStart = 11, cutEnd = 8;
-    measuredTime.setSeconds(shiftTime);
-    $('#durrval').html(measuredTime.toISOString().substr(cutStart, cutEnd));
+    $('#durrval').html(moment.duration(shiftTime, "seconds").format("h:mm:ss"));
 }
 
 function decrementLogout() {

@@ -9,7 +9,7 @@
 if (!defined('TRACKER')) die('No.');
 
 // Load department list
-$departments = getDepartments(0);
+$departments = getDepartments(false);
 $cDept = getCheckIn($badgeID);
 if ($cDept) $cDept = $cDept[0];
 ?>
@@ -67,7 +67,7 @@ if ($cDept) $cDept = $cDept[0];
             </div>
 
             <div class="row">
-                <div class="col-sm" id="currdurr" style="display: none">
+                <div class="col-sm" id="currdurr" style="display: none;padding: 0.3em;">
                     <div class="card-body">
                         <div class="statistic">
                             <div class="value"><img src="assets/img/clock-circular-outline.png"
@@ -78,18 +78,18 @@ if ($cDept) $cDept = $cDept[0];
                         </div>
                     </div>
                 </div>
-                <div class="col-sm">
+                <div class="col-sm" style="padding: 0.3em;">
                     <div class="card-body">
                         <div class="statistic">
                             <div class="value"><img src="assets/img/clock-circular-outline.png"
                                                     class="img-circle inline image"> <span
-                                        id="hourstoday" style="text-transform: none">Loading</span>
+                                        id="hourstoday" style="text-transform: none;">Loading</span>
                             </div>
                             <div class="label">Hours Today</div>
                         </div>
                     </div>
                 </div>
-                <div class="col-sm">
+                <div class="col-sm" style="padding: 0.3em;">
                     <div class="card-body">
                         <div class="statistic">
                             <div class="value"><img src="assets/img/clock-circular-outline.png"
@@ -111,7 +111,7 @@ if ($cDept) $cDept = $cDept[0];
         </div>
     </div>
 
-    <script src="js/landing.js"></script>
+    <script src="js/landing.js?v=2"></script>
     <script>$(document).ready(function () {
             initData();
             clockCycle();

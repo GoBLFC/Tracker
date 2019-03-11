@@ -16,5 +16,9 @@ if (!defined('TRACKER')) die('No.');
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
 
+<?php
+if ($devMode === 1) echo "<script>$(document).ready(function () {logoutTime = 600})</script>";
+?>
+
 </body>
 </html>

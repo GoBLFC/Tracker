@@ -10,7 +10,7 @@ if (isManager($badgeID) || isAdmin($badgeID)) {
             if (isManager($badgeID) || isAdmin($badgeID)) {
                 ?>
                 <div class="col-sm">
-                    <a role="button" class="btn btn-light" href="manage" style="width:100%">Management
+                    <a role="button" class="btn btn-light" href="manage" style="width:100%;margin-bottom: 5px">Management
                         Panel
                     </a>
                 </div>
@@ -19,7 +19,7 @@ if (isManager($badgeID) || isAdmin($badgeID)) {
             if (isAdmin($badgeID)) {
                 ?>
                 <div class="col-sm">
-                    <a role="button" class="btn btn-light" href="admin" style="width:100%">Admin
+                    <a role="button" class="btn btn-light" href="admin" style="width:100%;margin-bottom: 5px">Admin
                         Panel
                     </a>
                 </div>

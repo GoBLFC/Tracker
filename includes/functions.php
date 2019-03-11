@@ -49,10 +49,27 @@ function getUser($id, $session)
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function getUserByID($id)
+function getUsers()
 {
     global $db;
-    $stmt = $db->prepare("SELECT * FROM `users` WHERE id = :id");
+    $stmt = $db->prepare("SELECT * FROM `users`");
+    $stmt->execute();
+
+    $users = [];
+    foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $user) $users[$user['id']] = $user;
+
+    return $users;
+}
+
+function getUserByID($id, $full)
+{
+    global $db;
+    if ($full) {
+        $stmt = $db->prepare("SELECT * FROM `users` WHERE id = :id");
+    } else {
+        $stmt = $db->prepare("SELECT `id`, `first_name`, `last_name`, `nickname` FROM `users` WHERE id = :id");
+    }
+
     $stmt->bindValue(':id', $id, PDO::PARAM_INT);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -84,10 +101,23 @@ function getActiveClockins()
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+function getLogs()
+{
+    global $db;
+    $stmt = $db->prepare("SELECT * FROM `logs`");
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
 function getDepartments($hidden)
 {
     global $db;
-    $stmt = $db->prepare("SELECT * FROM `departments` WHERE `hidden` = $hidden");
+    if (!$hidden) {
+        $stmt = $db->prepare("SELECT * FROM `departments` WHERE `hidden` = 0");
+    } else {
+        $stmt = $db->prepare("SELECT * FROM `departments`");
+    }
+
     $stmt->execute();
 
     $departments = [];
@@ -100,7 +130,7 @@ function getDepartments($hidden)
 function updateSession($id, $fName, $lName, $nName, $session)
 {
     global $db;
-    $stmt = $db->prepare("INSERT INTO `users` (`id`, `first_name`, `last_name`, `nickname`, `admin`, `manager`, `last_session`, `last_ip`, `staff_salt`, `staff_pass`, `registered`, `reg_ua`) VALUES (:id, :fName, :lName, :nName, 0, 0, :lastsession, :lastip, '', '', NOW(), :regua) ON DUPLICATE KEY UPDATE `first_name` = :fName2, `last_name` = :lName2, `nickname` = :nName2, `last_session` = :lastsession2, `last_ip` = :lastip2");
+    $stmt = $db->prepare("INSERT INTO `users` (`id`, `first_name`, `last_name`, `nickname`, `admin`, `manager`, `last_session`, `last_ip`, `registered`, `reg_ua`) VALUES (:id, :fName, :lName, :nName, 0, 0, :lastsession, :lastip, NOW(), :regua) ON DUPLICATE KEY UPDATE `first_name` = :fName2, `last_name` = :lName2, `nickname` = :nName2, `last_session` = :lastsession2, `last_ip` = :lastip2, `last_login` = NOW()");
     //$stmt = $db->prepare("UPDATE `users` SET `last_session` = :lastsession, `last_ip` = :lastip WHERE `users`.`id` = :id");
     $stmt->bindValue(':id', $id, PDO::PARAM_INT);
     $stmt->bindValue(':fName', $fName, PDO::PARAM_STR);
@@ -142,6 +172,22 @@ function deauthorizeKiosk($session)
     $stmt->execute();
 }
 
+function setBanned($badgeID, $state)
+{
+    $user = getUserByID($badgeID, false);
+    if ($state == 1 && !isset($user[0])) {
+        updateSession($badgeID, "BAN", "BAN", "BAN", "BAN");
+    }
+
+    global $db;
+    $stmt = $db->prepare("UPDATE `users` SET `banned` = :state WHERE `users`.`id` = :id");
+    $stmt->bindValue(':id', $badgeID, PDO::PARAM_INT);
+    $stmt->bindValue(':state', $state, PDO::PARAM_INT);
+    $stmt->execute();
+
+    return isset($user[0]) ? $user[0]['nickname'] : "Unknown";
+}
+
 function setAdmin($value, $badgeID)
 {
     global $db;
@@ -167,6 +213,7 @@ function addDept($name, $hidden)
     $stmt->bindValue(':name', $name, PDO::PARAM_STR);
     $stmt->bindValue(':hidden', $hidden, PDO::PARAM_INT);
     $stmt->execute();
+
     return $db->lastInsertId();
 }
 
@@ -178,6 +225,7 @@ function updateDept($id, $name, $hidden)
     $stmt->bindValue(':name', $name, PDO::PARAM_STR);
     $stmt->bindValue(':hidden', $hidden, PDO::PARAM_INT);
     $stmt->execute();
+
     return $db->lastInsertId();
 }
 
@@ -190,6 +238,7 @@ function addBonus($start, $stop, $depts, $modifier)
     $stmt->bindValue(':depts', $depts, PDO::PARAM_STR);
     $stmt->bindValue(':mod', $modifier, PDO::PARAM_STR);
     $stmt->execute();
+
     return $db->lastInsertId();
 }
 
@@ -213,6 +262,14 @@ function getManagers()
 {
     global $db;
     $stmt = $db->prepare("SELECT * FROM `users` WHERE `manager` = 1");
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function getBanned()
+{
+    global $db;
+    $stmt = $db->prepare("SELECT * FROM `users` WHERE `banned` = 1");
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
@@ -261,6 +318,29 @@ function createNotification($uid, $type, $msg)
     $stmt->execute();
 }
 
+function addTime($id, $in, $out, $dept, $notes, $badgeID)
+{
+    global $db;
+    $stmt = $db->prepare("INSERT INTO `tracker` (`uid`, `checkin`, `checkout`, `dept`, `notes`, `addedby`) VALUES (:uid, :checkin, :checkout, :dept, :notes, :addedby)");
+    $stmt->bindValue(':uid', $id, PDO::PARAM_INT);
+    $stmt->bindValue(':checkin', $in, PDO::PARAM_STR);
+    $stmt->bindValue(':checkout', $out, PDO::PARAM_STR);
+    $stmt->bindValue(':dept', $dept, PDO::PARAM_INT);
+    $stmt->bindValue(':notes', escapeText(filter_var($notes, FILTER_SANITIZE_STRING)), PDO::PARAM_STR);
+    $stmt->bindValue(':addedby', $badgeID, PDO::PARAM_INT);
+    $stmt->execute();
+
+    return $db->lastInsertId();
+}
+
+function removeTime($id)
+{
+    global $db;
+    $stmt = $db->prepare("DELETE FROM `tracker` WHERE `tracker`.`id` = :id");
+    $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+}
+
 function checkIn($uid, $dept)
 {
     global $db;
@@ -294,6 +374,14 @@ function getCheckIn($uid)
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+function getDevmode()
+{
+    global $db;
+    $stmt = $db->prepare("SELECT `devmode` FROM `settings`");
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC)[0]['devmode'];
+}
+
 function getSiteStatus()
 {
     global $db;
@@ -312,6 +400,46 @@ function setSiteStatus($status)
     return true;
 }
 
+function setDevmode($status)
+{
+    global $db;
+
+    $stmt = $db->prepare("UPDATE `settings` SET `devmode` = :status");
+    $stmt->bindValue(':status', $status, PDO::PARAM_INT);
+    $stmt->execute();
+    return true;
+}
+
+function findUser($input)
+{
+    global $db;
+
+    $stmt = $db->prepare("SELECT * FROM `users` WHERE `id` = :id OR `nickname` LIKE :nickname OR CONCAT( first_name,  ' ', last_name ) LIKE  :inputname");
+    $stmt->bindValue(':id', $input, PDO::PARAM_STR);
+    $stmt->bindValue(':nickname', '%' . $input . '%', PDO::PARAM_STR);
+    $stmt->bindValue(':inputname', '%' . $input . '%', PDO::PARAM_STR);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function getUnclockedUsers()
+{
+    global $db;
+    $stmt = $db->prepare("SELECT * FROM `tracker` WHERE `auto` = 1");
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function addLog($uid, $action, $data)
+{
+    global $db;
+    $stmt = $db->prepare("INSERT INTO `logs` (`uid`, `action`, `data`) VALUES (:uid, :action, :data)");
+    $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
+    $stmt->bindValue(':action', $action, PDO::PARAM_STR);
+    $stmt->bindValue(':data', $data, PDO::PARAM_STR);
+    $stmt->execute();
+}
+
 function getClockTime($uid)
 {
     $in = getCheckIn($uid);
@@ -322,7 +450,7 @@ function getClockTime($uid)
 function getMinutesToday($uid)
 {
     global $db;
-    $stmt = $db->prepare("SELECT id,checkin,checkout FROM `tracker` WHERE `uid` = :uid AND (DATE(`checkin`) = CURDATE() OR DATE(`checkout`) = CURDATE())");
+    $stmt = $db->prepare("SELECT id,checkin,checkout FROM `tracker` WHERE `uid` = :uid AND (DATE(`checkin`) = CURDATE() OR DATE(`checkout`) = CURDATE() OR `checkout` IS NULL)");
     $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
     $stmt->execute();
     $periods = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -367,7 +495,7 @@ function getMinutesTotal($uid)
 }
 
 // Somewhat inefficient O(N2) queries to get all bonus periods and find all time entries that reside within them.
-function calculateBonusTime($uid)
+function calculateBonusTime($uid, $array)
 {
     global $db;
     $stmt = $db->prepare("SELECT * FROM `time_mod`");
@@ -375,11 +503,11 @@ function calculateBonusTime($uid)
     $periods = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $bonus = 0;
-    $trackers = [];
+    $entries = [];
     $debug = [];
 
     foreach ($periods as $period) {
-        $stmt = $db->prepare("SELECT * FROM `tracker` WHERE `uid` = :uid ");
+        $stmt = $db->prepare("SELECT * FROM `tracker` WHERE `uid` = :uid ORDER BY `checkin` ASC");
         //$stmt = $db->prepare("SELECT * FROM `tracker` WHERE `dept` = :dept AND `uid` = :uid AND (`checkin` BETWEEN :start1 AND :stop1 OR `checkout` BETWEEN :start2 AND :stop2)");
         $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
         //$stmt->bindValue(':dept', $period['dept'], PDO::PARAM_INT);
@@ -394,20 +522,59 @@ function calculateBonusTime($uid)
         foreach ($results as $result) {
             // Department check
             $departments = explode(",", $period['dept']);
-            if (!in_array($result['dept'], $departments)) continue;
+            if (!$array && !in_array($result['dept'], $departments)) continue;
 
-            $overlap = overlapInMinutes($period['start'], $period['stop'], $result['checkin'], $result['checkout']);
-            $result['overlap'] = $overlap;
-            $result['bonus'] = ($period['modifier'] * $overlap) - $overlap;
+            if ($result['checkout'] == null) {
+                $checkout = date("Y-m-d h:i:sA", time());
+            } else {
+                $checkout = date("Y-m-d h:i:sA", strtotime($result['checkout']));
+            }
+
+            if (!isset($result['overlap'])) $result['overlap'] = 0;
+            if (!isset($result['bonus'])) $result['bonus'] = 0;
+
+            if (in_array($result['dept'], $departments)) {
+                $overlap = overlapInMinutes($period['start'], $period['stop'], $result['checkin'], $checkout);
+                $result['overlap'] .= $overlap;
+                $result['bonus'] .= ($period['modifier'] * $overlap) - $overlap;
+                //echo "<br>OVERLAP: " . $overlap;
+            } else {
+                //echo "<br>SKIP";
+            }
+
             $debug[$result['id']] = $result;
             $bonus = $bonus + $result['bonus'];
-            $trackers[$period['dept']][] = $result;
+            //$trackers[$period['dept']][] = $result;
+
+            if ($array) {
+                $timestamp = strtotime($result['checkin']);
+
+                $worked = strtotime($checkout) - strtotime($result['checkin']);
+
+                // Redo dates for short format
+                $checkin = date("M d h:i:sA", strtotime($result['checkin']));
+                $checkout = date("M d h:i:sA", strtotime($checkout));
+
+                if (!isset($entries[$timestamp]['bonus'])) $entries[$timestamp]['bonus'] = 0;
+                if (!isset($entries[$timestamp]['overlap'])) $entries[$timestamp]['overlap'] = 0;
+
+                $entries[$timestamp]['id'] = $result['id'];
+                $entries[$timestamp]['dept'] = $result['dept'];
+                $entries[$timestamp]['auto'] = $result['auto'];
+                $entries[$timestamp]['worked'] = $worked;
+                $entries[$timestamp]['bonus'] .= $result['bonus'];
+                $entries[$timestamp]['overlap'] .= $result['overlap'];
+                $entries[$timestamp]['checkin'] = $checkin;
+                $entries[$timestamp]['checkout'] = $checkout;
+                $entries[$timestamp]['notes'] = $result['notes'];
+                $entries[$timestamp]['ongoing'] = !$result['checkout'];
+            }
         }
     }
 
     //echo json_encode($debug);
 
-    return $bonus;
+    return $array ? $entries : $bonus;
 }
 
 function overlapInMinutes($startDate1, $endDate1, $startDate2, $endDate2)
@@ -426,15 +593,31 @@ function overlapInMinutes($startDate1, $endDate1, $startDate2, $endDate2)
 // Jank-ass permission check until we can do it via API somehow
 function isAdmin($id)
 {
-    $user = getUserByID($id);
-    if ($user[0]['admin'] == 1) return true;
+    $user = getUserByID($id, true);
+    if (isset($user[0]) && $user[0]['admin'] == 1) return true;
     return false;
 }
 
 function isManager($id)
 {
-    $user = getUserByID($id);
-    if ($user[0]['manager'] == 1) return true;
+    $user = getUserByID($id, true);
+    if (isset($user[0]) && $user[0]['manager'] == 1) return true;
     return false;
 }
 
+function isBanned($id)
+{
+    $user = getUserByID($id, true);
+    if (isset($user[0]) && $user[0]['banned'] == 1) return true;
+    return false;
+}
+
+function escapeText($text)
+{
+    $esc = htmlspecialchars($text, ENT_QUOTES);
+    $esc = str_replace("  ", " &nbsp;", $esc);
+    $esc = preg_replace('/^\x20/m', "&nbsp;", $esc);
+    $esc = preg_replace('/\x20(?=\r|\n)/m', "&nbsp;", $esc);
+
+    return $esc;
+}

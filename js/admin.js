@@ -11,6 +11,12 @@ function initData() {
         });
     });
 
+    postAction({action: 'getBanned'}, function (data) {
+        $.each(data['val'], function (index, value) {
+            addUserRow("Banned", value['id'], value['nickname']);
+        });
+    });
+
     postAction({action: 'getDepts'}, function (data) {
         $.each(data['val'], function (index, value) {
             addDeptRow(value['id'], value['name'], value['hidden']);
@@ -26,6 +32,13 @@ function initData() {
         $.each(data['val'], function (index, value) {
             addBonusRow(value['id'], value['start'], value['stop'], value['dept'], value['modifier'] + "x");
         });
+    });
+
+    $('#example').DataTable({
+        dom: 'Bfrtip',
+        buttons: [
+            'csv', 'excel', 'pdf'
+        ]
     });
 }
 
@@ -69,18 +82,6 @@ function toggleSetting(button, off, on, offLoad, onLoad, setting, method, toggle
     });
 }
 
-function getButtonInput(object) {
-    return $(object).parent().parent().find('.form-control').val();
-}
-
-function getButtonSelect(object) {
-    return $(object).parent().parent().find('.custom-select').val();
-}
-
-function getTableKey(object) {
-    return $('th:first', $(object).parents('tr')).text();
-}
-
 function setAdmin(value, badgeid, callback) {
     postAction({action: 'setAdmin', badgeid: badgeid, value: value}, function (data) {
         if (data['code'] === 0) return;
@@ -98,10 +99,24 @@ function setManager(value, badgeid, callback) {
     postAction({action: 'setManager', badgeid: badgeid, value: value}, function (data) {
         if (data['code'] === 0) return;
         if (value === 0) {
-            toastNotify('Manager removed.', 'success', 'success', 1500);
+            toastNotify('Manager removed.', 'success', 1500);
         } else {
             toastNotify('Made ' + data['name'] + ' manager!', 'success', 1500);
             addUserRow("Manager", badgeid, data['name']);
+        }
+        if (callback) callback();
+    });
+}
+
+function setBanned(value, badgeid, callback) {
+    if (value === "") return;
+    postAction({action: 'setBanned', badgeid: badgeid, value: value}, function (data) {
+        if (data['code'] === 0) return;
+        if (value === 0) {
+            toastNotify('User (' + data['name'] + ') unbanned.', 'success', 1500);
+        } else {
+            toastNotify('User (' + data['name'] + ') banned.', 'success', 1500);
+            addUserRow("Banned", badgeid, data['name']);
         }
         if (callback) callback();
     });
@@ -161,6 +176,12 @@ function removeAdmin(elem) {
     });
 }
 
+function removeBanned(elem) {
+    setBanned(0, getTableKey(elem), function () {
+        $(elem).parent().parent().remove();
+    });
+}
+
 function removeBonus(elem) {
     postAction({action: 'removeBonus', id: $(elem).data("id")}, function (data) {
         if (data['code'] === 0) return;
@@ -180,6 +201,12 @@ function toggleKiosk(button) {
         var expireDate = new Date;
         expireDate.setDate(expireDate.getDate() + 30);
         $.cookie("kiosknonce", data.val, {expires: expireDate});
+    })
+}
+
+function toggleDevmode(button) {
+    toggleSetting(button, 'Disable', 'Enable', 'Disabling', 'Enabling', 'Dev Mode', 'setDevmode', 'btn-warning btn-danger', function (data) {
+        console.log("Dev mode changed.")
     })
 }
 
@@ -205,4 +232,9 @@ function addRow(key, elem, data) {
         innerTable += '<' + t + '>' + data[i] + '</' + t + '>';
     }
     $(elem).append('<tr>' + innerTable + '</tr>');
+}
+
+function changeFrame(type) {
+    $('#datFrame').show();
+    $('#datFrame').attr("src", "pages/report.php?type=" + type);
 }
