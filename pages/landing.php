@@ -111,7 +111,7 @@ if ($cDept) $cDept = $cDept[0];
         </div>
     </div>
 
-    <script src="js/landing.js?v=2"></script>
+    <script src="js/landing.js?v=3"></script>
     <script>$(document).ready(function () {
             initData();
             clockCycle();

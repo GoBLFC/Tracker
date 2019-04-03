@@ -207,6 +207,10 @@ label {
     cursor: pointer;
 }
 
+.deptSummary {
+    margin: 0;
+}
+
 input[type="submit"] {
     background: #b5cd60;
     border: 0;

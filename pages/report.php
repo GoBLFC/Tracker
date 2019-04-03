@@ -15,6 +15,7 @@ $header = array();
 $users = getUsers();
 $depts = getDepartments(true);
 $logs = array();
+$deptSummary = array();
 
 if ($type == "unclocked") {
     //$title = "Unclocked Users for " . date('Y/m/d', strtotime("-1 days"));
@@ -41,6 +42,27 @@ if ($type == "unclocked") {
     $title = "Staff Logs";
     $header = array("Badge", "Nickname", "Time", "Action", "Data");
     $logs = getLogs();
+} else if ($type == "apps") {
+    $title = "Volunteer Applications";
+    //$header = array("ID", "Legal Name");
+    $header = array("ID", "Legal Name", "Badge Name", "Roles", "Assigned?", "", "Contact Pref", "Email", "Phone", "Telegram", "Twitter", "Facebook", "E-Contacts", "", "2018 Hours Recorded", "2019 Hours Desired", "W", "R", "F", "S", "U", "M", "T", "P", "Can't Miss", "", "Comments", "Previous BLFC Experience", "Other con experience", "");
+
+    $logs = getLogs();
+
+    $data = json_decode($_POST['appdata']);
+
+    $departments = array();
+    foreach ($data as $td) {
+        foreach ($td->volunteerDepartments as $dept) {
+            $depname = $dept->department->name;
+            if (array_search($depname, $departments) === FALSE) {
+                $departments[] = $depname;
+            }
+        }
+    }
+    sort($departments);
+
+    foreach ($departments as $dept) array_push($header, $dept);
 } else {
     $title = $type;
 }
@@ -73,6 +95,22 @@ if ($type == "unclocked") {
 <?php
 //print_r($unclocked);
 //print_r($users);
+
+if ($type == "apps") {
+    ?>
+    <form method="post" action="">
+        <div class="form-group">
+            <input type="text" class="form-control" id="appdata" name="appdata"
+                   placeholder="Application Data">
+            <small id="emailHelp" class="form-text text-muted">Copy paste data from <a
+                        href="https://reg.goblfc.org/api/volunteers" target="_blank">here</a></small>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    <?php
+    //echo  $_SESSION['accessToken'];
+    //print_r(getApps());
+}
 ?>
 
 <table id="tableDat" class="display nowrap" style="width:100%">
@@ -115,8 +153,113 @@ if ($type == "unclocked") {
             echo "<td>" . $td['data'] . "</td>";
             echo "</tr>";
         }
+    } else if ($type == "apps") {
+        if (isset($_POST['appdata'])) {
+            $data = str_replace("<", "&lt;", $_POST['appdata']);
+            $data = str_replace(">", "&gt;", $data);
+            $data = json_decode($data);
+
+            foreach ($data as $td) {
+                if ($td->userId == 14378) continue;
+                echo "<tr>";
+                echo "<td>" . $td->userId . "</td>";
+                echo "<td>";
+                echo ($td->user->preferredName) ? $td->user->preferredName . " (" . $td->user->firstName . " " . $td->user->lastName . ")" : $td->user->firstName . " " . $td->user->lastName;
+                echo "</td>";
+                echo "<td>" . ((isset($td->user->registration->badgeName)) ? $td->user->registration->badgeName : "(UNREGISTERED)") . "</td>";
+                echo "<td>";
+                foreach ($td->user->roles as $role) {
+                    echo $role->name . ", ";
+                }
+                echo "</td>";
+                $assigned = "No";
+                foreach ($td->volunteerDepartments as $tddept) {
+                    if ($tddept->type == "assignment") {
+                        $assigned = "Yes";
+                    }
+                }
+                echo "<td>" . $assigned . "</td>";
+                echo "<td></td>";
+                echo "<td>" . $td->contactMethod . "</td>";
+                echo "<td>" . $td->user->email . "</td>";
+                echo "<td>" . $td->user->phone . "</td>";
+                echo "<td>" . $td->contactMethodTelegram . "</td>";
+                echo "<td>" . $td->contactMethodTwitter . "</td>";
+                echo "<td>" . $td->contactMethodFacebook . "</td>";
+
+                echo "<td>";
+                if (isset($td->user->registration->emergencyContactName1)) {
+                    echo $td->user->registration->emergencyContactName1 . ": " . $td->user->registration->emergencyContactPhone1;
+                }
+                if (isset($td->user->registration->emergencyContactName2)) {
+                    echo " | " . $td->user->registration->emergencyContactName2 . ": " . $td->user->registration->emergencyContactPhone2;
+                }
+                echo "</td>";
+
+                echo "<td></td>";
+                echo "<td>";
+                foreach ($td->user->previousVolunteers as $hours) {
+                    if ($hours->conventionId == "2018") echo $hours->workedHours;
+                }
+                echo "</td>";
+                echo "<td>" . $td->availableHours . "</td>";
+                echo "<td>";
+                if ($td->availableDaysWednesday) echo "W";
+                echo "</td>";
+                echo "<td>";
+                if ($td->availableDaysThursday) echo "R";
+                echo "</td>";
+                echo "<td>";
+                if ($td->availableDaysFriday) echo "F";
+                echo "</td>";
+                echo "<td>";
+                if ($td->availableDaysSaturday) echo "S";
+                echo "</td>";
+                echo "<td>";
+                if ($td->availableDaysSunday) echo "U";
+                echo "</td>";
+                echo "<td>";
+                if ($td->availableDaysMonday) echo "M";
+                echo "</td>";
+                echo "<td>";
+                if ($td->availableDaysTuesday) echo "T";
+                echo "</td>";
+                echo "<td>";
+                if ($td->availableBeforeCon) echo "P";
+                echo "</td>";
+                echo "<td>" . $td->eventsCanNotMiss . "</td>";
+                echo "<td></td>";
+                echo "<td>" . $td->anythingElse . "</td>";
+                echo "<td>" . $td->previousConExperience . "</td>";
+                echo "<td>" . $td->previousOtherExperience . "</td>";
+
+                echo "<td></td>";
+                foreach ($departments as $dept) {
+                    echo "<td>";
+                    $state = "";
+                    foreach ($td->volunteerDepartments as $tddept) {
+                        if ($dept == $tddept->department->name) {
+                            if ($tddept->type == "avoid" OR $state == "X") {
+                                $state = "X";
+                            } else if ($tddept->type == "assignment" or $state == "✓") {
+                                $state = "✓";
+                            } else if ($tddept->type == "experience") {
+                                $state .= "!";
+                            } else if ($tddept->type == "interest") {
+                                $state .= "♥";
+                            }
+                        }
+                    }
+                    echo $state;
+                    echo "</td>";
+                }
+
+                echo "</tr>";
+            }
+        }
     }
     ?>
+
     </tbody>
     <tfoot>
     <tr>
@@ -127,10 +270,64 @@ if ($type == "unclocked") {
     </tfoot>
 </table>
 
+<div class="container" style="top: 5em;">
+    <div class="card">
+        <div class="row">
+            <div class="col-sm">
+                <div class="card-body">
+                    <div class="card">
+                        <div class="card-header cadHeader">
+                            <div>Dept Count</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm">
+                                <div class="card-header cadBody">
+                                    <table id="asdasd" class="table table table-striped table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Dept</th>
+                                            <th scope="col">Count</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="uRow">
+                                        <?php
+                                        foreach ($data as $td) {
+                                            foreach ($departments as $dept) {
+                                                foreach ($td->volunteerDepartments as $tddept) {
+                                                    if ($dept == $tddept->department->name) {
+                                                        if ($tddept->type == "assignment" or $state == "✓") {
+                                                            if (!isset($deptSummary[$dept])) $deptSummary[$dept] = 0;
+                                                            $deptSummary[$dept]++;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        foreach ($deptSummary as $dept => $key) {
+                                            echo "<tr>";
+                                            echo "<th>$dept</th>";
+                                            echo "<td>$key</td>";
+                                            echo "</tr>";
+                                        }
+                                        ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     $(document).ready(function () {
         $('#tableDat').DataTable({
             dom: 'Bfrtip',
+            "pageLength": 50,
             buttons: [
                 'csv', 'excel', 'pdf'],
             <?php
@@ -138,9 +335,10 @@ if ($type == "unclocked") {
                 echo "\"order\": [[2, \"desc\"]]";
             } else if (strpos($type, 'vHour') !== false) {
                 echo "\"order\": [[0, \"desc\"]]";
-            }
-            else if ($type == "logs") {
+            } else if ($type == "logs") {
                 echo "\"order\": [[2, \"desc\"]]";
+            } else if ($type == "apps") {
+                echo "\"order\": [[0, \"desc\"]]";
             }
             ?>
         });

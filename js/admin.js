@@ -33,13 +33,6 @@ function initData() {
             addBonusRow(value['id'], value['start'], value['stop'], value['dept'], value['modifier'] + "x");
         });
     });
-
-    $('#example').DataTable({
-        dom: 'Bfrtip',
-        buttons: [
-            'csv', 'excel', 'pdf'
-        ]
-    });
 }
 
 function addListeners() {

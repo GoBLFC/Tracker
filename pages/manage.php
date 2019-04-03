@@ -87,6 +87,43 @@ if (!isManager($badgeID) && !isAdmin($badgeID)) die('Unauthorized.');
                             </div>
                         </div>
                         <div class="row">
+                            <div class="col-sm" style="">
+                                <div class="card">
+                                    <div class="card-body cadBody">
+                                        <div class="card-title" style="text-align: center;">Rewards Claimed (BUTTONS DO NOTHING YET)</div>
+                                        <table class="table" style="margin: auto;width: 40% !important;">
+                                            <thead style="">
+                                            <tr style="">
+                                                <th scope="col">1 Hour</th>
+                                                <th scope="col">4 Hour</th>
+                                                <th scope="col">8 Hour</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-success" data-id="31"
+                                                            onclick="">Claimed
+                                                    </button>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-success" data-id="31"
+                                                            onclick="">Claimed
+                                                    </button>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-danger" data-id="31"
+                                                            onclick="">Claim
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="col-sm">
                                 <div class="card-header cadBody">
                                     <table id="table" class="table table table-striped table">

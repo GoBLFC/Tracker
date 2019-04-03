@@ -281,10 +281,18 @@ if (!isAdmin($badgeID)) die('Unauthorized.');
                                 </div>
                             </div>
                             <div class="row">
+                                <div class="col-sm" style="margin-bottom: 5px;">
+                                    <a role="button" class="btn btn-dark" style="display:grid"
+                                       onclick="changeFrame('apps')">Volunteer Applications
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="row">
                                 <div class="col-sm">
                                     <div class="card-header cadBody" style="padding: 10px 0 0 0;">
                                         <iframe id="datFrame" src=""
-                                                style="width: 100%;height: 570px;border:none;display: none"></iframe>
+                                                style="width: 100%;height: 700px;border:none;display: none"></iframe>
                                     </div>
                                 </div>
                             </div>
@@ -311,9 +319,9 @@ if (!isAdmin($badgeID)) die('Unauthorized.');
     </div>
 </div>
 
-<script src="js/landing.js?v=1"></script>
-<script src="js/general.js?v=1"></script>
-<script src="js/admin.js?v=1"></script>
+<script src="js/landing.js?v=3"></script>
+<script src="js/general.js?v=3"></script>
+<script src="js/admin.js?v=3"></script>
 
 <script>$(document).ready(function () {
         initData();
