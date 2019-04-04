@@ -59,6 +59,19 @@ function loadVolunteer(id) {
         window.currUid = user['id'];
         initClock(user['id']);
 
+        $("#rewards").find(`[data-type='${'reward'}']`).attr('class', 'btn btn-sm btn-danger');
+        $("#rewards").find(`[data-type='${'reward'}']`).html('Claim');
+        getRewardClaims(id, "time", function (data) {
+            if (data.code === -1) return;
+            $.each(data['val'], function (key, val) {
+                let reward = $("#rewards").find(`[data-id='${val.claim}']`);
+                reward.removeClass("btn-danger");
+                reward.addClass("btn-success");
+                reward.data("state", "claimed");
+                reward.html("Claimed");
+            });
+        });
+
         // Load entries
         postAction({action: 'getTimeEntriesOther', id: id}, function (data) {
             $.each(data['val'], function (index, value) {
@@ -76,15 +89,20 @@ function loadVolunteer(id) {
 
 function addTime() {
     const uid = window.currUid;
-
-    if ($("#timestart").datetimepicker('date') === null || $("#timestart").datetimepicker('date') === null) {
-        alert("Please select a start and stop date.");
-        return;
-    }
     const start = $("#timestart").datetimepicker('date').format("YYYY-MM-DD HH:mm:ss");
     const stop = $("#timestop").datetimepicker('date').format("YYYY-MM-DD HH:mm:ss");
     const dept = $("#dept").val();
     const notes = $("#notes").val();
+
+    if ($("#timestart").datetimepicker('date') === null || $("#timestop").datetimepicker('date') === null) {
+        alert("Please select a start and stop date.");
+        return;
+    }
+
+    if (dept === undefined || dept === null) {
+        alert("Please select a department.");
+        return;
+    }
 
     postAction({
         action: 'addTime',
@@ -98,6 +116,36 @@ function addTime() {
 
         loadVolunteer(uid);
         toastNotify('Time added!', 'success', 1500);
+    });
+}
+
+function checkIn() {
+    const uid = window.currUid;
+    const dept = $("#dept").val();
+    const notes = $("#notes").val();
+
+    if ($("#timestart").datetimepicker('date') !== null || $("#timestop").datetimepicker('date') !== null) {
+        alert("Start/Stop date not required for Check In. Did you mean add time?");
+        $("#timestart").datetimepicker().clear();
+        $("#timestop").datetimepicker().clear();
+        return;
+    }
+
+    if (dept === undefined || dept === null) {
+        alert("Please select a department.");
+        return;
+    }
+
+    postAction({
+        action: 'checkInOther',
+        id: uid,
+        dept: dept,
+        notes: notes
+    }, function (data) {
+        if (data['code'] === 0) return;
+
+        loadVolunteer(uid);
+        toastNotify('User checked in!', 'success', 1500);
     });
 }
 
@@ -131,6 +179,31 @@ function getEarnedTime(id, callback) {
     postAction({action: "getEarnedTimeOther", id: id}, function (data) {
         callback(data);
     });
+}
+
+function getRewardClaims(id, type, callback) {
+    postAction({action: "getRewardClaims", id: id, type: type}, function (data) {
+        callback(data);
+    });
+}
+
+function toggleClaim(button) {
+    // Lazyness
+    if ($(button).data('state') === "claimed") {
+        postAction({action: "unclaimReward", uid: window.currUid, type: $(button).data('id')}, function (data) {
+            $(button).removeClass("btn-success");
+            $(button).addClass("btn-danger");
+            $(button).data("state", "unclaimed");
+            $(button).html("Claim");
+        });
+    } else {
+        postAction({action: "claimReward", uid: window.currUid, type: $(button).data('id')}, function (data) {
+            $(button).removeClass("btn-danger");
+            $(button).addClass("btn-success");
+            $(button).data("state", "claimed");
+            $(button).html("Claimed");
+        });
+    }
 }
 
 function initClock(id) {

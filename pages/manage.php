@@ -90,7 +90,7 @@ if (!isManager($badgeID) && !isAdmin($badgeID)) die('Unauthorized.');
                             <div class="col-sm" style="">
                                 <div class="card">
                                     <div class="card-body cadBody">
-                                        <div class="card-title" style="text-align: center;">Rewards Claimed (BUTTONS DO NOTHING YET)</div>
+                                        <div class="card-title" style="text-align: center;">Rewards Claimed</div>
                                         <table class="table" style="margin: auto;width: 40% !important;">
                                             <thead style="">
                                             <tr style="">
@@ -100,20 +100,23 @@ if (!isManager($badgeID) && !isAdmin($badgeID)) die('Unauthorized.');
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr>
+                                            <tr id="rewards">
                                                 <td>
-                                                    <button type="button" class="btn btn-sm btn-success" data-id="31"
-                                                            onclick="">Claimed
+                                                    <button type="button" class="btn btn-sm btn-danger"
+                                                            data-type="reward" data-id="time1" data-state="unclaimed"
+                                                            onclick="toggleClaim(this)">Claim
                                                     </button>
                                                 </td>
                                                 <td>
-                                                    <button type="button" class="btn btn-sm btn-success" data-id="31"
-                                                            onclick="">Claimed
+                                                    <button type="button" class="btn btn-sm btn-danger"
+                                                            data-type="reward" data-id="time4" data-state="unclaimed"
+                                                            onclick="toggleClaim(this)">Claim
                                                     </button>
                                                 </td>
                                                 <td>
-                                                    <button type="button" class="btn btn-sm btn-danger" data-id="31"
-                                                            onclick="">Claim
+                                                    <button type="button" class="btn btn-sm btn-danger"
+                                                            data-type="reward" data-id="time8" data-state="unclaimed"
+                                                            onclick="toggleClaim(this)">Claim
                                                     </button>
                                                 </td>
                                             </tr>
@@ -170,8 +173,13 @@ if (!isManager($badgeID) && !isAdmin($badgeID)) die('Unauthorized.');
                                                style="width: 10%;" id="notes">
                                         <div class="input-group-append">
                                             <button class="btn btn-outline-secondary" type="button"
+                                                    style="float: right; background-color: #005a24; color: #ffffff; border: 1px solid rgba(0, 0, 0, 0.15)"
+                                                    onClick="checkIn()">
+                                                Check In
+                                            </button>
+                                            <button class="btn btn-outline-secondary" type="button"
                                                     style="background-color: #004014; color: #ffffff; border: 1px solid rgba(0, 0, 0, 0.15)"
-                                                    onClick="ad dTime()">
+                                                    onClick="addTime()">
                                                 Add Time
                                             </button>
                                         </div>
@@ -210,7 +218,9 @@ if (!isManager($badgeID) && !isAdmin($badgeID)) die('Unauthorized.');
 
 <div class="container" style="top: 5em;position: relative;">
     <div class="card novis">
-        <div class="autologout">Auto logout in <span id="lsec">60</span> <span id="gram">seconds</span>...</div>
+        <div class="autologout">Auto logout in <span id="lsec">60</span> <span id="gram">seconds</span>...
+            <a role="button" class="btn btn-light btn-sm" href="/tracker/?logout" style="">Logout Now</a>
+        </div>
     </div>
 </div>
 

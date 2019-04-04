@@ -299,6 +299,36 @@ function getNotifications($uid)
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+function getRewardClaims($uid, $type)
+{
+    global $db;
+    $stmt = $db->prepare("SELECT `claim`, `date` FROM `claims` WHERE `uid` = :uid AND `claim` LIKE :type1");
+    $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
+    $stmt->bindValue(':type1', "%" . $type . "%", PDO::PARAM_STR);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function claimReward($uid, $type)
+{
+    global $db;
+    $stmt = $db->prepare("INSERT INTO `claims` (`id`, `uid`, `claim`, `date`) VALUES (NULL, :uid, :type1, CURRENT_TIMESTAMP);");
+    $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
+    $stmt->bindValue(':type1', $type, PDO::PARAM_STR);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function unclaimReward($uid, $type)
+{
+    global $db;
+    $stmt = $db->prepare("DELETE FROM `claims` WHERE `claims`.`uid` = :uid AND `claim` = :type1");
+    $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
+    $stmt->bindValue(':type1', $type, PDO::PARAM_STR);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
 function markNotificationRead($id)
 {
     global $db;
@@ -341,12 +371,13 @@ function removeTime($id)
     $stmt->execute();
 }
 
-function checkIn($uid, $dept)
+function checkIn($uid, $dept, $notes, $addedBy)
 {
     global $db;
-    $stmt = $db->prepare("INSERT INTO `tracker` (`uid`, `checkin`, `dept`, `notes`, `addedby`) VALUES (:uid, CURRENT_TIMESTAMP, :dept, '', :uid2)");
+    $stmt = $db->prepare("INSERT INTO `tracker` (`uid`, `checkin`, `dept`, `notes`, `addedby`) VALUES (:uid, CURRENT_TIMESTAMP, :dept, :notes, :uid2)");
     $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
-    $stmt->bindValue(':uid2', $uid, PDO::PARAM_INT);
+    $stmt->bindValue(':notes', $notes, PDO::PARAM_STR);
+    $stmt->bindValue(':uid2', $addedBy, PDO::PARAM_INT);
     $stmt->bindValue(':dept', $dept, PDO::PARAM_INT);
     $stmt->execute();
 }

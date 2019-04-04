@@ -40,7 +40,7 @@ if ($user == null) {
             $ret['code'] = 0;
             $ret['msg'] = "Invalid department specified.";
         } else {
-            checkIn($badgeID, $dept);
+            checkIn($badgeID, $dept, "", $badgeID);
 
             $ret['code'] = 1;
             $ret['msg'] = "Clocked in.";
@@ -69,10 +69,6 @@ if ($user == null) {
     }
 
     // MANAGER FUNCTIONS
-    /*
-     *
-     */
-
     if (($isManager || $isAdmin) && substr($action, 0, 3) !== "get") {
         $postData = array();
         foreach ($_POST as $p => $d) {
@@ -121,6 +117,9 @@ if ($user == null) {
         } else if ($action == "checkOutOther") {
             $ret['code'] = 1;
             checkOut($_POST['id'], null);
+        } else if ($action == "checkInOther") {
+            $ret['code'] = 1;
+            checkIn($_POST['id'], $_POST['dept'], $_POST['notes'], $badgeID);
         } else if ($action == "addTime") {
             $id = $_POST['id'];
             $start = $_POST['start'];
@@ -133,6 +132,15 @@ if ($user == null) {
         } else if ($action == "removeTime") {
             $ret['code'] = 1;
             removeTime($_POST['id']);
+        } else if ($action == "getRewardClaims") {
+            $ret['code'] = 1;
+            $ret['val'] = getRewardClaims($_POST['id'], $_POST['type']);
+        } else if ($action == "claimReward") {
+            $ret['code'] = 1;
+            $ret['val'] = claimReward($_POST['uid'], $_POST['type']);
+        } else if ($action == "unclaimReward") {
+            $ret['code'] = 1;
+            $ret['val'] = unclaimReward($_POST['uid'], $_POST['type']);
         }
     }
 

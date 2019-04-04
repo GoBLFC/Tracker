@@ -315,7 +315,9 @@ if (!isAdmin($badgeID)) die('Unauthorized.');
 
 <div class="container" style="top: 5em;position: relative;">
     <div class="card novis">
-        <div class="autologout">Auto logout in <span id="lsec">60</span> <span id="gram">seconds</span>...</div>
+        <div class="autologout">Auto logout in <span id="lsec">60</span> <span id="gram">seconds</span>...
+            <a role="button" class="btn btn-light btn-sm" href="/tracker/?logout" style="">Logout Now</a>
+        </div>
     </div>
 </div>
 

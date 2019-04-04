@@ -287,17 +287,23 @@ if ($type == "apps") {
                                         <tr>
                                             <th scope="col">Dept</th>
                                             <th scope="col">Count</th>
+                                            <th scope="col">Hours</th>
                                         </tr>
                                         </thead>
                                         <tbody id="uRow">
                                         <?php
                                         foreach ($data as $td) {
                                             foreach ($departments as $dept) {
+                                                if (!isset($deptSummary[$dept])) {
+                                                    $deptSummary[$dept]['count'] = 0;
+                                                    $deptSummary[$dept]['hours'] = 0;
+                                                }
+
                                                 foreach ($td->volunteerDepartments as $tddept) {
                                                     if ($dept == $tddept->department->name) {
                                                         if ($tddept->type == "assignment" or $state == "✓") {
-                                                            if (!isset($deptSummary[$dept])) $deptSummary[$dept] = 0;
-                                                            $deptSummary[$dept]++;
+                                                            $deptSummary[$dept]['count']++;
+                                                            $deptSummary[$dept]['hours'] += $td->availableHours;
                                                         }
                                                     }
                                                 }
@@ -307,7 +313,8 @@ if ($type == "apps") {
                                         foreach ($deptSummary as $dept => $key) {
                                             echo "<tr>";
                                             echo "<th>$dept</th>";
-                                            echo "<td>$key</td>";
+                                            echo "<td>" . $deptSummary[$dept]['count'] . "</td>";
+                                            echo "<td>" . $deptSummary[$dept]['hours'] . "</td>";
                                             echo "</tr>";
                                         }
                                         ?>
