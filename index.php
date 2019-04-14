@@ -28,7 +28,7 @@ if ($page == "admin" && $isAdmin) {
         require_once('vendor/autoload.php');
         include('pages/sso.php');
     } else if ($user != null) {
-        if ($isBanned || $siteStatus !== 1 || ($devMode == 0 && $kioskAuth == 0)) {
+        if ($_SESSION['quickclock'] >= 20 || $isBanned || $siteStatus !== 1 || ($devMode == 0 && $kioskAuth == 0)) {
             include('pages/disabled.php');
         } else {
             include('pages/landing.php');

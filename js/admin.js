@@ -1,3 +1,5 @@
+var logoutTime = 240;
+
 function initData() {
     postAction({action: 'getAdmins'}, function (data) {
         $.each(data['val'], function (index, value) {

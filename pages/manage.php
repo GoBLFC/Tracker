@@ -97,6 +97,7 @@ if (!isManager($badgeID) && !isAdmin($badgeID)) die('Unauthorized.');
                                                 <th scope="col">1 Hour</th>
                                                 <th scope="col">4 Hour</th>
                                                 <th scope="col">8 Hour</th>
+                                                <th scope="col">12 Hour</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -116,6 +117,12 @@ if (!isManager($badgeID) && !isAdmin($badgeID)) die('Unauthorized.');
                                                 <td>
                                                     <button type="button" class="btn btn-sm btn-danger"
                                                             data-type="reward" data-id="time8" data-state="unclaimed"
+                                                            onclick="toggleClaim(this)">Claim
+                                                    </button>
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-danger"
+                                                            data-type="reward" data-id="time12" data-state="unclaimed"
                                                             onclick="toggleClaim(this)">Claim
                                                     </button>
                                                 </td>
@@ -208,7 +215,7 @@ if (!isManager($badgeID) && !isAdmin($badgeID)) die('Unauthorized.');
         <div class="card novis">
             <div class="row">
                 <div class="col-sm">
-                    <a href="/tracker/" style="float:right"
+                    <a href="/" style="float:right"
                        role="button" class="btn btn-sm btn-info">BACK
                     </a></div>
             </div>
@@ -219,7 +226,7 @@ if (!isManager($badgeID) && !isAdmin($badgeID)) die('Unauthorized.');
 <div class="container" style="top: 5em;position: relative;">
     <div class="card novis">
         <div class="autologout">Auto logout in <span id="lsec">60</span> <span id="gram">seconds</span>...
-            <a role="button" class="btn btn-light btn-sm" href="/tracker/?logout" style="">Logout Now</a>
+            <a role="button" class="btn btn-light btn-sm" href="/?logout" style="">Logout Now</a>
         </div>
     </div>
 </div>

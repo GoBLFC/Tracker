@@ -6,7 +6,13 @@
  * Time: 3:57 AM
  */
 
-if ($isBanned) {
+if ($_SESSION['quickclock'] >= 20 || $siteStatus == 12) {
+    $statusClass = "onFire";
+    $message = "SITE ON FIRE!!";
+    $description = "Something has gone terribly wrong. We blame you.";
+    $description .= "<audio id='audio' preload=\"auto\" src=\"/assets/egg/meltdown.ogg\" autoplay=\"\"></audio><script>document.getElementById(\"audio\").volume = 0.35;</script>";
+    $_SESSION['quickclock'] = 0;
+} else if ($isBanned) {
     $statusClass = "siteDisabled";
     $message = "Not Permitted.";
     $description = "You are not permitted to volunteer on behalf of BLFC. If any questions, please contact hr@goblfc.org";
@@ -18,10 +24,6 @@ if ($isBanned) {
     $statusClass = "noKiosk";
     $message = "Device not authorized.";
     $description = "If you believe this is in error, please contact a staff member.";
-} else if ($siteStatus == 12) {
-    $statusClass = "onFire";
-    $message = "SITE ON FIRE!!";
-    $description = "Something has gone terribly wrong.";
 }
 
 if (!isAdmin($badgeID)) {
@@ -52,7 +54,7 @@ if (isAdmin($badgeID) || isManager($badgeID)) {
     <div class="container" style="top: 5em;position: relative;">
         <div class="card novis">
             <div class="autologout">Auto logout in <span id="lsec">60</span> <span id="gram">seconds</span>...
-                <a role="button" class="btn btn-light btn-sm" href="/tracker/?logout" style="">Logout Now</a>
+                <a role="button" class="btn btn-light btn-sm" href="/?logout" style="">Logout Now</a>
             </div>
         </div>
     </div>

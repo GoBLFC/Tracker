@@ -28,6 +28,6 @@ foreach (getActiveClockins() as $clockin) {
         $out = $in->add(new DateInterval('PT1H'));
     }
 
-    checkOut($uid, $out);
+    checkOut($uid, $out, null);
     createNotification($uid, "danger", "You were automatically checked out because you may have forgotten to check out. <br>You've been credited with 1 hour.<br><b>Please verify your time with your department lead or volunteer desk!</b>");
 }

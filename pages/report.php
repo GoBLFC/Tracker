@@ -86,8 +86,8 @@ if ($type == "unclocked") {
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"/>
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.5.4/css/buttons.dataTables.min.css"/>
 
-    <link rel="stylesheet" media="all" href="/tracker/css/style.css">
-    <link rel="stylesheet" type="text/css" href="/tracker/css/custom-css-bootstrap.css">
+    <link rel="stylesheet" media="all" href="/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/css/custom-css-bootstrap.css">
 
     <title><?php echo "$title" ?></title>
 </head>

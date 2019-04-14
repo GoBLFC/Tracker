@@ -16,7 +16,7 @@ $(document).ready(function () {
     });
 });
 
-let logoutTime = 60;
+var logoutTime = 60;
 let onClock = false;
 let shiftTime = 0;
 
@@ -121,7 +121,7 @@ function decrementLogout() {
     if (logoutTime === 1) $('#gram').text("second");
     if (logoutTime === 0) $('.autologout').html("Goodbye!");
     if (logoutTime === -1) {
-        window.location.href = "/tracker/?logout=timeout";
+        window.location.href = "/?logout=timeout";
         return;
     }
 
@@ -141,6 +141,16 @@ function checkIn(callback) {
 
 function checkOut(callback) {
     postAction({action: "checkOut"}, function (data) {
+        if (data.code <= -1) {
+            toastNotify(data.msg, (data.code === -3 ? "danger" : "warning"), 1500);
+            if (data.code === -3) {
+                $("#audio")[0].volume = 0.35;
+                $("#audio")[0].play();
+                alert('YOU JUST HAD TO BREAK IT DIDN\'T YOU?');
+                location.reload();
+            }
+        }
+
         callback(data);
     });
 }

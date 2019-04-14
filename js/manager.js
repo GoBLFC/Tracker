@@ -1,3 +1,5 @@
+var logoutTime = 240;
+
 function initData() {
     clockCycle();
 

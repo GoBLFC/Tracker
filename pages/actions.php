@@ -47,10 +47,7 @@ if ($user == null) {
             //$ret['msg'] = "Not Implemented ...YET!\nBUT HEY LOOK THERE'S A JSON \"API\" CALLBACK AT LEAST! \xF0\x9F\x98\x81";
         }
     } else if ($action == "checkOut") {
-        checkOut($badgeID, null);
-
-        $ret['code'] = 1;
-        $ret['msg'] = "Clocked out.";
+        $ret = checkOut($badgeID, null, $ret);
     } else if ($action == "getClockTime") {
         $ret['code'] = 1;
         $ret['val'] = getClockTime($badgeID);
@@ -116,7 +113,7 @@ if ($user == null) {
             $ret['val'] = calculateBonusTime($_POST['id'], true);
         } else if ($action == "checkOutOther") {
             $ret['code'] = 1;
-            checkOut($_POST['id'], null);
+            checkOut($_POST['id'], null, null);
         } else if ($action == "checkInOther") {
             $ret['code'] = 1;
             checkIn($_POST['id'], $_POST['dept'], $_POST['notes'], $badgeID);
@@ -249,6 +246,9 @@ if ($user == null) {
             $modifier = $_POST['modifier'];
 
             $ret['val'] = addBonus($start, $stop, $depts, $modifier);
+            $ret['code'] = 1;
+        } else if ($action == "getApps") {
+            $ret['val'] = getApps();
             $ret['code'] = 1;
         }
     }

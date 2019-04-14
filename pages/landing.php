@@ -102,12 +102,14 @@ if ($cDept) $cDept = $cDept[0];
                 </div>
             </div>
         </div>
+
+        <audio id='audio' preload="auto" src="/assets/egg/hero.ogg"></audio>
     </div>
 
     <div class="container" style="top: 5em;position: relative;">
         <div class="card novis">
             <div class="autologout">Auto logout in <span id="lsec">60</span> <span id="gram">seconds</span>...
-                <a role="button" class="btn btn-light btn-sm" href="/tracker/?logout" style="">Logout Now</a>
+                <a role="button" class="btn btn-light btn-sm" href="/?logout" style="">Logout Now</a>
             </div>
         </div>
     </div>

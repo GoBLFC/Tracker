@@ -382,9 +382,35 @@ function checkIn($uid, $dept, $notes, $addedBy)
     $stmt->execute();
 }
 
-function checkOut($uid, $autoTime)
+function checkOut($uid, $autoTime, $ret)
 {
     global $db;
+    $checkIn = getCheckIn($uid)[0];
+    $timeDiff = (new DateTime('NOW'))->getTimestamp() - (new DateTime($checkIn['checkin']))->getTimestamp();
+    $ret['in'] = $checkIn;
+    $ret['diff'] = $timeDiff;
+
+    if ($timeDiff < 10) {
+        if (!isset($_SESSION['quickclock'])) $_SESSION['quickclock'] = 0;
+        $_SESSION['quickclock']++;
+
+        if ($_SESSION['quickclock'] >= 20) {
+            $ret['code'] = -2;
+            if ($_SESSION['quickclock'] == 20) $ret['code'] = -3;
+            $ret['msg'] = "LOOK AT WHAT YOU'VE DONE!!!!!11 >:(";
+        } else if ($_SESSION['quickclock'] >= 10) {
+            $ret['code'] = -2;
+            $ret['msg'] = "SLOW DOWN COWBOY! SITE IS GETTING WARM!";
+        } else {
+            $ret['code'] = -1;
+            $ret['msg'] = "Too quick! Please wait a moment...";
+        }
+
+        return $ret;
+    } else {
+        $ret['code'] = 1;
+        $ret['msg'] = "Clocked out.";
+    }
 
     $time = date("Y-m-d H:i:s");
     if ($autoTime) $time = $autoTime->format('Y-m-d H:i:s');
@@ -394,6 +420,8 @@ function checkOut($uid, $autoTime)
     $stmt->bindValue(':time', $time, PDO::PARAM_STR);
     $stmt->bindValue(':auto', isset($autoTime), PDO::PARAM_INT);
     $stmt->execute();
+
+    return $ret;
 }
 
 function getCheckIn($uid)
@@ -632,7 +660,7 @@ function jwt_request($url, $token, $post)
     $ch = curl_init($url); // Initialise cURL
     $post = json_encode($post); // Encode the data array into a JSON string
     $authorization = "Authorization: Bearer " . $token; // Prepare the authorisation token
-    echo $authorization;
+    //echo $authorization;
     curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', $authorization)); // Inject the token into the header
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     //curl_setopt($ch, CURLOPT_POST, 1); // Specify the request method as POST

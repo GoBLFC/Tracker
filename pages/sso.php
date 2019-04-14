@@ -37,7 +37,7 @@ if (!defined('TRACKER')) {
 $provider = new \League\OAuth2\Client\Provider\GenericProvider([
     'clientId' => '4',
     'clientSecret' => '7D863CA4-E42B-4345-9DC6-4ADD479917EE',
-    'redirectUri' => 'https://blfc.zilyin.com/tracker/pages/sso.php',
+    'redirectUri' => 'https://tracker.goblfc.org/pages/sso.php',
     'urlAuthorize' => 'https://reg.goblfc.org/oauth/authorize',
     'urlAccessToken' => 'https://reg.goblfc.org/api/oauth/token',
     'urlResourceOwnerDetails' => 'https://reg.goblfc.org/api/users/current',
@@ -75,7 +75,7 @@ if (!isset($_GET['code'])) {
         if (isset($isAdmin) && ($isAdmin || $isManager)) addLog($badgeID, "logIn", "ip:" . $_SERVER["HTTP_CF_CONNECTING_IP"]);
         updateSession($badgeID, $userInfo['firstName'], $userInfo['lastName'], $userInfo['nickName'], session_id());
 
-        header("Refresh:0; url=/tracker", true, 303);
+        header("Refresh:0; url=/", true, 303);
         ?>
 
         <?php
