@@ -6,7 +6,7 @@ include('functions.php');
 
 $session = "";
 
-session_start();
+if(!isset($_SESSION)) session_start();
 $badgeID = "";
 if (isset($_SESSION['badgeid'])) $badgeID = $_SESSION['badgeid'];
 

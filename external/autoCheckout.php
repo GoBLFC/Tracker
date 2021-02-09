@@ -29,5 +29,5 @@ foreach (getActiveClockins() as $clockin) {
     }
 
     checkOut($uid, $out, null);
-    createNotification($uid, "danger", "You were automatically checked out because you may have forgotten to check out. <br>You've been credited with 1 hour.<br><b>Please verify your time with your department lead or volunteer desk!</b>");
+    createNotification($uid, "danger", 0,"You were automatically checked out because you may have forgotten to check out. <br>You've been credited with 1 hour.<br><b>Please verify your time with your department lead or volunteer desk!</b>", 1);
 }

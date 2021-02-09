@@ -27,6 +27,9 @@
                 <a class="nav-link">Bonuses</a>
             </li>
             <li class="nav-item">
+                <a class="nav-link">Rewards</a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link">Reports</a>
             </li>
             <!--

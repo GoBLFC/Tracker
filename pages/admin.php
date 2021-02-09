@@ -172,6 +172,7 @@ if (!isAdmin($badgeID)) die('Unauthorized.');
                             </div>
                         </div>
                     </div>
+
                     <div class="card" data-section="Bonuses" style="display:none;">
                         <div class="card-header cadHeader">
                             <div>Bonus Settings</div>
@@ -234,6 +235,51 @@ if (!isAdmin($badgeID)) die('Unauthorized.');
                         </div>
                     </div>
 
+                    <div class="card" data-section="Rewards" style="display:none;">
+                        <div class="card-header cadHeader">
+                            <div>Rewards</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm">
+                                <div class="card-header cadBody">
+                                    <table id="table" class="table table table-striped table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" style="width:1%">ID</th>
+                                            <th scope="col" style="width:20%">Name</th>
+                                            <th scope="col" style="width:43%">Description</th>
+                                            <th scope="col" style="width:12%">Hours (Optional)</th>
+                                            <th scope="col" style="width:12%">Hidden</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="rRow">
+                                        </tbody>
+                                    </table>
+                                    <div class="input-group">
+                                        <input id="rName" type="text" class="form-control inputDark" placeholder="Name"
+                                               aria-label="Name" aria-describedby="basic-addon2" style="width:20%">
+                                        <input id="rDesc" type="text" class="form-control inputDark" placeholder="Description"
+                                               aria-label="Description" aria-describedby="basic-addon2" style="width:43%">
+                                        <input id="rHours" type="text" class="form-control inputDark" placeholder="Hours"
+                                               aria-label="Hours" aria-describedby="basic-addon2" style="width:12%">
+                                        <select class="custom-select inputDark" id="inputGroupSelect02">
+                                            <option value=-1 hidden selected>Hidden</option>
+                                            <option value=0>No</option>
+                                            <option value=1>Yes</option>
+                                        </select>
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-secondary" type="button"
+                                                    style="background-color: #004014; color: #ffffff; border: 1px solid rgba(0, 0, 0, 0.15)"
+                                                    onclick="addReward()">
+                                                Add Reward
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="card" data-section="Reports" style="display:none;">
                         <div class="card-header cadHeader">
                             Generate Reports
@@ -262,6 +308,7 @@ if (!isAdmin($badgeID)) die('Unauthorized.');
                                         </div>
                                     </div>
                                 </div>
+                                <!--
                                 <div class="col-sm" style="margin-bottom: 5px;">
                                     <div class="input-group">
                                         <input type="text" class="form-control inputDark" placeholder="Badge #"
@@ -274,6 +321,7 @@ if (!isAdmin($badgeID)) die('Unauthorized.');
                                         </div>
                                     </div>
                                 </div>
+                                -->
                                 <div class="col-sm" style="margin-bottom: 5px;">
                                     <a role="button" class="btn btn-dark" style="display:grid"
                                        onclick="changeFrame('logs')">Staff Logs
@@ -284,6 +332,11 @@ if (!isAdmin($badgeID)) die('Unauthorized.');
                                 <div class="col-sm" style="margin-bottom: 5px;">
                                     <a role="button" class="btn btn-dark" style="display:grid"
                                        onclick="changeFrame('apps')">Volunteer Applications
+                                    </a>
+                                </div>
+                                <div class="col-sm" style="margin-bottom: 5px;">
+                                    <a role="button" class="btn btn-dark" style="display:grid"
+                                       onclick="changeFrame('depttimes')">Department Summary
                                     </a>
                                 </div>
                             </div>

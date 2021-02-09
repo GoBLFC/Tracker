@@ -42,10 +42,14 @@ if ($type == "unclocked") {
     $title = "Staff Logs";
     $header = array("Badge", "Nickname", "Time", "Action", "Data");
     $logs = getLogs();
+} else if ($type == "depttimes") {
+    $title = "Dept. Times";
+    $header = array("Department", "Hours", "Unique", "Total Clockins");
+    $logs = getAllTrackerEntries();
 } else if ($type == "apps") {
     $title = "Volunteer Applications";
     //$header = array("ID", "Legal Name");
-    $header = array("ID", "Legal Name", "Badge Name", "Roles", "Assigned?", "", "Contact Pref", "Email", "Phone", "Telegram", "Twitter", "Facebook", "E-Contacts", "", "2018 Hours Recorded", "2019 Hours Desired", "W", "R", "F", "S", "U", "M", "T", "P", "Can't Miss", "", "Comments", "Previous BLFC Experience", "Other con experience", "");
+    $header = array("ID", "Legal Name", "Badge Name", "Roles", "Assigned?", "", "Contact Pref", "Email", "Phone", "Telegram", "Twitter", "Facebook", "E-Contacts", "", "2018 Hours Recorded", "2019 Hours Desired", "W", "R", "F", "S", "U", "M", "T", "P", "Can't Miss", "", "Comments", "Previous BLFC Experience", "Other con experience", "Created At", "Updated", "");
 
     $logs = getLogs();
 
@@ -153,6 +157,42 @@ if ($type == "apps") {
             echo "<td>" . $td['data'] . "</td>";
             echo "</tr>";
         }
+    } else if ($type == "depttimes") {
+        $entries = getAllTrackerEntries();
+        $users = array();
+        $count = array();
+        $times = array();
+
+        foreach ($depts as $dept) {
+            $hours[$dept['id']] = 0;
+            $count[$dept['id']] = 0;
+        }
+
+        foreach ($entries as $entry) {
+            if (!isset($users[$entry['uid']])) $users[$entry['uid']] = 0;
+            $users[$entry['dept']][$entry['uid']]++;
+            $users['total'][$entry['uid']]++;
+            $times[$entry['dept']] += $entry['diff'];
+            $count[$entry['dept']]++;
+        }
+
+        $totalTime = 0;
+        $totalCheckins = 0;
+        foreach ($depts as $dept) {
+            echo "<tr>";
+            echo "<td>" . $dept['name'] . "</td>";
+            echo "<td>" . number_format((float)$times[$dept['id']] / 3600, 2, '.', '') . "</td>";
+            echo "<td>" . sizeof($users[$dept['id']]) . "</td>";
+            echo "<td>" . $count[$dept['id']] . "</td>";
+            echo "</tr>";
+
+            $totalTime += $times[$dept['id']];
+            $totalCheckins += $count[$dept['id']];
+        }
+
+        echo "Total Hours: " . number_format((float)$totalTime / 3600, 2, '.', '');
+        echo " | Total Unique: " . sizeof($users['total']);
+        echo " | Total Checkins: " . $totalCheckins;
     } else if ($type == "apps") {
         if (isset($_POST['appdata'])) {
             $data = str_replace("<", "&lt;", $_POST['appdata']);
@@ -232,6 +272,8 @@ if ($type == "apps") {
                 echo "<td>" . $td->anythingElse . "</td>";
                 echo "<td>" . $td->previousConExperience . "</td>";
                 echo "<td>" . $td->previousOtherExperience . "</td>";
+                echo "<td>" . $td->createdAt . "</td>";
+                echo "<td>" . $td->updatedAt . "</td>";
 
                 echo "<td></td>";
                 foreach ($departments as $dept) {
@@ -346,6 +388,8 @@ if ($type == "apps") {
                 echo "\"order\": [[2, \"desc\"]]";
             } else if ($type == "apps") {
                 echo "\"order\": [[0, \"desc\"]]";
+            } else if ($type == "depttimes") {
+                echo "\"order\": [[1, \"desc\"]]";
             }
             ?>
         });

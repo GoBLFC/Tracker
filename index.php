@@ -14,6 +14,7 @@ $kioskAuth = (isset($_COOKIE['kiosknonce']) && sizeof(checkKiosk($_COOKIE['kiosk
 $isAdmin = isAdmin($badgeID);
 $isManager = isManager($badgeID);
 $isBanned = isbanned($badgeID);
+$notifs = getNotifications($badgeID, 1);
 
 include('pages/headerhtml.php');
 
@@ -23,18 +24,21 @@ if ($page == "admin" && $isAdmin) {
     include('pages/admin.php');
 } else if ($page == "manage" && ($isManager || $isAdmin)) {
     include('pages/manage.php');
-} else
-    if ($page == "sso") {
-        require_once('vendor/autoload.php');
-        include('pages/sso.php');
-    } else if ($user != null) {
-        if ($_SESSION['quickclock'] >= 20 || $isBanned || $siteStatus !== 1 || ($devMode == 0 && $kioskAuth == 0)) {
-            include('pages/disabled.php');
+} else if ($page == "sso") {
+    require_once('vendor/autoload.php');
+    include('pages/sso.php');
+} else if ($user != null) {
+    if ((isset($_SESSION['quickclock']) && $_SESSION['quickclock'] >= 20) || $isBanned || $siteStatus !== 1 || ($devMode == 0 && $kioskAuth == 0)) {
+        include('pages/disabled.php');
+    } else {
+        if (sizeof($notifs) > 0) {
+            include('pages/alert.php');
         } else {
             include('pages/landing.php');
         }
-    } else {
-        include('pages/login.php');
     }
+} else {
+    include('pages/login.php');
+}
 
 include('includes/footer.php');

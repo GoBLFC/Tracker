@@ -114,6 +114,48 @@ if ($cDept) $cDept = $cDept[0];
         </div>
     </div>
 
+    <div class="container" style="top: 5em;position: relative;">
+        <div class="card novis">
+            <div class="telegramBox"><img src="/assets/img/icons/telegram.png">
+                <a role="button" class="btn btn-light btn-md telegramButton" data-toggle="modal"
+                   data-target="#exampleModalCenter">Telegram Bot</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle" style="color: black;">Scan to add bot</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <img src="https://chart.googleapis.com/chart?chs=500x500&amp;cht=qr&amp;chl=<?php echo urlencode("https://t.me/BLFC_BOT?start=" . getTGUID($badgeID)) ?>&amp;choe=UTF-8"
+                     title="Opens Telegram to add bot." style="width: 100%;">
+                <ul class="list-unstyled" style="color:black; margin-left: 30px;">
+                    <li>This bot can provide you:</li>
+                    <ul>
+                        <li>Hours clocked</li>
+                        <li>Eligible Rewards</li>
+                    </ul>
+                    </li>
+                    <li>This bot will also:</li>
+                    <ul>
+                        <li>Remind you when you can get a reward</li>
+                    </ul>
+                    </li>
+                </ul>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="js/landing.js?v=3"></script>
     <script>$(document).ready(function () {
             initData();

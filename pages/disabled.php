@@ -6,7 +6,7 @@
  * Time: 3:57 AM
  */
 
-if ($_SESSION['quickclock'] >= 20 || $siteStatus == 12) {
+if ((isset($_SESSION['quickclock']) && $_SESSION['quickclock'] >= 20) || $siteStatus == 12) {
     $statusClass = "onFire";
     $message = "SITE ON FIRE!!";
     $description = "Something has gone terribly wrong. We blame you.";
@@ -23,10 +23,10 @@ if ($_SESSION['quickclock'] >= 20 || $siteStatus == 12) {
 } else if ($kioskAuth == 0) {
     $statusClass = "noKiosk";
     $message = "Device not authorized.";
-    $description = "If you believe this is in error, please contact a staff member.";
+    $description = "If you believe this is in error, please contact a volunteer manager.";
 }
 
-if (!isAdmin($badgeID)) {
+if (!isAdmin($badgeID) && !isManager($badgeID)) {
     logoutSession($session);
     session_unset();
     session_regenerate_id();

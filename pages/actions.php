@@ -27,7 +27,7 @@ if ($user == null) {
 } else if ((!$isAdmin && !$isManager) && getDevmode() == 0 && sizeof(checkKiosk($_COOKIE['kiosknonce'])) == 0) {
     $ret['code'] = 0;
     $ret['msg'] = "Kiosk not authorized.";
-} else if (!$isAdmin && getSiteStatus() == 0) {
+} else if ((!$isAdmin && !$isManager) && getSiteStatus() == 0) {
     $ret['code'] = 0;
     $ret['msg'] = "Site is disabled.";
 } else {
@@ -59,10 +59,13 @@ if ($user == null) {
         $ret['val'] = calculateBonusTime($badgeID, false) + getMinutesTotal($badgeID);
     } else if ($action == "getNotifications") {
         $ret['code'] = 1;
-        $ret['val'] = getNotifications($badgeID);
+        $ret['val'] = getNotifications($badgeID, 0);
     } else if ($action == "readNotification") {
         $ret['code'] = 1;
         $ret['val'] = markNotificationRead($_POST['id']);
+    } else if ($action == "ackAllNotifs") {
+        $ret['code'] = 1;
+        $ret['val'] = ackAllNotifs($badgeID);
     }
 
     // MANAGER FUNCTIONS
@@ -117,6 +120,9 @@ if ($user == null) {
         } else if ($action == "checkInOther") {
             $ret['code'] = 1;
             checkIn($_POST['id'], $_POST['dept'], $_POST['notes'], $badgeID);
+        } else if ($action == "createUser") {
+            $badgeID = $_POST['badgeid'];
+            $ret['code'] = createUser($badgeID);
         } else if ($action == "addTime") {
             $id = $_POST['id'];
             $start = $_POST['start'];
@@ -131,7 +137,7 @@ if ($user == null) {
             removeTime($_POST['id']);
         } else if ($action == "getRewardClaims") {
             $ret['code'] = 1;
-            $ret['val'] = getRewardClaims($_POST['id'], $_POST['type']);
+            $ret['val'] = getRewardClaims($_POST['id']);
         } else if ($action == "claimReward") {
             $ret['code'] = 1;
             $ret['val'] = claimReward($_POST['uid'], $_POST['type']);
@@ -221,11 +227,24 @@ if ($user == null) {
         } else if ($action == "getBonuses") {
             $ret['val'] = getBonuses();
             $ret['code'] = 1;
+        } else if ($action == "getRewards") {
+            $ret['val'] = getRewards(false, true);
+            $ret['code'] = 1;
         } else if ($action == "addDept") {
             $name = $_POST['name'];
             $hidden = $_POST['hidden'];
 
             $ret['val'] = addDept($name, $hidden);
+            $ret['code'] = 1;
+        } else if ($action == "addReward") {
+            $name = $_POST['name'];
+            $desc = $_POST['description'];
+            $hours = $_POST['hours'];
+            $hidden = $_POST['hidden'];
+            $type = "other";
+            if ($hours > 0) $type = "time";
+
+            $ret['val'] = addReward($name, $desc, $hours, $type, $hidden);
             $ret['code'] = 1;
         } else if ($action == "updateDept") {
             $id = $_POST['id'];
@@ -233,6 +252,16 @@ if ($user == null) {
             $hidden = $_POST['hidden'];
 
             $ret['val'] = updateDept($id, $name, $hidden);
+            $ret['code'] = 1;
+        } else if ($action == "updateReward") {
+            $id = $_POST['id'];
+            $field = $_POST['field'];
+            $value = $_POST['value'];
+            $type = "other";
+
+            if ($field == "hours" && $value > 0) $type = "time";
+
+            $ret['val'] = updateReward($id, $field, $value, $type);
             $ret['code'] = 1;
         } else if ($action == "removeBonus") {
             $id = $_POST['id'];

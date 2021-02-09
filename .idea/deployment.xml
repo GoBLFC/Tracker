@@ -5,7 +5,7 @@
       <paths name="Joan SF">
         <serverdata>
           <mappings>
-            <mapping deploy="/home/web/html/Joan/BLFC/tracker" local="$PROJECT_DIR$" web="tracker" />
+            <mapping deploy="/home/web/html/Joan/BLFCTracker" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>

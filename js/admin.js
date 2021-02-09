@@ -1,4 +1,4 @@
-var logoutTime = 240;
+var logoutTime = 900;
 
 function initData() {
     postAction({action: 'getAdmins'}, function (data) {
@@ -26,6 +26,12 @@ function initData() {
         });
 
         $("#depts").selectpicker("refresh");
+    });
+
+    postAction({action: 'getRewards'}, function (data) {
+        $.each(data['val'], function (index, value) {
+            addRewardRow(value['id'], value['name'], value['desc'], value['hours'], value['hidden']);
+        });
 
         addListeners();
     });
@@ -43,14 +49,19 @@ function addListeners() {
 
     // Detect input focus change
     $(".form-control").focusout(function (e) {
+        if (typeof e === 'undefined') return;
         const elem = $(e.currentTarget);
+
         if (elem.data("type") === "dept") updateDept(getTableKey(elem.parent()), elem.val(), getButtonSelect(elem));
+        if (elem.data("type") === "reward") updateReward(getTableKey(elem.parent()), elem.data("field"), elem.val());
     });
 
     // Detect selection change
     $(".custom-select").change(function (e) {
+        if (typeof e === 'undefined') return;
         const elem = $(e.currentTarget);
         if (elem.data("type") === "dept") updateDept(getTableKey(elem.parent()), getButtonInput(elem), getButtonSelect(elem));
+        if (elem.data("type") === "reward") updateReward(getTableKey(elem.parent()), elem.data("field"), elem.val());
     });
 }
 
@@ -128,6 +139,22 @@ function addDept(elem) {
     });
 }
 
+function addReward() {
+    console.log('1');
+    const name = $("#rName").val();
+    const desc = $("#rDesc").val();
+    const hours = $("#rHours").val();
+    const hidden = parseInt(getButtonSelect(elem));
+    postAction({action: 'addReward', name: name, description: desc, hours: hours, hidden: hidden}, function (data) {
+        console.log('2');
+
+        if (data['code'] === 0) return;
+        toastNotify('Reward created.', 'success', 1500);
+        addRewardRow(data['val'], name, desc, hours, hidden);
+        addListeners();
+    });
+}
+
 function addBonus() {
     if ($("#bonusstart").datetimepicker('date') === null || $("#bonusstop").datetimepicker('date') === null) {
         alert("Please select a start and stop date.");
@@ -156,6 +183,13 @@ function updateDept(id, name, hidden) {
     postAction({action: 'updateDept', id: id, name: name, hidden: hidden}, function (data) {
         if (data['code'] === 0) return;
         toastNotify('Department updated.', 'success', 1500);
+    });
+}
+
+function updateReward(id, field, value) {
+    postAction({action: 'updateReward', id: id, field: field, value: value}, function (data) {
+        if (data['code'] === 0) return;
+        toastNotify('Reward updated.', 'success', 1500);
     });
 }
 
@@ -218,6 +252,12 @@ function addDeptRow(id, name, hidden) {
 function addBonusRow(id, start, stop, depts, modifier) {
     const data = [start, stop, depts, modifier, "<button type=\"button\" class=\"btn btn-sm btn-danger\" data-id=\"" + id + "\" onClick=\"removeBonus(this)\">Remove</button>"];
     addRow(false, $("#bRow"), data)
+}
+
+function addRewardRow(id, name, description, hours, hidden) {
+    console.log("add: " + id + " / " + name + " / ");
+    const data = [id, "<input type=\"text\" data-type=\"reward\" data-field=\"name\" class=\"form-control inputDark\" value=\"" + name + "\" aria-label=\"Name\" aria-describedby=\"basic-addon2\">", "<input type=\"text\"  data-type=\"reward\" data-field=\"desc\" class=\"form-control inputDark\" value=\"" + description + "\" aria-label=\"Description\" aria-describedby=\"basic-addon2\">", "<input data-type=\"reward\" data-field=\"hours\" type=\"text\" class=\"form-control inputDark\" value=\"" + hours + "\" aria-label=\"Hours\" aria-describedby=\"basic-addon2\">", "<select class=\"custom-select inputDark wt\" data-type=\"reward\" data-field=\"hidden\" ><option value=0>No</option><option " + (hidden === 1 ? "selected=\"\"" : "") + "value=1>Yes</option></select>"];
+    addRow(true, $("#rRow"), data)
 }
 
 function addRow(key, elem, data) {

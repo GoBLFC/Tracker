@@ -10,6 +10,7 @@
     }
   ],
   "require": {
-    "league/oauth2-client": "2.4.1"
+    "league/oauth2-client": "2.4.1",
+    "longman/telegram-bot": "*"
   }
 }

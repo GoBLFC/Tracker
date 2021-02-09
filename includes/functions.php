@@ -75,6 +75,26 @@ function getUserByID($id, $full)
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+function getUserByTGCID($id)
+{
+    global $db;
+    $stmt = $db->prepare("SELECT * FROM `users` WHERE tg_chatid = :id");
+
+    $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC)[0];
+}
+
+function getUserByTGUID($id)
+{
+    global $db;
+    $stmt = $db->prepare("SELECT * FROM `users` WHERE tg_uid = :id");
+
+    $stmt->bindValue(':id', $id, PDO::PARAM_STR);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC)[0];
+}
+
 function getUserBySession($session)
 {
     global $db;
@@ -97,6 +117,14 @@ function getActiveClockins()
 {
     global $db;
     $stmt = $db->prepare("SELECT * FROM `tracker` WHERE checkout IS NULL");
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function getAllTrackerEntries()
+{
+    global $db;
+    $stmt = $db->prepare("SELECT *, TIME_TO_SEC(TIMEDIFF(`checkout`, `checkin`)) as diff FROM `tracker` WHERE checkout IS NOT NULL AND checkin IS NOT NULL");
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
@@ -130,7 +158,7 @@ function getDepartments($hidden)
 function updateSession($id, $fName, $lName, $nName, $session)
 {
     global $db;
-    $stmt = $db->prepare("INSERT INTO `users` (`id`, `first_name`, `last_name`, `nickname`, `admin`, `manager`, `last_session`, `last_ip`, `registered`, `reg_ua`) VALUES (:id, :fName, :lName, :nName, 0, 0, :lastsession, :lastip, NOW(), :regua) ON DUPLICATE KEY UPDATE `first_name` = :fName2, `last_name` = :lName2, `nickname` = :nName2, `last_session` = :lastsession2, `last_ip` = :lastip2, `last_login` = NOW()");
+    $stmt = $db->prepare("INSERT INTO `users` (`id`, `first_name`, `last_name`, `nickname`, `admin`, `manager`, `last_session`, `last_ip`, `registered`, `reg_ua`, `tg_uid`) VALUES (:id, :fName, :lName, :nName, 0, 0, :lastsession, :lastip, NOW(), :regua, :tgid) ON DUPLICATE KEY UPDATE `first_name` = :fName2, `last_name` = :lName2, `nickname` = :nName2, `last_session` = :lastsession2, `last_ip` = :lastip2, `last_login` = NOW()");
     //$stmt = $db->prepare("UPDATE `users` SET `last_session` = :lastsession, `last_ip` = :lastip WHERE `users`.`id` = :id");
     $stmt->bindValue(':id', $id, PDO::PARAM_INT);
     $stmt->bindValue(':fName', $fName, PDO::PARAM_STR);
@@ -139,12 +167,27 @@ function updateSession($id, $fName, $lName, $nName, $session)
     $stmt->bindValue(':lName2', $lName, PDO::PARAM_STR);
     $stmt->bindValue(':nName', $nName, PDO::PARAM_STR);
     $stmt->bindValue(':nName2', $nName, PDO::PARAM_STR);
+    $stmt->bindValue(':tgid', guidv4(openssl_random_pseudo_bytes(16)), PDO::PARAM_STR);
     $stmt->bindValue(':lastsession', $session, PDO::PARAM_STR);
     $stmt->bindValue(':lastsession2', $session, PDO::PARAM_STR);
     $stmt->bindValue(':regua', $_SERVER['HTTP_USER_AGENT'], PDO::PARAM_STR);
     $stmt->bindValue(':lastip', $_SERVER["HTTP_CF_CONNECTING_IP"], PDO::PARAM_STR);
     $stmt->bindValue(':lastip2', $_SERVER["HTTP_CF_CONNECTING_IP"], PDO::PARAM_STR);
     $stmt->execute();
+}
+
+function updateTGChat($chatID, $tguid)
+{
+    global $db;
+
+    // Update chat ID and invalidate UID
+    $stmt = $db->prepare("UPDATE `users` SET `tg_chatid` = :chatID, `tg_uid` = :newID WHERE `users`.`tg_uid` = :tgUID;");
+    $stmt->bindValue(':chatID', $chatID, PDO::PARAM_INT);
+    $stmt->bindValue(':tgUID', $tguid, PDO::PARAM_STR);
+    $stmt->bindValue(':newID', guidv4(openssl_random_pseudo_bytes(16)), PDO::PARAM_STR);
+    $stmt->execute();
+
+    return "Thanks for volunteering!" . PHP_EOL . "Press these buttons to view more info.";
 }
 
 function checkKiosk($session)
@@ -170,6 +213,22 @@ function deauthorizeKiosk($session)
     $stmt = $db->prepare("DELETE FROM `kiosks` WHERE `session` = :sess");
     $stmt->bindValue(':sess', $session, PDO::PARAM_STR);
     $stmt->execute();
+}
+
+function createUser($badgeID)
+{
+    $user = getUserByID($badgeID, false);
+    if (count($user) > 0) {
+        return 2;
+    }
+
+    global $db;
+    $stmt = $db->prepare("INSERT INTO `users` (`id`, `first_name`, `last_name`, `nickname`, `tg_uid`) VALUES (:id, 'TempUser', 'TempUser', 'TempUser', :tgid)");
+    $stmt->bindValue(':id', $badgeID, PDO::PARAM_INT);
+    $stmt->bindValue(':tgid', guidv4(openssl_random_pseudo_bytes(16)), PDO::PARAM_STR);
+    $stmt->execute();
+
+    return 1;
 }
 
 function setBanned($badgeID, $state)
@@ -217,6 +276,20 @@ function addDept($name, $hidden)
     return $db->lastInsertId();
 }
 
+function addReward($name, $desc, $hours, $type, $hidden)
+{
+    global $db;
+    $stmt = $db->prepare("INSERT INTO `rewards` (`id`, `name`, `desc`, `hours`, `type`) VALUES (NULL, :name, :desc, :hours, :type1, $hidden);");
+    $stmt->bindValue(':name', $name, PDO::PARAM_STR);
+    $stmt->bindValue(':desc', $desc, PDO::PARAM_STR);
+    $stmt->bindValue(':hours', $hours, PDO::PARAM_INT);
+    $stmt->bindValue(':type1', $type, PDO::PARAM_STR);
+    $stmt->bindValue(':hidden', $hidden, PDO::PARAM_INT);
+    $stmt->execute();
+
+    return $db->lastInsertId();
+}
+
 function updateDept($id, $name, $hidden)
 {
     global $db;
@@ -229,10 +302,23 @@ function updateDept($id, $name, $hidden)
     return $db->lastInsertId();
 }
 
+function updateReward($id, $field, $value, $type)
+{
+    global $db;
+    // Yes field is not PDO - temp solution. This function is limited to management.
+    $stmt = $db->prepare("UPDATE `rewards` SET `" . $field . "` = :val WHERE `rewards`.`id` = :id");
+    $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+    $stmt->bindValue(':val', $value, PDO::PARAM_STR);
+    //$stmt->bindValue(':typ', $type, PDO::PARAM_STR);
+    $stmt->execute();
+
+    return $db->lastInsertId();
+}
+
 function addBonus($start, $stop, $depts, $modifier)
 {
     global $db;
-    $stmt = $db->prepare("INSERT INTO `time_mod` (`id`, `start`, `stop`, `dept`, `modifier`) VALUES (NULL, :start, :stop, :depts, :mod)");
+    $stmt = $db->prepare("INSERT INTO `time_mod` (`id`, `start`, `stop`, `dept`, `modifier`, `hidden`) VALUES (NULL, :start, :stop, :depts, :mod, 0)");
     $stmt->bindValue(':start', $start, PDO::PARAM_STR);
     $stmt->bindValue(':stop', $stop, PDO::PARAM_STR);
     $stmt->bindValue(':depts', $depts, PDO::PARAM_STR);
@@ -285,28 +371,66 @@ function getDepts()
 function getBonuses()
 {
     global $db;
-    $stmt = $db->prepare("SELECT * FROM `time_mod`");
+    $stmt = $db->prepare("SELECT * FROM `time_mod` WHERE `hidden` = 0");
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function getNotifications($uid)
+function getNotifications($uid, $ack)
 {
     global $db;
-    $stmt = $db->prepare("SELECT * FROM `notifications` WHERE `uid` = :uid AND `hasread` = 0");
+    $stmt = $db->prepare("SELECT * FROM `notifications` WHERE `uid` = :uid AND `hasread` = 0 AND `ack` = :ack");
     $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
+    $stmt->bindValue(':ack', $ack, PDO::PARAM_INT);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function getRewardClaims($uid, $type)
+function hasBeenNotified($uid, $reward)
 {
     global $db;
-    $stmt = $db->prepare("SELECT `claim`, `date` FROM `claims` WHERE `uid` = :uid AND `claim` LIKE :type1");
+    $stmt = $db->prepare("SELECT * FROM `notifications` WHERE `uid` = :uid AND `reward` = :reward");
     $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
-    $stmt->bindValue(':type1', "%" . $type . "%", PDO::PARAM_STR);
+    $stmt->bindValue(':reward', $reward, PDO::PARAM_INT);
+    $stmt->execute();
+
+    return (sizeof($stmt->fetchAll(PDO::FETCH_ASSOC)) > 0 ? true : false);
+}
+
+function getRewardClaims($uid)
+{
+    global $db;
+    $stmt = $db->prepare("SELECT `claim`, `date` FROM `claims` WHERE `uid` = :uid");
+    $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
+    //$stmt->bindValue(':type1', "%" . $type . "%", PDO::PARAM_STR);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function getEligibleRewards($uid)
+{
+    // Current claims
+    $earnedHours = (calculateBonusTime($uid, false) + getMinutesTotal($uid)) / 60;
+    $claims = getRewardClaims($uid);
+    $rewards = getRewards(true, false);
+
+    $availRewards = [];
+    foreach ($rewards as $reward) {
+        if ($reward['hours'] == 0) continue;
+
+        $availRewards[$reward['id']] = $reward;
+        $availRewards[$reward['id']]['claimed'] = false;
+        $availRewards[$reward['id']]['avail'] = true;
+        if ($earnedHours < $reward['hours']) $availRewards[$reward['id']]['avail'] = false;
+
+        // Set claim state
+        foreach ($claims as $claim) {
+            //if ($claim['claim'] == $reward['id']) continue 2;
+            if ($claim['claim'] == $reward['id']) $availRewards[$reward['id']]['claimed'] = true;
+        }
+    }
+
+    return $availRewards;
 }
 
 function claimReward($uid, $type)
@@ -338,13 +462,24 @@ function markNotificationRead($id)
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function createNotification($uid, $type, $msg)
+function ackAllNotifs($uid)
 {
     global $db;
-    $stmt = $db->prepare("INSERT INTO `notifications` (`uid`, `type`, `message`) VALUES (:uid, :type, :msg)");
+    $stmt = $db->prepare("UPDATE `notifications` SET `hasread` = '1', `ack` = '1' WHERE `notifications`.`uid` = :uid AND `hasread` = 0 AND `ack` = 1;");
+    $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function createNotification($uid, $type, $reward, $msg, $ack)
+{
+    global $db;
+    $stmt = $db->prepare("INSERT INTO `notifications` (`uid`, `type`, `reward`, `message`, `ack`) VALUES (:uid, :type, :reward, :msg, :ack)");
     $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
     $stmt->bindValue(':type', $type, PDO::PARAM_STR);
+    $stmt->bindValue(':reward', $reward, PDO::PARAM_INT);
     $stmt->bindValue(':msg', $msg, PDO::PARAM_STR);
+    $stmt->bindValue(':ack', $ack, PDO::PARAM_INT);
     $stmt->execute();
 }
 
@@ -485,6 +620,30 @@ function getUnclockedUsers()
 {
     global $db;
     $stmt = $db->prepare("SELECT * FROM `tracker` WHERE `auto` = 1");
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function getTGUID($id)
+{
+    global $db;
+    $stmt = $db->prepare("SELECT `tg_uid` FROM `users` WHERE `id` = :id");
+    $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC)[0]['tg_uid'];
+}
+
+function getRewards($time, $all)
+{
+    global $db;
+    if ($all) {
+        $stmt = $db->prepare("SELECT * FROM `rewards`");
+    } else if ($time) {
+        $stmt = $db->prepare("SELECT * FROM `rewards` WHERE `hours` > 0");
+    } else {
+        $stmt = $db->prepare("SELECT * FROM `rewards` WHERE `hidden` = 0");
+    }
+
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
@@ -701,4 +860,14 @@ function escapeText($text)
     $esc = preg_replace('/\x20(?=\r|\n)/m', "&nbsp;", $esc);
 
     return $esc;
+}
+
+function guidv4($data)
+{
+    assert(strlen($data) == 16);
+
+    $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // set version to 0100
+    $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // set bits 6-7 to 10
+
+    return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
 }

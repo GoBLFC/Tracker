@@ -65,6 +65,32 @@ a {
     color: darkgrey;
 }
 
+.telegramBox {
+    background-color: #279DDA;
+    padding: 5px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    bottom: -32px;
+    position: absolute;
+    text-align: center;
+    left: 0%;
+    font-size: 0.8em;
+    color: white;
+}
+
+.telegramBox img {
+    height: 79%;
+    position: absolute;
+}
+
+.telegramButton {
+    color: white !important;
+    background-color: #29a5d9 !important;
+    width: 14em !important;
+    font-weight: 600 !important;
+    border-width: 0px !important;
+}
+
 .highvis {
     background-image: url("/assets/img/highvis.png") !important;
     background-blend-mode: darken;
@@ -258,71 +284,6 @@ input[type="submit"]:hover {
     transition: all 0.2s linear;
     transform: translate(10px, 0);
     opacity: 0;
-}
-
-.close {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 35px;
-    height: 30px;
-    background: #000;
-    color: #fff;
-    cursor: pointer;
-    border: 0;
-}
-
-.mask {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(52, 73, 94, 0.8);
-    z-index: 50;
-    visibility: hidden;
-    opacity: 0;
-    transition: 0.7s;
-}
-
-.modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    width: 400px;
-    /*height: 300px;*/
-    margin-left: -200px;
-    margin-top: -150px;
-    background: #272727;
-    z-index: 100;
-    visibility: hidden;
-    opacity: 0;
-    transition: 0.5s ease-out;
-    transform: translateY(45px);
-}
-
-.modal img {
-    width: 50%;
-    float: right;
-}
-
-.modal h2 {
-    width: 45%;
-    position: absolute;
-    text-align: left;
-    padding: 0 0 0 15px;
-    font-size: 15px;
-}
-
-.active {
-    visibility: visible;
-    opacity: 1;
-}
-
-.active + .modal {
-    visibility: visible;
-    opacity: 1;
-    transform: translateY(0);
 }
 
 /* Additional Bootstrap Overrides */

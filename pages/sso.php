@@ -73,7 +73,8 @@ if (!isset($_GET['code'])) {
         setcookie("badge", $badgeID, 0, "/");
         setcookie("session", session_id(), 0, "/");
         if (isset($isAdmin) && ($isAdmin || $isManager)) addLog($badgeID, "logIn", "ip:" . $_SERVER["HTTP_CF_CONNECTING_IP"]);
-        updateSession($badgeID, $userInfo['firstName'], $userInfo['lastName'], $userInfo['nickName'], session_id());
+        //die(print_r($userInfo));
+        updateSession($badgeID, $userInfo['firstName'], $userInfo['lastName'], $userInfo['username'], session_id());
 
         header("Refresh:0; url=/", true, 303);
         ?>

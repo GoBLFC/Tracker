@@ -1,4 +1,4 @@
-var logoutTime = 240;
+var logoutTime = 900;
 
 function initData() {
     clockCycle();
@@ -118,6 +118,16 @@ function addTime() {
 
         loadVolunteer(uid);
         toastNotify('Time added!', 'success', 1500);
+    });
+}
+
+function createUser(badgeid) {
+    postAction({action: 'createUser', badgeid: badgeid}, function (data) {
+        if (data['code'] === 2) {
+            toastNotify('User (' + badgeid + ') already exists.', 'warning', 1500);
+        } else {
+            toastNotify('User (' + badgeid + ') created.', 'success', 1500);
+        }
     });
 }
 

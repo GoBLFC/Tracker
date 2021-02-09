@@ -2,12 +2,11 @@
 <project version="4">
   <component name="WebServers">
     <option name="servers">
-      <webServer id="97db3da4-1de7-4238-908e-5aa6dcec7afa" name="Joan SF" url="https://blfc.zilyin.com">
-        <fileTransfer host="sf.gld.bz" port="22" privateKey="C:\Users\joann\Documents\ChampionRealms\stuff\champions.ppk" accessType="SFTP" keyPair="true">
+      <webServer id="97db3da4-1de7-4238-908e-5aa6dcec7afa" name="Joan SF" url="https://tracker.goblfc.org">
+        <fileTransfer accessType="SFTP" host="10.10.0.21" port="22" sshConfigId="cfcb1aa3-8f19-4d57-a116-86c931b242bb" sshConfig="Joan SF" keyPair="true">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" shareSSLContext="true" />
           </advancedOptions>
-          <option name="port" value="22" />
         </fileTransfer>
       </webServer>
     </option>

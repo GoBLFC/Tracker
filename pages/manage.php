@@ -94,38 +94,21 @@ if (!isManager($badgeID) && !isAdmin($badgeID)) die('Unauthorized.');
                                         <table class="table" style="margin: auto;width: 40% !important;">
                                             <thead style="">
                                             <tr style="">
-                                                <th scope="col">1 Hour</th>
-                                                <th scope="col">4 Hour</th>
-                                                <th scope="col">8 Hour</th>
-                                                <th scope="col">12 Hour</th>
+                                                <?php
+                                                foreach (getRewards(false, false) as $reward) echo "<th scope=\"col\">" . $reward['name'] . "</th>";
+                                                ?>
                                             </tr>
                                             </thead>
                                             <tbody>
                                             <tr id="rewards">
-                                                <td>
-                                                    <button type="button" class="btn btn-sm btn-danger"
-                                                            data-type="reward" data-id="time1" data-state="unclaimed"
-                                                            onclick="toggleClaim(this)">Claim
+                                                <?php
+                                                foreach (getRewards(false, false) as $reward) echo "                                                <td>
+                                                    <button type=\"button\" class=\"btn btn-sm btn-danger\"
+                                                            data-type=\"reward\" data-id=\"" . $reward['id'] . "\" data-state=\"unclaimed\"
+                                                            onclick=\"toggleClaim(this)\">Claim
                                                     </button>
-                                                </td>
-                                                <td>
-                                                    <button type="button" class="btn btn-sm btn-danger"
-                                                            data-type="reward" data-id="time4" data-state="unclaimed"
-                                                            onclick="toggleClaim(this)">Claim
-                                                    </button>
-                                                </td>
-                                                <td>
-                                                    <button type="button" class="btn btn-sm btn-danger"
-                                                            data-type="reward" data-id="time8" data-state="unclaimed"
-                                                            onclick="toggleClaim(this)">Claim
-                                                    </button>
-                                                </td>
-                                                <td>
-                                                    <button type="button" class="btn btn-sm btn-danger"
-                                                            data-type="reward" data-id="time12" data-state="unclaimed"
-                                                            onclick="toggleClaim(this)">Claim
-                                                    </button>
-                                                </td>
+                                                </td>";
+                                                ?>
                                             </tr>
                                             </tbody>
                                         </table>
@@ -204,6 +187,33 @@ if (!isManager($badgeID) && !isAdmin($badgeID)) die('Unauthorized.');
                             <div class="col-sm">
                                 <div class="card-header cadBody">
 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="card" data-section="Users">
+                        <div class="card-header cadHeader">
+                            <div>User Settings</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm">
+                                <div class="card-header cadBody">
+                                    <div class="card">
+                                        <div class="input-group">
+                                            <input id="" type="text" class="form-control inputDark"
+                                                   placeholder="Badge Number"
+                                                   aria-label="Badge Number" aria-describedby="basic-addon2">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-outline-secondary" type="button"
+                                                        onClick="createUser(getButtonInput(this))"
+                                                        style="background-color: #1d6300; color: #ffffff; border: 1px solid rgba(0, 0, 0, 0.15)">
+                                                    Create User
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

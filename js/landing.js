@@ -155,6 +155,12 @@ function checkOut(callback) {
     });
 }
 
+function ackAllNotifs(callback) {
+    postAction({action: "ackAllNotifs"}, function (data) {
+        callback(data);
+    });
+}
+
 function getClockTime(callback) {
     postAction({action: "getClockTime"}, function (data) {
         callback(data);
@@ -180,6 +186,8 @@ function getNotifications(callback) {
 }
 
 function postAction(data, callback) {
+    console.log('3: ' + data);
+
     $.post("pages/actions.php", data)
         .done(function (data) {
             if (data.code === 0) alert('Error: ' + data.msg);
