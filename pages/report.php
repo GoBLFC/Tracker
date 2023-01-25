@@ -55,18 +55,45 @@ if ($type == "unclocked") {
 
     //$data = json_decode($_POST['appdata']);
 	//echo getApps();
-	$userData = json_decode(getApps());
-	//print_r($userData);
+	
+	// Get all pages of data
+	$allData = false;
+	$nextPage = "";
+	$dataArr = array();
+	while ($allData == false){
+		$pageData = getApps($nextPage);
+		$data = json_decode($pageData);
 
-    $departments = array();
-    foreach ($userData as $td) {
-        foreach ($td->data as $user) {
-            $depname = $user->department->name;
-            if (array_search($depname, $departments) === FALSE) {
-                $departments[] = $depname;
-            }
-        }
-    }
+        // Pagination
+		if ($data->hasMore){
+			$nextPage = $data->nextPage;
+		}else{
+			$allData = true;
+		}
+		
+		$dataArr[] = $data;
+	}
+
+
+
+    // Combine Pagination
+	//$appData = array_merge([], ...$dataArr);
+		
+	
+	//print_r($appData);
+	
+	$departments = array();
+	foreach ($dataArr as $appData){
+		foreach ($appData->data as $td) {
+			foreach ($td->departments as $dept){
+				$depname = $dept->name;
+				if (array_search($depname, $departments) === FALSE) {
+					$departments[] = $depname;
+				}
+			}
+		}
+	}
+
     sort($departments);
 
     foreach ($departments as $dept) array_push($header, $dept);
@@ -154,9 +181,7 @@ if ($type == "apps") {
         }
     } else if ($type == "depttimes") {
         $entries = getAllTrackerEntries();
-        $users = array();
-        $count = array();
-        $times = array();
+        $users = $count = $times = array();
 
         foreach ($depts as $dept) {
             $hours[$dept['id']] = 0;
@@ -164,9 +189,12 @@ if ($type == "apps") {
         }
 
         foreach ($entries as $entry) {
-            if (!isset($users[$entry['uid']])) $users[$entry['uid']] = 0;
+            if (!isset($users[$entry['dept']])) $users[$entry['dept']][$entry['uid']] = 0;
+            if (!isset($users[$entry['dept']][$entry['uid']])) $users[$entry['dept']][$entry['uid']] = 0;
+            if (!isset($times[$entry['dept']])) $times[$entry['dept']] = 0;
+
             $users[$entry['dept']][$entry['uid']]++;
-            $users['total'][$entry['uid']]++;
+            $users['total'][$entry['uid']] = 0;
             $times[$entry['dept']] += $entry['diff'];
             $count[$entry['dept']]++;
         }
@@ -174,6 +202,11 @@ if ($type == "apps") {
         $totalTime = 0;
         $totalCheckins = 0;
         foreach ($depts as $dept) {
+            if (!isset($users[$dept['id']])){
+                $times[$dept['id']] = 0;
+                $users[$dept['id']] = array();
+            }
+
             echo "<tr>";
             echo "<td>" . $dept['name'] . "</td>";
             echo "<td>" . number_format((float)$times[$dept['id']] / 3600, 2, '.', '') . "</td>";
@@ -189,118 +222,131 @@ if ($type == "apps") {
         echo " | Total Unique: " . sizeof($users['total']);
         echo " | Total Checkins: " . $totalCheckins;
     } else if ($type == "apps") {
-		foreach ($userData->data as $td) {
-			$contacts = array();
-			$options = array();
+		foreach ($dataArr as $appData){
+			foreach ($appData->data as $td) {
+				$contacts = array();
+				$options = array();
 
-			if ($td->user->id == 14378) continue;
-			echo "<tr>";
-			echo "<td>" . $td->user->id . "</td>";
-			echo "<td>";
-			echo ($td->user->preferredName) ? $td->user->preferredName . " (" . $td->user->firstName . " " . $td->user->lastName . ")" : $td->user->firstName . " " . $td->user->lastName;
-			echo "</td>";
-			//echo "<td>" . ((isset($td->user->registration->badgeName)) ? $td->user->registration->badgeName : "(UNREGISTERED)") . "</td>";
-			echo "<td>";
-			foreach ($td->departments as $dept) {
-				echo $dept->name . ", ";
-			}
-			echo "</td>";
-			$assigned = "No";
-			foreach ($td->departments as $dept){
-				foreach ($dept->states as $state) {
-					if ($state == "assignment") {
-						$assigned = "Yes";
-					}
-				}
-			}
-			
-			echo "<td>" . $assigned . "</td>";
-			echo "<td>" . (($td->user->isStaff) ? "Yes" : "No") . "</td>";
-			echo "<td></td>";
-			
-			$primaryContact = "";
-			foreach ($td->contactMethods as $contact){
-				$contacts[$contact->name]['value'] = $contact->value;
-				$contacts[$contact->name]['isPrimary'] = $contact->isPrimary;
-				if ($contact->isPrimary) $primaryContact = $contact->name;
-			}
-			
-			echo "<td>" . $primaryContact  . "</td>";
-			echo "<td>" . $td->user->email . "</td>";
-			echo "<td>" . $td->user->phone . "</td>";
-			echo "<td>" . $contacts['telegram']['value'] . "</td>";
-			echo "<td>" . $contacts['twitter']['value'] . "</td>";
-			echo "<td>" . $contacts['discord']['value'] . "</td>";
-			#echo "<td>" . $td->contactMethodFacebook . "</td>";
-
-			#echo "<td>";
-			#if (isset($td->user->registration->emergencyContactName1)) {
-			#    echo $td->user->registration->emergencyContactName1 . ": " . $td->user->registration->emergencyContactPhone1;
-			#}
-			#if (isset($td->user->registration->emergencyContactName2)) {
-			#    echo " | " . $td->user->registration->emergencyContactName2 . ": " . $td->user->registration->emergencyContactPhone2;
-			#}
-			#echo "</td>";
-
-			foreach ($td->options as $option){
-				$options[$option->name] = $option->value;
-			}
-			
-			echo "<td>" . $options['Available Hours'] . "</td>";
-			echo "<td>";
-			if (in_array("Wednesday", $options['Volunteer Days'])) echo "W";
-			echo "</td>";
-			echo "<td>";
-			if (in_array("Thursday", $options['Volunteer Days'])) echo "R";
-			echo "</td>";
-			echo "<td>";
-			if (in_array("Friday", $options['Volunteer Days'])) echo "F";
-			echo "</td>";
-			echo "<td>";
-			if (in_array("Saturday", $options['Volunteer Days'])) echo "S";
-			echo "</td>";
-			echo "<td>";
-			if (in_array("Sunday", $options['Volunteer Days'])) echo "U";
-			echo "</td>";
-			echo "<td>";
-			if (in_array("Monday", $options['Volunteer Days'])) echo "M";
-			echo "</td>";
-			echo "<td>";
-			if (in_array("Tuesday", $options['Volunteer Days'])) echo "T";
-			echo "</td>";
-			echo "<td>";
-			echo $options['Are you available to help out in the months before the con?'] . "</td>";
-			echo "</td>";
-			echo "<td>" . $options['Are there any events you can not miss? [Optional]'] . "</td>";
-			echo "<td></td>";
-			echo "<td>" . $options['Is there anything else you would like to mention?'] . "</td>";
-			echo "<td>" . $options['Have you previously volunteered with Further Confusion? If so, what did you do? [Optional]'] . "</td>";
-			echo "<td>" . $options['Have you previously volunteered for another convention? If so, which? [Optional]'] . "</td>";
-			echo "<td>" . $td->createdAt . "</td>";
-			echo "<td>" . $td->updatedAt . "</td>";
-
-			echo "<td></td>";
-			foreach ($departments as $dept) {
+				if ($td->user->id == 14378) continue;
+				echo "<tr>";
+				echo "<td>" . $td->user->id . "</td>";
 				echo "<td>";
-				$state = "";
-				foreach ($td->volunteerDepartments as $tddept) {
-					if ($dept == $tddept->department->name) {
-						if ($tddept->type == "avoid" OR $state == "X") {
-							$state = "X";
-						} else if ($tddept->type == "assignment" or $state == "✓") {
-							$state = "✓";
-						} else if ($tddept->type == "experience") {
-							$state .= "!";
-						} else if ($tddept->type == "interest") {
-							$state .= "♥";
+				echo ($td->user->preferredName) ? $td->user->preferredName . " (" . $td->user->firstName . " " . $td->user->lastName . ")" : $td->user->firstName . " " . $td->user->lastName;
+				echo "</td>";
+				//echo "<td>" . ((isset($td->user->registration->badgeName)) ? $td->user->registration->badgeName : "(UNREGISTERED)") . "</td>";
+				echo "<td>";
+				foreach ($td->departments as $dept) {
+					echo $dept->name . ", ";
+				}
+				echo "</td>";
+				$assigned = "No";
+				foreach ($td->departments as $dept){
+					foreach ($dept->states as $state) {
+						if ($state == "assignment") {
+							$assigned = "Yes";
 						}
 					}
 				}
-				echo $state;
-				echo "</td>";
-			}
+				
+				echo "<td>" . $assigned . "</td>";
+				echo "<td>" . (($td->user->isStaff) ? "Yes" : "No") . "</td>";
+				echo "<td></td>";
+				
+				$primaryContact = "";
+				foreach ($td->contactMethods as $contact){
+					$contacts[$contact->name]['value'] = $contact->value;
+					$contacts[$contact->name]['isPrimary'] = $contact->isPrimary;
+					if ($contact->isPrimary) $primaryContact = $contact->name;
+				}
+				
+				echo "<td>" . $primaryContact  . "</td>";
+				echo "<td>" . $td->user->email . "</td>";
+				echo "<td>" . $td->user->phone . "</td>";
+				echo "<td>" . $contacts['telegram']['value'] . "</td>";
+				echo "<td>" . $contacts['twitter']['value'] . "</td>";
+				echo "<td>" . $contacts['discord']['value'] . "</td>";
+				#echo "<td>" . $td->contactMethodFacebook . "</td>";
 
-			echo "</tr>";
+				#echo "<td>";
+				#if (isset($td->user->registration->emergencyContactName1)) {
+				#    echo $td->user->registration->emergencyContactName1 . ": " . $td->user->registration->emergencyContactPhone1;
+				#}
+				#if (isset($td->user->registration->emergencyContactName2)) {
+				#    echo " | " . $td->user->registration->emergencyContactName2 . ": " . $td->user->registration->emergencyContactPhone2;
+				#}
+				#echo "</td>";
+
+				// Instantiate some options incase concat doesn't provide.
+				$options['Volunteer Days'] = array();
+				
+				foreach ($td->options as $option){
+					$options[$option->name] = $option->value;
+				}
+				
+				echo "<td>" . $options['Available Hours'] . "</td>";
+				echo "<td>";
+
+				if (in_array("Wednesday", $options['Volunteer Days'])) echo "W";
+				echo "</td>";
+				echo "<td>";
+				if (in_array("Thursday", $options['Volunteer Days'])) echo "R";
+				echo "</td>";
+				echo "<td>";
+				if (in_array("Friday", $options['Volunteer Days'])) echo "F";
+				echo "</td>";
+				echo "<td>";
+				if (in_array("Saturday", $options['Volunteer Days'])) echo "S";
+				echo "</td>";
+				echo "<td>";
+				if (in_array("Sunday", $options['Volunteer Days'])) echo "U";
+				echo "</td>";
+				echo "<td>";
+				if (in_array("Monday", $options['Volunteer Days'])) echo "M";
+				echo "</td>";
+				echo "<td>";
+				if (in_array("Tuesday", $options['Volunteer Days'])) echo "T";
+				echo "</td>";
+				echo "<td>";
+				echo $options['Are you available to help out in the months before the con?'] . "</td>";
+				echo "</td>";
+				echo "<td>" . $options['Are there any events you can not miss? [Optional]'] . "</td>";
+				echo "<td></td>";
+				echo "<td>" . $options['Is there anything else you would like to mention?'] . "</td>";
+				echo "<td>" . $options['Have you previously volunteered with Biggest Little Fur Con 2023? If so, what did you do? [Optional]'] . "</td>";
+				echo "<td>" . $options['Have you previously volunteered for another convention? If so, which? [Optional]'] . "</td>";
+				echo "<td>" . $td->createdAt . "</td>";
+				echo "<td>" . $td->updatedAt . "</td>";
+
+				echo "<td></td>";
+				foreach ($departments as $dpt){
+					echo "<td>";
+
+					foreach ($td->departments as $dept) {
+						if ($dpt != $dept->name) continue;
+						
+						$stateText = "";
+						foreach ($dept->states as $state) {
+							if ($state == "avoid") {
+								$stateText = "X";
+							} else if ($state == "assignment") {
+								$stateText .= "✓";
+							} else if ($state == "experience") {
+								$stateText .= "!";
+							} else if ($state == "interest") {
+								$stateText .= "♥";
+							} else{
+								$stateText = "???";
+							}
+						}
+						
+						echo "<div>$stateText</div>";
+					}
+					
+					echo "</td>";
+				}
+
+				echo "</tr>";
+			}
 		}
     }
     ?>
@@ -314,66 +360,6 @@ if ($type == "apps") {
     </tr>
     </tfoot>
 </table>
-
-<div class="container" style="top: 5em;">
-    <div class="card">
-        <div class="row">
-            <div class="col-sm">
-                <div class="card-body">
-                    <div class="card">
-                        <div class="card-header cadHeader">
-                            <div>Dept Count</div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm">
-                                <div class="card-header cadBody">
-                                    <table id="asdasd" class="table table table-striped table">
-                                        <thead>
-                                        <tr>
-                                            <th scope="col">Dept</th>
-                                            <th scope="col">Count</th>
-                                            <th scope="col">Hours</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody id="uRow">
-                                        <?php
-                                        foreach ($userData as $td) {
-                                            foreach ($departments as $dept) {
-                                                if (!isset($deptSummary[$dept])) {
-                                                    $deptSummary[$dept]['count'] = 0;
-                                                    $deptSummary[$dept]['hours'] = 0;
-                                                }
-
-                                                foreach ($td->volunteerDepartments as $tddept) {
-                                                    if ($dept == $tddept->department->name) {
-                                                        if ($tddept->type == "assignment" or $state == "✓") {
-                                                            $deptSummary[$dept]['count']++;
-                                                            $deptSummary[$dept]['hours'] += $td->availableHours;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-
-                                        foreach ($deptSummary as $dept => $key) {
-                                            echo "<tr>";
-                                            echo "<th>$dept</th>";
-                                            echo "<td>" . $deptSummary[$dept]['count'] . "</td>";
-                                            echo "<td>" . $deptSummary[$dept]['hours'] . "</td>";
-                                            echo "</tr>";
-                                        }
-                                        ?>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <script>
     $(document).ready(function () {

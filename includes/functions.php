@@ -906,9 +906,17 @@ function getToken(){
 	return $req;
 }
 
-function getApps()
+function getApps($nextPage)
 {
-    return jwt_request("https://reg.goblfc.org/api/v0/volunteers/search", json_decode(getToken())->access_token, array(), false);
+	if ($nextPage != ""){
+		$data = json_encode(array(
+			"nextPage"  => $nextPage,
+		));
+	}else{
+		$data = "{}";
+	}
+		
+    return jwt_request("https://reg.goblfc.org/api/v0/volunteers/search", json_decode(getToken())->access_token, $data, false);
 }
 
 function jwt_request($url, $token, $post, $content)
@@ -923,7 +931,7 @@ function jwt_request($url, $token, $post, $content)
 	    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post)); // Set the posted fields
     }else{
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', $authorization)); // Inject the token into the header
-		curl_setopt($ch, CURLOPT_POSTFIELDS, "{}"); // Set the posted fields
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $post); // Set the posted fields
 	}
 	
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -931,6 +939,7 @@ function jwt_request($url, $token, $post, $content)
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1); // This will follow any redirects
     $result = curl_exec($ch); // Execute the cURL statement
     curl_close($ch); // Close the cURL connection
+	//print $result;
     return $result; // Return the received data
 }
 
