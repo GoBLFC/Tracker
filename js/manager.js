@@ -135,15 +135,18 @@ function checkIn() {
     const uid = window.currUid;
     const dept = $("#dept").val();
     const notes = $("#notes").val();
+    var start = null;
 
-    if ($("#timestart").datetimepicker('date') !== null || $("#timestop").datetimepicker('date') !== null) {
-        alert("Start/Stop date not required for Check In. Did you mean add time?");
-        $("#timestart").datetimepicker().clear();
-        $("#timestop").datetimepicker().clear();
+    if ($("#timestart").datetimepicker('date') !== null) start = $("#timestart").datetimepicker('date').format("YYYY-MM-DD HH:mm:ss");
+
+    if ($("#timestart").datetimepicker('date') !== null && $("#timestop").datetimepicker('date') !== null) {
+        alert("Please use 'Add Time' when Start and Stop dates are filled in.");
+        //$("#timestart").datetimepicker().clear();
+        //$("#timestop").datetimepicker().clear();
         return;
     }
 
-    if (dept === undefined || dept === null) {
+    if (dept === undefined || dept === null || dept == "") {
         alert("Please select a department.");
         return;
     }
@@ -151,6 +154,7 @@ function checkIn() {
     postAction({
         action: 'checkInOther',
         id: uid,
+		start: start,
         dept: dept,
         notes: notes
     }, function (data) {
@@ -169,9 +173,14 @@ function removeTime(id) {
 }
 
 function checkOutOther() {
+	console.log(window.currUid);
     postAction({action: "checkOutOther", id: window.currUid}, function (data) {
         loadVolunteer(window.currUid);
-        toastNotify('Checked out!', 'success', 1500);
+		if (data['code'] === 1) {
+			toastNotify('Checked out!', 'success', 1500);
+        } else {
+            toastNotify(data['msg'], 'success', 1500);
+        }
     });
 }
 
@@ -202,12 +211,16 @@ function getRewardClaims(id, type, callback) {
 function toggleClaim(button) {
     // Lazyness
     if ($(button).data('state') === "claimed") {
-        postAction({action: "unclaimReward", uid: window.currUid, type: $(button).data('id')}, function (data) {
-            $(button).removeClass("btn-success");
-            $(button).addClass("btn-danger");
-            $(button).data("state", "unclaimed");
-            $(button).html("Claim");
-        });
+		let claimConfirm = confirm("Are you sure to un-claim this reward?");
+
+		if (claimConfirm){
+			postAction({action: "unclaimReward", uid: window.currUid, type: $(button).data('id')}, function (data) {
+				$(button).removeClass("btn-success");
+				$(button).addClass("btn-danger");
+				$(button).data("state", "unclaimed");
+				$(button).html("Claim");
+			});
+		}
     } else {
         postAction({action: "claimReward", uid: window.currUid, type: $(button).data('id')}, function (data) {
             $(button).removeClass("btn-danger");
@@ -216,6 +229,37 @@ function toggleClaim(button) {
             $(button).html("Claimed");
         });
     }
+}
+
+function toggleKiosk(button) {
+    toggleSetting(button, 'Deauthorize', 'Authorize', 'Deauthorizing', 'Authorizing', 'Kiosk', 'setKioskAuth', 'btn-warning btn-danger', function (data) {
+        var expireDate = new Date;
+        expireDate.setDate(expireDate.getDate() + 30);
+        $.cookie("kiosknonce", data.val, {expires: expireDate});
+    })
+}
+
+function toggleSetting(button, off, on, offLoad, onLoad, setting, method, toggle, callback) {
+    const status = $(button).data('status');
+    const opposite = !Number(status);
+
+    applyLoading(button, (status === 0) ? offLoad : onLoad + ' ' + setting);
+
+    $(button).data('status', opposite);
+    postAction({action: method, status: +opposite}, function (data) {
+        const statusTextOpposite = ((+opposite === 0) ? off : on);
+        const statusText = ((+opposite === 1) ? off : on);
+
+        $(button).html($(button).data('original-text'));
+
+        if (data.code === 1) {
+            $(button).html(statusText + ' ' + setting);
+            $(button).toggleClass(toggle);
+
+            toastNotify(setting + ' ' + statusTextOpposite + 'd!', 'success', 1500);
+            if (callback !== null) callback(data);
+        }
+    });
 }
 
 function initClock(id) {

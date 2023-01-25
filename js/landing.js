@@ -184,30 +184,3 @@ function getNotifications(callback) {
         callback(data);
     });
 }
-
-function postAction(data, callback) {
-    console.log('3: ' + data);
-
-    $.post("pages/actions.php", data)
-        .done(function (data) {
-            if (data.code === 0) alert('Error: ' + data.msg);
-            if (callback) callback(data);
-            if (data.msg !== undefined) console.log(data.msg);
-        }).fail(function (data) {
-        alert('Internal error, please contact a staff member for assistance.');
-        console.log(data.msg);
-    });
-}
-
-function toastNotify(message, type, delay) {
-    $.notify({
-        message: message
-    }, {
-        type: type,
-        delay: delay,
-        animate: {
-            enter: 'animated bounceInRight',
-            exit: 'animated bounceOutRight'
-        },
-    });
-}

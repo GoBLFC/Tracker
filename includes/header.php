@@ -25,15 +25,20 @@ if (isset($_COOKIE["kiosk"])) {
 }
 
 if (isset($_GET['logout'])) {
-    $token = $_SESSION['accessToken'];
     logoutSession($session);
-
-    session_unset();
-    session_regenerate_id();
 
     setcookie("session", '', 0, "/");
     setcookie("badge", '', 0, "/");
     //header('Location: /');
-    header("Refresh:0; url=https://reg.goblfc.org/oauth/logout?next=https%3A%2F%2Ftracker.goblfc.org%2F&client_id=4&access_token=" . $token, true, 303);
+	
+	if (isset($_SESSION['accessToken'])){
+		header("Refresh:0; url=https://reg.goblfc.org/oauth/logout?next=https%3A%2F%2Ftracker.goblfc.org%2F&client_id=4&access_token=" . $_SESSION['accessToken'], true, 303);
+	}else{
+		header("Refresh:0; url=https://tracker.goblfc.org", true, 303);
+	}
+	
+	session_unset();
+    session_regenerate_id();
+	
     die();
 }

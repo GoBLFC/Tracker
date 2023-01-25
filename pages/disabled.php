@@ -10,12 +10,12 @@ if ((isset($_SESSION['quickclock']) && $_SESSION['quickclock'] >= 20) || $siteSt
     $statusClass = "onFire";
     $message = "SITE ON FIRE!!";
     $description = "Something has gone terribly wrong. We blame you.";
-    $description .= "<audio id='audio' preload=\"auto\" src=\"/assets/egg/meltdown.ogg\" autoplay=\"\"></audio><script>document.getElementById(\"audio\").volume = 0.35;</script>";
+    $description .= "<audio id='audio' preload=\"auto\" src=\"/assets/egg/meltdown.ogg\" autoplay=\"\"></audio><script>document.getElementById(\"audio\").volume = 0.35; setTimeout(function(){window.location.reload()}, 10000)();</script>";
     $_SESSION['quickclock'] = 0;
 } else if ($isBanned) {
     $statusClass = "siteDisabled";
     $message = "Not Permitted.";
-    $description = "You are not permitted to volunteer on behalf of BLFC. If any questions, please contact hr@goblfc.org";
+    $description = "There is a hold on your volunteer account. Please talk to a volunteer manager at the volunteer desk.";
 } else if ($siteStatus == 0) {
     $statusClass = "siteDisabled";
     $message = "Site disabled.";

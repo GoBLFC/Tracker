@@ -62,19 +62,9 @@ if (!isset($_GET['code'])) {
         ]);
 
         $userInfo = $provider->getResourceOwner($accessToken)->toArray();
-
-        $_SESSION['badgeid'] = $userInfo['id'];
+		
+		userSignIn($userInfo['id'], $userInfo['firstName'], $userInfo['lastName'], $userInfo['username']);		
         $_SESSION['accessToken'] = $accessToken->getToken();
-
-        $badgeID = $_SESSION['badgeid'];
-
-        session_regenerate_id();
-
-        setcookie("badge", $badgeID, 0, "/");
-        setcookie("session", session_id(), 0, "/");
-        if (isset($isAdmin) && ($isAdmin || $isManager)) addLog($badgeID, "logIn", "ip:" . $_SERVER["HTTP_CF_CONNECTING_IP"]);
-        //die(print_r($userInfo));
-        updateSession($badgeID, $userInfo['firstName'], $userInfo['lastName'], $userInfo['username'], session_id());
 
         header("Refresh:0; url=/", true, 303);
         ?>

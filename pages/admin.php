@@ -91,6 +91,23 @@ if (!isAdmin($badgeID)) die('Unauthorized.');
                                     </div>
                                     <div class="card">
                                         <div class="card-header">
+                                            Leads
+                                        </div>
+                                        <table id="table" class="table table table-striped table">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col">Badge</th>
+                                                <th scope="col">Name</th>
+                                                <!--<th scope="col">Properties</th>-->
+                                                <th scope="col">Actions</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="uRowLead">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="card">
+                                        <div class="card-header">
                                             Banned
                                         </div>
                                         <table id="table" class="table table table-striped table">
@@ -120,6 +137,11 @@ if (!isAdmin($badgeID)) die('Unauthorized.');
                                                         onClick="setManager(1, getButtonInput(this))"
                                                         style="background-color: #402300; color: #ffffff; border: 1px solid rgba(0, 0, 0, 0.15)">
                                                     Make Manager
+                                                </button>
+                                                <button class="btn btn-outline-secondary" type="button"
+                                                        onClick="setLead(1, getButtonInput(this))"
+                                                        style="background-color: #1a5800; color: #ffffff; border: 1px solid rgba(0, 0, 0, 0.15)">
+                                                    Make Lead
                                                 </button>
                                                 <button class="btn btn-outline-secondary highvis banButton"
                                                         type="button"
@@ -270,7 +292,7 @@ if (!isAdmin($badgeID)) die('Unauthorized.');
                                         <div class="input-group-append">
                                             <button class="btn btn-outline-secondary" type="button"
                                                     style="background-color: #004014; color: #ffffff; border: 1px solid rgba(0, 0, 0, 0.15)"
-                                                    onclick="addReward()">
+                                                    onclick="addReward(this)">
                                                 Add Reward
                                             </button>
                                         </div>

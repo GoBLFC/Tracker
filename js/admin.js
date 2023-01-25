@@ -13,6 +13,12 @@ function initData() {
         });
     });
 
+    postAction({action: 'getLeads'}, function (data) {
+        $.each(data['val'], function (index, value) {
+            addUserRow("Lead", value['id'], value['nickname']);
+        });
+    });
+	
     postAction({action: 'getBanned'}, function (data) {
         $.each(data['val'], function (index, value) {
             addUserRow("Banned", value['id'], value['nickname']);
@@ -114,18 +120,35 @@ function setManager(value, badgeid, callback) {
     });
 }
 
-function setBanned(value, badgeid, callback) {
-    if (value === "") return;
-    postAction({action: 'setBanned', badgeid: badgeid, value: value}, function (data) {
+function setLead(value, badgeid, callback) {
+    postAction({action: 'setLead', badgeid: badgeid, value: value}, function (data) {
         if (data['code'] === 0) return;
         if (value === 0) {
-            toastNotify('User (' + data['name'] + ') unbanned.', 'success', 1500);
+            toastNotify('Lead removed.', 'success', 1500);
         } else {
-            toastNotify('User (' + data['name'] + ') banned.', 'success', 1500);
-            addUserRow("Banned", badgeid, data['name']);
+            toastNotify('Made ' + data['name'] + ' lead!', 'success', 1500);
+            addUserRow("Lead", badgeid, data['name']);
         }
         if (callback) callback();
     });
+}
+
+function setBanned(value, badgeid, callback) {
+    if (value === "") return;
+	let claimConfirm = confirm("Are you SURE you want to ban " + badgeid + "?");
+
+	if (claimConfirm){
+		postAction({action: 'setBanned', badgeid: badgeid, value: value}, function (data) {
+			if (data['code'] === 0) return;
+			if (value === 0) {
+				toastNotify('User (' + data['name'] + ') unbanned.', 'success', 1500);
+			} else {
+				toastNotify('User (' + data['name'] + ') banned.', 'success', 1500);
+				addUserRow("Banned", badgeid, data['name']);
+			}
+			if (callback) callback();
+		});
+	}
 }
 
 function addDept(elem) {
@@ -139,7 +162,7 @@ function addDept(elem) {
     });
 }
 
-function addReward() {
+function addReward(elem) {
     console.log('1');
     const name = $("#rName").val();
     const desc = $("#rDesc").val();
@@ -190,6 +213,12 @@ function updateReward(id, field, value) {
     postAction({action: 'updateReward', id: id, field: field, value: value}, function (data) {
         if (data['code'] === 0) return;
         toastNotify('Reward updated.', 'success', 1500);
+    });
+}
+
+function removeLead(elem) {
+    setLead(0, getTableKey(elem), function () {
+        $(elem).parent().parent().remove();
     });
 }
 

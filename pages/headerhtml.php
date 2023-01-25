@@ -24,30 +24,24 @@
     <meta name="msapplication-config" content="/assets/img/icons/browserconfig.xml">
     <meta name="theme-color" content="#ffffff">
 
-    <script
-            src="https://code.jquery.com/jquery-3.3.1.min.js"
-            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-            crossorigin="anonymous"></script>
-    <script src="js/jquery.cookie.js"></script>
-    <script src="js/bootstrap-notify.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
-    <script type="text/javascript"
-            src="https://cdnjs.cloudflare.com/ajax/libs/moment-duration-format/1.3.0/moment-duration-format.min.js"></script>
-    <script type="text/javascript"
-            src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+    <script src="js/lib/jquery-3.3.1.min.js"></script>
+    <script src="js/lib/jquery.cookie.js"></script>
+    <script src="js/lib/bootstrap-notify.min.js"></script>
+    <script type="text/javascript" src="js/lib/moment.min.js"></script>
+    <script type="text/javascript" src="js/lib/moment-duration-format.min.js"></script>
+    <script type="text/javascript" src="js/lib/tempusdominus-bootstrap-4.min.js"></script>
+
+	<script src="js/general.js?v=3"></script>
 
     <link rel="stylesheet" media="all" href="css/style.css">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="css/animate.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css"/>
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css"/>
-
-    <link rel="stylesheet" type="text/css" href="/css/custom-css-bootstrap.css">
+    <link rel="stylesheet" href="css/bootstrap/font-awesome.min.css">
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap/bootstrap-select.css"/>
+    <link rel="stylesheet" href="css/bootstrap/tempusdominus-bootstrap-4.min.css"/>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap/custom-css-bootstrap.css">
 
     <title>BLFC Volunteer Tracking</title>
 </head>

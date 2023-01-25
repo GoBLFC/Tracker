@@ -12,13 +12,16 @@ define('TRACKER', TRUE);
 include('../includes/header.php');
 
 $user = isValidSession($session, $badgeID);
+$isLead = isLead($badgeID);
 $isAdmin = isAdmin($badgeID);
 $isManager = isManager($badgeID);
 
 $ret['code'] = -1;
 //$ret['msg'] = "Unknown Action.";
 
-if ($user == null) {
+if ($user == null && isset($_POST['action']) && $_POST['action'] == "checkQuickCode") {
+	$ret = checkQuickCode($_POST['quickcode']);
+} elseif ($user == null) {
     $ret['code'] = 0;
     $ret['msg'] = "Not authenticated.";
 } elseif (!isset($_POST['action'])) {
@@ -40,7 +43,7 @@ if ($user == null) {
             $ret['code'] = 0;
             $ret['msg'] = "Invalid department specified.";
         } else {
-            checkIn($badgeID, $dept, "", $badgeID);
+            checkIn($badgeID, null, $dept, "", $badgeID);
 
             $ret['code'] = 1;
             $ret['msg'] = "Clocked in.";
@@ -69,7 +72,7 @@ if ($user == null) {
     }
 
     // MANAGER FUNCTIONS
-    if (($isManager || $isAdmin) && substr($action, 0, 3) !== "get") {
+    if (($isManager || $isAdmin || $isLead) && substr($action, 0, 3) !== "get") {
         $postData = array();
         foreach ($_POST as $p => $d) {
             if ($p == "action") continue;
@@ -78,6 +81,28 @@ if ($user == null) {
 
         addLog($_SESSION['badgeid'], $action, implode(",", $postData));
     }
+	
+    if ((!$isLead && !$isAdmin && !$isManager) && $ret['code'] === -1) {
+		$ret['code'] = 0;
+        $ret['msg'] = "Unauthorized.";
+	}else{
+		if ($action == "setKioskAuth") {
+            $status = $_POST['status'];
+
+            if ($status == 1) {
+                $kioskNonce = md5(rand());
+                authorizeKiosk($kioskNonce);
+                $ret['val'] = $kioskNonce;
+            }
+
+            if ($status == 0) {
+                deauthorizeKiosk($_COOKIE['kiosknonce']);
+                $ret['val'] = 1;
+            }
+
+            $ret['code'] = 1;
+		}
+	}
 
     if ((!$isManager && !$isAdmin) && $ret['code'] === -1) {
         $ret['code'] = 0;
@@ -115,11 +140,10 @@ if ($user == null) {
             $ret['code'] = 1;
             $ret['val'] = calculateBonusTime($_POST['id'], true);
         } else if ($action == "checkOutOther") {
-            $ret['code'] = 1;
-            checkOut($_POST['id'], null, null);
+            $ret = checkOut($_POST['id'], null, null);
         } else if ($action == "checkInOther") {
             $ret['code'] = 1;
-            checkIn($_POST['id'], $_POST['dept'], $_POST['notes'], $badgeID);
+            checkIn($_POST['id'], $_POST['start'], $_POST['dept'], $_POST['notes'], $badgeID);
         } else if ($action == "createUser") {
             $badgeID = $_POST['badgeid'];
             $ret['code'] = createUser($badgeID);
@@ -144,22 +168,6 @@ if ($user == null) {
         } else if ($action == "unclaimReward") {
             $ret['code'] = 1;
             $ret['val'] = unclaimReward($_POST['uid'], $_POST['type']);
-        }
-    }
-
-    // ADMIN FUNCTIONS
-    if (!$isAdmin && $ret['code'] === -1) {
-        $ret['code'] = 0;
-        $ret['msg'] = "Unauthorized.";
-    } else {
-        if ($action == "setSiteStatus") {
-            $status = $_POST['status'];
-            $ret['code'] = 1;
-            $ret['val'] = setSiteStatus($status);
-        } else if ($action == "setDevmode") {
-            $status = $_POST['status'];
-            $ret['code'] = 1;
-            $ret['val'] = setDevmode($status);
         } else if ($action == "setKioskAuth") {
             $status = $_POST['status'];
 
@@ -175,6 +183,22 @@ if ($user == null) {
             }
 
             $ret['code'] = 1;
+		}
+    }
+
+    // ADMIN FUNCTIONS
+    if (!$isAdmin && $ret['code'] === -1) {
+        $ret['code'] = 0;
+        $ret['msg'] = "Unauthorized.";
+    } else {
+        if ($action == "setSiteStatus") {
+            $status = $_POST['status'];
+            $ret['code'] = 1;
+            $ret['val'] = setSiteStatus($status);
+        } else if ($action == "setDevmode") {
+            $status = $_POST['status'];
+            $ret['code'] = 1;
+            $ret['val'] = setDevmode($status);
         } else if ($action == "setAdmin") {
             $badgeID = $_POST['badgeid'];
             $value = $_POST['value'];
@@ -205,7 +229,20 @@ if ($user == null) {
                 $ret['name'] = $user[0]['nickname'];
                 $ret['code'] = 1;
             }
-        } else if ($action == "setBanned") {
+        } else if ($action == "setLead") {
+            $badgeID = $_POST['badgeid'];
+            $value = $_POST['value'];
+
+            $user = getUserByID($badgeID, true);
+            if (!isset($user[0])) {
+                $ret['code'] = 0;
+                $ret['msg'] = "User with ID '$badgeID' not found!";
+            } else {
+                setLead($value, $badgeID);
+                $ret['name'] = $user[0]['nickname'];
+                $ret['code'] = 1;
+            }
+		} else if ($action == "setBanned") {
             $badgeID = $_POST['badgeid'];
             $value = $_POST['value'];
 
@@ -215,6 +252,9 @@ if ($user == null) {
             $ret['code'] = 1;
         } else if ($action == "getManagers") {
             $ret['val'] = getManagers();
+            $ret['code'] = 1;
+        } else if ($action == "getLeads") {
+            $ret['val'] = getLeads();
             $ret['code'] = 1;
         } else if ($action == "getBanned") {
             $ret['val'] = getBanned();

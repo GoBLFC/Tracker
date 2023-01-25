@@ -49,16 +49,19 @@ if ($type == "unclocked") {
 } else if ($type == "apps") {
     $title = "Volunteer Applications";
     //$header = array("ID", "Legal Name");
-    $header = array("ID", "Legal Name", "Badge Name", "Roles", "Assigned?", "", "Contact Pref", "Email", "Phone", "Telegram", "Twitter", "Facebook", "E-Contacts", "", "2018 Hours Recorded", "2019 Hours Desired", "W", "R", "F", "S", "U", "M", "T", "P", "Can't Miss", "", "Comments", "Previous BLFC Experience", "Other con experience", "Created At", "Updated", "");
+    $header = array("ID", "Legal Name", "Roles", "Assigned?", "Staff?", "", "Contact Pref", "Email", "Phone", "Telegram", "Twitter", "Discord", "2023 Hours Desired", "W", "R", "F", "S", "U", "M", "T", "P", "Can't Miss", "", "Comments", "Previous BLFC Experience", "Other con experience", "Created At", "Updated", "");
 
     $logs = getLogs();
 
-    $data = json_decode($_POST['appdata']);
+    //$data = json_decode($_POST['appdata']);
+	//echo getApps();
+	$userData = json_decode(getApps());
+	//print_r($userData);
 
     $departments = array();
-    foreach ($data as $td) {
-        foreach ($td->volunteerDepartments as $dept) {
-            $depname = $dept->department->name;
+    foreach ($userData as $td) {
+        foreach ($td->data as $user) {
+            $depname = $user->department->name;
             if (array_search($depname, $departments) === FALSE) {
                 $departments[] = $depname;
             }
@@ -74,25 +77,25 @@ if ($type == "unclocked") {
 
 <html>
 <head>
-    <script
-            src="https://code.jquery.com/jquery-3.3.1.min.js"
-            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-            crossorigin="anonymous"></script>
-    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.5.4/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.5.4/js/buttons.flash.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.5.4/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.5.4/js/buttons.print.min.js"></script>
+	<link rel="stylesheet" media="all" href="/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap/custom-css-bootstrap.css">
+	
+    <script src="/js/lib/jquery-3.3.1.min.js"></script>
 
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"/>
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.5.4/css/buttons.dataTables.min.css"/>
+    <script src="/js/lib/datatables/jquery.dataTables.min.js"></script>
+    <script src="/js/lib/datatables/dataTables.buttons.min.js"></script>
+    <script src="/js/lib/datatables/buttons.flash.min.js"></script>
+    <script src="/js/lib/datatables/jszip.min.js"></script>
+    <script src="/js/lib/datatables/pdfmake.min.js"></script>
+    <script src="/js/lib/datatables/vfs_fonts.js"></script>
+    <script src="/js/lib/datatables/buttons.html5.min.js"></script>
+    <script src="/js/lib/datatables/buttons.print.min.js"></script>
 
-    <link rel="stylesheet" media="all" href="/css/style.css">
-    <link rel="stylesheet" type="text/css" href="/css/custom-css-bootstrap.css">
 
+	
+    <link rel="stylesheet" href="/css/datatables/jquery.dataTables.min.css"/>
+    <link rel="stylesheet" href="/css/datatables/buttons.dataTables.min.css"/>
+	
     <title><?php echo "$title" ?></title>
 </head>
 
@@ -102,18 +105,10 @@ if ($type == "unclocked") {
 
 if ($type == "apps") {
     ?>
-    <form method="post" action="">
-        <div class="form-group">
-            <input type="text" class="form-control" id="appdata" name="appdata"
-                   placeholder="Application Data">
-            <small id="emailHelp" class="form-text text-muted">Copy paste data from <a
-                        href="https://reg.goblfc.org/api/volunteers" target="_blank">here</a></small>
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-    <?php
-    //echo  $_SESSION['accessToken'];
-    //print_r(getApps());
+
+<?php
+//echo  $_SESSION['accessToken'];
+//print_r(getApps());
 }
 ?>
 
@@ -194,111 +189,119 @@ if ($type == "apps") {
         echo " | Total Unique: " . sizeof($users['total']);
         echo " | Total Checkins: " . $totalCheckins;
     } else if ($type == "apps") {
-        if (isset($_POST['appdata'])) {
-            $data = str_replace("<", "&lt;", $_POST['appdata']);
-            $data = str_replace(">", "&gt;", $data);
-            $data = json_decode($data);
+		foreach ($userData->data as $td) {
+			$contacts = array();
+			$options = array();
 
-            foreach ($data as $td) {
-                if ($td->userId == 14378) continue;
-                echo "<tr>";
-                echo "<td>" . $td->userId . "</td>";
-                echo "<td>";
-                echo ($td->user->preferredName) ? $td->user->preferredName . " (" . $td->user->firstName . " " . $td->user->lastName . ")" : $td->user->firstName . " " . $td->user->lastName;
-                echo "</td>";
-                echo "<td>" . ((isset($td->user->registration->badgeName)) ? $td->user->registration->badgeName : "(UNREGISTERED)") . "</td>";
-                echo "<td>";
-                foreach ($td->user->roles as $role) {
-                    echo $role->name . ", ";
-                }
-                echo "</td>";
-                $assigned = "No";
-                foreach ($td->volunteerDepartments as $tddept) {
-                    if ($tddept->type == "assignment") {
-                        $assigned = "Yes";
-                    }
-                }
-                echo "<td>" . $assigned . "</td>";
-                echo "<td></td>";
-                echo "<td>" . $td->contactMethod . "</td>";
-                echo "<td>" . $td->user->email . "</td>";
-                echo "<td>" . $td->user->phone . "</td>";
-                echo "<td>" . $td->contactMethodTelegram . "</td>";
-                echo "<td>" . $td->contactMethodTwitter . "</td>";
-                echo "<td>" . $td->contactMethodFacebook . "</td>";
+			if ($td->user->id == 14378) continue;
+			echo "<tr>";
+			echo "<td>" . $td->user->id . "</td>";
+			echo "<td>";
+			echo ($td->user->preferredName) ? $td->user->preferredName . " (" . $td->user->firstName . " " . $td->user->lastName . ")" : $td->user->firstName . " " . $td->user->lastName;
+			echo "</td>";
+			//echo "<td>" . ((isset($td->user->registration->badgeName)) ? $td->user->registration->badgeName : "(UNREGISTERED)") . "</td>";
+			echo "<td>";
+			foreach ($td->departments as $dept) {
+				echo $dept->name . ", ";
+			}
+			echo "</td>";
+			$assigned = "No";
+			foreach ($td->departments as $dept){
+				foreach ($dept->states as $state) {
+					if ($state == "assignment") {
+						$assigned = "Yes";
+					}
+				}
+			}
+			
+			echo "<td>" . $assigned . "</td>";
+			echo "<td>" . (($td->user->isStaff) ? "Yes" : "No") . "</td>";
+			echo "<td></td>";
+			
+			$primaryContact = "";
+			foreach ($td->contactMethods as $contact){
+				$contacts[$contact->name]['value'] = $contact->value;
+				$contacts[$contact->name]['isPrimary'] = $contact->isPrimary;
+				if ($contact->isPrimary) $primaryContact = $contact->name;
+			}
+			
+			echo "<td>" . $primaryContact  . "</td>";
+			echo "<td>" . $td->user->email . "</td>";
+			echo "<td>" . $td->user->phone . "</td>";
+			echo "<td>" . $contacts['telegram']['value'] . "</td>";
+			echo "<td>" . $contacts['twitter']['value'] . "</td>";
+			echo "<td>" . $contacts['discord']['value'] . "</td>";
+			#echo "<td>" . $td->contactMethodFacebook . "</td>";
 
-                echo "<td>";
-                if (isset($td->user->registration->emergencyContactName1)) {
-                    echo $td->user->registration->emergencyContactName1 . ": " . $td->user->registration->emergencyContactPhone1;
-                }
-                if (isset($td->user->registration->emergencyContactName2)) {
-                    echo " | " . $td->user->registration->emergencyContactName2 . ": " . $td->user->registration->emergencyContactPhone2;
-                }
-                echo "</td>";
+			#echo "<td>";
+			#if (isset($td->user->registration->emergencyContactName1)) {
+			#    echo $td->user->registration->emergencyContactName1 . ": " . $td->user->registration->emergencyContactPhone1;
+			#}
+			#if (isset($td->user->registration->emergencyContactName2)) {
+			#    echo " | " . $td->user->registration->emergencyContactName2 . ": " . $td->user->registration->emergencyContactPhone2;
+			#}
+			#echo "</td>";
 
-                echo "<td></td>";
-                echo "<td>";
-                foreach ($td->user->previousVolunteers as $hours) {
-                    if ($hours->conventionId == "2018") echo $hours->workedHours;
-                }
-                echo "</td>";
-                echo "<td>" . $td->availableHours . "</td>";
-                echo "<td>";
-                if ($td->availableDaysWednesday) echo "W";
-                echo "</td>";
-                echo "<td>";
-                if ($td->availableDaysThursday) echo "R";
-                echo "</td>";
-                echo "<td>";
-                if ($td->availableDaysFriday) echo "F";
-                echo "</td>";
-                echo "<td>";
-                if ($td->availableDaysSaturday) echo "S";
-                echo "</td>";
-                echo "<td>";
-                if ($td->availableDaysSunday) echo "U";
-                echo "</td>";
-                echo "<td>";
-                if ($td->availableDaysMonday) echo "M";
-                echo "</td>";
-                echo "<td>";
-                if ($td->availableDaysTuesday) echo "T";
-                echo "</td>";
-                echo "<td>";
-                if ($td->availableBeforeCon) echo "P";
-                echo "</td>";
-                echo "<td>" . $td->eventsCanNotMiss . "</td>";
-                echo "<td></td>";
-                echo "<td>" . $td->anythingElse . "</td>";
-                echo "<td>" . $td->previousConExperience . "</td>";
-                echo "<td>" . $td->previousOtherExperience . "</td>";
-                echo "<td>" . $td->createdAt . "</td>";
-                echo "<td>" . $td->updatedAt . "</td>";
+			foreach ($td->options as $option){
+				$options[$option->name] = $option->value;
+			}
+			
+			echo "<td>" . $options['Available Hours'] . "</td>";
+			echo "<td>";
+			if (in_array("Wednesday", $options['Volunteer Days'])) echo "W";
+			echo "</td>";
+			echo "<td>";
+			if (in_array("Thursday", $options['Volunteer Days'])) echo "R";
+			echo "</td>";
+			echo "<td>";
+			if (in_array("Friday", $options['Volunteer Days'])) echo "F";
+			echo "</td>";
+			echo "<td>";
+			if (in_array("Saturday", $options['Volunteer Days'])) echo "S";
+			echo "</td>";
+			echo "<td>";
+			if (in_array("Sunday", $options['Volunteer Days'])) echo "U";
+			echo "</td>";
+			echo "<td>";
+			if (in_array("Monday", $options['Volunteer Days'])) echo "M";
+			echo "</td>";
+			echo "<td>";
+			if (in_array("Tuesday", $options['Volunteer Days'])) echo "T";
+			echo "</td>";
+			echo "<td>";
+			echo $options['Are you available to help out in the months before the con?'] . "</td>";
+			echo "</td>";
+			echo "<td>" . $options['Are there any events you can not miss? [Optional]'] . "</td>";
+			echo "<td></td>";
+			echo "<td>" . $options['Is there anything else you would like to mention?'] . "</td>";
+			echo "<td>" . $options['Have you previously volunteered with Further Confusion? If so, what did you do? [Optional]'] . "</td>";
+			echo "<td>" . $options['Have you previously volunteered for another convention? If so, which? [Optional]'] . "</td>";
+			echo "<td>" . $td->createdAt . "</td>";
+			echo "<td>" . $td->updatedAt . "</td>";
 
-                echo "<td></td>";
-                foreach ($departments as $dept) {
-                    echo "<td>";
-                    $state = "";
-                    foreach ($td->volunteerDepartments as $tddept) {
-                        if ($dept == $tddept->department->name) {
-                            if ($tddept->type == "avoid" OR $state == "X") {
-                                $state = "X";
-                            } else if ($tddept->type == "assignment" or $state == "✓") {
-                                $state = "✓";
-                            } else if ($tddept->type == "experience") {
-                                $state .= "!";
-                            } else if ($tddept->type == "interest") {
-                                $state .= "♥";
-                            }
-                        }
-                    }
-                    echo $state;
-                    echo "</td>";
-                }
+			echo "<td></td>";
+			foreach ($departments as $dept) {
+				echo "<td>";
+				$state = "";
+				foreach ($td->volunteerDepartments as $tddept) {
+					if ($dept == $tddept->department->name) {
+						if ($tddept->type == "avoid" OR $state == "X") {
+							$state = "X";
+						} else if ($tddept->type == "assignment" or $state == "✓") {
+							$state = "✓";
+						} else if ($tddept->type == "experience") {
+							$state .= "!";
+						} else if ($tddept->type == "interest") {
+							$state .= "♥";
+						}
+					}
+				}
+				echo $state;
+				echo "</td>";
+			}
 
-                echo "</tr>";
-            }
-        }
+			echo "</tr>";
+		}
     }
     ?>
 
@@ -334,7 +337,7 @@ if ($type == "apps") {
                                         </thead>
                                         <tbody id="uRow">
                                         <?php
-                                        foreach ($data as $td) {
+                                        foreach ($userData as $td) {
                                             foreach ($departments as $dept) {
                                                 if (!isset($deptSummary[$dept])) {
                                                     $deptSummary[$dept]['count'] = 0;

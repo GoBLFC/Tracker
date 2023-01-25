@@ -2,7 +2,7 @@
 if (!defined('TRACKER')) die('No.');
 
 /*---------------Start of SQL Config---------------*/
-$host = "localhost";
+$host = "10.10.0.30";
 $user = "blfc";
 $sqlpass = "0m3cV37F0Cw4reYx";
 $dataBase = "blfc_vtracker";

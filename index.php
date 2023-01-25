@@ -13,6 +13,7 @@ $siteStatus = getSiteStatus();
 $kioskAuth = (isset($_COOKIE['kiosknonce']) && sizeof(checkKiosk($_COOKIE['kiosknonce']))) >= 1 ? 1 : 0;
 $isAdmin = isAdmin($badgeID);
 $isManager = isManager($badgeID);
+$isLead = isLead($badgeID);
 $isBanned = isbanned($badgeID);
 $notifs = getNotifications($badgeID, 1);
 
@@ -24,6 +25,8 @@ if ($page == "admin" && $isAdmin) {
     include('pages/admin.php');
 } else if ($page == "manage" && ($isManager || $isAdmin)) {
     include('pages/manage.php');
+} else if ($page == "lead" && $isLead) {
+    include('pages/lead.php');
 } else if ($page == "sso") {
     require_once('vendor/autoload.php');
     include('pages/sso.php');

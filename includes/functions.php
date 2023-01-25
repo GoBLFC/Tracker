@@ -158,7 +158,7 @@ function getDepartments($hidden)
 function updateSession($id, $fName, $lName, $nName, $session)
 {
     global $db;
-    $stmt = $db->prepare("INSERT INTO `users` (`id`, `first_name`, `last_name`, `nickname`, `admin`, `manager`, `last_session`, `last_ip`, `registered`, `reg_ua`, `tg_uid`) VALUES (:id, :fName, :lName, :nName, 0, 0, :lastsession, :lastip, NOW(), :regua, :tgid) ON DUPLICATE KEY UPDATE `first_name` = :fName2, `last_name` = :lName2, `nickname` = :nName2, `last_session` = :lastsession2, `last_ip` = :lastip2, `last_login` = NOW()");
+    $stmt = $db->prepare("INSERT INTO `users` (`id`, `first_name`, `last_name`, `nickname`, `admin`, `manager`, `last_session`, `last_ip`, `registered`, `reg_ua`, `tg_uid`) VALUES (:id, :fName, :lName, :nName, 0, 0, :lastsession, :lastip, NOW(), :regua, :tgid) ON DUPLICATE KEY UPDATE `first_name` = :fName2, `last_name` = :lName2, `nickname` = :nName2, `last_session` = :lastsession2, `last_ip` = :lastip2, `last_login` = NOW(), `tg_quickcode` = NULL");
     //$stmt = $db->prepare("UPDATE `users` SET `last_session` = :lastsession, `last_ip` = :lastip WHERE `users`.`id` = :id");
     $stmt->bindValue(':id', $id, PDO::PARAM_INT);
     $stmt->bindValue(':fName', $fName, PDO::PARAM_STR);
@@ -174,6 +174,44 @@ function updateSession($id, $fName, $lName, $nName, $session)
     $stmt->bindValue(':lastip', $_SERVER["HTTP_CF_CONNECTING_IP"], PDO::PARAM_STR);
     $stmt->bindValue(':lastip2', $_SERVER["HTTP_CF_CONNECTING_IP"], PDO::PARAM_STR);
     $stmt->execute();
+}
+
+function generateQuickCode($uid)
+{
+	$code = rand(1001, 9998);
+
+    global $db;
+
+    // Update chat ID and invalidate UID
+    $stmt = $db->prepare("UPDATE `users` SET `tg_quickcode` = :quickcode , `tg_quickcodetime` = NOW() WHERE `users`.`id` = :uid;");
+	$stmt->bindValue(':quickcode', $code, PDO::PARAM_INT);
+	$stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
+    $stmt->execute();
+	
+	return $code;
+}
+
+function checkQuickCode($code)
+{
+	global $db;
+
+    // Update chat ID and invalidate UID
+    $stmt = $db->prepare("SELECT * FROM `users` WHERE `tg_quickcode` = :quickcode AND `tg_quickcodetime` BETWEEN NOW() - INTERVAL 30 SECOND AND NOW();");
+	$stmt->bindValue(':quickcode', intval($code), PDO::PARAM_INT);
+	$stmt->execute();
+
+    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	
+	if (sizeof($result) == 0) {
+		$ret['code'] = -1;
+	}else{
+		$ret['code'] = 1;
+        //$ret['msg'] = "Good Code! " + $result[0]['id'];
+        $ret['id'] = $result[0]['id'];		
+		$ret['session'] = userSignIn($result[0]['id'], $result[0]['first_name'], $result[0]['last_name'], $result[0]['nickname']);		
+	}
+	
+	return $ret;
 }
 
 function updateTGChat($chatID, $tguid)
@@ -265,6 +303,15 @@ function setManager($value, $badgeID)
     $stmt->execute();
 }
 
+function setLead($value, $badgeID)
+{
+    global $db;
+    $stmt = $db->prepare("UPDATE `users` SET `lead` = :value WHERE `users`.`id` = :id");
+    $stmt->bindValue(':id', $badgeID, PDO::PARAM_INT);
+    $stmt->bindValue(':value', $value, PDO::PARAM_INT);
+    $stmt->execute();
+}
+
 function addDept($name, $hidden)
 {
     global $db;
@@ -278,8 +325,10 @@ function addDept($name, $hidden)
 
 function addReward($name, $desc, $hours, $type, $hidden)
 {
+	if ($hidden == -1) $hidden = 0;
+	
     global $db;
-    $stmt = $db->prepare("INSERT INTO `rewards` (`id`, `name`, `desc`, `hours`, `type`) VALUES (NULL, :name, :desc, :hours, :type1, $hidden);");
+    $stmt = $db->prepare("INSERT INTO `rewards` (`id`, `name`, `desc`, `hours`, `type`, `hidden`) VALUES (NULL, :name, :desc, :hours, :type1, :hidden);");
     $stmt->bindValue(':name', $name, PDO::PARAM_STR);
     $stmt->bindValue(':desc', $desc, PDO::PARAM_STR);
     $stmt->bindValue(':hours', $hours, PDO::PARAM_INT);
@@ -352,6 +401,14 @@ function getManagers()
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+function getLeads()
+{
+    global $db;
+    $stmt = $db->prepare("SELECT * FROM `users` WHERE `lead` = 1");
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
 function getBanned()
 {
     global $db;
@@ -412,11 +469,11 @@ function getEligibleRewards($uid)
     // Current claims
     $earnedHours = (calculateBonusTime($uid, false) + getMinutesTotal($uid)) / 60;
     $claims = getRewardClaims($uid);
-    $rewards = getRewards(true, false);
+    $rewards = getRewards(false, false);
 
     $availRewards = [];
     foreach ($rewards as $reward) {
-        if ($reward['hours'] == 0) continue;
+        //if ($reward['hours'] == 0) continue;
 
         $availRewards[$reward['id']] = $reward;
         $availRewards[$reward['id']]['claimed'] = false;
@@ -449,6 +506,16 @@ function unclaimReward($uid, $type)
     $stmt = $db->prepare("DELETE FROM `claims` WHERE `claims`.`uid` = :uid AND `claim` = :type1");
     $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
     $stmt->bindValue(':type1', $type, PDO::PARAM_STR);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function removeNotification($uid, $reward)
+{
+    global $db;
+    $stmt = $db->prepare("DELETE FROM `notifications` WHERE `notifications`.`reward` = :reward AND `uid` = :uid");
+    $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
+    $stmt->bindValue(':reward', $reward, PDO::PARAM_INT);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
@@ -506,11 +573,15 @@ function removeTime($id)
     $stmt->execute();
 }
 
-function checkIn($uid, $dept, $notes, $addedBy)
+function checkIn($uid, $start, $dept, $notes, $addedBy)
 {
     global $db;
-    $stmt = $db->prepare("INSERT INTO `tracker` (`uid`, `checkin`, `dept`, `notes`, `addedby`) VALUES (:uid, CURRENT_TIMESTAMP, :dept, :notes, :uid2)");
+	
+	if ($start == null) $start = "now";
+
+    $stmt = $db->prepare("INSERT INTO `tracker` (`uid`, `checkin`, `dept`, `notes`, `addedby`) VALUES (:uid, :checkin, :dept, :notes, :uid2)");
     $stmt->bindValue(':uid', $uid, PDO::PARAM_INT);
+    $stmt->bindValue(':checkin', date("Y-m-d H:i:s", strtotime($start)), PDO::PARAM_STR);
     $stmt->bindValue(':notes', $notes, PDO::PARAM_STR);
     $stmt->bindValue(':uid2', $addedBy, PDO::PARAM_INT);
     $stmt->bindValue(':dept', $dept, PDO::PARAM_INT);
@@ -766,26 +837,27 @@ function calculateBonusTime($uid, $array)
             //$trackers[$period['dept']][] = $result;
 
             if ($array) {
-                $timestamp = strtotime($result['checkin']);
-
+                //$timestamp = strtotime($result['checkin']);
+				$id = $result['id'];
+				
                 $worked = strtotime($checkout) - strtotime($result['checkin']);
 
                 // Redo dates for short format
                 $checkin = date("M d h:i:sA", strtotime($result['checkin']));
 
-                if (!isset($entries[$timestamp]['bonus'])) $entries[$timestamp]['bonus'] = 0;
-                if (!isset($entries[$timestamp]['overlap'])) $entries[$timestamp]['overlap'] = 0;
+                if (!isset($entries[$id]['bonus'])) $entries[$id]['bonus'] = 0;
+                if (!isset($entries[$id]['overlap'])) $entries[$id]['overlap'] = 0;
 
-                $entries[$timestamp]['id'] = $result['id'];
-                $entries[$timestamp]['dept'] = $result['dept'];
-                $entries[$timestamp]['auto'] = $result['auto'];
-                $entries[$timestamp]['worked'] = $worked;
-                $entries[$timestamp]['bonus'] += $result['bonus'];
-                $entries[$timestamp]['overlap'] += $result['overlap'];
-                $entries[$timestamp]['checkin'] = $checkin;
-                $entries[$timestamp]['checkout'] = $result['checkout'];
-                $entries[$timestamp]['notes'] = $result['notes'];
-                $entries[$timestamp]['ongoing'] = !$result['checkout'];
+                $entries[$id]['id'] = $result['id'];
+                $entries[$id]['dept'] = $result['dept'];
+                $entries[$id]['auto'] = $result['auto'];
+                $entries[$id]['worked'] = $worked;
+                $entries[$id]['bonus'] += $result['bonus'];
+                $entries[$id]['overlap'] += $result['overlap'];
+                $entries[$id]['checkin'] = $checkin;
+                $entries[$id]['checkout'] = $result['checkout'];
+                $entries[$id]['notes'] = $result['notes'];
+                $entries[$id]['ongoing'] = !$result['checkout'];
             }
         }
     }
@@ -808,26 +880,58 @@ function overlapInMinutes($startDate1, $endDate1, $startDate2, $endDate2)
     return $overlap > 0 ? $overlap : 0;
 }
 
-function getApps()
+function userSignIn($badgeID, $firstName, $lastName, $username)
 {
-    return jwt_request("https://reg.goblfc.org/api/volunteers?client_id=4", $_SESSION['accessToken'], array());
+	session_regenerate_id();
+
+	$_SESSION['badgeid'] = $badgeID;
+
+	setcookie("badge", $badgeID, 0, "/");
+	setcookie("session", session_id(), 0, "/");
+	if (isset($isAdmin) && ($isAdmin || $isManager)) addLog($badgeID, "logIn", "ip:" . $_SERVER["HTTP_CF_CONNECTING_IP"]);
+	//die(print_r($userInfo));
+	updateSession($badgeID, $firstName, $lastName, $username, session_id());
+	
+	return session_id();
 }
 
-function jwt_request($url, $token, $post)
+function getToken(){
+	$data = array(
+		'client_id' => '4',
+		'client_secret' => '7D863CA4-E42B-4345-9DC6-4ADD479917EE',
+		'grant_type' => 'client_credentials',
+		'scope' => 'volunteer:read',
+	);
+	$req = jwt_request("https://reg.goblfc.org/api/oauth/token", $_SESSION['accessToken'], $data, true);
+	return $req;
+}
+
+function getApps()
 {
-    header('Content-Type: application/json'); // Specify the type of data
+    return jwt_request("https://reg.goblfc.org/api/v0/volunteers/search", json_decode(getToken())->access_token, array(), false);
+}
+
+function jwt_request($url, $token, $post, $content)
+{
+    //header('Content-Type: application/json'); // Specify the type of data
     $ch = curl_init($url); // Initialise cURL
-    $post = json_encode($post); // Encode the data array into a JSON string
     $authorization = "Authorization: Bearer " . $token; // Prepare the authorisation token
     //echo $authorization;
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', $authorization)); // Inject the token into the header
+	
+	if ($content){
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
+	    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post)); // Set the posted fields
+    }else{
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', $authorization)); // Inject the token into the header
+		curl_setopt($ch, CURLOPT_POSTFIELDS, "{}"); // Set the posted fields
+	}
+	
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    //curl_setopt($ch, CURLOPT_POST, 1); // Specify the request method as POST
-    //curl_setopt($ch, CURLOPT_POSTFIELDS, $post); // Set the posted fields
+    curl_setopt($ch, CURLOPT_POST, 1); // Specify the request method as POST
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1); // This will follow any redirects
     $result = curl_exec($ch); // Execute the cURL statement
     curl_close($ch); // Close the cURL connection
-    return json_decode($result); // Return the received data
+    return $result; // Return the received data
 }
 
 // Jank-ass permission check until we can do it via API somehow
@@ -842,6 +946,13 @@ function isManager($id)
 {
     $user = getUserByID($id, true);
     if (isset($user[0]) && $user[0]['manager'] == 1) return true;
+    return false;
+}
+
+function isLead($id)
+{
+    $user = getUserByID($id, true);
+    if (isset($user[0]) && $user[0]['lead'] == 1) return true;
     return false;
 }
 

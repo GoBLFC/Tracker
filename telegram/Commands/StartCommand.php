@@ -63,7 +63,7 @@ class StartCommand extends SystemCommand
         // Validate UID
         $tguid = $message->getText(true);
 
-        $keyboard = new Keyboard('/hours - Show my hours clocked', '/rewards - Show available rewards');
+        $keyboard = new Keyboard('/code - Get quick sign-in code', '/hours - Show my hours clocked', '/rewards - Show available rewards');
 
         $keyboard
             ->setResizeKeyboard(true)

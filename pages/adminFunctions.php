@@ -1,5 +1,5 @@
 <?php
-if (isManager($badgeID) || isAdmin($badgeID)) {
+if (isManager($badgeID) || isAdmin($badgeID) || isLead($badgeID)) {
     ?>
     <div class="card">
         <div class="card-header">
@@ -7,6 +7,15 @@ if (isManager($badgeID) || isAdmin($badgeID)) {
         </div>
         <div class="row">
             <?php
+			if (isLead($badgeID)) {
+                ?>
+                <div class="col-sm">
+                    <a role="button" class="btn btn-light" href="lead" style="width:100%;margin-bottom: 5px">Lead
+                        Panel
+                    </a>
+                </div>
+                <?php
+            }
             if (isManager($badgeID) || isAdmin($badgeID)) {
                 ?>
                 <div class="col-sm">

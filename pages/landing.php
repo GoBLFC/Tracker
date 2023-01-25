@@ -139,8 +139,9 @@ if ($cDept) $cDept = $cDept[0];
                 <ul class="list-unstyled" style="color:black; margin-left: 30px;">
                     <li>This bot can provide you:</li>
                     <ul>
-                        <li>Hours clocked</li>
+                        <li>Hours Clocked</li>
                         <li>Eligible Rewards</li>
+                        <li>Quick Login Code</li>
                     </ul>
                     </li>
                     <li>This bot will also:</li>

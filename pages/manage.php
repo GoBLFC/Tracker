@@ -95,14 +95,14 @@ if (!isManager($badgeID) && !isAdmin($badgeID)) die('Unauthorized.');
                                             <thead style="">
                                             <tr style="">
                                                 <?php
-                                                foreach (getRewards(false, false) as $reward) echo "<th scope=\"col\">" . $reward['name'] . "</th>";
+                                                foreach (getRewards(false, true) as $reward) echo "<th scope=\"col\">" . $reward['name'] . "</th>";
                                                 ?>
                                             </tr>
                                             </thead>
                                             <tbody>
                                             <tr id="rewards">
                                                 <?php
-                                                foreach (getRewards(false, false) as $reward) echo "                                                <td>
+                                                foreach (getRewards(false, true) as $reward) echo "                                                <td>
                                                     <button type=\"button\" class=\"btn btn-sm btn-danger\"
                                                             data-type=\"reward\" data-id=\"" . $reward['id'] . "\" data-state=\"unclaimed\"
                                                             onclick=\"toggleClaim(this)\">Claim
@@ -214,6 +214,25 @@ if (!isManager($badgeID) && !isAdmin($badgeID)) die('Unauthorized.');
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+					
+                    <div class="card">
+                        <div class="card-header cadHeader">
+                            <div>Kiosk Settings</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm">
+                                <div class="card-header cadBody">
+									<center>
+										<button data-status=<?php echo $kioskAuth ?> onclick="toggleKiosk(this)"
+												type="button"
+												class="btn btn-sm btn-<?php echo($kioskAuth == 1 ? "danger" : "warning") ?>
+										"><?php echo($kioskAuth == 1 ? "Deauthorize" : "Authorize") ?> Kiosk
+										</button>
+									</center>
                                 </div>
                             </div>
                         </div>
