@@ -173,8 +173,8 @@ function updateSession($id, $fName, $lName, $nName, $session)
     $stmt->bindValue(':lastsession', $session, PDO::PARAM_STR);
     $stmt->bindValue(':lastsession2', $session, PDO::PARAM_STR);
     $stmt->bindValue(':regua', $_SERVER['HTTP_USER_AGENT'], PDO::PARAM_STR);
-    $stmt->bindValue(':lastip', $_SERVER["HTTP_CF_CONNECTING_IP"], PDO::PARAM_STR);
-    $stmt->bindValue(':lastip2', $_SERVER["HTTP_CF_CONNECTING_IP"], PDO::PARAM_STR);
+    $stmt->bindValue(':lastip', $_SERVER["REMOTE_ADDR"], PDO::PARAM_STR);
+    $stmt->bindValue(':lastip2', $_SERVER["REMOTE_ADDR"], PDO::PARAM_STR);
     $stmt->execute();
 }
 
@@ -890,7 +890,7 @@ function userSignIn($badgeID, $firstName, $lastName, $username)
 
 	setcookie("badge", $badgeID, 0, "/");
 	setcookie("session", session_id(), 0, "/");
-	if (isset($isAdmin) && ($isAdmin || $isManager)) addLog($badgeID, "logIn", "ip:" . $_SERVER["HTTP_CF_CONNECTING_IP"]);
+	if (isset($isAdmin) && ($isAdmin || $isManager)) addLog($badgeID, "logIn", "ip:" . $_SERVER["REMOTE_ADDR"]);
 	//die(print_r($userInfo));
 	updateSession($badgeID, $firstName, $lastName, $username, session_id());
 	
