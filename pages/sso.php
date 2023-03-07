@@ -20,9 +20,7 @@ setcookie("badge", $badgeID);
 setcookie("session", session_id());
 updateSession($badgeID, session_id());
 */
-?>
 
-<?php
 if (!defined('TRACKER')) {
     define('TRACKER', TRUE);
 

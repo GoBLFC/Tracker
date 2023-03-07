@@ -19,9 +19,11 @@ $isLead = isLead($badgeID);
 $isBanned = isbanned($badgeID);
 $notifs = getNotifications($badgeID, 1);
 
-include('pages/headerhtml.php');
-
 if (isset($_GET['page'])) $page = $_GET['page'];
+
+if (!(isset($page) && $page == "sso")) {
+    include('pages/headerhtml.php');
+}
 
 if ($page == "admin" && $isAdmin) {
     include('pages/admin.php');
