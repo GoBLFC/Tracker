@@ -1,4 +1,7 @@
 <?php
+
+require "../config.php";
+
 // Load composer
 use Longman\TelegramBot\Request;
 
@@ -7,15 +10,6 @@ define('TRACKER', TRUE);
 require dirname( __DIR__ , 1 ) . '/vendor/autoload.php';
 include(dirname( __DIR__ , 1 ) . '/includes/sql.php');
 include(dirname( __DIR__ , 1 ) . '/includes/functions.php');
-
-$bot_api_key = '821217613:AAFppYNuWAgLULFFKj93CQNh1eBVpIULSvY';
-$bot_username = 'BLFC_BOT';
-
-// Define all IDs of admin users in this array (leave as empty array if not used)
-$admin_users = [
-//    123,
-    585471691, 274776646
-];
 
 // Define all paths for your custom commands in this array (leave as empty array if not used)
 $commands_paths = [
@@ -32,13 +26,13 @@ $commands_paths = [
 
 try {
     // Create Telegram API object
-    $telegram = new Longman\TelegramBot\Telegram($bot_api_key, $bot_username);
+    $telegram = new Longman\TelegramBot\Telegram($BOT_API_KEY, $BOT_USERNAME);
 
     // Add commands paths containing your custom commands
     $telegram->addCommandsPaths($commands_paths);
 
     // Enable admin users
-    $telegram->enableAdmins($admin_users);
+    $telegram->enableAdmins($BOT_ADMINS);
 
     // Enable MySQL
     //$telegram->enableMySql($mysql_credentials);

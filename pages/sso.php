@@ -27,6 +27,7 @@ if (!defined('TRACKER')) {
     define('TRACKER', TRUE);
 
     // Included from index
+    require "../main.php";
     require_once('../vendor/autoload.php');
     include('../includes/header.php');
 } else {
@@ -35,12 +36,12 @@ if (!defined('TRACKER')) {
 }
 
 $provider = new \League\OAuth2\Client\Provider\GenericProvider([
-    'clientId' => '4',
-    'clientSecret' => '7D863CA4-E42B-4345-9DC6-4ADD479917EE',
-    'redirectUri' => 'https://tracker.goblfc.org/pages/sso.php',
-    'urlAuthorize' => 'https://reg.goblfc.org/oauth/authorize',
-    'urlAccessToken' => 'https://reg.goblfc.org/api/oauth/token',
-    'urlResourceOwnerDetails' => 'https://reg.goblfc.org/api/users/current',
+    'clientId' => $OAUTH_CLIENT_ID,
+    'clientSecret' => $OAUTH_CLIENT_SECRET,
+    'redirectUri' => "{$CANONICAL_URL}/pages/sso.php",
+    'urlAuthorize' => "{$OAUTH_CONCAT_BASE_URL}/oauth/authorize",
+    'urlAccessToken' => "{$OAUTH_CONCAT_BASE_URL}/api/oauth/token",
+    'urlResourceOwnerDetails' => "{$OAUTH_CONCAT_BASE_URL}/api/users/current",
     'scopes' => 'pii:basic',
 ]);
 

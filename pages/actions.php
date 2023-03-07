@@ -9,6 +9,7 @@ header('Content-type: application/json');
 
 define('TRACKER', TRUE);
 
+require "../main.php";
 include('../includes/header.php');
 
 $user = isValidSession($session, $badgeID);

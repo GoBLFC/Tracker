@@ -1,6 +1,8 @@
 <?php
 if (!defined('TRACKER')) die('No.');
 
+require ROOT_DIR . "/config.php";
+
 include('sql.php');
 include('functions.php');
 
@@ -32,9 +34,9 @@ if (isset($_GET['logout'])) {
     //header('Location: /');
 	
 	if (isset($_SESSION['accessToken'])){
-		header("Refresh:0; url=https://reg.goblfc.org/oauth/logout?next=https%3A%2F%2Ftracker.goblfc.org%2F&client_id=4&access_token=" . $_SESSION['accessToken'], true, 303);
+		header("Refresh:0; url={$OAUTH_CONCAT_BASE_URL}/oauth/logout?next={urlencode($CANONICAL_URL)}&client_id={$OAUTH_CLIENT_ID}&access_token=" . $_SESSION['accessToken'], true, 303);
 	}else{
-		header("Refresh:0; url=https://tracker.goblfc.org", true, 303);
+		header("Refresh:0; url=$CANONICAL_URL", true, 303);
 	}
 	
 	session_unset();

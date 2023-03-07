@@ -1,18 +1,16 @@
 <?php
 
+require "../config.php";
+
 // Load composer
 require __DIR__ . '/vendor/autoload.php';
 
-$bot_api_key = '821217613:AAFppYNuWAgLULFFKj93CQNh1eBVpIULSvY';
-$bot_username = 'BLFC_BOT';
-$hook_url = 'https://tracker.goblfc.org/telegram/hook.php';
-
 try {
     // Create Telegram API object
-    $telegram = new Longman\TelegramBot\Telegram($bot_api_key, $bot_username);
+    $telegram = new Longman\TelegramBot\Telegram($BOT_API_KEY, $BOT_USERNAME);
 
     // Set webhook
-    $result = $telegram->setWebhook($hook_url);
+    $result = $telegram->setWebhook("{$CANONICAL_URL}/telegram/hook.php");
     if ($result->isOk()) {
         echo $result->getDescription();
     }

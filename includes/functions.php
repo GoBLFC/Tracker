@@ -6,6 +6,8 @@
  * Time: 4:29 PM
  */
 
+require ROOT_DIR . "/config.php";
+
 function isValidSession($session, $badge)
 {
     if ($badge == "") return false;
@@ -896,18 +898,22 @@ function userSignIn($badgeID, $firstName, $lastName, $username)
 }
 
 function getToken(){
+    global $OAUTH_CLIENT_ID;
+    global $OAUTH_CLIENT_SECRET;
+    global $OAUTH_CONCAT_BASE_URL;
 	$data = array(
-		'client_id' => '4',
-		'client_secret' => '7D863CA4-E42B-4345-9DC6-4ADD479917EE',
+		'client_id' => $OAUTH_CLIENT_ID,
+		'client_secret' => $OAUTH_CLIENT_SECRET,
 		'grant_type' => 'client_credentials',
 		'scope' => 'volunteer:read',
 	);
-	$req = jwt_request("https://reg.goblfc.org/api/oauth/token", $_SESSION['accessToken'], $data, true);
+	$req = jwt_request("{$OAUTH_CONCAT_BASE_URL}/api/oauth/token", $_SESSION['accessToken'], $data, true);
 	return $req;
 }
 
 function getApps($nextPage)
 {
+    global $OAUTH_CONCAT_BASE_URL;
 	if ($nextPage != ""){
 		$data = json_encode(array(
 			"nextPage"  => $nextPage,
@@ -916,7 +922,7 @@ function getApps($nextPage)
 		$data = "{}";
 	}
 		
-    return jwt_request("https://reg.goblfc.org/api/v0/volunteers/search", json_decode(getToken())->access_token, $data, false);
+    return jwt_request("{$OAUTH_CONCAT_BASE_URL}/api/v0/volunteers/search", json_decode(getToken())->access_token, $data, false);
 }
 
 function jwt_request($url, $token, $post, $content)

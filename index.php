@@ -1,6 +1,8 @@
 <?php
 define('TRACKER', TRUE);
 
+require "main.php";
+
 include('includes/header.php');
 
 // TODO: Replace most of the individual variables with user/site objects to reduce queries and make it cleaner

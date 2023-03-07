@@ -6,6 +6,8 @@
  * Time: 11:12 PM
  */
 define('TRACKER', TRUE);
+
+require "../main.php";
 include('../includes/header.php');
 
 if (!isAdmin($badgeID)) die('Unauthorized.');

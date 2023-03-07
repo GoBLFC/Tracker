@@ -1,5 +1,7 @@
 <?php
 
+require "../config.php";
+
 namespace Longman\TelegramBot\Commands\SystemCommands;
 
 //if (php_sapi_name() != 'cli') die('No.');
@@ -16,15 +18,15 @@ require_once('../vendor/autoload.php');
 
 function sendTGMessage($userID, $message)
 {
-    $bot_api_key = '821217613:AAFppYNuWAgLULFFKj93CQNh1eBVpIULSvY';
-    $bot_username = 'BLFC_BOT';
+    global $BOT_API_KEY;
+    global $BOT_USERNAME;
 
     $user = getUserByID($userID, true)[0];
     if ($user['tg_chatid'] == "") return "User does not have a chat ID!";
 
     try {
         // Create Telegram API object
-        $telegram = new Telegram($bot_api_key, $bot_username);
+        $telegram = new Telegram($BOT_API_KEY, $BOT_USERNAME);
 
         return Request::sendMessage([
             'chat_id' => $user['tg_chatid'],
