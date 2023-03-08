@@ -11,9 +11,9 @@
 namespace Longman\TelegramBot\Commands\SystemCommands;
 
 use Longman\TelegramBot\Commands\SystemCommand;
-use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Request;
 use Longman\TelegramBot\Entities\Keyboard;
+use Longman\TelegramBot\Entities\ServerResponse;
 
 /**
  * Start command
@@ -53,7 +53,7 @@ class StartCommand extends SystemCommand
      * @return \Longman\TelegramBot\Entities\ServerResponse
      * @throws \Longman\TelegramBot\Exception\TelegramException
      */
-    public function execute()
+    public function execute(): ServerResponse
     {
         $message = $this->getMessage();
 

@@ -7,13 +7,14 @@ use Longman\TelegramBot\Request;
 
 define('TRACKER', TRUE);
 
-require dirname( __DIR__ , 1 ) . '/vendor/autoload.php';
-include(dirname( __DIR__ , 1 ) . '/includes/sql.php');
-include(dirname( __DIR__ , 1 ) . '/includes/functions.php');
+require "../main.php";
+require ROOT_DIR . "/vendor/autoload.php";
+include ROOT_DIR . "/includes/sql.php";
+include ROOT_DIR . "/includes/functions.php";
 
 // Define all paths for your custom commands in this array (leave as empty array if not used)
 $commands_paths = [
-    './Commands/',
+    "Commands",
 ];
 
 // Enter your MySQL database credentials
