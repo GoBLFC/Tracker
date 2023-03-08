@@ -3,7 +3,7 @@
 require "../config.php";
 
 // Load composer
-require "/vendor/autoload.php";
+require "../vendor/autoload.php";
 
 try {
     // Create Telegram API object
