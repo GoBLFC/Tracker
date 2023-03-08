@@ -134,7 +134,7 @@ if ($cDept) $cDept = $cDept[0];
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <img src="https://chart.googleapis.com/chart?chs=500x500&amp;cht=qr&amp;chl=<?php echo urlencode("https://t.me/BLFC_BOT?start=" . getTGUID($badgeID)) ?>&amp;choe=UTF-8"
+                <img src="https://chart.googleapis.com/chart?chs=500x500&amp;cht=qr&amp;chl=<?php echo urlencode("https://t.me/{$BOT_USERNAME}?start=" . getTGUID($badgeID)) ?>&amp;choe=UTF-8"
                      title="Opens Telegram to add bot." style="width: 100%;">
                 <ul class="list-unstyled" style="color:black; margin-left: 30px;">
                     <li>This bot can provide you:</li>
