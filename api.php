@@ -4,11 +4,6 @@ header('Content-type: application/json');
 
 require "main.php";
 
-$user = isValidSession($session, $badgeID);
-$isLead = isLead($badgeID);
-$isAdmin = isAdmin($badgeID);
-$isManager = isManager($badgeID);
-
 $ret['code'] = -1;
 //$ret['msg'] = "Unknown Action.";
 

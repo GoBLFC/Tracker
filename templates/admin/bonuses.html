@@ -1,0 +1,67 @@
+{% extends "admin.html" %}
+
+{% block card %}
+
+<div class="card" data-section="Bonuses">
+    <div class="card-header cadHeader">
+        <div>Bonus Settings</div>
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            <div class="card-header cadBody">
+                <table id="table" class="table table table-striped table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Start</th>
+                        <th scope="col">Stop</th>
+                        <th scope="col">Depts</th>
+                        <th scope="col">Mod</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody id="bRow">
+                    </tbody>
+                </table>
+
+                <div class="input-group" style="display: flex">
+                    <div class="input-group date" id="bonusstart"
+                         data-target-input="nearest" style="width: auto;max-width: 50%;">
+                        <input type="text" class="form-control datetimepicker-input"
+                               placeholder="Start" data-target="#bonusstart"/>
+                        <div class="input-group-append" data-target="#bonusstart"
+                             data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group date" id="bonusstop"
+                         data-target-input="nearest" style="width: auto;max-width: 50%;">
+                        <input type="text" class="form-control datetimepicker-input"
+                               placeholder="Stop" data-target="#bonusstop"/>
+                        <div class="input-group-append" data-target="#bonusstop"
+                             data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <select style="width: 10%" class="selectpicker dropup"
+                            title="Departments" multiple
+                            data-live-search="true" id="depts">
+                    </select>
+                    <input type="text" class="form-control inputDark" placeholder="Modifier"
+                           aria-label="Modifier" aria-describedby="basic-addon2"
+                           style="width: 10%;" id="bonusmod">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button"
+                                style="background-color: #004014; color: #ffffff; border: 1px solid rgba(0, 0, 0, 0.15)"
+                                onClick="addBonus(this)">
+                            Add Bonus
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "admin.html" %}
+
+{% block card %}
+
+<div class="card" data-section="Departments">
+    <div class="card-header cadHeader">
+        <div>Department Settings</div>
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            <div class="card-header cadBody">
+                <table id="table" class="table table table-striped table">
+                    <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Department</th>
+                        <th scope="col">Hidden</th>
+                        <!--<th scope="col">Actions</th>-->
+                    </tr>
+                    </thead>
+                    <tbody id="dRow">
+                    </tbody>
+                </table>
+                <div class="input-group">
+                    <input type="text" class="form-control inputDark" placeholder="Name"
+                           aria-label="Name" aria-describedby="basic-addon2" style="width:55%">
+                    <select class="custom-select inputDark" id="inputGroupSelect02">
+                        <option value=-1 hidden selected>Hidden</option>
+                        <option value=0>No</option>
+                        <option value=1>Yes</option>
+                    </select>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button"
+                                style="background-color: #004014; color: #ffffff; border: 1px solid rgba(0, 0, 0, 0.15)"
+                                onclick="addDept(this)">
+                            Add Dept
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

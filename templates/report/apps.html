@@ -1,0 +1,43 @@
+{% extends "report.html" %}
+
+{% block report %}
+
+{% for row in rows %}
+<tr>
+<td>{{ row.id }}</td>
+<td>{{ row.name }}</td>
+<!-- <td>{{ row.badge }}</td> -->
+<td>{{ row.roles }}</td>
+<td>{{ row.assigned }}</td>
+<td>{{ row.staff }}</td>
+<td></td>
+<td>{{ row.primaryContact }}</td>
+<td>{{ row.email }}</td>
+<td>{{ row.phone }}</td>
+<td>{{ row.telegram }}</td>
+<td>{{ row.twitter }}</td>
+<td>{{ row.discord }}</td>
+<td>{{ row.availableHours }}</td>
+<td>{{ row.wednesday }}</td>
+<td>{{ row.thursday }}</td>
+<td>{{ row.friday }}</td>
+<td>{{ row.saturday }}</td>
+<td>{{ row.sunday }}</td>
+<td>{{ row.monday }}</td>
+<td>{{ row.tuesday }}</td>
+<td>{{ row.precon }}</td>
+<td>{{ row.cantMiss }}</td>
+<td></td>
+<td>{{ row.anythingElse }}</td>
+<td>{{ row.previousVolunteer }}</td>
+<td>{{ row.previousVolunteerOther }}</td>
+<td>{{ row.created }}</td>
+<td>{{ row.updated }}</td>
+<td></td>
+{% for selection in row.deptSelections %}
+<td><div>{{ selection }}</div></td>
+{% endfor %}
+</tr>
+{% endfor %}
+
+{% endblock %}

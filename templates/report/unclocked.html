@@ -1,0 +1,15 @@
+{% extends "report.html" %}
+
+{% block report %}
+
+{% for td in unclocked %}
+<tr>
+<td>{{ td.uid }}</td>
+<td>{{ users[td.uid].nickname }}</td>
+<td>{{ td.checkin }}</td>
+<td>{{ td.checkout }}</td>
+<td>{{ depts[td.dept].name }}</td>
+</tr>
+{% endfor %}
+
+{% endblock %}

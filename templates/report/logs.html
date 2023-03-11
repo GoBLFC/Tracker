@@ -1,0 +1,15 @@
+{% extends "report.html" %}
+
+{% block report %}
+
+{% for td in logs %}
+<tr>
+<td>{{ td.uid }}</td>
+<td>{{ users[td.uid].nickname }}</td>
+<td>{{ td.time }}</td>
+<td>{{ td.action }}</td>
+<td>{{ td.data }}</td>
+</tr>
+{% endfor %}
+
+{% endblock %}

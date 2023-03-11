@@ -34,14 +34,6 @@ function getTableKey(object) {
     return $('th:first', $(object).parents('tr')).text();
 }
 
-$(".nav-item").on('click', function (event) {
-    $(".nav-item.active").removeClass('active');
-    $(this).addClass('active');
-    const sect = $.trim($(this).text());
-    $(".card[data-section]:visible").hide();
-    $('.card[data-section=' + sect + ']').show();
-});
-
 function postAction(data, callback) {
     console.log('3: ' + data);
 

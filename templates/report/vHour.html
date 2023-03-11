@@ -1,0 +1,14 @@
+{% extends "report.html" %}
+
+{% block report %}
+
+{% for td in users %}
+<tr>
+<td>{{ td.id }}</td>
+<td>{{ td.nickname }}</td>
+<td>{{ td.worked }}</td>
+<td>{{ td.earned }}</td>
+</tr>
+{% endfor %}
+
+{% endblock %}
