@@ -1,14 +1,6 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: joann
- * Date: 2/9/2019
- * Time: 10:56 PM
- */
+{% extends "base.html" %}
 
-if (!defined('TRACKER')) die('No.');
-if (!isAdmin($badgeID)) die('Unauthorized.');
-?>
+{% block content %}
 
 <div class="container" style="top: 5em;position: relative;">
     <div class="card">
@@ -18,7 +10,7 @@ if (!isAdmin($badgeID)) die('Unauthorized.');
         <div class="row">
             <div class="col-sm">
                 <div class="card-body">
-                    <?php include('navbar.php'); ?>
+                    {{ include("navbar.html") }}
 
                     <div class="card" data-section="Site">
                         <div class="card-header cadHeader">
@@ -27,22 +19,22 @@ if (!isAdmin($badgeID)) die('Unauthorized.');
                         <div class="row">
                             <div class="col-sm">
                                 <div class="card-header cadBody">
-                                    <button data-status=<?php echo $devMode . " " ?>
+                                    <button data-status={{ devMode }}
                                             onclick="toggleDevmode(this)"
                                             type="button"
-                                            class="btn btn-sm btn-<?php echo($devMode == 1 ? "danger" : "warning") ?>
-                    "><?php echo($devMode == 1 ? "Disable" : "Enable") ?> Dev Mode
+                                            class="btn btn-sm btn-{{ devMode ? 'danger' : 'warning' }}">
+                                            {{ devMode ? "Disable" : "Enable" }} Dev Mode
                                     </button>
-                                    <button data-status=<?php echo $siteStatus . " " ?>
+                                    <button data-status={{ siteStatus }}
                                             onclick="toggleSite(this)"
                                             type="button"
-                                            class="btn btn-sm btn-<?php echo($siteStatus == 1 ? "danger" : "success") ?>
-                    "><?php echo($siteStatus == 1 ? "Disable" : "Enable") ?> Site
+                                            class="btn btn-sm btn-{{ siteStatus ? 'danger' : 'success' }}">
+                                            {{ siteStatus ? "Disable" : "Enable" }} Site
                                     </button>
-                                    <button data-status=<?php echo $kioskAuth ?> onclick="toggleKiosk(this)"
+                                    <button data-status={{ kioskAuth }} onclick="toggleKiosk(this)"
                                             type="button"
-                                            class="btn btn-sm btn-<?php echo($kioskAuth == 1 ? "danger" : "warning") ?>
-                    "><?php echo($kioskAuth == 1 ? "Deauthorize" : "Authorize") ?> Kiosk
+                                            class="btn btn-sm btn-{{ kioskAuth ? 'danger' : 'warning' }}">
+                                            {{ kioskAuth ? "Deauthorize" : "Authorize" }} Kiosk
                                     </button>
                                 </div>
                             </div>
@@ -391,7 +383,7 @@ if (!isAdmin($badgeID)) die('Unauthorized.');
 <div class="container" style="top: 5em;position: relative;">
     <div class="card novis">
         <div class="autologout">Auto logout in <span id="lsec">60</span> <span id="gram">seconds</span>...
-            <a role="button" class="btn btn-light btn-sm" href="/?logout" style="">Logout Now</a>
+            <a role="button" class="btn btn-light btn-sm" href="/logout.php" style="">Logout Now</a>
         </div>
     </div>
 </div>
@@ -405,3 +397,5 @@ if (!isAdmin($badgeID)) die('Unauthorized.');
         decrementLogout();
     });
 </script>
+
+{% endblock %}

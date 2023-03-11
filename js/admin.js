@@ -300,5 +300,5 @@ function addRow(key, elem, data) {
 
 function changeFrame(type) {
     $('#datFrame').show();
-    $('#datFrame').attr("src", "pages/report.php?type=" + type);
+    $('#datFrame').attr("src", "/report.php?type=" + type);
 }

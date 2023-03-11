@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container" style="top: 5em;position: relative;">
+        <div class="card">
+            <div class="card-header highvis {{ statusClass }}">
+                <div class="vistext">{{ message }}</div>
+            </div>
+            <div class="card-body">
+                {{ description | raw }}
+            </div>
+        </div>
+
+        {{ include("adminFunctions.html") }}
+    </div>
+
+{% if isAdmin or isManager %}
+    <div class="container" style="top: 5em;position: relative;">
+        <div class="card novis">
+            <div class="autologout">Auto logout in <span id="lsec">60</span> <span id="gram">seconds</span>...
+                <a role="button" class="btn btn-light btn-sm" href="/logout.php" style="">Logout Now</a>
+            </div>
+        </div>
+    </div>
+    <script src="js/landing.js"></script>
+    <script>$(document).ready(function () {
+            decrementLogout();
+        });
+    </script>
+{% endif %}
+
+{% endblock %}

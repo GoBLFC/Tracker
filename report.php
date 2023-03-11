@@ -1,16 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: joann
- * Date: 3/6/2019
- * Time: 11:12 PM
- */
-define('TRACKER', TRUE);
 
-require "../main.php";
-include('../includes/header.php');
+require "main.php";
 
-if (!isAdmin($badgeID)) die('Unauthorized.');
+if (!$isAdmin) die('Unauthorized.');
+
 $type = $_GET['type'];
 $header = array();
 

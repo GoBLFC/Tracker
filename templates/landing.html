@@ -1,32 +1,20 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: joann
- * Date: 10/21/2018
- * Time: 4:44 PM
- */
+{% extends "base.html" %}
 
-if (!defined('TRACKER')) die('No.');
+{% block content %}
 
-// Load department list
-$departments = getDepartments(false);
-$cDept = getCheckIn($badgeID);
-if ($cDept) $cDept = $cDept[0];
-?>
     <div class="container" style="top: 5em;position: relative;">
         <div class="card">
             <div class="card-header">
-                <?php //echo 'Check-' . ($cDept ? "Out" : "In") ?>
-                <?php echo "Welcome " . $user[0]['nickname'] . "!" ?>
+                Welcome {{ user[0].nickname }}!
             </div>
 
             <div class="container">
                 <div class="row">
                     <div class="col-sm">
                         <div class="card-body">
-                            <div id="checkstatus" class="alert alert-<?php echo($cDept ? "success" : "danger") ?>"
+                            <div id="checkstatus" class="alert alert-{{ cDept ? "success" : "danger" }}"
                                  style="padding: 0.4rem 1rem; margin: 0>" role="alert">
-                                You are currently <?php echo($cDept ? "" : "not") ?> checked in.
+                                You are currently {{ cDept ? "" : "not " }}checked in.
                             </div>
 
                             <!--<p class="card-text">Select a department from the list on the right.</p>-->
@@ -34,28 +22,26 @@ if ($cDept) $cDept = $cDept[0];
                     </div>
                     <div class="col-sm">
                         <div class="card-body">
-                            <select <?php echo($cDept ? "disabled " : "") ?> id="dept"
+                            <select {{ cDept ? "disabled " : "" }}id="dept"
                                                                              class="custom-select custom-select-lg mb-3"
                                                                              style="margin-bottom: 0 !important;">
-
-                                <?php if (!$cDept) { ?>
-                                    <option value="-1" disabled selected hidden>Select Department</option>
-                                <?php } ?>
-                                <?php foreach ($departments as $dept) echo "<option " . (($cDept && $cDept['dept'] == $dept['id']) ? "selected" : "") . " value='" . $dept['id'] . "'>" . $dept['name'] . "</option>"; ?>
-
+                                {% if not cDept %}
+                                <option value="-1" disabled selected hidden>Select Department</option>
+                                {% endif %}
+                                {% for dept in departments %}
+                                <option {{ (cDept and cDept.dept == dept.id) ? "selected " : "" }}value="{{ dept.id }}">{{ dept.name }}</option>
+                                {% endfor %}
                             </select>
                         </div>
                     </div>
                     <div class="col-sm">
                         <div class="card-body">
                             <a href="#" id="checkinout" class="btn btn-block btn-primary"
-                               data-value="<?php echo($cDept ? "out" : "in") ?>"><?php echo 'Check-' . ($cDept ? "Out" : "In") ?></a>
+                               data-value="{{ cDept ? "out" : "in" }}">Check-{{ cDept ? "Out" : "In" }}</a>
                         </div>
                     </div>
                 </div>
-                <?php
-                include('pages/adminFunctions.php');
-                ?>
+                {{ include("adminFunctions.html") }}
             </div>
         </div>
     </div>
@@ -109,7 +95,7 @@ if ($cDept) $cDept = $cDept[0];
     <div class="container" style="top: 5em;position: relative;">
         <div class="card novis">
             <div class="autologout">Auto logout in <span id="lsec">60</span> <span id="gram">seconds</span>...
-                <a role="button" class="btn btn-light btn-sm" href="/?logout" style="">Logout Now</a>
+                <a role="button" class="btn btn-light btn-sm" href="/logout.php" style="">Logout Now</a>
             </div>
         </div>
     </div>
@@ -134,7 +120,7 @@ if ($cDept) $cDept = $cDept[0];
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <img src="https://chart.googleapis.com/chart?chs=500x500&amp;cht=qr&amp;chl=<?php echo urlencode("https://t.me/{$BOT_USERNAME}?start=" . getTGUID($badgeID)) ?>&amp;choe=UTF-8"
+                <img src="https://chart.googleapis.com/chart?chs=500x500&amp;cht=qr&amp;chl={{ tgBot }}&amp;choe=UTF-8"
                      title="Opens Telegram to add bot." style="width: 100%;">
                 <ul class="list-unstyled" style="color:black; margin-left: 30px;">
                     <li>This bot can provide you:</li>
@@ -165,5 +151,4 @@ if ($cDept) $cDept = $cDept[0];
         });
     </script>
 
-<?php //echo calculateBonusTime(1234);
-?>
+{% endblock %}

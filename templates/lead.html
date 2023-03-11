@@ -1,14 +1,6 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: joann
- * Date: 2/20/2019
- * Time: 8:43 PM
- */
+{% extends "base.html" %}
 
-if (!defined('TRACKER')) die('No.');
-if (!isLead($badgeID)) die('Unauthorized.');
-?>
+{% block content %}
 
 <div class="container" style="top: 5em;position: relative;">
     <div class="card">
@@ -27,10 +19,10 @@ if (!isLead($badgeID)) die('Unauthorized.');
                             <div class="col-sm">
                                 <div class="card-header cadBody">
 									<center>
-										<button data-status=<?php echo $kioskAuth ?> onclick="toggleKiosk(this)"
+										<button data-status={{ kioskAuth }} onclick="toggleKiosk(this)"
 												type="button"
-												class="btn btn-sm btn-<?php echo($kioskAuth == 1 ? "danger" : "warning") ?>
-										"><?php echo($kioskAuth == 1 ? "Deauthorize" : "Authorize") ?> Kiosk
+												class="btn btn-sm btn-{{ kioskAuth ? "danger" : "warning" }}">
+                                                {{ kioskAuth ? "Deauthorize" : "Authorize" }} Kiosk
 										</button>
 									</center>
                                 </div>
@@ -55,7 +47,7 @@ if (!isLead($badgeID)) die('Unauthorized.');
 <div class="container" style="top: 5em;position: relative;">
     <div class="card novis">
         <div class="autologout">Auto logout in <span id="lsec">60</span> <span id="gram">seconds</span>...
-            <a role="button" class="btn btn-light btn-sm" href="/?logout" style="">Logout Now</a>
+            <a role="button" class="btn btn-light btn-sm" href="/logout.php" style="">Logout Now</a>
         </div>
     </div>
 </div>
@@ -69,3 +61,5 @@ if (!isLead($badgeID)) die('Unauthorized.');
         decrementLogout();
     });
 </script>
+
+{% endblock %}

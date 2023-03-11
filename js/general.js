@@ -45,7 +45,7 @@ $(".nav-item").on('click', function (event) {
 function postAction(data, callback) {
     console.log('3: ' + data);
 
-    $.post("pages/actions.php", data)
+    $.post("/api.php", data)
         .done(function (data) {
             if (data.code === 0) alert('Error: ' + data.msg);
             if (callback) callback(data);

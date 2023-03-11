@@ -1,0 +1,30 @@
+{% if isManager or isAdmin or isLead %}
+    <div class="card">
+        <div class="card-header">
+            Your Functions
+        </div>
+        <div class="row">
+            {% if isLead %}
+                <div class="col-sm">
+                    <a role="button" class="btn btn-light" href="/lead.php" style="width:100%;margin-bottom: 5px">Lead
+                        Panel
+                    </a>
+                </div>
+            {% endif %}
+            {% if isManager or isAdmin %}
+                <div class="col-sm">
+                    <a role="button" class="btn btn-light" href="/manage.php" style="width:100%;margin-bottom: 5px">Management
+                        Panel
+                    </a>
+                </div>
+            {% endif %}
+            {% if isAdmin %}
+                <div class="col-sm">
+                    <a role="button" class="btn btn-light" href="/admin.php" style="width:100%;margin-bottom: 5px">Admin
+                        Panel
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}

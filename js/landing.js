@@ -121,7 +121,7 @@ function decrementLogout() {
     if (logoutTime === 1) $('#gram').text("second");
     if (logoutTime === 0) $('.autologout').html("Goodbye!");
     if (logoutTime === -1) {
-        window.location.href = "/?logout=timeout";
+        window.location.href = "/logout.php";
         return;
     }
 

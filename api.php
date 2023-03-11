@@ -1,16 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: joann
- * Date: 1/31/2019
- * Time: 10:37 PM
- */
+
 header('Content-type: application/json');
 
-define('TRACKER', TRUE);
-
-require "../main.php";
-include('../includes/header.php');
+require "main.php";
 
 $user = isValidSession($session, $badgeID);
 $isLead = isLead($badgeID);

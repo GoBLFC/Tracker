@@ -1,51 +1,53 @@
 <?php
-define('TRACKER', TRUE);
 
 require "main.php";
 
-include('includes/header.php');
+if ($user != null) {
+    if ((isset($_SESSION["quickclock"]) && $_SESSION["quickclock"] >= 20) || $isBanned || $siteStatus !== 1 || ($devMode == 0 && $kioskAuth == 0)) {
+        if ((isset($_SESSION["quickclock"]) && $_SESSION["quickclock"] >= 20) || $siteStatus == 12) {
+            $statusClass = "onFire";
+            $message = "SITE ON FIRE!!";
+            $description = "Something has gone terribly wrong. We blame you.";
+            $description .= "<audio id='audio' preload=\"auto\" src=\"/assets/egg/meltdown.ogg\" autoplay=\"\"></audio><script>document.getElementById(\"audio\").volume = 0.35; setTimeout(function(){window.location.reload()}, 10000)();</script>";
+            $_SESSION['quickclock'] = 0;
+        } else if ($isBanned) {
+            $statusClass = "siteDisabled";
+            $message = "Not Permitted.";
+            $description = "There is a hold on your volunteer account. Please talk to a volunteer manager at the volunteer desk.";
+        } else if ($siteStatus == 0) {
+            $statusClass = "siteDisabled";
+            $message = "Site disabled.";
+            $description = "Site is disabled for maintenance.";
+        } else if ($kioskAuth == 0) {
+            $statusClass = "noKiosk";
+            $message = "Device not authorized.";
+            $description = "If you believe this is in error, please contact a volunteer manager.";
+        }
 
-// TODO: Replace most of the individual variables with user/site objects to reduce queries and make it cleaner
+        if (!isAdmin($badgeID) && !isManager($badgeID)) {
+            logoutSession($session);
+            session_unset();
+            session_regenerate_id();
+        }
 
-// Check session
-$user = isValidSession($session, $badgeID);
-$page = "landing";
-$devMode = getDevmode();
-$siteStatus = getSiteStatus();
-$kioskAuth = (isset($_COOKIE['kiosknonce']) && sizeof(checkKiosk($_COOKIE['kiosknonce']))) >= 1 ? 1 : 0;
-$isAdmin = isAdmin($badgeID);
-$isManager = isManager($badgeID);
-$isLead = isLead($badgeID);
-$isBanned = isbanned($badgeID);
-$notifs = getNotifications($badgeID, 1);
-
-if (isset($_GET['page'])) $page = $_GET['page'];
-
-if (!(isset($page) && $page == "sso")) {
-    include('pages/headerhtml.php');
-}
-
-if ($page == "admin" && $isAdmin) {
-    include('pages/admin.php');
-} else if ($page == "manage" && ($isManager || $isAdmin)) {
-    include('pages/manage.php');
-} else if ($page == "lead" && $isLead) {
-    include('pages/lead.php');
-} else if ($page == "sso") {
-    require_once('vendor/autoload.php');
-    include('pages/sso.php');
-} else if ($user != null) {
-    if ((isset($_SESSION['quickclock']) && $_SESSION['quickclock'] >= 20) || $isBanned || $siteStatus !== 1 || ($devMode == 0 && $kioskAuth == 0)) {
-        include('pages/disabled.php');
+        echo $twig->render("disabled.html", [
+            "statusClass" => $statusClass,
+            "message" => $message,
+            "description" => $description
+        ]);
     } else {
         if (sizeof($notifs) > 0) {
-            include('pages/alert.php');
+            echo $twig->render("alert.html");
         } else {
-            include('pages/landing.php');
+            $cDept = getCheckIn($badgeID);
+            if ($cDept) $cDept = $cDept[0];
+            echo $twig->render("landing.html", [
+                "departments" => getDepartments(false),
+                "tgBot" => urlencode("https://t.me/{$BOT_USERNAME}?start=" . getTGUID($badgeID)),
+                "cDept" => $cDept
+            ]);
         }
     }
 } else {
-    include('pages/login.php');
+    echo $twig->render("login.html");
 }
-
-include('includes/footer.php');

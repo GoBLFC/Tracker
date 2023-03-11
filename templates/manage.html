@@ -1,14 +1,6 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: joann
- * Date: 2/20/2019
- * Time: 8:43 PM
- */
+{% extends "base.html" %}
 
-if (!defined('TRACKER')) die('No.');
-if (!isManager($badgeID) && !isAdmin($badgeID)) die('Unauthorized.');
-?>
+{% block content %}
 
 <div class="container" style="top: 5em;position: relative;">
     <div class="card">
@@ -94,21 +86,21 @@ if (!isManager($badgeID) && !isAdmin($badgeID)) die('Unauthorized.');
                                         <table class="table" style="margin: auto;width: 40% !important;">
                                             <thead style="">
                                             <tr style="">
-                                                <?php
-                                                foreach (getRewards(false, true) as $reward) echo "<th scope=\"col\">" . $reward['name'] . "</th>";
-                                                ?>
+                                                {% for reward in rewards %}
+                                                <th scope="col">{{ reward.name }}</th>
+                                                {% endfor %}
                                             </tr>
                                             </thead>
                                             <tbody>
                                             <tr id="rewards">
-                                                <?php
-                                                foreach (getRewards(false, true) as $reward) echo "                                                <td>
-                                                    <button type=\"button\" class=\"btn btn-sm btn-danger\"
-                                                            data-type=\"reward\" data-id=\"" . $reward['id'] . "\" data-state=\"unclaimed\"
-                                                            onclick=\"toggleClaim(this)\">Claim
+                                                {% for reward in rewards %}
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-danger"
+                                                            data-type="reward" data-id="{{ reward.id }}" data-state="unclaimed"
+                                                            onclick="toggleClaim(this)">Claim
                                                     </button>
-                                                </td>";
-                                                ?>
+                                                </td>
+                                                {% endfor %}
                                             </tr>
                                             </tbody>
                                         </table>
@@ -227,10 +219,10 @@ if (!isManager($badgeID) && !isAdmin($badgeID)) die('Unauthorized.');
                             <div class="col-sm">
                                 <div class="card-header cadBody">
 									<center>
-										<button data-status=<?php echo $kioskAuth ?> onclick="toggleKiosk(this)"
+										<button data-status={{ kioskAuth }} onclick="toggleKiosk(this)"
 												type="button"
-												class="btn btn-sm btn-<?php echo($kioskAuth == 1 ? "danger" : "warning") ?>
-										"><?php echo($kioskAuth == 1 ? "Deauthorize" : "Authorize") ?> Kiosk
+												class="btn btn-sm btn-{{ kioskAuth ? "danger" : "warning" }}">
+                                                {{ kioskAuth ? "Deauthorize" : "Authorize" }} Kiosk
 										</button>
 									</center>
                                 </div>
@@ -255,7 +247,7 @@ if (!isManager($badgeID) && !isAdmin($badgeID)) die('Unauthorized.');
 <div class="container" style="top: 5em;position: relative;">
     <div class="card novis">
         <div class="autologout">Auto logout in <span id="lsec">60</span> <span id="gram">seconds</span>...
-            <a role="button" class="btn btn-light btn-sm" href="/?logout" style="">Logout Now</a>
+            <a role="button" class="btn btn-light btn-sm" href="/logout.php" style="">Logout Now</a>
         </div>
     </div>
 </div>
@@ -269,3 +261,5 @@ if (!isManager($badgeID) && !isAdmin($badgeID)) die('Unauthorized.');
         decrementLogout();
     });
 </script>
+
+{% endblock %}

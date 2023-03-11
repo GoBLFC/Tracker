@@ -1,5 +1,4 @@
 <?php
-if (!defined('TRACKER')) die('No.');
 
 require ROOT_DIR . "/config.php";
 

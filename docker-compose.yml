@@ -25,7 +25,6 @@ services:
       - 8080:80
     # If this becomes any more complicated, it may need to be moved to a separate Dockerfile.
     command: "bash -c 'docker-php-ext-install pdo_mysql && \
-      a2enmod rewrite && \
       mv $$PHP_INI_DIR/php.ini-development $$PHP_INI_DIR/php.ini && \
       exec apache2-foreground'"
 
