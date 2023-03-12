@@ -1,6 +1,7 @@
 {
     "require": {
         "league/oauth2-client": "^2.6",
-        "longman/telegram-bot": "^0.80.0"
+        "longman/telegram-bot": "^0.80.0",
+        "twig/twig": "^3.0"
     }
 }
