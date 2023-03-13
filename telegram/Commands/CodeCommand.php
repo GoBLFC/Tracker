@@ -66,8 +66,8 @@ class CodeCommand extends SystemCommand
             ]);
         }
 
-		$code = generateQuickCode($user['id']);
-		
+		$db->setQuickCode($user['id'], rand(1001, 9998));
+
         return Request::sendMessage([
             'chat_id' => $currChatID,
             'text' => "***Quick Signin Code:*** $code" . PHP_EOL . "***Please use within 30 seconds***",

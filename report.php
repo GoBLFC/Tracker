@@ -7,14 +7,14 @@ if (!$isAdmin) die('Unauthorized.');
 $type = $_GET['type'];
 $header = array();
 
-$users = getUsers();
-$depts = getDepartments(true);
+$users = $db->listUsers();
+$depts = $db->listDepartments(hidden: true);
 $deptSummary = array();
 
 if ($type == "unclocked") {
     //$title = "Unclocked Users for " . date('Y/m/d', strtotime("-1 days"));
     $title = "Latest Unclocked Users";
-    $unclocked = getUnclockedUsers();
+    $unclocked = $db->listUnclockedUsers();
     $header = array("ID", "Nickname", "Check-In", "Auto Checkout", "Dept");
 } else if (strpos($type, 'vHour') !== false) {
     $hour = (int)filter_var($type, FILTER_SANITIZE_NUMBER_INT);
@@ -35,12 +35,12 @@ if ($type == "unclocked") {
 } else if ($type == "logs") {
     $title = "Staff Logs";
     $header = array("Badge", "Nickname", "Time", "Action", "Data");
-    $logs = getLogs();
+    $logs = $db->getLogs();
 } else if ($type == "depttimes") {
     $title = "Dept. Times";
     $header = array("Department", "Hours", "Unique", "Total Clockins");
 
-    $entries = getAllTrackerEntries();
+    $entries = $db->getAllTrackerEntries();
     $users = $count = $times = array();
 
     foreach ($depts as $dept) {

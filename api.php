@@ -8,17 +8,25 @@ $ret['code'] = -1;
 //$ret['msg'] = "Unknown Action.";
 
 if ($user == null && isset($_POST['action']) && $_POST['action'] == "checkQuickCode") {
-	$ret = checkQuickCode($_POST['quickcode']);
+    $auth = $db->checkQuickCode($_POST['quickcode']);
+    if (!$auth) {
+        $ret['code'] = -1;
+    } else {
+        $ret['code'] = 1;
+        //$ret['msg'] = "Good Code! " + $result[0]['id'];
+        $ret['id'] = $result[0]['id'];
+        $ret['session'] = userSignIn($result[0]['id'], $result[0]['first_name'], $result[0]['last_name'], $result[0]['nickname']);
+    }
 } elseif ($user == null) {
     $ret['code'] = 0;
     $ret['msg'] = "Not authenticated.";
 } elseif (!isset($_POST['action'])) {
     $ret['code'] = 0;
     $ret['msg'] = "No data provided.";
-} else if ((!$isAdmin && !$isManager) && getDevmode() == 0 && sizeof(checkKiosk($_COOKIE['kiosknonce'])) == 0) {
+} else if ((!$isAdmin && !$isManager) && !$db->getDevMode() && !$db->checkKiosk($_COOKIE['kiosknonce'])->fetch()) {
     $ret['code'] = 0;
     $ret['msg'] = "Kiosk not authorized.";
-} else if ((!$isAdmin && !$isManager) && getSiteStatus() == 0) {
+} else if ((!$isAdmin && !$isManager) && !$db->getSiteStatus()) {
     $ret['code'] = 0;
     $ret['msg'] = "Site is disabled.";
 } else {
@@ -31,7 +39,7 @@ if ($user == null && isset($_POST['action']) && $_POST['action'] == "checkQuickC
             $ret['code'] = 0;
             $ret['msg'] = "Invalid department specified.";
         } else {
-            checkIn($badgeID, null, $dept, "", $badgeID);
+            $db->checkIn($badgeID, $dept, "", $badgeID);
 
             $ret['code'] = 1;
             $ret['msg'] = "Clocked in.";
@@ -50,13 +58,13 @@ if ($user == null && isset($_POST['action']) && $_POST['action'] == "checkQuickC
         $ret['val'] = calculateBonusTime($badgeID, false) + getMinutesTotal($badgeID);
     } else if ($action == "getNotifications") {
         $ret['code'] = 1;
-        $ret['val'] = getNotifications($badgeID, 0);
+        $ret['val'] = $db->listNotifications($badgeID, 0)->fetchAll();
     } else if ($action == "readNotification") {
         $ret['code'] = 1;
-        $ret['val'] = markNotificationRead($_POST['id']);
+        $ret['val'] = $db->markNotificationRead($_POST['id']);
     } else if ($action == "ackAllNotifs") {
         $ret['code'] = 1;
-        $ret['val'] = ackAllNotifs($badgeID);
+        $ret['val'] = $db->ackAllNotifs($badgeID);
     }
 
     // MANAGER FUNCTIONS
@@ -67,7 +75,7 @@ if ($user == null && isset($_POST['action']) && $_POST['action'] == "checkQuickC
             $postData[] = "$p:$d";
         }
 
-        addLog($_SESSION['badgeid'], $action, implode(",", $postData));
+        $db->createLog($_SESSION['badgeid'], $action, implode(",", $postData));
     }
 	
     if ((!$isLead && !$isAdmin && !$isManager) && $ret['code'] === -1) {
@@ -79,12 +87,12 @@ if ($user == null && isset($_POST['action']) && $_POST['action'] == "checkQuickC
 
             if ($status == 1) {
                 $kioskNonce = md5(rand());
-                authorizeKiosk($kioskNonce);
+                $db->authorizeKiosk($kioskNonce);
                 $ret['val'] = $kioskNonce;
             }
 
             if ($status == 0) {
-                deauthorizeKiosk($_COOKIE['kiosknonce']);
+                $db->deauthorizeKiosk($_COOKIE['kiosknonce']);
                 $ret['val'] = 1;
             }
 
@@ -99,22 +107,22 @@ if ($user == null && isset($_POST['action']) && $_POST['action'] == "checkQuickC
         if ($action == "getUserSearch") {
             $input = $_POST['input'];
             $ret['code'] = 1;
-            $users = findUser($input);
+            $users = $db->searchUsers($input)->fetchAll();
             foreach ($users as $user) {
-                $dept = getCheckIn($user['id']);
-                if (isset($dept[0])) $user['dept'] = $dept;
+                $dept = $db->getCheckIn($user['id'])->fetch();
+                if (isset($dept)) $user['dept'] = $dept;
                 $ret['results'][] = $user;
             }
         } else if ($action == "getDepts") {
             $depts = array();
-            foreach (getDepts() as $dept) $depts[$dept['id']] = $dept;
+            foreach ($db->listDepartments() as $dept) $depts[$dept['id']] = $dept;
             $ret['val'] = $depts;
             $ret['code'] = 1;
         } else if ($action == "getUser") {
             $ret['code'] = 1;
-            $ret['user'] = getUserByID($_POST['id'], false);
-            $dept = getCheckIn($_POST['id']);
-            $ret['user'][0]['dept'] = isset($dept[0]) ? $dept[0] : null;
+            $ret['user'] = $db->getUser($_POST['id'])->fetch();
+            $dept = $db->getCheckIn($_POST['id'])->fetch();
+            $ret['user']['dept'] = isset($dept) ? $dept : null;
         } else if ($action == "getClockTimeOther") {
             $ret['code'] = 1;
             $ret['val'] = getClockTime($_POST['id']);
@@ -131,7 +139,7 @@ if ($user == null && isset($_POST['action']) && $_POST['action'] == "checkQuickC
             $ret = checkOut($_POST['id'], null, null);
         } else if ($action == "checkInOther") {
             $ret['code'] = 1;
-            checkIn($_POST['id'], $_POST['start'], $_POST['dept'], $_POST['notes'], $badgeID);
+            $db->checkIn($_POST['id'], $_POST['dept'], $_POST['notes'], $badgeID, $_POST['start']);
         } else if ($action == "createUser") {
             $badgeID = $_POST['badgeid'];
             $ret['code'] = createUser($badgeID);
@@ -142,31 +150,31 @@ if ($user == null && isset($_POST['action']) && $_POST['action'] == "checkQuickC
             $dept = $_POST['dept'];
             $notes = $_POST['notes'];
 
-            $ret['val'] = addTime($id, $start, $stop, $dept, $notes, $badgeID);
+            $ret['val'] = $db->createTime($id, $start, $stop, $dept, $notes, $badgeID);
             $ret['code'] = 1;
         } else if ($action == "removeTime") {
             $ret['code'] = 1;
-            removeTime($_POST['id']);
+            $db->deleteTime($_POST['id']);
         } else if ($action == "getRewardClaims") {
             $ret['code'] = 1;
-            $ret['val'] = getRewardClaims($_POST['id']);
+            $ret['val'] = $db->listRewardClaims($_POST['id']);
         } else if ($action == "claimReward") {
             $ret['code'] = 1;
-            $ret['val'] = claimReward($_POST['uid'], $_POST['type']);
+            $ret['val'] = $db->claimReward($_POST['uid'], $_POST['type']);
         } else if ($action == "unclaimReward") {
             $ret['code'] = 1;
-            $ret['val'] = unclaimReward($_POST['uid'], $_POST['type']);
+            $ret['val'] = $db->unclaimReward($_POST['uid'], $_POST['type']);
         } else if ($action == "setKioskAuth") {
             $status = $_POST['status'];
 
             if ($status == 1) {
                 $kioskNonce = md5(rand());
-                authorizeKiosk($kioskNonce);
+                $db->authorizeKiosk($kioskNonce);
                 $ret['val'] = $kioskNonce;
             }
 
             if ($status == 0) {
-                deauthorizeKiosk($_COOKIE['kiosknonce']);
+                $db->deauthorizeKiosk($_COOKIE['kiosknonce']);
                 $ret['val'] = 1;
             }
 
@@ -182,52 +190,52 @@ if ($user == null && isset($_POST['action']) && $_POST['action'] == "checkQuickC
         if ($action == "setSiteStatus") {
             $status = $_POST['status'];
             $ret['code'] = 1;
-            $ret['val'] = setSiteStatus($status);
+            $ret['val'] = $db->setSiteStatus($status);
         } else if ($action == "setDevmode") {
             $status = $_POST['status'];
             $ret['code'] = 1;
-            $ret['val'] = setDevmode($status);
+            $ret['val'] = $db->setDevmode($status);
         } else if ($action == "setAdmin") {
             $badgeID = $_POST['badgeid'];
             $value = $_POST['value'];
 
-            $user = getUserByID($badgeID, true);
+            $user = $db->getUser($badgeID)->fetch();
 
             if ($_SESSION['badgeid'] == $badgeID) {
                 $ret['code'] = 0;
                 $ret['msg'] = "You can't remove yourself!!";
-            } else if (!isset($user[0])) {
+            } else if (!isset($user)) {
                 $ret['code'] = 0;
                 $ret['msg'] = "User with ID '$badgeID' not found!";
             } else {
-                setAdmin($value, $badgeID);
-                $ret['name'] = $user[0]['nickname'];
+                $db->setUserRole($badgeID, admin: $value);
+                $ret['name'] = $user['nickname'];
                 $ret['code'] = 1;
             }
         } else if ($action == "setManager") {
             $badgeID = $_POST['badgeid'];
             $value = $_POST['value'];
 
-            $user = getUserByID($badgeID, true);
-            if (!isset($user[0])) {
+            $user = $db->getUser($badgeID)->fetch();
+            if (!isset($user)) {
                 $ret['code'] = 0;
                 $ret['msg'] = "User with ID '$badgeID' not found!";
             } else {
-                setManager($value, $badgeID);
-                $ret['name'] = $user[0]['nickname'];
+                $db->setUserRole($badgeID, manager: $value);
+                $ret['name'] = $user['nickname'];
                 $ret['code'] = 1;
             }
         } else if ($action == "setLead") {
             $badgeID = $_POST['badgeid'];
             $value = $_POST['value'];
 
-            $user = getUserByID($badgeID, true);
-            if (!isset($user[0])) {
+            $user = $db->getUser($badgeID)->fetch();
+            if (!isset($user)) {
                 $ret['code'] = 0;
                 $ret['msg'] = "User with ID '$badgeID' not found!";
             } else {
-                setLead($value, $badgeID);
-                $ret['name'] = $user[0]['nickname'];
+                $db->setUserRole($badgeID, lead: $value);
+                $ret['name'] = $user['nickname'];
                 $ret['code'] = 1;
             }
 		} else if ($action == "setBanned") {
@@ -236,33 +244,33 @@ if ($user == null && isset($_POST['action']) && $_POST['action'] == "checkQuickC
 
             $ret['name'] = setBanned($badgeID, $value);
         } else if ($action == "getAdmins") {
-            $ret['val'] = getAdmins();
+            $ret['val'] = $db->listUsersByRole(admin: true)->fetchAll();
             $ret['code'] = 1;
         } else if ($action == "getManagers") {
-            $ret['val'] = getManagers();
+            $ret['val'] = $db->listUsersByRole(manager: true)->fetchAll();
             $ret['code'] = 1;
         } else if ($action == "getLeads") {
-            $ret['val'] = getLeads();
+            $ret['val'] = $db->listUsersByRole(lead: true)->fetchAll();
             $ret['code'] = 1;
         } else if ($action == "getBanned") {
-            $ret['val'] = getBanned();
+            $ret['val'] = $db->listBans()->fetchAll();
             $ret['code'] = 1;
         } else if ($action == "getDepts") {
             $depts = array();
-            foreach (getDepts() as $dept) $depts[$dept['id']] = $dept;
+            foreach ($db->listDepartments() as $dept) $depts[$dept['id']] = $dept;
             $ret['val'] = $depts;
             $ret['code'] = 1;
         } else if ($action == "getBonuses") {
-            $ret['val'] = getBonuses();
+            $ret['val'] = $db->listBonuses()->fetchAll();
             $ret['code'] = 1;
         } else if ($action == "getRewards") {
-            $ret['val'] = getRewards(false, true);
+            $ret['val'] = $db->listRewards(hidden: true)->fetchAll();
             $ret['code'] = 1;
         } else if ($action == "addDept") {
             $name = $_POST['name'];
             $hidden = $_POST['hidden'];
 
-            $ret['val'] = addDept($name, $hidden);
+            $ret['val'] = $db->createDepartment($name, $hidden);
             $ret['code'] = 1;
         } else if ($action == "addReward") {
             $name = $_POST['name'];
@@ -272,14 +280,14 @@ if ($user == null && isset($_POST['action']) && $_POST['action'] == "checkQuickC
             $type = "other";
             if ($hours > 0) $type = "time";
 
-            $ret['val'] = addReward($name, $desc, $hours, $type, $hidden);
+            $ret['val'] = $db->createReward($name, $desc, $hours, $type, $hidden);
             $ret['code'] = 1;
         } else if ($action == "updateDept") {
             $id = $_POST['id'];
             $name = $_POST['name'];
             $hidden = $_POST['hidden'];
 
-            $ret['val'] = updateDept($id, $name, $hidden);
+            $ret['val'] = $db->updateDepartment($id, $name, $hidden);
             $ret['code'] = 1;
         } else if ($action == "updateReward") {
             $id = $_POST['id'];
@@ -289,12 +297,12 @@ if ($user == null && isset($_POST['action']) && $_POST['action'] == "checkQuickC
 
             if ($field == "hours" && $value > 0) $type = "time";
 
-            $ret['val'] = updateReward($id, $field, $value, $type);
+            $ret['val'] = $db->updateReward($id, $field, $value, $type);
             $ret['code'] = 1;
         } else if ($action == "removeBonus") {
             $id = $_POST['id'];
 
-            $ret['val'] = removeBonus($id);
+            $ret['val'] = $db->deleteBonus($id);
             $ret['code'] = 1;
         } else if ($action == "addBonus") {
             $start = $_POST['start'];
@@ -302,7 +310,7 @@ if ($user == null && isset($_POST['action']) && $_POST['action'] == "checkQuickC
             $depts = $_POST['depts'];
             $modifier = $_POST['modifier'];
 
-            $ret['val'] = addBonus($start, $stop, $depts, $modifier);
+            $ret['val'] = $db->createBonus($start, $stop, $depts, $modifier);
             $ret['code'] = 1;
         } else if ($action == "getApps") {
             $ret['val'] = getApps();

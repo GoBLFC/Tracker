@@ -5,11 +5,8 @@ require "../config.php";
 // Load composer
 use Longman\TelegramBot\Request;
 
-define('TRACKER', TRUE);
-
 require "../main.php";
 require ROOT_DIR . "/vendor/autoload.php";
-include ROOT_DIR . "/includes/sql.php";
 include ROOT_DIR . "/includes/functions.php";
 
 // Define all paths for your custom commands in this array (leave as empty array if not used)

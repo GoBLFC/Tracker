@@ -24,8 +24,7 @@ if ($user != null) {
             $description = "If you believe this is in error, please contact a volunteer manager.";
         }
 
-        if (!isAdmin($badgeID) && !isManager($badgeID)) {
-            logoutSession($session);
+        if (!$isAdmin && !$isManager) {
             session_unset();
             session_regenerate_id();
         }
@@ -39,11 +38,11 @@ if ($user != null) {
         if (sizeof($notifs) > 0) {
             echo $twig->render("alert.html");
         } else {
-            $cDept = getCheckIn($badgeID);
+            $cDept = $db->getCheckIn($badgeID)->fetch();
             if ($cDept) $cDept = $cDept[0];
             echo $twig->render("landing.html", [
-                "departments" => getDepartments(false),
-                "tgBot" => urlencode("https://t.me/{$BOT_USERNAME}?start=" . getTGUID($badgeID)),
+                "departments" => $db->listDepartments(),
+                "tgBot" => urlencode("https://t.me/{$BOT_USERNAME}?start=" . $db->getTGUID($badgeID)),
                 "cDept" => $cDept
             ]);
         }

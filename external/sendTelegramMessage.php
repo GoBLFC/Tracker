@@ -1,18 +1,17 @@
 <?php
 
 require "../config.php";
+require "../database.php";
 
 namespace Longman\TelegramBot\Commands\SystemCommands;
 
 //if (php_sapi_name() != 'cli') die('No.');
-define('TRACKER', TRUE);
 
 chdir(dirname(__FILE__));
 
 use Longman\TelegramBot\Request;
 use Longman\TelegramBot\Telegram;
 
-require_once('../includes/sql.php');
 require_once('../includes/functions.php');
 require_once('../vendor/autoload.php');
 
@@ -21,7 +20,9 @@ function sendTGMessage($userID, $message)
     global $BOT_API_KEY;
     global $BOT_USERNAME;
 
-    $user = getUserByID($userID, true)[0];
+    global $db;
+
+    $user = $db->getUser($userID)->fetch();
     if ($user['tg_chatid'] == "") return "User does not have a chat ID!";
 
     try {

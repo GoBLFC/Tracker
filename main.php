@@ -6,7 +6,7 @@ define("ROOT_DIR", __DIR__);
 
 require ROOT_DIR . "/config.php";
 
-include ROOT_DIR . "/includes/sql.php";
+include ROOT_DIR . "/database.php";
 include ROOT_DIR . "/includes/functions.php";
 include ROOT_DIR . "/vendor/autoload.php";
 
@@ -33,19 +33,21 @@ if (isset($_COOKIE["kiosk"])) {
 $loader = new \Twig\Loader\FilesystemLoader(ROOT_DIR . "/templates");
 $twig = new \Twig\Environment($loader);
 
+$db = new Database($DB_HOST, $DB_NAME, $DB_USERNAME, $DB_PASSWORD);
+
 $user = isValidSession($session, $badgeID);
-$page = "landing";
-$devMode = getDevmode();
-$siteStatus = getSiteStatus();
-$kioskAuth = (isset($_COOKIE["kiosknonce"]) && sizeof(checkKiosk($_COOKIE["kiosknonce"]))) >= 1 ? 1 : 0;
-$isAdmin = isAdmin($badgeID);
-$isManager = isManager($badgeID);
-$isLead = isLead($badgeID);
-$isBanned = isbanned($badgeID);
-$notifs = getNotifications($badgeID, 1);
+$devMode = $db->getDevMode();
+$siteStatus = $db->getSiteStatus();
+$kioskAuth = (isset($_COOKIE["kiosknonce"]) && $db->checkKiosk($_COOKIE["kiosknonce"])->fetch()) ? 1 : 0;
+
+$roles = $db->getUserRole($badgeID)->fetch();
+$isAdmin = $roles ? (bool) $roles["admin"] : false;
+$isManager = $roles ? (bool) $roles["manager"] : false;
+$isLead = $roles ? (bool) $roles["lead"] : false;
+$isBanned = $db->getUserBan($badgeID);
+$notifs = $db->listNotifications($badgeID, 1)->fetchAll();
 
 $twig->addGlobal("user", $user);
-$twig->addGlobal("page", $page);
 $twig->addGlobal("devMode", $devMode);
 $twig->addGlobal("siteStatus", $siteStatus);
 $twig->addGlobal("kioskAuth", $kioskAuth);

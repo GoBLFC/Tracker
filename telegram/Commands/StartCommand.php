@@ -88,9 +88,10 @@ class StartCommand extends SystemCommand
 
         if ($user['tg_chatid'] == "") {
             // New add
+            $db->updateTGChat($currChatID, $tguid);
             return Request::sendMessage([
                 'chat_id' => $currChatID,
-                'text' => updateTGChat($currChatID, $tguid),
+                'text' => "Thanks for volunteering!" . PHP_EOL . "Press these buttons to view more info.",
                 'reply_markup' => $keyboard,
             ]);
         } else {
@@ -108,10 +109,12 @@ class StartCommand extends SystemCommand
                     'text' => "I have been changed to report to another user. " . PHP_EOL . "You'll have to scan the QR code again to get your volunteer time info from me.",
                 ]);
 
+                $db->updateTGChat($currChatID, $tguid);
+
                 // Update new acct
                 return Request::sendMessage([
                     'chat_id' => $currChatID,
-                    'text' => updateTGChat($currChatID, $tguid),
+                    'text' => "Thanks for volunteering!" . PHP_EOL . "Press these buttons to view more info.",
                     'reply_markup' => $keyboard,
                 ]);
             }
