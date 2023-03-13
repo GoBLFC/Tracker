@@ -359,7 +359,7 @@ class Database {
         return $stmt;
     }
 
-    function listRewardClaims($uid) {
+    public function listRewardClaims($uid) {
         $sql = "SELECT `claim`, `date` FROM `claims` WHERE `uid` = :uid";
 
         $stmt = $this->conn->prepare($sql);
@@ -468,7 +468,7 @@ class Database {
         return (bool) $stmt->fetch();
     }
 
-    function ackAllNotifs($uid) {
+    public function ackAllNotifs($uid) {
         $sql = "UPDATE `notifications` SET `hasread` = 1, `ack` = 1 WHERE `uid` = :uid AND `hasread` = 0 AND `ack` = 1";
 
         $stmt = $this->conn->prepare($sql);
