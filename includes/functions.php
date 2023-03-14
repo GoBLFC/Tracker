@@ -97,11 +97,12 @@ function getEligibleRewards($uid)
     return $availRewards;
 }
 
-function checkOut($uid, $autoTime, $ret)
+function checkOut($uid, $autoTime)
 {
     global $db;
     $checkIn = $db->getCheckIn($uid)->fetch();
     $timeDiff = (new DateTime('NOW'))->getTimestamp() - (new DateTime($checkIn['checkin']))->getTimestamp();
+    $ret = [];
     $ret['in'] = $checkIn;
     $ret['diff'] = $timeDiff;
 
