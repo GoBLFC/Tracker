@@ -110,7 +110,7 @@ if ($user == null && isset($_POST['action']) && $_POST['action'] == "checkQuickC
             $users = $db->searchUsers($input)->fetchAll();
             foreach ($users as $user) {
                 $dept = $db->getCheckIn($user['id'])->fetch();
-                if (isset($dept)) $user['dept'] = $dept;
+                if ($dept) $user['dept'] = $dept;
                 $ret['results'][] = $user;
             }
         } else if ($action == "getDepts") {
@@ -157,7 +157,7 @@ if ($user == null && isset($_POST['action']) && $_POST['action'] == "checkQuickC
             $db->deleteTime($_POST['id']);
         } else if ($action == "getRewardClaims") {
             $ret['code'] = 1;
-            $ret['val'] = $db->listRewardClaims($_POST['id']);
+            $ret['val'] = $db->listRewardClaims($_POST['id'])->fetchAll();
         } else if ($action == "claimReward") {
             $ret['code'] = 1;
             $ret['val'] = $db->claimReward($_POST['uid'], $_POST['type']);

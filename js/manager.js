@@ -52,7 +52,7 @@ function loadVolunteer(id) {
         if (data['code'] === 0) return;
         $("#eRow").empty();
         const uCard = $("#uHeadName");
-        const user = data['user'][0];
+        const user = data['user'];
 
         console.log(user);
 
