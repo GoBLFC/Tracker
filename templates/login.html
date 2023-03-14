@@ -48,7 +48,7 @@ function submitCode() {
 	var code = "";
 	inputs.forEach((input, i) => {code += input.value});
 	
-    postAction({action: 'checkQuickCode', quickcode: code}, function (data) {
+    postAction("/api.php", {action: 'checkQuickCode', quickcode: code}, function (data) {
         if (data['code'] === 1) {
 			// Successful login, forward to landing
 			document.cookie = "badge=" + data['id'];

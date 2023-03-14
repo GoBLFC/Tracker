@@ -34,10 +34,10 @@ function getTableKey(object) {
     return $('th:first', $(object).parents('tr')).text();
 }
 
-function postAction(data, callback) {
+function postAction(url, data, callback) {
     console.log('3: ' + data);
 
-    $.post("/api.php", data)
+    $.post(url, data)
         .done(function (data) {
             if (data.code === 0) alert('Error: ' + data.msg);
             if (callback) callback(data);

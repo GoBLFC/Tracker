@@ -31,7 +31,7 @@ function initData() {
                 toastNotify(n['message'], n['type'], 30000);
             }, time);
             time += 500;
-            postAction({action: "readNotification", id: n['id']});
+            postAction("/api.php", {action: "readNotification", id: n['id']});
         });
     });
 }
@@ -134,13 +134,13 @@ function decrementLogout() {
 
 function checkIn(callback) {
     const dept = $("#dept").children("option:selected").val();
-    postAction({action: "checkIn", dept: dept}, function (data) {
+    postAction("/api.php", {action: "checkIn", dept: dept}, function (data) {
         callback(data);
     });
 }
 
 function checkOut(callback) {
-    postAction({action: "checkOut"}, function (data) {
+    postAction("/api.php", {action: "checkOut"}, function (data) {
         if (data.code <= -1) {
             toastNotify(data.msg, (data.code === -3 ? "danger" : "warning"), 1500);
             if (data.code === -3) {
@@ -156,31 +156,31 @@ function checkOut(callback) {
 }
 
 function ackAllNotifs(callback) {
-    postAction({action: "ackAllNotifs"}, function (data) {
+    postAction("/api.php", {action: "ackAllNotifs"}, function (data) {
         callback(data);
     });
 }
 
 function getClockTime(callback) {
-    postAction({action: "getClockTime"}, function (data) {
+    postAction("/api.php", {action: "getClockTime"}, function (data) {
         callback(data);
     });
 }
 
 function getMinutesToday(callback) {
-    postAction({action: "getMinutesToday"}, function (data) {
+    postAction("/api.php", {action: "getMinutesToday"}, function (data) {
         callback(data);
     });
 }
 
 function getEarnedTime(callback) {
-    postAction({action: "getEarnedTime"}, function (data) {
+    postAction("/api.php", {action: "getEarnedTime"}, function (data) {
         callback(data);
     });
 }
 
 function getNotifications(callback) {
-    postAction({action: "getNotifications"}, function (data) {
+    postAction("/api.php", {action: "getNotifications"}, function (data) {
         callback(data);
     });
 }

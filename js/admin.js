@@ -1,31 +1,31 @@
 var logoutTime = 900;
 
 function initData() {
-    postAction({action: 'getAdmins'}, function (data) {
+    postAction("/api/admin.php", {action: 'getAdmins'}, function (data) {
         $.each(data['val'], function (index, value) {
             addUserRow("Admin", value['id'], value['nickname']);
         });
     });
 
-    postAction({action: 'getManagers'}, function (data) {
+    postAction("/api/admin.php", {action: 'getManagers'}, function (data) {
         $.each(data['val'], function (index, value) {
             addUserRow("Manager", value['id'], value['nickname']);
         });
     });
 
-    postAction({action: 'getLeads'}, function (data) {
+    postAction("/api/admin.php", {action: 'getLeads'}, function (data) {
         $.each(data['val'], function (index, value) {
             addUserRow("Lead", value['id'], value['nickname']);
         });
     });
 	
-    postAction({action: 'getBanned'}, function (data) {
+    postAction("/api/admin.php", {action: 'getBanned'}, function (data) {
         $.each(data['val'], function (index, value) {
             addUserRow("Banned", value['id'], value['nickname']);
         });
     });
 
-    postAction({action: 'getDepts'}, function (data) {
+    postAction("/api/admin.php", {action: 'getDepts'}, function (data) {
         $.each(data['val'], function (index, value) {
             addDeptRow(value['id'], value['name'], value['hidden']);
             $('#depts').append($("<option></option>").attr("value", value['id']).text(value['name']));
@@ -34,7 +34,7 @@ function initData() {
         $("#depts").selectpicker("refresh");
     });
 
-    postAction({action: 'getRewards'}, function (data) {
+    postAction("/api/admin.php", {action: 'getRewards'}, function (data) {
         $.each(data['val'], function (index, value) {
             addRewardRow(value['id'], value['name'], value['desc'], value['hours'], value['hidden']);
         });
@@ -42,7 +42,7 @@ function initData() {
         addListeners();
     });
 
-    postAction({action: 'getBonuses'}, function (data) {
+    postAction("/api/admin.php", {action: 'getBonuses'}, function (data) {
         $.each(data['val'], function (index, value) {
             addBonusRow(value['id'], value['start'], value['stop'], value['dept'], value['modifier'] + "x");
         });
@@ -78,7 +78,7 @@ function toggleSetting(button, off, on, offLoad, onLoad, setting, method, toggle
     applyLoading(button, (status === 0) ? offLoad : onLoad + ' ' + setting);
 
     $(button).data('status', opposite);
-    postAction({action: method, status: +opposite}, function (data) {
+    postAction("/api/admin.php", {action: method, status: +opposite}, function (data) {
         const statusTextOpposite = ((+opposite === 0) ? off : on);
         const statusText = ((+opposite === 1) ? off : on);
 
@@ -95,7 +95,7 @@ function toggleSetting(button, off, on, offLoad, onLoad, setting, method, toggle
 }
 
 function setAdmin(value, badgeid, callback) {
-    postAction({action: 'setAdmin', badgeid: badgeid, value: value}, function (data) {
+    postAction("/api/admin.php", {action: 'setAdmin', badgeid: badgeid, value: value}, function (data) {
         if (data['code'] === 0) return;
         if (value === 0) {
             toastNotify('Admin removed.', 'success', 1500);
@@ -108,7 +108,7 @@ function setAdmin(value, badgeid, callback) {
 }
 
 function setManager(value, badgeid, callback) {
-    postAction({action: 'setManager', badgeid: badgeid, value: value}, function (data) {
+    postAction("/api/admin.php", {action: 'setManager', badgeid: badgeid, value: value}, function (data) {
         if (data['code'] === 0) return;
         if (value === 0) {
             toastNotify('Manager removed.', 'success', 1500);
@@ -121,7 +121,7 @@ function setManager(value, badgeid, callback) {
 }
 
 function setLead(value, badgeid, callback) {
-    postAction({action: 'setLead', badgeid: badgeid, value: value}, function (data) {
+    postAction("/api/admin.php", {action: 'setLead', badgeid: badgeid, value: value}, function (data) {
         if (data['code'] === 0) return;
         if (value === 0) {
             toastNotify('Lead removed.', 'success', 1500);
@@ -138,7 +138,7 @@ function setBanned(value, badgeid, callback) {
 	let claimConfirm = confirm("Are you SURE you want to ban " + badgeid + "?");
 
 	if (claimConfirm){
-		postAction({action: 'setBanned', badgeid: badgeid, value: value}, function (data) {
+		postAction("/api/admin.php", {action: 'setBanned', badgeid: badgeid, value: value}, function (data) {
 			if (data['code'] === 0) return;
 			if (value === 0) {
 				toastNotify('User (' + data['name'] + ') unbanned.', 'success', 1500);
@@ -154,7 +154,7 @@ function setBanned(value, badgeid, callback) {
 function addDept(elem) {
     const name = getButtonInput(elem);
     const hidden = parseInt(getButtonSelect(elem));
-    postAction({action: 'addDept', name: name, hidden: hidden}, function (data) {
+    postAction("/api/admin.php", {action: 'addDept', name: name, hidden: hidden}, function (data) {
         if (data['code'] === 0) return;
         toastNotify('Department created.', 'success', 1500);
         addDeptRow(data['val'], name, hidden);
@@ -168,7 +168,7 @@ function addReward(elem) {
     const desc = $("#rDesc").val();
     const hours = $("#rHours").val();
     const hidden = parseInt(getButtonSelect(elem));
-    postAction({action: 'addReward', name: name, description: desc, hours: hours, hidden: hidden}, function (data) {
+    postAction("/api/admin.php", {action: 'addReward', name: name, description: desc, hours: hours, hidden: hidden}, function (data) {
         console.log('2');
 
         if (data['code'] === 0) return;
@@ -189,7 +189,7 @@ function addBonus() {
     const modifier = $("#bonusmod").val();
     //console.log("Bonus: START: " + start + " STOP: " + stop + " DEPTS: " + depts + " MOD: " + modifier);
 
-    postAction({
+    postAction("/api/admin.php", {
         action: 'addBonus',
         start: start,
         stop: stop,
@@ -203,14 +203,14 @@ function addBonus() {
 }
 
 function updateDept(id, name, hidden) {
-    postAction({action: 'updateDept', id: id, name: name, hidden: hidden}, function (data) {
+    postAction("/api/admin.php", {action: 'updateDept', id: id, name: name, hidden: hidden}, function (data) {
         if (data['code'] === 0) return;
         toastNotify('Department updated.', 'success', 1500);
     });
 }
 
 function updateReward(id, field, value) {
-    postAction({action: 'updateReward', id: id, field: field, value: value}, function (data) {
+    postAction("/api/admin.php", {action: 'updateReward', id: id, field: field, value: value}, function (data) {
         if (data['code'] === 0) return;
         toastNotify('Reward updated.', 'success', 1500);
     });
@@ -241,7 +241,7 @@ function removeBanned(elem) {
 }
 
 function removeBonus(elem) {
-    postAction({action: 'removeBonus', id: $(elem).data("id")}, function (data) {
+    postAction("/api/admin.php", {action: 'removeBonus', id: $(elem).data("id")}, function (data) {
         if (data['code'] === 0) return;
         $(elem).parent().parent().remove();
         toastNotify('Bonus removed.', 'success', 1500);

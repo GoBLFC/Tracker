@@ -3,7 +3,7 @@ var logoutTime = 900;
 function initData() {
     clockCycle();
 
-    postAction({action: 'getDepts'}, function (data) {
+    postAction("/api/manage.php", {action: 'getDepts'}, function (data) {
         window.depts = data['val'];
 
         $.each(data['val'], function (index, value) {
@@ -24,7 +24,7 @@ function userSearch(input) {
     input = input.trim();
     if (input === '') return;
 
-    postAction({action: 'getUserSearch', input: input}, function (data) {
+    postAction("/api/manage.php", {action: 'getUserSearch', input: input}, function (data) {
         if (data['code'] === 0) return;
 
         $.each(data['results'], function (index, value) {
@@ -48,7 +48,7 @@ function loadVolunteer(id) {
     onClock = false;
     shiftTime = 0;
 
-    postAction({action: 'getUser', id: id}, function (data) {
+    postAction("/api/manage.php", {action: 'getUser', id: id}, function (data) {
         if (data['code'] === 0) return;
         $("#eRow").empty();
         const uCard = $("#uHeadName");
@@ -75,7 +75,7 @@ function loadVolunteer(id) {
         });
 
         // Load entries
-        postAction({action: 'getTimeEntriesOther', id: id}, function (data) {
+        postAction("/api/manage.php", {action: 'getTimeEntriesOther', id: id}, function (data) {
             $.each(data['val'], function (index, value) {
                 const earned = value['worked'] + (value['bonus'] * 60);
 
@@ -106,7 +106,7 @@ function addTime() {
         return;
     }
 
-    postAction({
+    postAction("/api/manage.php", {
         action: 'addTime',
         id: uid,
         start: start,
@@ -122,7 +122,7 @@ function addTime() {
 }
 
 function createUser(badgeid) {
-    postAction({action: 'createUser', badgeid: badgeid}, function (data) {
+    postAction("/api/manage.php", {action: 'createUser', badgeid: badgeid}, function (data) {
         if (data['code'] === 2) {
             toastNotify('User (' + badgeid + ') already exists.', 'warning', 1500);
         } else {
@@ -151,7 +151,7 @@ function checkIn() {
         return;
     }
 
-    postAction({
+    postAction("/api/manage.php", {
         action: 'checkInOther',
         id: uid,
 		start: start,
@@ -166,7 +166,7 @@ function checkIn() {
 }
 
 function removeTime(id) {
-    postAction({action: "removeTime", id: id}, function (data) {
+    postAction("/api/manage.php", {action: "removeTime", id: id}, function (data) {
         loadVolunteer(window.currUid);
         toastNotify('Removed time entry!', 'success', 1500);
     });
@@ -174,7 +174,7 @@ function removeTime(id) {
 
 function checkOutOther() {
 	console.log(window.currUid);
-    postAction({action: "checkOutOther", id: window.currUid}, function (data) {
+    postAction("/api/manage.php", {action: "checkOutOther", id: window.currUid}, function (data) {
         loadVolunteer(window.currUid);
 		if (data['code'] === 1) {
 			toastNotify('Checked out!', 'success', 1500);
@@ -185,25 +185,25 @@ function checkOutOther() {
 }
 
 function getClockTime(id, callback) {
-    postAction({action: "getClockTimeOther", id: id}, function (data) {
+    postAction("/api/manage.php", {action: "getClockTimeOther", id: id}, function (data) {
         callback(data);
     });
 }
 
 function getMinutesToday(id, callback) {
-    postAction({action: "getMinutesTodayOther", id: id}, function (data) {
+    postAction("/api/manage.php", {action: "getMinutesTodayOther", id: id}, function (data) {
         callback(data);
     });
 }
 
 function getEarnedTime(id, callback) {
-    postAction({action: "getEarnedTimeOther", id: id}, function (data) {
+    postAction("/api/manage.php", {action: "getEarnedTimeOther", id: id}, function (data) {
         callback(data);
     });
 }
 
 function getRewardClaims(id, type, callback) {
-    postAction({action: "getRewardClaims", id: id, type: type}, function (data) {
+    postAction("/api/manage.php", {action: "getRewardClaims", id: id, type: type}, function (data) {
         callback(data);
     });
 }
@@ -214,7 +214,7 @@ function toggleClaim(button) {
 		let claimConfirm = confirm("Are you sure to un-claim this reward?");
 
 		if (claimConfirm){
-			postAction({action: "unclaimReward", uid: window.currUid, type: $(button).data('id')}, function (data) {
+			postAction("/api/manage.php", {action: "unclaimReward", uid: window.currUid, type: $(button).data('id')}, function (data) {
 				$(button).removeClass("btn-success");
 				$(button).addClass("btn-danger");
 				$(button).data("state", "unclaimed");
@@ -222,7 +222,7 @@ function toggleClaim(button) {
 			});
 		}
     } else {
-        postAction({action: "claimReward", uid: window.currUid, type: $(button).data('id')}, function (data) {
+        postAction("/api/manage.php", {action: "claimReward", uid: window.currUid, type: $(button).data('id')}, function (data) {
             $(button).removeClass("btn-danger");
             $(button).addClass("btn-success");
             $(button).data("state", "claimed");
@@ -246,7 +246,7 @@ function toggleSetting(button, off, on, offLoad, onLoad, setting, method, toggle
     applyLoading(button, (status === 0) ? offLoad : onLoad + ' ' + setting);
 
     $(button).data('status', opposite);
-    postAction({action: method, status: +opposite}, function (data) {
+    postAction("/api/manage.php", {action: method, status: +opposite}, function (data) {
         const statusTextOpposite = ((+opposite === 0) ? off : on);
         const statusText = ((+opposite === 1) ? off : on);
 
