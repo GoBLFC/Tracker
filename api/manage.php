@@ -47,7 +47,8 @@ switch ($action) {
         echo json_encode(["code" => 1, "val" => calculateBonusTime($_POST["id"], true)]);
         break;
     case "checkOutOther":
-        echo json_encode(checkOut($_POST["id"], null));
+        $db->checkOut($_POST["id"], null);
+        echo json_encode(["code" => 1, "msg" => "Clocked out"]);
         break;
     case "checkInOther":
         $db->checkIn($_POST["id"], $_POST["dept"], $_POST["notes"], $badgeID, $_POST["start"]);

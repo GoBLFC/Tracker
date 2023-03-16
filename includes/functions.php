@@ -97,39 +97,6 @@ function getEligibleRewards($uid)
     return $availRewards;
 }
 
-function checkOut($uid, $autoTime)
-{
-    global $db;
-    $checkIn = $db->getCheckIn($uid)->fetch();
-    $timeDiff = (new DateTime('NOW'))->getTimestamp() - (new DateTime($checkIn['checkin']))->getTimestamp();
-    $ret = [];
-    $ret['in'] = $checkIn;
-    $ret['diff'] = $timeDiff;
-
-    if ($timeDiff < 10) {
-        if (!isset($_SESSION['quickclock'])) $_SESSION['quickclock'] = 0;
-        $_SESSION['quickclock']++;
-
-        if ($_SESSION['quickclock'] >= 20) {
-            $ret['code'] = -2;
-            if ($_SESSION['quickclock'] == 20) $ret['code'] = -3;
-            $ret['msg'] = "LOOK AT WHAT YOU'VE DONE!!!!!11 >:(";
-        } else if ($_SESSION['quickclock'] >= 10) {
-            $ret['code'] = -2;
-            $ret['msg'] = "SLOW DOWN COWBOY! SITE IS GETTING WARM!";
-        } else {
-            $ret['code'] = -1;
-            $ret['msg'] = "Too quick! Please wait a moment...";
-        }
-    } else {
-        $db->checkOut($uid, $autoTime);
-        $ret['code'] = 1;
-        $ret['msg'] = "Clocked out.";
-    }
-
-    return $ret;
-}
-
 function getClockTime($uid)
 {
     global $db;

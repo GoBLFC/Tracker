@@ -38,7 +38,8 @@ switch ($action) {
         }
         break;
     case "checkOut":
-        echo json_encode(checkOut($badgeID, null));
+        $db->checkOut($badgeID, null);
+        echo json_encode(["code" => 1, "msg" => "Clocked out"]);
         break;
     case "getClockTime":
         echo json_encode(["code" => 1, "val" => getClockTime($badgeID)]);
