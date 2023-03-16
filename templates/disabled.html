@@ -19,7 +19,14 @@
     <div class="container" style="top: 5em;position: relative;">
         {{ include("autoLogout.html") }}
     </div>
-    <script src="js/landing.js"></script>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+
+{% if isAdmin or isManager %}
+    <script src="/js/landing.js"></script>
     <script>$(document).ready(function () {
             decrementLogout();
         });

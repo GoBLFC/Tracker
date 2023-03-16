@@ -1,5 +1,30 @@
 {% extends "base.html" %}
 
+{% block styles %}
+
+<style>
+  form {
+    padding: 2rem;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    background: #505050;
+  }
+  form .form-control {
+    display: block;
+    height: 50px;
+    margin-right: 0.5rem;
+    text-align: center;
+    font-size: 1.25rem;
+    min-width: 0;
+  }
+  form .form-control:last-child {
+    margin-right: 0;
+  }
+</style>
+
+{% endblock %}
+
 {% block content %}
 
 <div class="card" style="width: 28rem;top: 8em;">
@@ -23,6 +48,10 @@
 		</form>
     </div>
 </div>
+
+{% endblock %}
+
+{% block scripts %}
 
 <script>
 $(function () {
@@ -137,26 +166,5 @@ inputs.forEach(input => {
   })
 })
 </script>
-
-<style>
-form {
-  padding: 2rem;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  max-width: 400px;
-  background: #505050;
-}
-form .form-control {
-  display: block;
-  height: 50px;
-  margin-right: 0.5rem;
-  text-align: center;
-  font-size: 1.25rem;
-  min-width: 0;
-}
-form .form-control:last-child {
-  margin-right: 0;
-}
-</style>
 
 {% endblock %}

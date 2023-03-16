@@ -15,24 +15,17 @@
     <meta name="msapplication-config" content="/assets/img/icons/browserconfig.xml">
     <meta name="theme-color" content="#ffffff">
 
-    <script src="js/lib/jquery-3.3.1.min.js"></script>
-    <script src="js/lib/jquery.cookie.js"></script>
-    <script src="js/lib/bootstrap-notify.min.js"></script>
-    <script type="text/javascript" src="js/lib/moment.min.js"></script>
-    <script type="text/javascript" src="js/lib/moment-duration-format.min.js"></script>
-    <script type="text/javascript" src="js/lib/tempusdominus-bootstrap-4.min.js"></script>
-
-	<script src="js/general.js?v=3"></script>
-
-    <link rel="stylesheet" media="all" href="css/style.css">
-
+    <link rel="stylesheet" media="all" href="/css/style.css">
+    
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="css/animate.min.css">
-    <link rel="stylesheet" href="css/bootstrap/font-awesome.min.css">
-    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css">
-    <link rel="stylesheet" href="css/bootstrap/bootstrap-select.css"/>
-    <link rel="stylesheet" href="css/bootstrap/tempusdominus-bootstrap-4.min.css"/>
-    <link rel="stylesheet" type="text/css" href="css/bootstrap/custom-css-bootstrap.css">
+    <link rel="stylesheet" href="/css/animate.min.css">
+    <link rel="stylesheet" href="/css/bootstrap/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/bootstrap/bootstrap-select.css"/>
+    <link rel="stylesheet" href="/css/bootstrap/tempusdominus-bootstrap-4.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap/custom-css-bootstrap.css">
+
+    {% block styles %}{% endblock %}
 
     <title>BLFC Volunteer Tracking</title>
 </head>
@@ -40,16 +33,27 @@
 <body>
 <div class="container" style="top: 3em;position: relative;">
     <div class='logo'>
-        <img src="assets/img/BLFC-ChipIcon.png"/>
+        <img src="/assets/img/BLFC-ChipIcon.png"/>
     </div>
 </div>
 
 {% block content %}{% endblock %}
 
-<script src="js/lib/popper.min.js"></script>
-<script src="js/lib/bootstrap.bundle.min.js"></script>
+<script src="/js/lib/jquery-3.3.1.min.js"></script>
+<script src="/js/lib/jquery.cookie.js"></script>
+<script src="/js/lib/bootstrap-notify.min.js"></script>
+<script type="text/javascript" src="/js/lib/moment.min.js"></script>
+<script type="text/javascript" src="/js/lib/moment-duration-format.min.js"></script>
+<script type="text/javascript" src="/js/lib/tempusdominus-bootstrap-4.min.js"></script>
 
-<script src="js/lib/bootstrap-select.min.js"></script>
+<script src="/js/general.js"></script>
+
+<script src="/js/lib/popper.min.js"></script>
+<script src="/js/lib/bootstrap.bundle.min.js"></script>
+
+<script src="/js/lib/bootstrap-select.min.js"></script>
+
+{% block scripts %}{% endblock %}
 
 {% if devMode %}<script>$(document).ready(function () {logoutTime = 60000})</script>{% endif %}
 

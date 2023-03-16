@@ -34,9 +34,13 @@
     {{ include("autoLogout.html") }}
 </div>
 
-<script src="js/landing.js?v=3"></script>
-<script src="js/general.js?v=3"></script>
-<script src="js/admin.js?v=3"></script>
+{% endblock %}
+
+{% block scripts %}
+
+<script src="/js/landing.js"></script>
+<script src="/js/general.js"></script>
+<script src="/js/admin.js"></script>
 
 <script>$(document).ready(function () {
         initData();

@@ -139,7 +139,11 @@
         </div>
     </div>
 
-    <script src="js/landing.js?v=3"></script>
+{% endblock %}
+
+{% block scripts %}
+
+    <script src="/js/landing.js"></script>
     <script>$(document).ready(function () {
             initData();
             clockCycle();
