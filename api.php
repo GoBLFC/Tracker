@@ -32,14 +32,27 @@ switch ($action) {
 
         if ($dept == "-1") {
             echo json_encode(["code" => 0, "msg" => "Invalid department specified"]);
-        } else {
-            $db->checkIn($badgeID, $dept, "", $badgeID);
-            echo json_encode(["code" => 1, "msg" => "Clocked in"]);
+            break;
         }
+
+        $result = $db->checkIn($badgeID, $dept, "", $badgeID);
+
+        if (!$result) {
+            echo json_encode([["code" => 0, "msg" => "Already checked in"]]);
+            break;
+        }
+
+        echo json_encode(["code" => 1, "msg" => "Checked in"]);
         break;
     case "checkOut":
-        $db->checkOut($badgeID, null);
-        echo json_encode(["code" => 1, "msg" => "Clocked out"]);
+        $result = $db->checkOut($badgeID, null);
+
+        if (!$result->rowCount()) {
+            echo json_encode(["code" => 0, "msg" => "Already checked out"]);
+            break;
+        }
+
+        echo json_encode(["code" => 1, "msg" => "Checked out"]);
         break;
     case "getClockTime":
         echo json_encode(["code" => 1, "val" => getClockTime($badgeID)]);

@@ -47,12 +47,24 @@ switch ($action) {
         echo json_encode(["code" => 1, "val" => calculateBonusTime($_POST["id"], true)]);
         break;
     case "checkOutOther":
-        $db->checkOut($_POST["id"], null);
-        echo json_encode(["code" => 1, "msg" => "Clocked out"]);
+        $result = $db->checkOut($_POST["id"], null);
+
+        if (!$result->rowCount()) {
+            echo json_encode(["code" => 0, "msg" => "Already checked out"]);
+            break;
+        }
+
+        echo json_encode(["code" => 1, "msg" => "Checked out"]);
         break;
     case "checkInOther":
-        $db->checkIn($_POST["id"], $_POST["dept"], $_POST["notes"], $badgeID, $_POST["start"]);
-        echo json_encode(["code" => 1]);
+        $result = $db->checkIn($_POST["id"], $_POST["dept"], $_POST["notes"], $badgeID, $_POST["start"]);
+
+        if (!$result) {
+            echo json_encode(["code" => 0, "msg" => "Already checked in"]);
+            break;
+        }
+
+        echo json_encode(["code" => 1, "msg" => "Checked in"]);
         break;
     case "createUser":
         echo json_encode(["code" => createUser($_POST["badgeID"])]);

@@ -199,6 +199,12 @@ class Database {
     // ################
 
     public function checkIn($uid, $dept, $notes, $addedBy, $start = "now") {
+
+        // Check for existing check-in first
+        if ($this->getCheckIn($uid)->fetch()) {
+            return null;
+        }
+
         $sql = "INSERT INTO `tracker` (`uid`, `checkin`, `dept`, `notes`, `addedby`) VALUES (:uid, :checkin, :dept, :notes, :uid2)";
 
         $stmt = $this->conn->prepare($sql);
@@ -213,7 +219,7 @@ class Database {
     }
 
     public function checkOut($uid, $autoTime) {
-        $sql = "UPDATE `tracker` SET `checkout` = :time, `auto` = :auto WHERE `uid` = :uid AND `checkout` IS NULL";
+        $sql = "UPDATE `tracker` SET `checkout` = :time, `auto` = :auto WHERE `uid` = :uid AND `checkout` IS NULL ORDER BY `id` DESC LIMIT 1";
 
         $time = date("Y-m-d H:i:s");
         if ($autoTime) $time = $autoTime->format('Y-m-d H:i:s');
@@ -228,7 +234,7 @@ class Database {
     }
 
     public function getCheckIn($uid) {
-        $sql = "SELECT `id`, `dept`, `checkin` FROM `tracker` WHERE `uid` = :uid AND `checkout` IS NULL";
+        $sql = "SELECT `id`, `dept`, `checkin` FROM `tracker` WHERE `uid` = :uid AND `checkout` IS NULL ORDER BY `id` DESC LIMIT 1";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(":uid", $uid, PDO::PARAM_INT);
