@@ -83,160 +83,192 @@ if ($type == "unclocked") {
     $totalUnique = sizeof($users['total']);
 } else if ($type == "apps") {
     $title = "Volunteer Applications";
-    //$header = array("ID", "Legal Name");
-    $header = array("ID", "Legal Name", "Roles", "Assigned?", "Staff?", "", "Contact Pref", "Email", "Phone", "Telegram", "Twitter", "Discord", "2023 Hours Desired", "W", "R", "F", "S", "U", "M", "T", "P", "Can't Miss", "", "Comments", "Previous BLFC Experience", "Other con experience", "Created At", "Updated", "");
+    $header = ["ID", "Legal Name", "Roles", "Assigned?", "Staff?", "Contact Pref", "Email", "Phone", "Telegram", "Twitter", "Discord", "Hours Desired", "W", "R", "F", "S", "U", "M", "T", "P", "Can't Miss", "Comments", "Previous BLFC Experience", "Other con experience", "Created At", "Updated"];
 
-    //$data = json_decode($_POST['appdata']);
-	//echo getApps();
-	
-	// Get all pages of data
-	$allData = false;
-	$nextPage = "";
-	$dataArr = array();
-	while ($allData == false){
-		$pageData = getApps($nextPage);
-		$data = json_decode($pageData);
+    // Begin ConCat API requests
+    $client = new GuzzleHttp\Client(["base_uri" => $OAUTH_CONCAT_BASE_URL]);
 
-        // Pagination
-		if ($data->hasMore){
-			$nextPage = $data->nextPage;
-		}else{
-			$allData = true;
-		}
-		
-		$dataArr[] = $data;
+    // Get authorization
+    $auth = $client->request("POST", "/api/oauth/token", [
+        "form_params" => [
+            "client_id" => $OAUTH_CLIENT_ID,
+            "client_secret" => $OAUTH_CLIENT_SECRET,
+            "grant_type" => "client_credentials",
+            "scope" => "volunteer:read"
+        ]
+    ]);
+
+    $bearer = json_decode($auth->getBody())->access_token;
+
+    // Get volunteer apps
+    $apps = [];
+
+    // Get the first page of results, also primes the while-loop if there is more than one page.
+    $request = $client->request("POST", "/api/v0/volunteers/search", [
+        "headers" => [
+            "Content-Type" => "application/json",
+            "Authorization" => "Bearer $bearer"
+        ],
+        // Specifying raw JSON as a string because Guzzle won't encode and send an empty array using the "json" key.
+        // If you need to test pagination during development, you can replace the body here with {"limit": 1}.
+        "body" => "{}"
+    ]);
+
+    $response = json_decode($request->getBody());
+    $apps = array_merge($apps, $response->data);
+
+    // Get additional pages (if any) until they run out.
+    while ($response->hasMore) {
+        $request = $client->request("POST", "/api/v0/volunteers/search", [
+            "headers" => ["Authorization" => "Bearer $bearer"],
+            "json" => ["nextPage" => $response->nextPage]
+        ]);
+        $response = json_decode($request->getBody());
+        $apps = array_merge($apps, $response->data);
+    }
+
+    // Build array of all department names where user provided input
+	$departments = [];
+	foreach ($apps as $app) {
+        foreach ($app->departments as $dept){
+            $departments[] = $dept->name;
+        }
 	}
-
-    // Combine Pagination
-	//$appData = array_merge([], ...$dataArr);
-	
-	//print_r($appData);
-	
-	$departments = array();
-	foreach ($dataArr as $appData){
-		foreach ($appData->data as $td) {
-			foreach ($td->departments as $dept){
-				$depname = $dept->name;
-				if (array_search($depname, $departments) === FALSE) {
-					$departments[] = $depname;
-				}
-			}
-		}
-	}
-
+    $departments = array_unique($departments);
     sort($departments);
 
-    foreach ($departments as $dept) array_push($header, $dept);
+    // Append departments as table columns
+    foreach ($departments as $dept) $header[] = $dept;
 
     $rows = [];
 
-    foreach ($dataArr as $appData) {
-        foreach ($appData->data as $td) {
-            $contacts = array();
-            $options = array();
+    foreach ($apps as $app) {
+        $options = [];
 
-            $row = [];
+        $row = [];
 
-            $row["id"] = $td->user->id;
-            $row["name"] = ($td->user->preferredName) ? $td->user->preferredName . " (" . $td->user->firstName . " " . $td->user->lastName . ")" : $td->user->firstName . " " . $td->user->lastName;
-            //$row["badge"] = ((isset($td->user->registration->badgeName)) ? $td->user->registration->badgeName : "(UNREGISTERED)");
+        $row["id"] = $app->user->id;
+        $row["staff"] = $app->user->isStaff;
+        $row["email"] = $app->user->email;
+        $row["phone"] = $app->user->phone;
+        $row["created"] = $app->createdAt;
+        $row["updated"] = $app->updatedAt;
 
-            $deptNames = [];
-            foreach ($td->departments as $dept) {
-                $deptNames[] = $dept->name;
-            }
-            $row["roles"] = implode(", ", $deptNames);
+        $legalName = "{$app->user->firstName} {$app->user->lastName}";
+        $preferredName = $app->user->preferredName;
+        $row["name"] = ($preferredName) ? $preferredName . " ({$legalName})" : $legalName;
 
-            $assigned = "No";
-            foreach ($td->departments as $dept){
-                foreach ($dept->states as $state) {
-                    if ($state == "assignment") {
-                        $assigned = "Yes";
-                    }
+        $row["primaryContact"] = null;
+
+        // Insert contact details as columns, also sets primary contact method
+        foreach ($app->contactMethods as $contact) {
+            if (in_array($contact->name, ["telegram", "twitter", "discord"])) {
+                $row[$contact->name] = $contact->value;
+                if (isset($contact->isPrimary) && $contact->isPrimary) {
+                    $row["primaryContact"] = $contact->name;
                 }
             }
+        }
 
-            $row["assigned"] = $assigned;
-            $row["staff"] = ($td->user->isStaff) ? "Yes" : "No";
-
-            $primaryContact = "";
-            foreach ($td->contactMethods as $contact){
-                $contacts[$contact->name]['value'] = $contact->value;
-                $contacts[$contact->name]['isPrimary'] = $contact->isPrimary;
-                if ($contact->isPrimary) $primaryContact = $contact->name;
+        // Build per-user list of departments and see if they're assigned to any
+        $depts = [];
+        $row["assigned"] = false;
+        foreach ($app->departments as $dept) {
+            $depts[] = $dept->name;
+            foreach ($dept->states as $state) {
+                if ($state == "assignment") {
+                    $row["assigned"] = true;
+                }
             }
+        }
+        $row["roles"] = implode(", ", $depts);
 
-            $row["primaryContact"] = $primaryContact;
-            $row["email"] = $td->user->email;
-            $row["phone"] = $td->user->phone;
-            $row["telegram"] = $contacts['telegram']['value'];
-            $row["twitter"] = $contacts['twitter']['value'];
-            $row["discord"] = $contacts['discord']['value'];
-
-            #echo "<td>";
-            #if (isset($td->user->registration->emergencyContactName1)) {
-            #    echo $td->user->registration->emergencyContactName1 . ": " . $td->user->registration->emergencyContactPhone1;
-            #}
-            #if (isset($td->user->registration->emergencyContactName2)) {
-            #    echo " | " . $td->user->registration->emergencyContactName2 . ": " . $td->user->registration->emergencyContactPhone2;
-            #}
-            #echo "</td>";
-
-            // Instantiate some options incase concat doesn't provide.
-            $options['Volunteer Days'] = array();
-
-            foreach ($td->options as $option){
-                $options[$option->name] = $option->value;
-            }
-
-            $row["availableHours"] = $options["Available Hours"];
-
-            if (in_array("Wednesday", $options['Volunteer Days'])) $row["wednesday"] = "W";
-            if (in_array("Thursday", $options['Volunteer Days'])) $row["thursday"] = "R";
-            if (in_array("Friday", $options['Volunteer Days'])) $row["friday"] = "F";
-            if (in_array("Saturday", $options['Volunteer Days'])) $row["saturday"] = "S";
-            if (in_array("Sunday", $options['Volunteer Days'])) $row["sunday"] = "U";
-            if (in_array("Monday", $options['Volunteer Days'])) $row["monday"] = "M";
-            if (in_array("Tuesday", $options['Volunteer Days'])) $row["tuesday"] = "T";
-
-            $row["precon"] = $options['Are you available to help out in the months before the con?'];
-            $row["cantMiss"] = $options['Are there any events you can not miss? [Optional]'];
-            $row["anythingElse"] = $options['Is there anything else you would like to mention?'];
-            $row["previousVolunteer"] = $options['Have you previously volunteered with Biggest Little Fur Con 2023? If so, what did you do? [Optional]'];
-            $row["previousVolunteerOther"] = $options['Have you previously volunteered for another convention? If so, which? [Optional]'];
-            $row["created"] = $td->createdAt;
-            $row["updated"] = $td->updatedAt;
-
-            $row["deptSelections"] = [];
-
-            foreach ($departments as $dpt) {
-
-                $stateText = "";
-
-                foreach ($td->departments as $dept) {
-                    if ($dpt != $dept->name) continue;
-
-                    $stateText = "";
-                    foreach ($dept->states as $state) {
-                        if ($state == "avoid") {
-                            $stateText = "X";
-                        } else if ($state == "assignment") {
-                            $stateText .= "✓";
-                        } else if ($state == "experience") {
-                            $stateText .= "!";
-                        } else if ($state == "interest") {
-                            $stateText .= "♥";
+        // Get options
+        foreach ($app->options as $option) {
+            $opt = $option->name;
+            switch ($opt) {
+                case "Available Hours":
+                    $row["availableHours"] = $option->value;
+                    break;
+                case "Volunteer Days":
+                    $dows = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+                    foreach ($dows as $dow) {
+                        if (in_array($dow, $option->value)) {
+                            $row[mb_strtolower($dow)] = true;
                         } else {
-                            $stateText = "???";
+                            $row[mb_strtolower($dow)] = false;
                         }
                     }
-                }
-                $row["deptSelections"][] = $stateText;
+                    break;
+
+                // The rest of this is pretty hacky because of how options are provided by the ConCat API.
+                // Any slight change of wording or the removal of these options could break the report.
+                // In other words: This assumes default ConCat volunteer application form fields are retained.
+
+                // "Are you available to help out in the months before the con?"
+                // This is a single-select option with two values: "yes" or "no"
+                case (str_contains($opt, "help out") && str_contains($opt, "before the con")):
+                    if ($option->value == "yes") {
+                        $row["preCon"] = true;
+                    } elseif ($option->value == "no") {
+                        $row["preCon"] = false;
+                    }
+                    break;
+
+                // "Are there any events you can not miss? [Optional]"
+                // Freetext field, max length 4000
+                case (str_contains($opt, "events") && str_contains($opt, "can not miss")):
+                    $row["cantMiss"] = $option->value;
+                    break;
+
+                // "Is there anything else you would like to mention?"
+                // Freetext field, max length 4000
+                case (str_contains($opt, "anything else") && str_contains($opt, "like to mention")):
+                    $row["anythingElse"] = $option->value;
+                    break;
+
+                // "Have you previously volunteered with <CON NAME>? If so, what did you do? [Optional]"
+                // Freetext field, max length 4000
+                case (str_contains($opt, "previously volunteered") && str_contains($opt, "what did you do")):
+                    $row["previousVolunteer"] = $option->value;
+                    break;
+
+                // "Have you previously volunteered for another convention? If so, which? [Optional]"
+                // Freetext field, max length 4000
+                case (str_contains($opt, "previously volunteered") && str_contains($opt, "another convention")):
+                    $row["previousVolunteerOther"] = $option->value;
+                    break;
             }
-
-            $rows[] = $row;
-
         }
+
+        $row["deptSelections"] = [];
+
+        foreach ($departments as $dpt) {
+
+            $stateText = "";
+
+            foreach ($app->departments as $dept) {
+                if ($dpt != $dept->name) continue;
+
+                $stateText = "";
+                foreach ($dept->states as $state) {
+                    if ($state == "avoid") {
+                        $stateText = "X";
+                    } elseif ($state == "assignment") {
+                        $stateText .= "✓";
+                    } elseif ($state == "experience") {
+                        $stateText .= "!";
+                    } elseif ($state == "interest") {
+                        $stateText .= "♥";
+                    } else {
+                        $stateText = "???";
+                    }
+                }
+            }
+            $row["deptSelections"][] = $stateText;
+        }
+
+        $rows[] = $row;
     }
 }
 

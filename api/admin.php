@@ -97,9 +97,6 @@ switch ($action) {
     case "addBonus":
         echo json_encode(["code" => 1, "val" => $db->createBonus($_POST["start"], $_POST["stop"], $_POST["depts"], $_POST["modifier"])]);
         break;
-    case "getApps":
-        echo json_encode(["code" => 1, "val" => getApps()]);
-        break;
 }
 
 ?>

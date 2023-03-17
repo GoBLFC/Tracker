@@ -265,58 +265,6 @@ function userSignIn($badgeID, $firstName, $lastName, $username)
 	return session_id();
 }
 
-function getToken(){
-    global $OAUTH_CLIENT_ID;
-    global $OAUTH_CLIENT_SECRET;
-    global $OAUTH_CONCAT_BASE_URL;
-	$data = array(
-		'client_id' => $OAUTH_CLIENT_ID,
-		'client_secret' => $OAUTH_CLIENT_SECRET,
-		'grant_type' => 'client_credentials',
-		'scope' => 'volunteer:read',
-	);
-	$req = jwt_request("{$OAUTH_CONCAT_BASE_URL}/api/oauth/token", $_SESSION['accessToken'], $data, true);
-	return $req;
-}
-
-function getApps($nextPage)
-{
-    global $OAUTH_CONCAT_BASE_URL;
-	if ($nextPage != ""){
-		$data = json_encode(array(
-			"nextPage"  => $nextPage,
-		));
-	}else{
-		$data = "{}";
-	}
-		
-    return jwt_request("{$OAUTH_CONCAT_BASE_URL}/api/v0/volunteers/search", json_decode(getToken())->access_token, $data, false);
-}
-
-function jwt_request($url, $token, $post, $content)
-{
-    //header('Content-Type: application/json'); // Specify the type of data
-    $ch = curl_init($url); // Initialise cURL
-    $authorization = "Authorization: Bearer " . $token; // Prepare the authorisation token
-    //echo $authorization;
-	
-	if ($content){
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
-	    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post)); // Set the posted fields
-    }else{
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', $authorization)); // Inject the token into the header
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $post); // Set the posted fields
-	}
-	
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, 1); // Specify the request method as POST
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1); // This will follow any redirects
-    $result = curl_exec($ch); // Execute the cURL statement
-    curl_close($ch); // Close the cURL connection
-	//print $result;
-    return $result; // Return the received data
-}
-
 function guidv4($data)
 {
     assert(strlen($data) == 16);
