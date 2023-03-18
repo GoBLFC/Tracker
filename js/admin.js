@@ -88,7 +88,11 @@ function toggleSetting(button, off, on, offLoad, onLoad, setting, method, toggle
             $(button).html(statusText + ' ' + setting);
             $(button).toggleClass(toggle);
 
-            toastNotify(setting + ' ' + statusTextOpposite + 'd!', 'success', 1500);
+            Toast.fire({
+                text: setting + " " + statusTextOpposite + "d",
+                icon: "success"
+            });
+
             if (callback !== null) callback(data);
         }
     });
@@ -98,9 +102,15 @@ function setAdmin(value, badgeid, callback) {
     postAction("/api/admin.php", {action: 'setAdmin', badgeid: badgeid, value: value}, function (data) {
         if (data['code'] === 0) return;
         if (value === 0) {
-            toastNotify('Admin removed.', 'success', 1500);
+            Toast.fire({
+                text: "Admin removed",
+                icon: "success"
+            });
         } else {
-            toastNotify('Made ' + data['name'] + ' admin!', 'success', 1500);
+            Toast.fire({
+                text: "Made " + data["name"] + " admin",
+                icon: "success"
+            });
             addUserRow("Admin", badgeid, data['name']);
         }
         if (callback) callback();
@@ -111,9 +121,15 @@ function setManager(value, badgeid, callback) {
     postAction("/api/admin.php", {action: 'setManager', badgeid: badgeid, value: value}, function (data) {
         if (data['code'] === 0) return;
         if (value === 0) {
-            toastNotify('Manager removed.', 'success', 1500);
+            Toast.fire({
+                text: "Manager removed",
+                icon: "success"
+            });
         } else {
-            toastNotify('Made ' + data['name'] + ' manager!', 'success', 1500);
+            Toast.fire({
+                text: "Made " + data["name"] + " manager",
+                icon: "success"
+            });
             addUserRow("Manager", badgeid, data['name']);
         }
         if (callback) callback();
@@ -124,9 +140,15 @@ function setLead(value, badgeid, callback) {
     postAction("/api/admin.php", {action: 'setLead', badgeid: badgeid, value: value}, function (data) {
         if (data['code'] === 0) return;
         if (value === 0) {
-            toastNotify('Lead removed.', 'success', 1500);
+            Toast.fire({
+                text: "Lead removed",
+                icon: "success"
+            });
         } else {
-            toastNotify('Made ' + data['name'] + ' lead!', 'success', 1500);
+            Toast.fire({
+                text: "Made " + data["name"] + " lead",
+                icon: "success"
+            });
             addUserRow("Lead", badgeid, data['name']);
         }
         if (callback) callback();
@@ -140,9 +162,15 @@ function setBanned(value, badgeid, callback) {
 	if (claimConfirm){
 		postAction("/api/admin.php", {action: 'setBanned', badgeid: badgeid, value: value}, function (data) {
 			if (value === 0) {
-				toastNotify('User unbanned.', 'success', 1500);
+				Toast.fire({
+                    text: "User unbanned",
+                    icon: "success"
+                });
 			} else {
-				toastNotify('User banned.', 'success', 1500);
+				Toast.fire({
+                    text: "User banned",
+                    icon: "success"
+                });
 				addUserRow("Banned", badgeid, data['name']);
 			}
 			if (callback) callback();
@@ -155,7 +183,10 @@ function addDept(elem) {
     const hidden = parseInt(getButtonSelect(elem));
     postAction("/api/admin.php", {action: 'addDept', name: name, hidden: hidden}, function (data) {
         if (data['code'] === 0) return;
-        toastNotify('Department created.', 'success', 1500);
+        Toast.fire({
+            text: "Department created",
+            icon: "success"
+        });
         addDeptRow(data['val'], name, hidden);
         addListeners();
     });
@@ -171,7 +202,10 @@ function addReward(elem) {
         console.log('2');
 
         if (data['code'] === 0) return;
-        toastNotify('Reward created.', 'success', 1500);
+        Toast.fire({
+            text: "Reward created",
+            icon: "success"
+        });
         addRewardRow(data['val'], name, desc, hours, hidden);
         addListeners();
     });
@@ -197,21 +231,30 @@ function addBonus() {
     }, function (data) {
         if (data['code'] === 0) return;
         addBonusRow(data['val'], start, stop, depts, modifier);
-        toastNotify('Bonus added!', 'success', 1500);
+        Toast.fire({
+            text: "Bonus added",
+            icon: "success"
+        });
     });
 }
 
 function updateDept(id, name, hidden) {
     postAction("/api/admin.php", {action: 'updateDept', id: id, name: name, hidden: hidden}, function (data) {
         if (data['code'] === 0) return;
-        toastNotify('Department updated.', 'success', 1500);
+        Toast.fire({
+            text: "Department updated",
+            icon: "success"
+        });
     });
 }
 
 function updateReward(id, field, value) {
     postAction("/api/admin.php", {action: 'updateReward', id: id, field: field, value: value}, function (data) {
         if (data['code'] === 0) return;
-        toastNotify('Reward updated.', 'success', 1500);
+        Toast.fire({
+            text: "Reward updated",
+            icon: "success"
+        });
     });
 }
 
@@ -243,7 +286,10 @@ function removeBonus(elem) {
     postAction("/api/admin.php", {action: 'removeBonus', id: $(elem).data("id")}, function (data) {
         if (data['code'] === 0) return;
         $(elem).parent().parent().remove();
-        toastNotify('Bonus removed.', 'success', 1500);
+        Toast.fire({
+            text: "Bonus removed",
+            icon: "success"
+        });
     });
 }
 

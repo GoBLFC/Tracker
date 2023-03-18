@@ -117,16 +117,25 @@ function addTime() {
         if (data['code'] === 0) return;
 
         loadVolunteer(uid);
-        toastNotify('Time added!', 'success', 1500);
+        Toast.fire({
+            text: "Time added",
+            icon: "success"
+        });
     });
 }
 
 function createUser(badgeid) {
     postAction("/api/manage.php", {action: 'createUser', badgeid: badgeid}, function (data) {
         if (data['code'] === 0) {
-            toastNotify('User (' + badgeid + ') already exists.', 'warning', 1500);
+            Toast.fire({
+                text: "User (" + badgeid + ") already exists",
+                icon: "warning"
+            });
         } else {
-            toastNotify('User (' + badgeid + ') created.', 'success', 1500);
+            Toast.fire({
+                text: "User (" + badgeid + ") created",
+                icon: "success"
+            });
         }
     });
 }
@@ -161,14 +170,20 @@ function checkIn() {
         if (data['code'] === 0) return;
 
         loadVolunteer(uid);
-        toastNotify('User checked in!', 'success', 1500);
+        Toast.fire({
+            text: "User checked in",
+            icon: "success"
+        });
     });
 }
 
 function removeTime(id) {
     postAction("/api/manage.php", {action: "removeTime", id: id}, function (data) {
         loadVolunteer(window.currUid);
-        toastNotify('Removed time entry!', 'success', 1500);
+        Toast.fire({
+            text: "Removed time entry",
+            icon: "success"
+        });
     });
 }
 
@@ -177,9 +192,15 @@ function checkOutOther() {
     postAction("/api/manage.php", {action: "checkOutOther", id: window.currUid}, function (data) {
         loadVolunteer(window.currUid);
 		if (data['code'] === 1) {
-			toastNotify('Checked out!', 'success', 1500);
+			Toast.fire({
+                text: "Checked out",
+                icon: "success"
+            });
         } else {
-            toastNotify(data['msg'], 'success', 1500);
+            Toast.fire({
+                text: data["msg"],
+                icon: "success"
+            });
         }
     });
 }
@@ -256,7 +277,11 @@ function toggleSetting(button, off, on, offLoad, onLoad, setting, method, toggle
             $(button).html(statusText + ' ' + setting);
             $(button).toggleClass(toggle);
 
-            toastNotify(setting + ' ' + statusTextOpposite + 'd!', 'success', 1500);
+            Toast.fire({
+                text: setting + " " + statusTextOpposite + "d!",
+                icon: "success"
+            });
+
             if (callback !== null) callback(data);
         }
     });

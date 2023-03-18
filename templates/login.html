@@ -83,9 +83,11 @@ function submitCode() {
 			document.cookie = "badge=" + data['id'];
 			document.cookie = "session=" + data['session'];
 			location.reload();
-			//toastNotify('Good Code!', 'success', 1500);
         } else {
-            toastNotify('Invalid Code', 'warning', 1500);
+            Toast.fire({
+              text: "Invalid code",
+              icon: "warning"
+            });
 			inputs.forEach((input, i) => {input.value = ""});
 			inputs[0].focus();
         }

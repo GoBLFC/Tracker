@@ -28,7 +28,18 @@ function initData() {
         let time = 0;
         $.each(data['val'], function (index, n) {
             setTimeout(function () {
-                toastNotify(n['message'], n['type'], 30000);
+                type = n["type"];
+                // Convert Bootstrap color classes to appropriate icon classes
+                if (type == "primary") {
+                    type = "info";
+                } else if (type == "danger") {
+                    type = "error";
+                }
+                Toast.fire({
+                    text: n["message"],
+                    icon: type,
+                    timer: 30000
+                });
             }, time);
             time += 500;
             postAction("/api.php", {action: "readNotification", id: n['id']});
@@ -99,7 +110,10 @@ function toggleStatus(status, data) {
         $shiftclock.hide();
     }
 
-    toastNotify('Checked ' + opposite + '!', 'success', 1500)
+    Toast.fire({
+        text: "Clocked " + opposite,
+        icon: "success"
+    });
 }
 
 function clockCycle() {
@@ -142,7 +156,10 @@ function checkIn(callback) {
 function checkOut(callback) {
     postAction("/api.php", {action: "checkOut"}, function (data) {
         if (data.code <= -1) {
-            toastNotify(data.msg, (data.code === -3 ? "danger" : "warning"), 1500);
+            Toast.fire({
+                text: data.msg,
+                icon: (data.code === -3 ? "error" : "warning")
+            });
             if (data.code === -3) {
                 $("#audio")[0].volume = 0.35;
                 $("#audio")[0].play();

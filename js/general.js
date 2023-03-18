@@ -1,3 +1,14 @@
+const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 5000,
+    timerProgressBar: true,
+    showClass: {
+        popup: "animate__animated animate__slideInDown animate__faster"
+    }
+});
+
 function debounce(func, wait, immediate) {
     var timeout;
     return function () {
@@ -45,18 +56,5 @@ function postAction(url, data, callback) {
         }).fail(function (data) {
         alert('Internal error, please contact a staff member for assistance.');
         console.log(data.msg);
-    });
-}
-
-function toastNotify(message, type, delay) {
-    $.notify({
-        message: message
-    }, {
-        type: type,
-        delay: delay,
-        animate: {
-            enter: 'animated bounceInRight',
-            exit: 'animated bounceOutRight'
-        },
     });
 }
