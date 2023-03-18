@@ -11,8 +11,8 @@ if ($user == null && isset($action) && $action == "checkQuickCode") {
     if (!$auth) {
         echo json_encode(["code" => -1]);
     } else {
-        $session = userSignIn($auth["id"], $auth["first_name"], $auth["last_name"], $auth["nickname"]);
-        echo json_encode(["code" => 1, "id" => $auth["id"], "session" => $session]);
+        $_SESSION["badgeid"] = $auth["id"];
+        echo json_encode(["code" => 1, "id" => $auth["id"]]);
     }
 }
 

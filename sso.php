@@ -31,8 +31,12 @@ if (!isset($_GET['code'])) {
 
         $userInfo = $provider->getResourceOwner($accessToken)->toArray();
 		
-		userSignIn($userInfo['id'], $userInfo['firstName'], $userInfo['lastName'], $userInfo['username']);		
+        $_SESSION["badgeid"] = $userInfo["id"];
         $_SESSION['accessToken'] = $accessToken->getToken();
+
+        if (!$db->getUser($userInfo["id"])->fetch()) {
+            $db->createUser($userInfo["id"], $userInfo["firstName"], $userInfo["lastName"], $userInfo["username"]);
+        }
 
         header("Refresh:0; url=/", true, 303);
 

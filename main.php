@@ -35,7 +35,18 @@ $twig = new \Twig\Environment($loader);
 
 $db = new Database($DB_HOST, $DB_NAME, $DB_USERNAME, $DB_PASSWORD);
 
-$user = isValidSession($session, $badgeID);
+// Check valid session
+if ($badgeID == "") {
+    $user = false;
+} else {
+    $user = $db->getUser($badgeID)->fetch();
+    if ($user == null) {
+        $user = false;
+    } elseif ($user['id'] != $badgeID) {
+        $user = false;
+    }
+}
+
 $devMode = $db->getDevMode();
 $siteStatus = $db->getSiteStatus();
 $kioskAuth = (isset($_COOKIE["kiosknonce"]) && $db->checkKiosk($_COOKIE["kiosknonce"])->fetch()) ? 1 : 0;

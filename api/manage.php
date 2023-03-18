@@ -67,7 +67,14 @@ switch ($action) {
         echo json_encode(["code" => 1, "msg" => "Checked in"]);
         break;
     case "createUser":
-        echo json_encode(["code" => createUser($_POST["badgeID"])]);
+        $result = $db->createUser($_POST["badgeID"]);
+
+        if (!$result) {
+            echo json_encode(["code" => 0, "msg" => "User already exists"]);
+            break;
+        }
+
+        echo json_encode(["code" => 1, "msg" => "User created"]);
         break;
     case "addTime":
         echo json_encode(["code" => 1, "val" => $db->createTime($_POST["id"], $_POST["start"], $_POST["stop"], $_POST["dept"], $_POST["notes"], $badgeID)]);

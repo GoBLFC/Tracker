@@ -139,11 +139,10 @@ function setBanned(value, badgeid, callback) {
 
 	if (claimConfirm){
 		postAction("/api/admin.php", {action: 'setBanned', badgeid: badgeid, value: value}, function (data) {
-			if (data['code'] === 0) return;
 			if (value === 0) {
-				toastNotify('User (' + data['name'] + ') unbanned.', 'success', 1500);
+				toastNotify('User unbanned.', 'success', 1500);
 			} else {
-				toastNotify('User (' + data['name'] + ') banned.', 'success', 1500);
+				toastNotify('User banned.', 'success', 1500);
 				addUserRow("Banned", badgeid, data['name']);
 			}
 			if (callback) callback();

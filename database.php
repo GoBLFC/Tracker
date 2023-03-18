@@ -13,6 +13,25 @@ class Database {
     // ## Users ##
     // ###########
 
+    public function createUser($id, $firstName, $lastName, $username) {
+        // Check for existing user first
+        if ($this->getUser($id)->fetch()) {
+            return null;
+        }
+
+        $sql = "INSERT INTO `users` (`id`, `first_name`, `last_name`, `nickname`, `tg_uid`) VALUES (:id, :firstName, :lastName, :username, :tgid)";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+        $stmt->bindValue(":firstName", $firstName, PDO::PARAM_STR);
+        $stmt->bindValue(":lastName", $lastName, PDO::PARAM_STR);
+        $stmt->bindValue(":username", $username, PDO::PARAM_STR);
+        $stmt->bindValue(":tgid", bin2hex(random_bytes(16)), PDO::PARAM_STR);
+        $stmt->execute();
+
+        return $this->conn->lastInsertId();
+    }
+
     public function getUser($id) {
         $sql = "SELECT * FROM `users` WHERE `id` = :id";
 
@@ -85,6 +104,18 @@ class Database {
         if (isset($admin)) { $stmt->bindValue(":admin", $admin, PDO::PARAM_INT); }
         if (isset($manager)) { $stmt->bindValue(":manager", $manager, PDO::PARAM_INT); }
         if (isset($lead)) { $stmt->bindValue(":lead", $lead, PDO::PARAM_INT); }
+        $stmt->execute();
+
+        return $stmt;
+    }
+
+    public function setUserBan($id, $banned) {
+        // TODO: Enable bans for non-existent users
+        $sql = "UPDATE `users` SET `banned` = :banned WHERE `id` = :id";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+        $stmt->bindValue(":banned", $banned, PDO::PARAM_INT);
         $stmt->execute();
 
         return $stmt;
@@ -181,7 +212,7 @@ class Database {
         if (isset($hidden)) { $stmt->bindValue(":hidden", $hidden, PDO::PARAM_INT); }
         $stmt->execute();
 
-        return $this->conn->lastInsertId();
+        return $stmt;
     }
 
     public function listDepartments($hidden = 0) {
@@ -199,7 +230,6 @@ class Database {
     // ################
 
     public function checkIn($uid, $dept, $notes, $addedBy, $start = "now") {
-
         // Check for existing check-in first
         if ($this->getCheckIn($uid)->fetch()) {
             return null;
@@ -326,7 +356,7 @@ class Database {
         $stmt->bindValue(":value", $value, PDO::PARAM_STR);
         $stmt->execute();
 
-        return $this->conn->lastInsertId();
+        return $stmt;
     }
 
     public function listRewards($hidden = 0) {

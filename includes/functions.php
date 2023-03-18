@@ -1,74 +1,8 @@
 <?php
 
-function isValidSession($session, $badge)
-{
-    global $db;
-    if ($badge == "") return false;
-    $user = $db->getUser($badge)->fetch();
-    if ($user == null) return false;
-    if ($user['id'] != $badge) return false;
-    return $user;
-}
-
 // TODO: Return method specific results instead of arrays
 
 /* SQL Queries */
-
-//Insert or update - excessive binds are because you can't re-use values, silly.
-function updateSession($id, $fName, $lName, $nName, $session)
-{
-    global $db;
-    $stmt = $db->conn->prepare("INSERT INTO `users` (`id`, `first_name`, `last_name`, `nickname`, `admin`, `manager`, `last_session`, `last_ip`, `registered`, `reg_ua`, `tg_uid`) VALUES (:id, :fName, :lName, :nName, 0, 0, :lastsession, :lastip, NOW(), :regua, :tgid) ON DUPLICATE KEY UPDATE `first_name` = :fName2, `last_name` = :lName2, `nickname` = :nName2, `last_session` = :lastsession2, `last_ip` = :lastip2, `last_login` = NOW(), `tg_quickcode` = NULL");
-    //$stmt = $db->conn->prepare("UPDATE `users` SET `last_session` = :lastsession, `last_ip` = :lastip WHERE `users`.`id` = :id");
-    $stmt->bindValue(':id', $id, PDO::PARAM_INT);
-    $stmt->bindValue(':fName', $fName, PDO::PARAM_STR);
-    $stmt->bindValue(':fName2', $fName, PDO::PARAM_STR);
-    $stmt->bindValue(':lName', $lName, PDO::PARAM_STR);
-    $stmt->bindValue(':lName2', $lName, PDO::PARAM_STR);
-    $stmt->bindValue(':nName', $nName, PDO::PARAM_STR);
-    $stmt->bindValue(':nName2', $nName, PDO::PARAM_STR);
-    $stmt->bindValue(':tgid', bin2hex(random_bytes(16)), PDO::PARAM_STR);
-    $stmt->bindValue(':lastsession', $session, PDO::PARAM_STR);
-    $stmt->bindValue(':lastsession2', $session, PDO::PARAM_STR);
-    $stmt->bindValue(':regua', $_SERVER['HTTP_USER_AGENT'], PDO::PARAM_STR);
-    $stmt->bindValue(':lastip', $_SERVER["REMOTE_ADDR"], PDO::PARAM_STR);
-    $stmt->bindValue(':lastip2', $_SERVER["REMOTE_ADDR"], PDO::PARAM_STR);
-    $stmt->execute();
-}
-
-function createUser($badgeID)
-{
-    global $db;
-    $user = $db->getUser($badgeID)->fetch();
-    if (count($user) > 0) {
-        return 2;
-    }
-
-    global $db;
-    $stmt = $db->conn->prepare("INSERT INTO `users` (`id`, `first_name`, `last_name`, `nickname`, `tg_uid`) VALUES (:id, 'TempUser', 'TempUser', 'TempUser', :tgid)");
-    $stmt->bindValue(':id', $badgeID, PDO::PARAM_INT);
-    $stmt->bindValue(':tgid', bin2hex(random_bytes(16)), PDO::PARAM_STR);
-    $stmt->execute();
-
-    return 1;
-}
-
-function setBanned($badgeID, $state)
-{
-    global $db;
-    $user = $db->getUser($badgeID)->fetch();
-    if ($state == 1 && !isset($user)) {
-        updateSession($badgeID, "BAN", "BAN", "BAN", "BAN");
-    }
-
-    global $db;
-    $stmt = $db->conn->prepare("UPDATE `users` SET `banned` = :state WHERE `id` = :id");
-    $stmt->bindValue(':id', $badgeID, PDO::PARAM_INT);
-    $stmt->bindValue(':state', $state, PDO::PARAM_INT);
-    $stmt->execute();
-
-    return isset($user) ? $user['nickname'] : "Unknown";
-}
 
 function getEligibleRewards($uid)
 {
@@ -247,20 +181,4 @@ function overlapInMinutes($startDate1, $endDate1, $startDate2, $endDate2)
     $overlap = floor(($firstEnd - $lastStart) / 60);
 
     return $overlap > 0 ? $overlap : 0;
-}
-
-function userSignIn($badgeID, $firstName, $lastName, $username)
-{
-    global $db;
-	session_regenerate_id();
-
-	$_SESSION['badgeid'] = $badgeID;
-
-	setcookie("badge", $badgeID, 0, "/");
-	setcookie("session", session_id(), 0, "/");
-	if (isset($isAdmin) && ($isAdmin || $isManager)) $db->createLog($badgeID, "logIn", "ip:" . $_SERVER["REMOTE_ADDR"]);
-	//die(print_r($userInfo));
-	updateSession($badgeID, $firstName, $lastName, $username, session_id());
-	
-	return session_id();
 }

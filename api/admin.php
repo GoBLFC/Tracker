@@ -46,7 +46,8 @@ switch ($action) {
         echo json_encode(setRole($db, $_POST["badgeid"], "lead", $_POST["value"]));
         break;
     case "setBanned":
-        echo json_encode(["name" => setBanned($_POST["badgeid"], $_POST["value"])]);
+        $db->setUserBan($_POST["badgeid"], $_POST["value"]);
+        echo json_encode(["code" => 1]);
         break;
     case "getAdmins":
         echo json_encode(["code" => 1, "val" => $db->listUsersByRole(admin: true)->fetchAll()]);

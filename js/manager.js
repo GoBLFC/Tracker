@@ -123,7 +123,7 @@ function addTime() {
 
 function createUser(badgeid) {
     postAction("/api/manage.php", {action: 'createUser', badgeid: badgeid}, function (data) {
-        if (data['code'] === 2) {
+        if (data['code'] === 0) {
             toastNotify('User (' + badgeid + ') already exists.', 'warning', 1500);
         } else {
             toastNotify('User (' + badgeid + ') created.', 'success', 1500);
