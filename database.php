@@ -550,7 +550,7 @@ class Database {
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(":chatID", $chatID, PDO::PARAM_INT);
         $stmt->bindValue(":tgUID", $tguid, PDO::PARAM_STR);
-        $stmt->bindValue(":newID", guidv4(openssl_random_pseudo_bytes(16)), PDO::PARAM_STR);
+        $stmt->bindValue(":newID", bin2hex(random_bytes(16)), PDO::PARAM_STR);
         $stmt->execute();
 
         return $stmt;

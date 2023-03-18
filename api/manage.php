@@ -89,7 +89,7 @@ switch ($action) {
         $status = $_POST["status"];
 
         if ($status == 1) {
-            $kioskNonce = md5(rand());
+            $kioskNonce = bin2hex(random_bytes(16));
             $db->authorizeKiosk($kioskNonce);
             echo json_encode(["code" => 1, "val" => $kioskNonce]);
         }

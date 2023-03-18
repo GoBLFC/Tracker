@@ -27,7 +27,7 @@ function updateSession($id, $fName, $lName, $nName, $session)
     $stmt->bindValue(':lName2', $lName, PDO::PARAM_STR);
     $stmt->bindValue(':nName', $nName, PDO::PARAM_STR);
     $stmt->bindValue(':nName2', $nName, PDO::PARAM_STR);
-    $stmt->bindValue(':tgid', guidv4(openssl_random_pseudo_bytes(16)), PDO::PARAM_STR);
+    $stmt->bindValue(':tgid', bin2hex(random_bytes(16)), PDO::PARAM_STR);
     $stmt->bindValue(':lastsession', $session, PDO::PARAM_STR);
     $stmt->bindValue(':lastsession2', $session, PDO::PARAM_STR);
     $stmt->bindValue(':regua', $_SERVER['HTTP_USER_AGENT'], PDO::PARAM_STR);
@@ -47,7 +47,7 @@ function createUser($badgeID)
     global $db;
     $stmt = $db->conn->prepare("INSERT INTO `users` (`id`, `first_name`, `last_name`, `nickname`, `tg_uid`) VALUES (:id, 'TempUser', 'TempUser', 'TempUser', :tgid)");
     $stmt->bindValue(':id', $badgeID, PDO::PARAM_INT);
-    $stmt->bindValue(':tgid', guidv4(openssl_random_pseudo_bytes(16)), PDO::PARAM_STR);
+    $stmt->bindValue(':tgid', bin2hex(random_bytes(16)), PDO::PARAM_STR);
     $stmt->execute();
 
     return 1;
@@ -263,14 +263,4 @@ function userSignIn($badgeID, $firstName, $lastName, $username)
 	updateSession($badgeID, $firstName, $lastName, $username, session_id());
 	
 	return session_id();
-}
-
-function guidv4($data)
-{
-    assert(strlen($data) == 16);
-
-    $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // set version to 0100
-    $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // set bits 6-7 to 10
-
-    return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
 }
