@@ -21,7 +21,7 @@ foreach ($db->listUsers() as $user) {
             echo "Already Notified reward: " . $reward['name'] . "\n";
         } else {
             echo "New available reward: " . $reward['name'] . "\n";
-            $db->createNotification($user['id'], "success", $reward['id'], "You can claim the following reward: <b>" . $reward['name'] . " - " . $reward['desc'] . "</b><br>Ask to claim this at the volunteer desk!", 1);
+            $db->createNotification($user['id'], "success", $reward['id'], "You can claim the following reward: <b>" . $reward['name'] . " - " . $reward['desc'] . "</b><br>Ask to claim this at the volunteer desk!");
             echo \Longman\TelegramBot\Commands\SystemCommands\sendTGMessage($user['id'], "You can claim the following reward: " . PHP_EOL . "***" . $reward['name'] . " - " . $reward['desc'] . "***" . PHP_EOL . PHP_EOL . "Ask to claim this at the volunteer desk!");
         }
     }

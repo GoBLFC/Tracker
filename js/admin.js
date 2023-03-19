@@ -3,25 +3,25 @@ var logoutTime = 900;
 function initData() {
     postAction("/api/admin.php", {action: 'getAdmins'}, function (data) {
         $.each(data['val'], function (index, value) {
-            addUserRow("Admin", value['id'], value['nickname']);
+            addUserRow("Admin", value['id'], value['username']);
         });
     });
 
     postAction("/api/admin.php", {action: 'getManagers'}, function (data) {
         $.each(data['val'], function (index, value) {
-            addUserRow("Manager", value['id'], value['nickname']);
+            addUserRow("Manager", value['id'], value['username']);
         });
     });
 
     postAction("/api/admin.php", {action: 'getLeads'}, function (data) {
         $.each(data['val'], function (index, value) {
-            addUserRow("Lead", value['id'], value['nickname']);
+            addUserRow("Lead", value['id'], value['username']);
         });
     });
 	
     postAction("/api/admin.php", {action: 'getBanned'}, function (data) {
         $.each(data['val'], function (index, value) {
-            addUserRow("Banned", value['id'], value['nickname']);
+            addUserRow("Banned", value['id'], value['username']);
         });
     });
 

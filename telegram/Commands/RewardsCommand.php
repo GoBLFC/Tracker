@@ -58,7 +58,7 @@ class RewardsCommand extends SystemCommand
 
         $currChatID = $message->getChat()->getId();
 
-        $user = getUserByTGCID($currChatID);
+        $user = $db->getUserByTelegramID($currChatID);
         if ($user == null) {
             return Request::sendMessage([
                 'chat_id' => $currChatID,

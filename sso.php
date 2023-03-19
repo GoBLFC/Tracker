@@ -35,7 +35,7 @@ if (!isset($_GET['code'])) {
         $_SESSION['accessToken'] = $accessToken->getToken();
 
         if (!$db->getUser($userInfo["id"])->fetch()) {
-            $db->createUser($userInfo["id"], $userInfo["firstName"], $userInfo["lastName"], $userInfo["username"]);
+            $db->createUser($userInfo["id"], $userInfo["username"], $userInfo["firstName"], $userInfo["lastName"]);
         }
 
         header("Refresh:0; url=/", true, 303);

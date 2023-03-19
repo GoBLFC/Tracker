@@ -28,7 +28,7 @@ function userSearch(input) {
         if (data['code'] === 0) return;
 
         $.each(data['results'], function (index, value) {
-            addUserRow(value['id'], value['nickname'], value['first_name'] + " " + value['last_name'], value['dept'], value['banned']);
+            addUserRow(value['id'], value['username'], value['first_name'] + " " + value['last_name'], value['dept'], value['banned']);
         });
     });
 }
@@ -57,13 +57,13 @@ function loadVolunteer(id) {
         console.log(user);
 
         uCard.parent().parent().show();
-        uCard.text(user['nickname']);
+        uCard.text(user['username']);
         window.currUid = user['id'];
         initClock(user['id']);
 
         $("#rewards").find(`[data-type='${'reward'}']`).attr('class', 'btn btn-sm btn-danger');
         $("#rewards").find(`[data-type='${'reward'}']`).html('Claim');
-        getRewardClaims(id, "time", function (data) {
+        getRewardClaims(id, function (data) {
             if (data.code === -1) return;
             $.each(data['val'], function (key, val) {
                 let reward = $("#rewards").find(`[data-id='${val.claim}']`);
@@ -223,8 +223,8 @@ function getEarnedTime(id, callback) {
     });
 }
 
-function getRewardClaims(id, type, callback) {
-    postAction("/api/manage.php", {action: "getRewardClaims", id: id, type: type}, function (data) {
+function getRewardClaims(id, callback) {
+    postAction("/api/manage.php", {action: "getRewardClaims", id: id}, function (data) {
         callback(data);
     });
 }

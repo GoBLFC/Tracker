@@ -13,20 +13,20 @@ class Database {
     // ## Users ##
     // ###########
 
-    public function createUser($id, $firstName, $lastName, $username) {
+    public function createUser($id, $username, $firstName, $lastName) {
         // Check for existing user first
         if ($this->getUser($id)->fetch()) {
             return null;
         }
 
-        $sql = "INSERT INTO `users` (`id`, `first_name`, `last_name`, `nickname`, `tg_uid`) VALUES (:id, :firstName, :lastName, :username, :tgid)";
+        $sql = "INSERT INTO `users` (`id`, `username`, `first_name`, `last_name`, `tg_setup_code`) VALUES (:id, :username, :firstName, :lastName, :tg_setup_code)";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+        $stmt->bindValue(":username", $username, PDO::PARAM_STR);
         $stmt->bindValue(":firstName", $firstName, PDO::PARAM_STR);
         $stmt->bindValue(":lastName", $lastName, PDO::PARAM_STR);
-        $stmt->bindValue(":username", $username, PDO::PARAM_STR);
-        $stmt->bindValue(":tgid", bin2hex(random_bytes(16)), PDO::PARAM_STR);
+        $stmt->bindValue(":tg_setup_code", bin2hex(random_bytes(16)), PDO::PARAM_STR);
         $stmt->execute();
 
         return $this->conn->lastInsertId();
@@ -42,39 +42,20 @@ class Database {
         return $stmt;
     }
 
-    public function listUsers() {
-        $stmt = $this->conn->query("SELECT * FROM `users`");
-        return $stmt;
-    }
+    public function listUsers($role = null) {
+        $sql = "SELECT * FROM `users`";
 
-    public function listUsersByRole($admin = null, $manager = null, $lead = null) {
-        // TODO: Consolidate with `listUsers` function
-
-        $sql = "SELECT * FROM `users` WHERE ";
-
-        $roles = [];
-        if (isset($admin)) { $roles[] = "`admin` = :admin"; }
-        if (isset($manager)) { $roles[] = "`manager` = :manager"; };
-        if (isset($lead)) { $roles[] = "`lead` = :lead"; }
-
-        // No roles were set, so list all users
-        if (!$roles) {
-            return $this->listUsers();
-        }
-
-        $sql .= implode(" AND ", $roles);
+        if ($role) { $sql .= "WHERE `role` = :role"; }
 
         $stmt = $this->conn->prepare($sql);
-        if (isset($admin)) { $stmt->bindValue(":admin", $admin, PDO::PARAM_INT); }
-        if (isset($manager)) { $stmt->bindValue(":manager", $manager, PDO::PARAM_INT); }
-        if (isset($lead)) { $stmt->bindValue(":lead", $lead, PDO::PARAM_INT); }
+        if ($role) { $stmt->bindParam(":role", $role, PDO::PARAM_INT); }
         $stmt->execute();
 
         return $stmt;
     }
 
     public function getUserRole($id) {
-        $sql = "SELECT `admin`, `manager`, `lead` FROM `users` WHERE `id` = :id";
+        $sql = "SELECT `role` FROM `users` WHERE `id` = :id";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(":id", $id, PDO::PARAM_INT);
@@ -83,35 +64,23 @@ class Database {
         return $stmt;
     }
 
-    public function setUserRole($id, $admin = null, $manager = null, $lead = null) {
-        $sql = "UPDATE `users` SET ";
-
-        $roles = [];
-        if (isset($admin)) { $roles[] = "`admin` = :admin"; }
-        if (isset($manager)) { $roles[] = "`manager` = :manager"; };
-        if (isset($lead)) { $roles[] = "`lead` = :lead"; }
-
-        // No roles were set
-        if (!$roles) {
-            return;
-        }
-
-        $sql .= implode(", ", $roles);
-        $sql .= " WHERE `id` = :id";
+    public function setUserRole($id, $role) {
+        $sql = "UPDATE `users` SET `role` = :role WHERE `id` = :id";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(":id", $id, PDO::PARAM_INT);
-        if (isset($admin)) { $stmt->bindValue(":admin", $admin, PDO::PARAM_INT); }
-        if (isset($manager)) { $stmt->bindValue(":manager", $manager, PDO::PARAM_INT); }
-        if (isset($lead)) { $stmt->bindValue(":lead", $lead, PDO::PARAM_INT); }
+        $stmt->bindValue(":role", $role, PDO::PARAM_INT);
         $stmt->execute();
 
         return $stmt;
     }
 
     public function setUserBan($id, $banned) {
-        // TODO: Enable bans for non-existent users
-        $sql = "UPDATE `users` SET `banned` = :banned WHERE `id` = :id";
+        $sql = "UPDATE `users` SET `role` = :banned WHERE `id` = :id";
+
+        // Role value of -1 means the user is banned
+        // Otherwise set their role back to regular volunteer status
+        $banned = $banned ? -1 : 0;
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(":id", $id, PDO::PARAM_INT);
@@ -122,7 +91,7 @@ class Database {
     }
 
     public function getUserBan($id) {
-        $sql = "SELECT `banned` FROM `users` WHERE `id` = :id";
+        $sql = "SELECT `role` FROM `users` WHERE `id` = :id";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(":id", $id);
@@ -130,22 +99,23 @@ class Database {
 
         $ban = $stmt->fetch();
 
-        if (!$ban) { return false; }
+        // User exists and they have the "ban" role
+        if ($ban && $ban[0] == -1) { return true; }
 
-        return $ban[0];
+        return false;
     }
 
     public function listBans() {
-        $stmt = $this->conn->query("SELECT * FROM `users` WHERE `banned` = 1");
+        $stmt = $this->conn->query("SELECT * FROM `users` WHERE `role` = -1");
         return $stmt;
     }
 
     public function searchUsers($input) {
-        $sql = "SELECT * FROM `users` WHERE `id` = :id OR `nickname` LIKE :nickname OR CONCAT(first_name, ' ', last_name) LIKE :inputname LIMIT 20";
+        $sql = "SELECT * FROM `users` WHERE `id` = :id OR `username` LIKE :username OR CONCAT(first_name, ' ', last_name) LIKE :inputname LIMIT 20";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(":id", $input, PDO::PARAM_STR);
-        $stmt->bindValue(":nickname", "%$input%", PDO::PARAM_STR);
+        $stmt->bindValue(":username", "%$input%", PDO::PARAM_STR);
         $stmt->bindValue(":inputname", "%$input%", PDO::PARAM_STR);
         $stmt->execute();
 
@@ -154,34 +124,24 @@ class Database {
 
     // ---
 
-    public function getUserByTGCID($id) {
-        $sql = "SELECT * FROM `users` WHERE `tg_chatid` = :id";
-
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
-        $stmt->execute();
-
-        return $stmt;
-    }
-
-    public function getUserByTGUID($id) {
+    public function getUserByTelegramID($id) {
         $sql = "SELECT * FROM `users` WHERE `tg_uid` = :id";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bindValue(":id", $id, PDO::PARAM_STR);
+        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
         $stmt->execute();
 
         return $stmt;
     }
 
-    public function getTGUID($id) {
-        $sql = "SELECT `tg_uid` FROM `users` WHERE `id` = :id";
+    public function getUserBySetupCode($code) {
+        $sql = "SELECT * FROM `users` WHERE `tg_setup_code` = :code";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+        $stmt->bindValue(":code", $code, PDO::PARAM_STR);
         $stmt->execute();
 
-        return $stmt->fetch()[0];
+        return $stmt;
     }
 
     // #################
@@ -235,13 +195,13 @@ class Database {
             return null;
         }
 
-        $sql = "INSERT INTO `tracker` (`uid`, `checkin`, `dept`, `notes`, `addedby`) VALUES (:uid, :checkin, :dept, :notes, :uid2)";
+        $sql = "INSERT INTO `tracker` (`uid`, `check_in`, `dept`, `notes`, `added_by`) VALUES (:uid, :checkIn, :dept, :notes, :addedBy)";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(":uid", $uid, PDO::PARAM_INT);
-        $stmt->bindValue(":checkin", date("Y-m-d H:i:s", strtotime($start)), PDO::PARAM_STR);
+        $stmt->bindValue(":checkIn", date("Y-m-d H:i:s", strtotime($start)), PDO::PARAM_STR);
         $stmt->bindValue(":notes", $notes, PDO::PARAM_STR);
-        $stmt->bindValue(":uid2", $addedBy, PDO::PARAM_INT);
+        $stmt->bindValue(":addedBy", $addedBy, PDO::PARAM_INT);
         $stmt->bindValue(":dept", $dept, PDO::PARAM_INT);
         $stmt->execute();
 
@@ -249,7 +209,7 @@ class Database {
     }
 
     public function checkOut($uid, $autoTime) {
-        $sql = "UPDATE `tracker` SET `checkout` = :time, `auto` = :auto WHERE `uid` = :uid AND `checkout` IS NULL ORDER BY `id` DESC LIMIT 1";
+        $sql = "UPDATE `tracker` SET `check_out` = :time, `auto` = :auto WHERE `uid` = :uid AND `check_out` IS NULL ORDER BY `id` DESC LIMIT 1";
 
         $time = date("Y-m-d H:i:s");
         if ($autoTime) $time = $autoTime->format('Y-m-d H:i:s');
@@ -264,7 +224,7 @@ class Database {
     }
 
     public function getCheckIn($uid) {
-        $sql = "SELECT `id`, `dept`, `checkin` FROM `tracker` WHERE `uid` = :uid AND `checkout` IS NULL ORDER BY `id` DESC LIMIT 1";
+        $sql = "SELECT `id`, `dept`, `check_in` FROM `tracker` WHERE `uid` = :uid AND `check_out` IS NULL ORDER BY `id` DESC LIMIT 1";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(":uid", $uid, PDO::PARAM_INT);
@@ -273,16 +233,16 @@ class Database {
         return $stmt;
     }
 
-    public function createTime($id, $in, $out, $dept, $notes, $badgeID) {
-        $sql = "INSERT INTO `tracker` (`uid`, `checkin`, `checkout`, `dept`, `notes`, `addedby`) VALUES (:uid, :checkin, :checkout, :dept, :notes, :addedby)";
+    public function createTime($id, $checkIn, $checkOut, $dept, $notes, $addedBy) {
+        $sql = "INSERT INTO `tracker` (`uid`, `check_in`, `check_out`, `dept`, `notes`, `added_by`) VALUES (:uid, :checkIn, :checkOut, :dept, :notes, :addedBy)";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(":uid", $id, PDO::PARAM_INT);
-        $stmt->bindValue(":checkin", $in, PDO::PARAM_STR);
-        $stmt->bindValue(":checkout", $out, PDO::PARAM_STR);
+        $stmt->bindValue(":checkIn", $checkIn, PDO::PARAM_STR);
+        $stmt->bindValue(":checkOut", $checkOut, PDO::PARAM_STR);
         $stmt->bindValue(":dept", $dept, PDO::PARAM_INT);
         $stmt->bindValue(":notes", $notes, PDO::PARAM_STR);
-        $stmt->bindValue(":addedby", $badgeID, PDO::PARAM_INT);
+        $stmt->bindValue(":addedBy", $addedBy, PDO::PARAM_INT);
         $stmt->execute();
 
         return $this->conn->lastInsertId();
@@ -301,13 +261,13 @@ class Database {
     // ---
 
     public function getActiveCheckIns() {
-        $sql = "SELECT * FROM `tracker` WHERE checkout IS NULL";
+        $sql = "SELECT * FROM `tracker` WHERE check_out IS NULL";
         $stmt = $this->conn->query($sql);
         return $stmt;
     }
 
     public function getAllTrackerEntries() {
-        $sql = "SELECT *, TIME_TO_SEC(TIMEDIFF(`checkout`, `checkin`)) as diff FROM `tracker` WHERE checkout IS NOT NULL AND checkin IS NOT NULL";
+        $sql = "SELECT *, TIME_TO_SEC(TIMEDIFF(`check_out`, `check_in`)) as diff FROM `tracker` WHERE check_out IS NOT NULL AND check_in IS NOT NULL";
         $stmt = $this->conn->query($sql);
         return $stmt;
     }
@@ -321,21 +281,20 @@ class Database {
     // ## Rewards ##
     // #############
 
-    public function createReward($name, $desc, $hours, $type, $hidden = 0) {
-        $sql = "INSERT INTO `rewards` (`name`, `desc`, `hours`, `type`, `hidden`) VALUES (:name, :desc, :hours, :type, :hidden)";
+    public function createReward($name, $desc, $hours, $hidden = 0) {
+        $sql = "INSERT INTO `rewards` (`name`, `desc`, `hours`, `hidden`) VALUES (:name, :desc, :hours, :hidden)";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(":name", $name, PDO::PARAM_STR);
         $stmt->bindValue(":desc", $desc, PDO::PARAM_STR);
         $stmt->bindValue(":hours", $hours, PDO::PARAM_INT);
-        $stmt->bindValue(":type", $type, PDO::PARAM_STR);
         $stmt->bindValue(":hidden", $hidden, PDO::PARAM_INT);
         $stmt->execute();
 
         return $this->conn->lastInsertId();
     }
 
-    public function updateReward($id, $field, $value, $type) {
+    public function updateReward($id, $field, $value) {
         $sql = "UPDATE `rewards` SET ";
 
         $fields = ["name", "desc", "hours", "hidden"];
@@ -374,14 +333,14 @@ class Database {
     // ############
 
     public function claimReward($uid, $claim) {
-        $sql = "INSERT INTO `claims` (`uid`, `claim`, `date`) VALUES (:uid, :claim, CURRENT_TIMESTAMP)";
+        $sql = "INSERT INTO `claims` (`uid`, `claim`) VALUES (:uid, :claim)";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(":uid", $uid, PDO::PARAM_INT);
         $stmt->bindValue(":claim", $claim, PDO::PARAM_STR);
         $stmt->execute();
 
-        return $stmt;
+        return $this->conn->lastInsertId();
     }
 
     public function unclaimReward($uid, $claim) {
@@ -396,7 +355,7 @@ class Database {
     }
 
     public function listRewardClaims($uid) {
-        $sql = "SELECT `claim`, `date` FROM `claims` WHERE `uid` = :uid";
+        $sql = "SELECT `claim` FROM `claims` WHERE `uid` = :uid";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(":uid", $uid, PDO::PARAM_INT);
@@ -410,7 +369,7 @@ class Database {
     // #############
 
     public function createBonus($start, $stop, $depts, $modifier) {
-        $sql = "INSERT INTO `time_mod` (`id`, `start`, `stop`, `dept`, `modifier`, `hidden`) VALUES (NULL, :start, :stop, :depts, :mod, 0)";
+        $sql = "INSERT INTO `bonuses` (`id`, `start`, `stop`, `dept`, `modifier`, `hidden`) VALUES (NULL, :start, :stop, :depts, :mod)";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(":start", $start, PDO::PARAM_STR);
@@ -423,7 +382,7 @@ class Database {
     }
 
     public function deleteBonus($id) {
-        $sql = "DELETE FROM `time_mod` WHERE `id` = :id";
+        $sql = "DELETE FROM `bonuses` WHERE `id` = :id";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(":id", $id, PDO::PARAM_INT);
@@ -433,7 +392,7 @@ class Database {
     }
 
     public function listBonuses($hidden = 0) {
-        $sql = "SELECT * FROM `time_mod` WHERE `hidden` = :hidden";
+        $sql = "SELECT * FROM `bonuses` WHERE `hidden` = :hidden";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(":hidden", $hidden);
@@ -446,15 +405,14 @@ class Database {
     // ## Notifications ##
     // ###################
 
-    public function createNotification($uid, $type, $reward, $message, $ack) {
-        $sql = "INSERT INTO `notifications` (`uid`, `type`, `reward`, `message`, `ack`) VALUES (:uid, :type, :reward, :message, :ack)";
+    public function createNotification($uid, $type, $reward, $message) {
+        $sql = "INSERT INTO `notifications` (`uid`, `type`, `reward`, `message`) VALUES (:uid, :type, :reward, :message)";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(":uid", $uid, PDO::PARAM_INT);
         $stmt->bindValue(":type", $type, PDO::PARAM_STR);
         $stmt->bindValue(":reward", $reward, PDO::PARAM_INT);
         $stmt->bindValue(":message", $message, PDO::PARAM_STR);
-        $stmt->bindValue(":ack", $ack, PDO::PARAM_INT);
         $stmt->execute();
 
         return $this->conn->lastInsertId();
@@ -472,7 +430,7 @@ class Database {
     }
 
     public function markNotificationRead($id) {
-        $sql = "UPDATE `notifications` SET `hasread` = '1' WHERE `id` = :id";
+        $sql = "UPDATE `notifications` SET `has_read` = '1' WHERE `id` = :id";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(":id", $id, PDO::PARAM_INT);
@@ -481,13 +439,12 @@ class Database {
         return $stmt;
     }
 
-    public function listNotifications($uid, $ack, $hasRead = 0) {
-        $sql = "SELECT * FROM `notifications` WHERE `uid` = :uid AND `hasread` = :hasRead AND `ack` = :ack";
+    public function listNotifications($uid, $hasRead = 0) {
+        $sql = "SELECT * FROM `notifications` WHERE `uid` = :uid AND `has_read` = :hasRead";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(":uid", $uid, PDO::PARAM_INT);
         $stmt->bindValue(":hasRead", $hasRead, PDO::PARAM_INT);
-        $stmt->bindValue(":ack", $ack, PDO::PARAM_INT);
         $stmt->execute();
 
         return $stmt;
@@ -505,7 +462,7 @@ class Database {
     }
 
     public function ackAllNotifs($uid) {
-        $sql = "UPDATE `notifications` SET `hasread` = 1, `ack` = 1 WHERE `uid` = :uid AND `hasread` = 0 AND `ack` = 1";
+        $sql = "UPDATE `notifications` SET `has_read` = 1 WHERE `uid` = :uid AND `has_read` = 0";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(":uid", $uid, PDO::PARAM_INT);
@@ -529,13 +486,13 @@ class Database {
     }
 
     public function authorizeKiosk($session) {
-        $sql = "INSERT INTO `kiosks` (`session`, `authorized`) VALUES (:session, CURRENT_TIMESTAMP)";
+        $sql = "INSERT INTO `kiosks` (`session`) VALUES (:session)";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(":session", $session, PDO::PARAM_STR);
         $stmt->execute();
 
-        return $stmt;
+        return $this->conn->lastInsertId();
     }
 
     public function deauthorizeKiosk($session) {
@@ -553,34 +510,34 @@ class Database {
     // ##########################
 
     public function setQuickCode($uid, $code) {
-        $sql = "UPDATE `users` SET `tg_quickcode` = :quickcode, `tg_quickcodetime` = NOW() WHERE `id` = :uid";
+        $sql = "INSERT INTO `telegram` (`code`, `uid`) VALUES (:code, :uid)";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bindValue(":quickcode", $code, PDO::PARAM_INT);
+        $stmt->bindValue(":code", $code, PDO::PARAM_STR);
         $stmt->bindValue(":uid", $uid, PDO::PARAM_INT);
         $stmt->execute();
 
-        return $stmt;
+        return $this->conn->lastInsertId();
     }
 
     public function checkQuickCode($code) {
-        $sql = "SELECT * FROM `users` WHERE `tg_quickcode` = :quickcode AND `tg_quickcodetime` BETWEEN NOW() - INTERVAL 30 SECOND AND NOW()";
+        $sql = "SELECT `uid` FROM `telegram` WHERE `code` = :code AND `time` > NOW() - INTERVAL 30 SECOND";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bindValue(":quickcode", intval($code), PDO::PARAM_INT);
+        $stmt->bindValue(":code", $code, PDO::PARAM_STR);
         $stmt->execute();
 
         return $stmt;
     }
 
-    public function updateTGChat($chatID, $tguid) {
+    public function updateTGChat($id, $code) {
         // Update chat ID and invalidate UID
-        $sql = "UPDATE `users` SET `tg_chatid` = :chatID, `tg_uid` = :newID WHERE `tg_uid` = :tgUID";
+        $sql = "UPDATE `users` SET `tg_uid` = :id, `tg_setup_code` = :newCode WHERE `tg_setup_code` = :code";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bindValue(":chatID", $chatID, PDO::PARAM_INT);
-        $stmt->bindValue(":tgUID", $tguid, PDO::PARAM_STR);
-        $stmt->bindValue(":newID", bin2hex(random_bytes(16)), PDO::PARAM_STR);
+        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+        $stmt->bindValue(":code", $code, PDO::PARAM_STR);
+        $stmt->bindValue(":newCode", bin2hex(random_bytes(16)), PDO::PARAM_STR);
         $stmt->execute();
 
         return $stmt;
@@ -591,7 +548,7 @@ class Database {
     // ####################
 
     public function getDevMode() {
-        $stmt = $this->conn->query("SELECT `devmode` FROM `settings`");
+        $stmt = $this->conn->query("SELECT `dev_mode` FROM `settings`");
         return $stmt->fetch()[0];
     }
 
@@ -610,11 +567,11 @@ class Database {
         return $stmt;
     }
 
-    public function setDevMode($devmode) {
-        $sql = "UPDATE `settings` SET `devmode` = :devmode";
+    public function setDevMode($devMode) {
+        $sql = "UPDATE `settings` SET `dev_mode` = :devMode";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bindValue(":devmode", $devmode, PDO::PARAM_INT);
+        $stmt->bindValue(":devMode", $devMode, PDO::PARAM_INT);
         $stmt->execute();
 
         return $stmt;

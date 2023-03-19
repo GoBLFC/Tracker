@@ -42,7 +42,7 @@ if ($user != null) {
             if ($cDept) $cDept = $cDept[0];
             echo $twig->render("landing.html", [
                 "departments" => $db->listDepartments(),
-                "tgBot" => urlencode("https://t.me/{$BOT_USERNAME}?start=" . $db->getTGUID($badgeID)),
+                "tgBot" => urlencode("https://t.me/{$BOT_USERNAME}?start=" . $user["tg_setup_code"]),
                 "cDept" => $cDept
             ]);
         }

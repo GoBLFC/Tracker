@@ -59,7 +59,7 @@ class HoursCommand extends SystemCommand
         $currChatID = $message->getChat()->getId();
         //$text    = 'Hi there!' . PHP_EOL . 'Type /help to see all commands! ' . PHP_EOL . 'PARAM: ' . $message->getText(true) . ' ID: ' . $chat_id;
 
-        $user = getUserByTGCID($currChatID);
+        $user = $db->getUserByTelegramID($currChatID);
         if ($user == null) {
             return Request::sendMessage([
                 'chat_id' => $currChatID,

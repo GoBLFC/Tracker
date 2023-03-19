@@ -69,7 +69,7 @@ class HelpCommand extends SystemCommand
             ->setOneTimeKeyboard(false)
             ->setSelective(false);
 
-        if (getUserByTGCID($currChatID) != null) {
+        if ($db->getUserByTelegramID($currChatID) != null) {
             return Request::sendMessage([
                 'chat_id' => $currChatID,
                 'text' => "Here's what I can do!" . PHP_EOL . "Press these buttons to get information from me.",

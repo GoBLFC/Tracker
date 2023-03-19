@@ -51,10 +51,10 @@ $devMode = $db->getDevMode();
 $siteStatus = $db->getSiteStatus();
 $kioskAuth = (isset($_COOKIE["kiosknonce"]) && $db->checkKiosk($_COOKIE["kiosknonce"])->fetch()) ? 1 : 0;
 
-$roles = $db->getUserRole($badgeID)->fetch();
-$isAdmin = $roles ? (bool) $roles["admin"] : false;
-$isManager = $roles ? (bool) $roles["manager"] : false;
-$isLead = $roles ? (bool) $roles["lead"] : false;
+$role = $db->getUserRole($badgeID)->fetch();
+$isAdmin = $role ? $role[0] >= 3 : false;
+$isManager = $role ? $role[0] >= 2 : false;
+$isLead = $role ? $role[0] >= 1 : false;
 $isBanned = $db->getUserBan($badgeID);
 $notifs = $db->listNotifications($badgeID, 1)->fetchAll();
 

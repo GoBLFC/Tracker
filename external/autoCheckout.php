@@ -26,5 +26,5 @@ foreach ($db->getActiveCheckIns() as $clockin) {
 
     $ret = $db->checkOut($uid, $out);
 	print("\nCheckout Results: " . $ret['code'] . " > " . $ret['msg'] . "(" . $ret['diff'] . ")");
-    $db->createNotification($uid, "danger", 0,"You were automatically checked out because you may have forgotten to check out. <br>You've been credited with 1 hour.<br><b>Please verify your time with your department lead or volunteer desk!</b>", 1);
+    $db->createNotification($uid, "danger", 0, "You were automatically checked out because you may have forgotten to check out. <br>You've been credited with 1 hour.<br><b>Please verify your time with your department lead or volunteer desk!</b>");
 }

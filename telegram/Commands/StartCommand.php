@@ -70,7 +70,7 @@ class StartCommand extends SystemCommand
             ->setOneTimeKeyboard(false)
             ->setSelective(false);
 
-        if (getUserByTGCID($currChatID) != null) {
+        if ($db->getUserByTelegramID($currChatID) != null) {
             return Request::sendMessage([
                 'chat_id' => $currChatID,
                 'text' => "Looks like I'm already familiar with you! Use /unlink to set me to a different volunteer account.",
@@ -78,7 +78,7 @@ class StartCommand extends SystemCommand
             ]);
         }
 
-        $user = getUserByTGUID($tguid);
+        $user = $db->getUserBySetupCode($tguid);
         if ($user == null) {
             return Request::sendMessage([
                 'chat_id' => $currChatID,
