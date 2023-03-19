@@ -22,29 +22,6 @@ let shiftTime = 0;
 
 function initData() {
     initClock();
-
-    getNotifications(function (data) {
-        if (data.val === -1) return;
-        let time = 0;
-        $.each(data['val'], function (index, n) {
-            setTimeout(function () {
-                type = n["type"];
-                // Convert Bootstrap color classes to appropriate icon classes
-                if (type == "primary") {
-                    type = "info";
-                } else if (type == "danger") {
-                    type = "error";
-                }
-                Toast.fire({
-                    text: n["message"],
-                    icon: type,
-                    timer: 30000
-                });
-            }, time);
-            time += 500;
-            postAction("/api.php", {action: "readNotification", id: n['id']});
-        });
-    });
 }
 
 function initClock() {
@@ -192,12 +169,6 @@ function getMinutesToday(callback) {
 
 function getEarnedTime(callback) {
     postAction("/api.php", {action: "getEarnedTime"}, function (data) {
-        callback(data);
-    });
-}
-
-function getNotifications(callback) {
-    postAction("/api.php", {action: "getNotifications"}, function (data) {
         callback(data);
     });
 }

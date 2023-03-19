@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,14 +14,25 @@
 
   </head>
   <body>
-    <div class="container" style="top: 3em; position: relative;">
-      <div class="logo">
-        <img src="/assets/img/BLFC-ChipIcon.png"/>
+    <div class="container my-5">
+      <img class="d-block mx-auto mb-4" src="/assets/img/BLFC-ChipIcon.png" width="128">
+
+      {% if devMode %}
+      <div class="text-center mb-3">
+        <span class="badge rounded-pill text-bg-warning">Dev Mode Enabled</span>
+        <span class="badge rounded-pill text-bg-primary">Your ID: #{{ user.id }}</span>
+        <span class="badge rounded-pill text-bg-secondary">Role: {% if isAdmin %}Admin{% elseif isManager %}Manager{% elseif isLead %}Lead{% else %}Unknown{% endif %}</span>
+        <span class="badge rounded-pill {% if kioskAuth %}text-bg-success{% else %}text-bg-danger{% endif %}">Kiosk: {% if kioskAuth %}Authorized{% else %}Unauthorized{% endif %}</span>
+        <span class="badge rounded-pill {% if siteStatus %}text-bg-success{% else %}text-bg-danger{% endif %}">Site: {% if siteStatus %}Enabled{% else %}Disabled{% endif %}</span>
       </div>
+      {% endif %}
+
+      {% block content %}{% endblock %}
+
     </div>
 
-    {% block content %}{% endblock %}
-
+    {% block modals %}{% endblock %}
+      
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/bootstrap-select.min.js" integrity="sha512-yDlE7vpGDP7o2eftkCiPZ+yuUyEcaBwoJoIhdXv71KZWugFqEphIS3PU60lEkFaz8RxaVsMpSvQxMBaKVwA5xg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>

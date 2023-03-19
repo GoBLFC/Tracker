@@ -2,33 +2,21 @@
 
 {% block card %}
 
-<div class="card" data-section="Site">
-    <div class="card-header cadHeader">
-        <div>Site Settings</div>
-    </div>
-    <div class="row">
-        <div class="col-sm">
-            <div class="card-header cadBody">
-                <button data-status={{ devMode }}
-                        onclick="toggleDevmode(this)"
-                        type="button"
-                        class="btn btn-sm btn-{{ devMode ? 'danger' : 'warning' }}">
-                        {{ devMode ? "Disable" : "Enable" }} Dev Mode
-                </button>
-                <button data-status={{ siteStatus }}
-                        onclick="toggleSite(this)"
-                        type="button"
-                        class="btn btn-sm btn-{{ siteStatus ? 'danger' : 'success' }}">
-                        {{ siteStatus ? "Disable" : "Enable" }} Site
-                </button>
-                <button data-status={{ kioskAuth }} onclick="toggleKiosk(this)"
-                        type="button"
-                        class="btn btn-sm btn-{{ kioskAuth ? 'danger' : 'warning' }}">
-                        {{ kioskAuth ? "Deauthorize" : "Authorize" }} Kiosk
-                </button>
-            </div>
-        </div>
-    </div>
+<div class="card mb-3" data-section="Site">
+  <div class="card-header">
+    Site Settings
+  </div>
+  <div class="card-body">
+    <button data-status={{ devMode }} onclick="toggleDevmode(this)" type="button" class="btn btn-sm btn-{{ devMode ? 'danger' : 'warning' }}">
+      {{ devMode ? "Disable" : "Enable" }} Dev Mode
+    </button>
+    <button data-status={{ siteStatus }} onclick="toggleSite(this)" type="button" class="btn btn-sm btn-{{ siteStatus ? 'danger' : 'success' }}">
+      {{ siteStatus ? "Disable" : "Enable" }} Site
+    </button>
+    <button data-status={{ kioskAuth }} onclick="toggleKiosk(this)" type="button" class="btn btn-sm btn-{{ kioskAuth ? 'danger' : 'warning' }}">
+      {{ kioskAuth ? "Deauthorize" : "Authorize" }} Kiosk
+    </button>
+  </div>
 </div>
 
 {% endblock %}

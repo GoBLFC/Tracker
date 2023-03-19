@@ -2,50 +2,34 @@
 
 {% block content %}
 
-<div class="container" style="top: 5em;position: relative;">
-    <div class="card">
-        <div class="card-header highvis">
-            <div class="vistext">Lead</div>
-        </div>
-        <div class="row">
-            <div class="col-sm">
-                <div class="card-body">
-					
-                    <div class="card">
-                        <div class="card-header cadHeader">
-                            <div>Kiosk Settings</div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm">
-                                <div class="card-header cadBody">
-									<center>
-										<button data-status={{ kioskAuth }} onclick="toggleKiosk(this)"
-												type="button"
-												class="btn btn-sm btn-{{ kioskAuth ? "danger" : "warning" }}">
-                                                {{ kioskAuth ? "Deauthorize" : "Authorize" }} Kiosk
-										</button>
-									</center>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<div class="row justify-content-md-center">
+  <div class="col-md-10 col-lg-8">
+    <div class="card mb-3">
+      <h5 class="card-header text-bg-warning">
+        Lead
+      </h5>
+      
+      <div class="card-body">
+
+        <div class="card mb-3">
+          <div class="card-header">
+            Kiosk Settings
+          </div>
+          <div class="card-body text-center">
+            <button data-status={{ kioskAuth }} onclick="toggleKiosk(this)" type="button" class="btn btn-sm btn-{{ kioskAuth ? "danger" : "warning" }}">
+              {{ kioskAuth ? "Deauthorize" : "Authorize" }} Kiosk
+            </button>
+          </div>
         </div>
 
-        <div class="card novis">
-            <div class="row">
-                <div class="col-sm">
-                    <a href="/" style="float:right"
-                       role="button" class="btn btn-sm btn-info">BACK
-                    </a></div>
-            </div>
-        </div>
+        <a class="btn btn-info btn-sm float-end" href="/" role="button">Back</a>
+
+      </div>
     </div>
-</div>
 
-<div class="container" style="top: 5em;position: relative;">
     {{ include("autoLogout.html") }}
+
+  </div>
 </div>
 
 {% endblock %}
@@ -56,9 +40,9 @@
 <script src="/js/manager.js"></script>
 
 <script>$(document).ready(function () {
-        initData();
-        decrementLogout();
-    });
+  initData();
+  decrementLogout();
+});
 </script>
 
 {% endblock %}

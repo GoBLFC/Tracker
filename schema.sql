@@ -71,7 +71,6 @@ CREATE TABLE `bonuses` (
 CREATE TABLE `notifications` (
   `id` int NOT NULL AUTO_INCREMENT,
   `uid` int NOT NULL,
-  `type` varchar(32) NOT NULL,
   `reward` int,
   `message` mediumtext NOT NULL,
   `has_read` boolean NOT NULL DEFAULT 0,

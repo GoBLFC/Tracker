@@ -1,55 +1,52 @@
 <html>
 <head>
-	<link rel="stylesheet" media="all" href="/css/style.css">
-    <link rel="stylesheet" type="text/css" href="/css/bootstrap/custom-css-bootstrap.css">
-
-    <script src="/js/lib/jquery-3.3.1.min.js"></script>
-
-    <script src="/js/lib/datatables/jquery.dataTables.min.js"></script>
-    <script src="/js/lib/datatables/dataTables.buttons.min.js"></script>
-    <script src="/js/lib/datatables/buttons.flash.min.js"></script>
-    <script src="/js/lib/datatables/jszip.min.js"></script>
-    <script src="/js/lib/datatables/pdfmake.min.js"></script>
-    <script src="/js/lib/datatables/vfs_fonts.js"></script>
-    <script src="/js/lib/datatables/buttons.html5.min.js"></script>
-    <script src="/js/lib/datatables/buttons.print.min.js"></script>
-
-    <link rel="stylesheet" href="/css/datatables/jquery.dataTables.min.css"/>
-    <link rel="stylesheet" href="/css/datatables/buttons.dataTables.min.css"/>
-
-    <title>{{ title }}</title>
+  <script src="/js/lib/jquery-3.3.1.min.js"></script>
+  
+  <script src="/js/lib/datatables/jquery.dataTables.min.js"></script>
+  <script src="/js/lib/datatables/dataTables.buttons.min.js"></script>
+  <script src="/js/lib/datatables/buttons.flash.min.js"></script>
+  <script src="/js/lib/datatables/jszip.min.js"></script>
+  <script src="/js/lib/datatables/pdfmake.min.js"></script>
+  <script src="/js/lib/datatables/vfs_fonts.js"></script>
+  <script src="/js/lib/datatables/buttons.html5.min.js"></script>
+  <script src="/js/lib/datatables/buttons.print.min.js"></script>
+  
+  <link rel="stylesheet" href="/css/datatables/jquery.dataTables.min.css"/>
+  <link rel="stylesheet" href="/css/datatables/buttons.dataTables.min.css"/>
+  
+  <title>{{ title }}</title>
 </head>
 
 <table id="tableDat" class="display nowrap" style="width:100%">
-    <thead>
+  <thead>
     <tr>
-        {% for th in header %}
-        <th>{{ th }}</th>
-        {% endfor %}
+      {% for th in header %}
+      <th>{{ th }}</th>
+      {% endfor %}
     </tr>
-    </thead>
-    <tbody style="color: black;">
-
+  </thead>
+  <tbody style="color: black;">
+    
     {% block report %}{% endblock %}
-
-    </tbody>
-    <tfoot>
+    
+  </tbody>
+  <tfoot>
     <tr>
-        {% for th in header %}
-        <th>{{ th }}</th>
-        {% endfor %}
+      {% for th in header %}
+      <th>{{ th }}</th>
+      {% endfor %}
     </tr>
-    </tfoot>
+  </tfoot>
 </table>
 
 <script>
-    $(document).ready(function () {
-        $('#tableDat').DataTable({
-            dom: 'Bfrtip',
-            "pageLength": 50,
-            buttons: ['csv', 'excel', 'pdf'],
-            "order": [[{{ orderCol }}, "desc"]]
-        });
+  $(document).ready(function () {
+    $('#tableDat').DataTable({
+      dom: 'Bfrtip',
+      "pageLength": 50,
+      buttons: ['csv', 'excel', 'pdf'],
+      "order": [[{{ orderCol }}, "desc"]]
     });
+  });
 </script>
 </html>
