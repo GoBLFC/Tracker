@@ -2,10 +2,6 @@
 
 require "main.php";
 
-setcookie("session", '', 0, "/");
-setcookie("badge", '', 0, "/");
-//header('Location: /');
-
 if (isset($_SESSION['accessToken'])) {
     if ($devMode) {
         header("Refresh:0; url=$CANONICAL_URL", true, 303); ?>

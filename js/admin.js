@@ -303,7 +303,7 @@ function toggleKiosk(button) {
     toggleSetting(button, 'Deauthorize', 'Authorize', 'Deauthorizing', 'Authorizing', 'Kiosk', 'setKioskAuth', 'btn-warning btn-danger', function (data) {
         var expireDate = new Date;
         expireDate.setDate(expireDate.getDate() + 30);
-        $.cookie("kiosknonce", data.val, {expires: expireDate});
+        document.cookie = "kiosknonce=" + data.val + "; expires=" + expireDate.toUTCString() + ";";
     })
 }
 
