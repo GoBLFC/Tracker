@@ -369,7 +369,7 @@ class Database {
     // #############
 
     public function createBonus($start, $stop, $depts, $modifier) {
-        $sql = "INSERT INTO `bonuses` (`id`, `start`, `stop`, `dept`, `modifier`, `hidden`) VALUES (NULL, :start, :stop, :depts, :mod)";
+        $sql = "INSERT INTO `bonuses` (`start`, `stop`, `dept`, `modifier`) VALUES (:start, :stop, :depts, :mod)";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(":start", $start, PDO::PARAM_STR);

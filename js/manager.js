@@ -1,5 +1,8 @@
 var logoutTime = 900;
 
+const timeStart = new tempusDominus.TempusDominus(document.getElementById("timeStart"));
+const timeStop = new tempusDominus.TempusDominus(document.getElementById("timeStop"));
+
 function initData() {
     clockCycle();
 
@@ -10,7 +13,7 @@ function initData() {
             $('#dept').append($("<option></option>").attr("value", value['id']).text(value['name']));
         });
 
-        $("#dept").selectpicker("refresh");
+        // $("#dept").selectpicker("refresh");
     });
 }
 
@@ -90,12 +93,12 @@ function loadVolunteer(id) {
 
 function addTime() {
     const uid = window.currUid;
-    const start = $("#timestart").datetimepicker('date').format("YYYY-MM-DD HH:mm:ss");
-    const stop = $("#timestop").datetimepicker('date').format("YYYY-MM-DD HH:mm:ss");
+    const start = moment(timeStart.dates.picked[0]).format("YYYY-MM-DD HH:mm:ss");
+    const stop = moment(timeStop.dates.picked[0]).format("YYYY-MM-DD HH:mm:ss");
     const dept = $("#dept").val();
     const notes = $("#notes").val();
 
-    if ($("#timestart").datetimepicker('date') === null || $("#timestop").datetimepicker('date') === null) {
+    if (moment(timeStart.dates.picked[0]) == null || moment(timeStop.dates.picked[0]) == null) {
         alert("Please select a start and stop date.");
         return;
     }
@@ -145,12 +148,10 @@ function checkIn() {
     const notes = $("#notes").val();
     var start = null;
 
-    if ($("#timestart").datetimepicker('date') !== null) start = $("#timestart").datetimepicker('date').format("YYYY-MM-DD HH:mm:ss");
+    if (moment(timeStart.dates.picked[0]) != null) start = moment(timeStart.dates.picked[0]).format("YYYY-MM-DD HH:mm:ss");
 
-    if ($("#timestart").datetimepicker('date') !== null && $("#timestop").datetimepicker('date') !== null) {
+    if (moment(timeStart.dates.picked[0]) != null && moment(timeStop.dates.picked[0]) != null) {
         alert("Please use 'Add Time' when Start and Stop dates are filled in.");
-        //$("#timestart").datetimepicker().clear();
-        //$("#timestop").datetimepicker().clear();
         return;
     }
 

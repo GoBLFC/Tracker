@@ -23,36 +23,48 @@
   </div>
 </div>
 
-<div class="card">
+<div class="card mb-3">
   <div class="card-header">
-    Add Reward
+    Add Bonus
   </div>
 
   <div class="card-body">
-    
-    <div class="input-group d-flex">
-      <div class="input-group date" id="bonusstart" data-target-input="nearest">
-        <input type="text" class="form-control datetimepicker-input" placeholder="Start" data-target="#bonusstart">
-        <div class="input-group-append" data-target="#bonusstart" data-toggle="datetimepicker">
-          <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+
+    <div class="row gx-3">
+
+      <div class="col-md-3">
+        <div class="input-group" id="bonusStart" data-td-target-input="nearest" data-td-target-toggle="nearest">
+          <input id="bonusStartInput" type="text" class="form-control" data-td-target="#bonusStart" placeholder="Start">
+          <span class="input-group-text" data-td-target="#bonusStart" data-td-toggle="datetimepicker">
+            <i class="fa-solid fa-calendar"></i>
+          </span>
         </div>
       </div>
-      
-      <div class="input-group date" id="bonusstop" data-target-input="nearest">
-        <input type="text" class="form-control datetimepicker-input" placeholder="Stop" data-target="#bonusstop">
-        <div class="input-group-append" data-target="#bonusstop" data-toggle="datetimepicker">
-          <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+
+      <div class="col-md-3">
+        <div class="input-group" id="bonusStop" data-td-target-input="nearest" data-td-target-toggle="nearest">
+          <input id="bonusStopInput" type="text" class="form-control" data-td-target="#bonusStop" placeholder="Stop">
+          <span class="input-group-text" data-td-target="#bonusStop" data-td-toggle="datetimepicker">
+            <i class="fa-solid fa-calendar"></i>
+          </span>
         </div>
       </div>
-      
-      <select class="selectpicker dropup" title="Departments" multiple data-live-search="true" id="depts"></select>
-      
-      <input type="text" class="form-control" placeholder="Modifier" aria-label="Modifier" id="bonusmod">
-      <button class="btn btn-success" type="button" onClick="addBonus(this)">
-        Add Bonus
-      </button>
+
+      <div class="col-md-3">
+        <select class="form-select" title="Departments" id="depts"></select>
+      </div>
+
+      <div class="col-md-3">
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="Modifier" aria-label="Modifier" id="bonusmod">
+          <button class="btn btn-success" type="button" onClick="addBonus(this)">
+            Add Bonus
+          </button>
+        </div>
+      </div>
+
     </div>
-    
+
   </div>
 </div>
 

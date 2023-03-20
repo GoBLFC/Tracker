@@ -1,5 +1,8 @@
 var logoutTime = 900;
 
+const bonusStart = new tempusDominus.TempusDominus(document.getElementById("bonusStart"));
+const bonusStop = new tempusDominus.TempusDominus(document.getElementById("bonusStop"));
+
 function initData() {
     postAction("/api/admin.php", {action: 'getAdmins'}, function (data) {
         $.each(data['val'], function (index, value) {
@@ -31,7 +34,7 @@ function initData() {
             $('#depts').append($("<option></option>").attr("value", value['id']).text(value['name']));
         });
 
-        $("#depts").selectpicker("refresh");
+        // $("#depts").selectpicker("refresh");
     });
 
     postAction("/api/admin.php", {action: 'getRewards'}, function (data) {
@@ -212,12 +215,12 @@ function addReward(elem) {
 }
 
 function addBonus() {
-    if ($("#bonusstart").datetimepicker('date') === null || $("#bonusstop").datetimepicker('date') === null) {
+    if (bonusStart.dates.picked[0] == null || bonusStop.dates.picked[0] == null) {
         alert("Please select a start and stop date.");
         return;
     }
-    const start = $("#bonusstart").datetimepicker('date').format("YYYY-MM-DD HH:mm:ss");
-    const stop = $("#bonusstop").datetimepicker('date').format("YYYY-MM-DD HH:mm:ss");
+    const start = moment(bonusStart.dates.picked[0]).format("YYYY-MM-DD HH:mm:ss");
+    const stop = moment(bonusStop.dates.picked[0]).format("YYYY-MM-DD HH:mm:ss");
     const depts = $("#depts").val();
     const modifier = $("#bonusmod").val();
     //console.log("Bonus: START: " + start + " STOP: " + stop + " DEPTS: " + depts + " MOD: " + modifier);

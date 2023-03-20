@@ -1,9 +1,5 @@
 <?php
 
-// TODO: Return method specific results instead of arrays
-
-/* SQL Queries */
-
 function getEligibleRewards($uid)
 {
     global $db;

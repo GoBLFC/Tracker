@@ -6,17 +6,17 @@
   <h5 class="card-header text-bg-warning">
     Management
   </h5>
-  
+
   <div class="card-body">
-    
+
     <div class="card mb-3">
       <div class="card-header">
         Search Volunteers
       </div>
-      
+
       <div class="card-body">
         <input id="searchinput" type="text" class="form-control mb-3" placeholder="Badge Number, Name, Username..." aria-label="Search">
-        
+
         <div class="card">
           <div class="card-body p-0">
             <table id="utable" class="table table-striped">
@@ -35,14 +35,14 @@
         </div>
       </div>
     </div>
-    
+
     <div id="userCard" class="card mb-3 d-none">
       <h5 id="userCardTitle" class="card-header text-center">
         User
       </h5>
-      
+
       <div class="card-body">
-        
+
         <div class="row">
           <div class="col-md text-center py-4 d-none" id="currdurr">
             <div class="display-2 fw-normal">
@@ -50,14 +50,14 @@
             </div>
             <div class="text-uppercase">Shift Duration</div>
           </div>
-          
+
           <div class="col-md text-center py-4">
             <div class="display-2 fw-normal">
               <i class="fa-regular fa-clock"></i> <span id="hourstoday">Loading</span>
             </div>
             <div class="text-uppercase">Hours Today</div>
           </div>
-          
+
           <div class="col-md text-center py-4">
             <div class="display-2 fw-normal">
               <i class="fa-regular fa-clock"></i> <span id="earnedtime">Loading</span>
@@ -65,7 +65,7 @@
             <div class="text-uppercase">Hours Earned</div>
           </div>
         </div>
-        
+
         <div class="card mb-3">
           <div class="card-header">
             Rewards Claimed
@@ -91,7 +91,7 @@
             </table>
           </div>
         </div>
-        
+
         <div class="card mb-3">
           <div class="card-header">
             Time Log
@@ -113,47 +113,57 @@
             </table>
           </div>
         </div>
-        
+
         <div class="card">
           <div class="card-header">
             Add Time
           </div>
           <div class="card-body">
-            
-            <div class="input-group d-flex">
-              <div class="input-group date w-50" id="timestart" data-target-input="nearest">
-                <input type="text" class="form-control datetimepicker-input" placeholder="Start" data-target="#timestart">
-                <div class="input-group-append" data-target="#timestart" data-toggle="datetimepicker">
-                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+
+            <div class="row gx-3">
+
+              <div class="col-md-3">
+                <div class="input-group" id="timeStart" data-td-target-input="nearest" data-td-target-toggle="nearest">
+                  <input id="timeStartInput" type="text" class="form-control" data-td-target="#timeStart" placeholder="Start">
+                  <span class="input-group-text" data-td-target="#timeStart" data-td-toggle="datetimepicker">
+                    <i class="fa-solid fa-calendar"></i>
+                  </span>
                 </div>
               </div>
-            </div>
-            
-            <div class="input-group date" id="timestop" data-target-input="nearest">
-              <input type="text" class="form-control datetimepicker-input" placeholder="Stop" data-target="#timestop">
-              <div class="input-group-append" data-target="#timestop" data-toggle="datetimepicker">
-                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+
+              <div class="col-md-3">
+                <div class="input-group" id="timeStop" data-td-target-input="nearest" data-td-target-toggle="nearest">
+                  <input id="timeStopInput" type="text" class="form-control" data-td-target="#timeStop" placeholder="Stop">
+                  <span class="input-group-text" data-td-target="#timeStop" data-td-toggle="datetimepicker">
+                    <i class="fa-solid fa-calendar"></i>
+                  </span>
+                </div>
               </div>
+
+              <div class="col-md-2">
+                <select class="form-select" title="Department" id="dept"></select>
+              </div>
+
+              <div class="col-md-4">
+                <div class="input-group">
+                  <input type="text" class="form-control" placeholder="Notes" aria-label="Notes" id="notes">
+                  <button class="btn btn-success" type="button" onClick="checkIn()">
+                    Check In
+                  </button>
+                  <button class="btn btn-success" type="button" onClick="addTime()">
+                    Add Time
+                  </button>
+                </div>
+              </div>
+
             </div>
-            
-            <select class="selectpicker" title="Department" data-live-search="true" id="dept"></select>
-            
-            <input type="text" class="form-control" placeholder="Notes" aria-label="Notes" id="notes">
-            <div class="input-group-append">
-              <button class="btn btn-success" type="button" onClick="checkIn()">
-                Check In
-              </button>
-              <button class="btn btn-success" type="button" onClick="addTime()">
-                Add Time
-              </button>
-            </div>
-            
+
           </div>
         </div>
-        
+
       </div>
     </div>
-    
+
     <div class="card mb-3">
       <div class="card-header">
         Create User
@@ -167,7 +177,7 @@
         </div>
       </div>
     </div>
-    
+
     <div class="card mb-3">
       <div class="card-header">
         Kiosk Settings
@@ -178,10 +188,10 @@
         </button>
       </div>
     </div>
-    
-    
+
+
     <a class="btn btn-info btn-sm float-end" href="/" role="button">Back</a>
-    
+
   </div>
 </div>
 
