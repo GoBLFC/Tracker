@@ -34,7 +34,7 @@ function initData() {
             $('#depts').append($("<option></option>").attr("value", value['id']).text(value['name']));
         });
 
-        // $("#depts").selectpicker("refresh");
+        $("#depts").selectpicker("refresh");
     });
 
     postAction("/api/admin.php", {action: 'getRewards'}, function (data) {

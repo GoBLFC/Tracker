@@ -13,7 +13,7 @@ function initData() {
             $('#dept').append($("<option></option>").attr("value", value['id']).text(value['name']));
         });
 
-        // $("#dept").selectpicker("refresh");
+        $("#dept").selectpicker("refresh");
     });
 }
 
