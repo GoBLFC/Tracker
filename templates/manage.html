@@ -11,31 +11,33 @@
     
     <div class="card mb-3">
       <div class="card-header">
-        Volunteer Management
+        Search Volunteers
       </div>
       
       <div class="card-body">
-        <div class="input-group">
-          <input id="searchinput" type="text" class="form-control inputDark" placeholder="Badge Number, Name, Username..." aria-label="Search" aria-describedby="basic-addon2">
-        </div>
+        <input id="searchinput" type="text" class="form-control mb-3" placeholder="Badge Number, Name, Username..." aria-label="Search">
         
-        <table id="utable" class="table table-striped">
-          <thead>
-            <tr>
-              <th scope="col">ID</th>
-              <th scope="col">Username</th>
-              <th scope="col">Name</th>
-              <th scope="col"></th>
-            </tr>
-          </thead>
-          <tbody id="uRow">
-          </tbody>
-        </table>
+        <div class="card">
+          <div class="card-body p-0">
+            <table id="utable" class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">ID</th>
+                  <th scope="col">Username</th>
+                  <th scope="col">Name</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody id="uRow">
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
     
-    <div class="card mb-3 d-none">
-      <h5 class="card-header text-center">
+    <div id="userCard" class="card mb-3 d-none">
+      <h5 id="userCardTitle" class="card-header text-center">
         User
       </h5>
       
@@ -65,8 +67,10 @@
         </div>
         
         <div class="card mb-3">
+          <div class="card-header">
+            Rewards Claimed
+          </div>
           <div class="card-body">
-            <h5 class="card-title text-center">Rewards Claimed</h5>
             <table class="table text-center">
               <thead>
                 <tr>
@@ -88,8 +92,11 @@
           </div>
         </div>
         
-        <div class="card">
-          <div class="card-body">
+        <div class="card mb-3">
+          <div class="card-header">
+            Time Log
+          </div>
+          <div class="card-body p-0">
             <table id="table" class="table table-striped">
               <thead>
                 <tr>
@@ -104,6 +111,14 @@
               <tbody id="eRow">
               </tbody>
             </table>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            Add Time
+          </div>
+          <div class="card-body">
             
             <div class="input-group d-flex">
               <div class="input-group date w-50" id="timestart" data-target-input="nearest">
@@ -114,24 +129,25 @@
               </div>
             </div>
             
-            <div class="input-group date" id="timestop" data-target-input="nearest" style="width: auto;max-width: 50%;">
+            <div class="input-group date" id="timestop" data-target-input="nearest">
               <input type="text" class="form-control datetimepicker-input" placeholder="Stop" data-target="#timestop">
               <div class="input-group-append" data-target="#timestop" data-toggle="datetimepicker">
                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
               </div>
             </div>
             
-            <select style="width: 10%" class="selectpicker" title="Department" data-live-search="true" id="dept"></select>
+            <select class="selectpicker" title="Department" data-live-search="true" id="dept"></select>
             
-            <input type="text" class="form-control inputDark" placeholder="Notes" aria-label="Notes" aria-describedby="basic-addon2" style="width: 10%;" id="notes">
+            <input type="text" class="form-control" placeholder="Notes" aria-label="Notes" id="notes">
             <div class="input-group-append">
-              <button class="btn btn-outline-secondary" type="button" style="float: right; background-color: #005a24; color: #ffffff; border: 1px solid rgba(0, 0, 0, 0.15)" onClick="checkIn()">
+              <button class="btn btn-success" type="button" onClick="checkIn()">
                 Check In
               </button>
-              <button class="btn btn-outline-secondary" type="button" style="background-color: #004014; color: #ffffff; border: 1px solid rgba(0, 0, 0, 0.15)" onClick="addTime()">
+              <button class="btn btn-success" type="button" onClick="addTime()">
                 Add Time
               </button>
             </div>
+            
           </div>
         </div>
         
@@ -144,12 +160,10 @@
       </div>
       <div class="card-body">
         <div class="input-group">
-          <input type="text" class="form-control" placeholder="Badge Number" aria-label="Badge Number" aria-describedby="basic-addon2">
-          <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="button" onClick="createUser(getButtonInput(this))" style="background-color: #1d6300; color: #ffffff; border: 1px solid rgba(0, 0, 0, 0.15)">
-              Create User
-            </button>
-          </div>
+          <input type="text" class="form-control" placeholder="Badge Number" aria-label="Badge Number">
+          <button class="btn btn-success" type="button" onClick="createUser(getButtonInput(this))">
+            Create User
+          </button>
         </div>
       </div>
     </div>
@@ -164,10 +178,10 @@
         </button>
       </div>
     </div>
-
+    
     
     <a class="btn btn-info btn-sm float-end" href="/" role="button">Back</a>
-
+    
   </div>
 </div>
 

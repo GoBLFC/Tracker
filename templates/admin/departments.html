@@ -6,7 +6,7 @@
   <div class="card-header">
     Department Settings
   </div>
-  <div class="card-body">
+  <div class="card-body p-0">
     <table id="table" class="table table-striped">
       <thead>
         <tr>
@@ -24,17 +24,15 @@
 <div class="card mb-3">
   <div class="card-body">
     <div class="input-group">
-      <input type="text" class="form-control" placeholder="Name" aria-label="Name" aria-describedby="basic-addon2">
-      <select class="custom-select" id="inputGroupSelect02">
+      <input type="text" class="form-control" placeholder="Name" aria-label="Name">
+      <select class="form-select">
         <option value=-1 hidden selected>Hidden</option>
         <option value=0>No</option>
         <option value=1>Yes</option>
       </select>
-      <div class="input-group-append">
-        <button class="btn btn-outline-secondary" type="button" onclick="addDept(this)">
-          Add Dept
-        </button>
-      </div>
+      <button class="btn btn-success" type="button" onclick="addDept(this)">
+        Add Dept
+      </button>
     </div>
   </div>
 </div>

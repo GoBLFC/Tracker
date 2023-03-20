@@ -6,15 +6,15 @@
   <div class="card-header">
     Rewards
   </div>
-  <div class="card-body">
+  <div class="card-body p-0">
     <table id="table" class="table table-striped">
       <thead>
         <tr>
-          <th scope="col" style="width:1%">ID</th>
-          <th scope="col" style="width:20%">Name</th>
-          <th scope="col" style="width:43%">Description</th>
-          <th scope="col" style="width:12%">Hours (Optional)</th>
-          <th scope="col" style="width:12%">Hidden</th>
+          <th scope="col">ID</th>
+          <th scope="col">Name</th>
+          <th scope="col">Description</th>
+          <th scope="col">Hours (Optional)</th>
+          <th scope="col">Hidden</th>
         </tr>
       </thead>
       <tbody id="rRow">
@@ -23,22 +23,23 @@
   </div>
 </div>
 
-<div class="card">
+<div class="card mb-3">
+  <div class="card-header">
+    Add Reward
+  </div>
   <div class="card-body">
     <div class="input-group">
-      <input id="rName" type="text" class="form-control" placeholder="Name" aria-label="Name" aria-describedby="basic-addon2">
-      <input id="rDesc" type="text" class="form-control" placeholder="Description" aria-label="Description" aria-describedby="basic-addon2">
-      <input id="rHours" type="text" class="form-control" placeholder="Hours" aria-label="Hours" aria-describedby="basic-addon2">
-      <select class="custom-select" id="inputGroupSelect02">
+      <input id="rName" type="text" class="form-control" placeholder="Name" aria-label="Name">
+      <input id="rDesc" type="text" class="form-control" placeholder="Description" aria-label="Description">
+      <input id="rHours" type="text" class="form-control" placeholder="Hours" aria-label="Hours">
+      <select class="form-select">
         <option value=-1 hidden selected>Hidden</option>
         <option value=0>No</option>
         <option value=1>Yes</option>
       </select>
-      <div class="input-group-append">
-        <button class="btn btn-outline-secondary" type="button" onclick="addReward(this)">
-          Add Reward
-        </button>
-      </div>
+      <button class="btn btn-success" type="button" onclick="addReward(this)">
+        Add Reward
+      </button>
     </div>
   </div>
 </div>

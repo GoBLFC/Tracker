@@ -6,18 +6,18 @@
   <h5 class="card-header">
     Welcome {{ user.username }}!
   </h5>
-  
+
   <div class="card-body">
     <div class="row">
-      
+
       <div class="col-md">
-        <div id="checkstatus" class="alert alert-{{ cDept ? 'success' : 'danger' }} py-2 mb-0" role="alert">
+        <div id="checkstatus" class="alert alert-{{ cDept ? 'success' : 'danger' }} py-2 mb-0 h-100 d-flex align-items-center" role="alert">
           You are currently {{ cDept ? "" : "not " }}checked in.
         </div>
       </div>
-      
+
       <div class="col-md">
-        <select {{ cDept ? "disabled " : "" }}id="dept">
+        <select class="form-select h-100" {{ cDept ? "disabled " : "" }}id="dept">
           {% if not cDept %}
           <option value="-1" disabled selected hidden>Select Department</option>
           {% endif %}
@@ -26,11 +26,11 @@
           {% endfor %}
         </select>
       </div>
-      
+
       <div class="col-md">
-        <a href="#" id="checkinout" class="btn btn-primary d-block" data-value="{{ cDept ? 'out' : 'in' }}">Check-{{ cDept ? "Out" : "In" }}</a>
+        <button id="checkinout" class="btn btn-primary w-100 h-100" data-value="{{ cDept ? 'out' : 'in' }}">Check-{{ cDept ? "Out" : "In" }}</button>
       </div>
-      
+
     </div>
   </div>
 </div>
@@ -43,31 +43,31 @@
   <h5 class="card-header">
     Your Stats
   </h5>
-  
+
   <div class="card-body">
     <div class="row">
-      
+
       <div class="col-md text-center py-4 d-none" id="currdurr">
         <div class="display-2 fw-normal">
           <i class="fa-regular fa-clock"></i> <span id="durrval">Loading</span>
         </div>
         <div class="text-uppercase">Shift Duration</div>
       </div>
-      
+
       <div class="col-md text-center py-4">
         <div class="display-2 fw-normal">
           <i class="fa-regular fa-clock"></i> <span id="hourstoday">Loading</span>
         </div>
         <div class="text-uppercase">Hours Today</div>
       </div>
-      
+
       <div class="col-md text-center py-4">
         <div class="display-2 fw-normal">
           <i class="fa-regular fa-clock"></i> <span id="earnedtime">Loading</span>
         </div>
         <div class="text-uppercase">Hours Earned</div>
       </div>
-      
+
     </div>
   </div>
 </div>

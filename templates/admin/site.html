@@ -7,15 +7,33 @@
     Site Settings
   </div>
   <div class="card-body">
-    <button data-status={{ devMode }} onclick="toggleDevmode(this)" type="button" class="btn btn-sm btn-{{ devMode ? 'danger' : 'warning' }}">
-      {{ devMode ? "Disable" : "Enable" }} Dev Mode
-    </button>
-    <button data-status={{ siteStatus }} onclick="toggleSite(this)" type="button" class="btn btn-sm btn-{{ siteStatus ? 'danger' : 'success' }}">
-      {{ siteStatus ? "Disable" : "Enable" }} Site
-    </button>
-    <button data-status={{ kioskAuth }} onclick="toggleKiosk(this)" type="button" class="btn btn-sm btn-{{ kioskAuth ? 'danger' : 'warning' }}">
-      {{ kioskAuth ? "Deauthorize" : "Authorize" }} Kiosk
-    </button>
+    <dl class="row">
+      <dt class="col-xl-2 offset-xl-2 col-md-3 pt-4 pb-2">
+        <button data-status={{ devMode }} onclick="toggleDevmode(this)" type="button" class="btn btn-{{ devMode ? 'danger' : 'warning' }} float-md-end">
+          {{ devMode ? "Disable" : "Enable" }} Dev Mode
+        </button>
+      </dt>
+      <dd class="col-xl-6 col-md-9 pt-4 pb-2">
+        <p>Dev Mode makes it easier to develop and test Tracker by relaxing the kiosk authorization requirement, greatly extending the auto-logout timer, and disabling logging out of ConCat in parallel with Tracker.</p>
+        <p><b>If Tracker is running in a production environment, this should be disabled.</b></p>
+      </dd>
+      <dt class="col-xl-2 offset-xl-2 col-md-3 py-2">
+        <button data-status={{ siteStatus }} onclick="toggleSite(this)" type="button" class="btn btn-{{ siteStatus ? 'danger' : 'success' }} float-md-end">
+          {{ siteStatus ? "Disable" : "Enable" }} Site
+        </button>
+      </dt>
+      <dd class="col-xl-6 col-md-9 py-2">
+        <p>Disabling the site makes it inaccessible to volunteers, prohibiting them from checking in or out. Managers and administrators can still log in and perform staff tasks, including checking users in or out on their behalf.</p>
+      </dd>
+      <dt class="col-xl-2 offset-xl-2 col-md-3 pt-2">
+        <button data-status={{ kioskAuth }} onclick="toggleKiosk(this)" type="button" class="btn btn-{{ kioskAuth ? 'danger' : 'warning' }} float-md-end">
+          {{ kioskAuth ? "Deauthorize" : "Authorize" }} Kiosk
+        </button>
+      </dt>
+      <dd class="col-xl-6 col-md-9 pt-2">
+        <p>Authorizing this kiosk will allow volunteers to check in or out on this device. This is required when setting up dedicated devices pre-con for checking in or out.</p>
+      </dd>
+    </dl>
   </div>
 </div>
 

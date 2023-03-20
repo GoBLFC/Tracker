@@ -4,9 +4,9 @@
 
 <div class="card mb-3">
   <div class="card-header">
-    <div>Bonus Settings</div>
+    <div>Bonuses</div>
   </div>
-  <div class="card-body">
+  <div class="card-body p-0">
     <table id="table" class="table table-striped">
       <thead>
         <tr>
@@ -20,6 +20,15 @@
       <tbody id="bRow">
       </tbody>
     </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    Add Reward
+  </div>
+
+  <div class="card-body">
     
     <div class="input-group d-flex">
       <div class="input-group date" id="bonusstart" data-target-input="nearest">
@@ -36,16 +45,14 @@
         </div>
       </div>
       
-      <select style="width: 10%" class="selectpicker dropup" title="Departments" multiple data-live-search="true" id="depts"></select>
+      <select class="selectpicker dropup" title="Departments" multiple data-live-search="true" id="depts"></select>
       
-      <input type="text" class="form-control inputDark" placeholder="Modifier" aria-label="Modifier" aria-describedby="basic-addon2" id="bonusmod">
-      <div class="input-group-append">
-        <button class="btn btn-outline-secondary" type="button" onClick="addBonus(this)">
-          Add Bonus
-        </button>
-      </div>
+      <input type="text" class="form-control" placeholder="Modifier" aria-label="Modifier" id="bonusmod">
+      <button class="btn btn-success" type="button" onClick="addBonus(this)">
+        Add Bonus
+      </button>
     </div>
-
+    
   </div>
 </div>
 

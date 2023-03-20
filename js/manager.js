@@ -51,13 +51,12 @@ function loadVolunteer(id) {
     postAction("/api/manage.php", {action: 'getUser', id: id}, function (data) {
         if (data['code'] === 0) return;
         $("#eRow").empty();
-        const uCard = $("#uHeadName");
         const user = data['user'];
 
         console.log(user);
 
-        uCard.parent().parent().show();
-        uCard.text(user['username']);
+        $("#userCard").removeClass("d-none");
+        $("#userCardTitle").text(user['username']);
         window.currUid = user['id'];
         initClock(user['id']);
 
@@ -289,12 +288,12 @@ function toggleSetting(button, off, on, offLoad, onLoad, setting, method, toggle
 
 function initClock(id) {
     getClockTime(id, function (data) {
-        $('#currdurr').hide();
+        $('#currdurr').addClass("d-none");
 
         if (data.val === -1) return;
         shiftTime = data.val;
         onClock = true;
-        $('#currdurr').show();
+        $('#currdurr').removeClass("d-none");
         updateClock();
     });
 
@@ -310,7 +309,7 @@ function initClock(id) {
 }
 
 function addUserRow(id, username, name, dept, banned) {
-    let status = "<span class=\"badge badge-pill badge-" + (dept == null ? "warning" : "success") + "\">" + (dept == null ? "Checked Out" : "Checked In") + "</span>";
+    let status = "<span class=\"badge rounded-pill text-bg-" + (dept == null ? "warning" : "success") + "\">" + (dept == null ? "Checked Out" : "Checked In") + "</span>";
     if (banned === 1) status = status.concat("<span class=\"badge badge-pill badge-danger\">Banned</span>");
     const data = [id, username, name, status, "<button type=\"button\" class=\"btn btn-sm btn-info\" data-id=\"" + id + "\" onClick=\"loadVolunteer(getTableKey(this))\">Load</button>"];
     addRow(true, $("#uRow"), data)

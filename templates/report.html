@@ -17,7 +17,7 @@
   <title>{{ title }}</title>
 </head>
 
-<table id="tableDat" class="display nowrap" style="width:100%">
+<table id="tableDat" class="display nowrap w-100">
   <thead>
     <tr>
       {% for th in header %}
@@ -25,7 +25,7 @@
       {% endfor %}
     </tr>
   </thead>
-  <tbody style="color: black;">
+  <tbody>
     
     {% block report %}{% endblock %}
     

@@ -74,7 +74,7 @@ function toggleStatus(status, data) {
         opposite = "In";
         $dept.prop("disabled", true);
         $checkstatus.html('You are currently checked in.');
-        $checkstatus.attr('class', 'alert alert-success');
+        $checkstatus.removeClass("alert-danger").addClass("alert-success");
         $shiftclock.show();
     } else {
         shiftTime = 0;
@@ -83,13 +83,17 @@ function toggleStatus(status, data) {
 
         $dept.prop("disabled", false);
         $checkstatus.html('You are currently not checked in.');
-        $checkstatus.attr('class', 'alert alert-danger');
+        $checkstatus.removeClass("alert-success").addClass("alert-danger");
         $shiftclock.hide();
     }
 
-    Toast.fire({
-        text: "Clocked " + opposite,
-        icon: "success"
+    Swal.fire({
+        text: "Checked " + opposite,
+        icon: "success",
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        timer: 2000
     });
 }
 
@@ -109,7 +113,6 @@ function updateClock() {
 }
 
 function decrementLogout() {
-    if (logoutTime === 1) $('#gram').text("second");
     if (logoutTime === 0) $('.autologout').html("Goodbye!");
     if (logoutTime === -1) {
         window.location.href = "/logout.php";

@@ -51,7 +51,7 @@ function initData() {
 
 function addListeners() {
     $(".form-control").off();
-    $(".custom-select").off();
+    $(".form-select").off();
 
     // Detect input focus change
     $(".form-control").focusout(function (e) {
@@ -63,7 +63,7 @@ function addListeners() {
     });
 
     // Detect selection change
-    $(".custom-select").change(function (e) {
+    $(".form-select").change(function (e) {
         if (typeof e === 'undefined') return;
         const elem = $(e.currentTarget);
         if (elem.data("type") === "dept") updateDept(getTableKey(elem.parent()), getButtonInput(elem), getButtonSelect(elem));
@@ -319,7 +319,7 @@ function addUserRow(type, badge, name) {
 }
 
 function addDeptRow(id, name, hidden) {
-    const data = [id, "<input type=\"text\" data-type=\"dept\" class=\"form-control inputDark wt\" value=\"" + name + "\" aria-label=\"Name\" aria-describedby=\"basic-addon2\">", "<select class=\"custom-select inputDark wt\" data-type=\"dept\"><option value=0>No</option><option " + (hidden === 1 ? "selected=\"\"" : "") + "value=1>Yes</option></select>"];
+    const data = [id, "<input type=\"text\" data-type=\"dept\" class=\"form-control\" value=\"" + name + "\" aria-label=\"Name\">", "<select class=\"form-select\" data-type=\"dept\"><option value=0>No</option><option " + (hidden === 1 ? "selected=\"\"" : "") + "value=1>Yes</option></select>"];
     addRow(true, $("#dRow"), data)
 }
 
@@ -330,7 +330,7 @@ function addBonusRow(id, start, stop, depts, modifier) {
 
 function addRewardRow(id, name, description, hours, hidden) {
     console.log("add: " + id + " / " + name + " / ");
-    const data = [id, "<input type=\"text\" data-type=\"reward\" data-field=\"name\" class=\"form-control inputDark\" value=\"" + name + "\" aria-label=\"Name\" aria-describedby=\"basic-addon2\">", "<input type=\"text\"  data-type=\"reward\" data-field=\"desc\" class=\"form-control inputDark\" value=\"" + description + "\" aria-label=\"Description\" aria-describedby=\"basic-addon2\">", "<input data-type=\"reward\" data-field=\"hours\" type=\"text\" class=\"form-control inputDark\" value=\"" + hours + "\" aria-label=\"Hours\" aria-describedby=\"basic-addon2\">", "<select class=\"custom-select inputDark wt\" data-type=\"reward\" data-field=\"hidden\" ><option value=0>No</option><option " + (hidden === 1 ? "selected=\"\"" : "") + "value=1>Yes</option></select>"];
+    const data = [id, "<input type=\"text\" data-type=\"reward\" data-field=\"name\" class=\"form-control\" value=\"" + name + "\" aria-label=\"Name\">", "<input type=\"text\"  data-type=\"reward\" data-field=\"desc\" class=\"form-control\" value=\"" + description + "\" aria-label=\"Description\">", "<input data-type=\"reward\" data-field=\"hours\" type=\"text\" class=\"form-control\" value=\"" + hours + "\" aria-label=\"Hours\">", "<select class=\"form-select\" data-type=\"reward\" data-field=\"hidden\" ><option value=0>No</option><option " + (hidden === 1 ? "selected=\"\"" : "") + "value=1>Yes</option></select>"];
     addRow(true, $("#rRow"), data)
 }
 

@@ -38,7 +38,7 @@ function getButtonInput(object) {
 }
 
 function getButtonSelect(object) {
-    return $(object).parent().parent().find('.custom-select').val();
+    return $(object).parent().parent().find('.form-select').val();
 }
 
 function getTableKey(object) {
