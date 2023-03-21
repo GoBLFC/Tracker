@@ -45,7 +45,6 @@ CREATE TABLE `rewards` (
   `name` varchar(64) NOT NULL,
   `desc` mediumtext NOT NULL,
   `hours` int NOT NULL,
-  `hidden` boolean NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -64,7 +63,6 @@ CREATE TABLE `bonuses` (
   `stop` datetime NOT NULL,
   `dept` varchar(256) NOT NULL,
   `modifier` double NOT NULL,
-  `hidden` boolean NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 

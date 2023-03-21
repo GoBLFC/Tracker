@@ -39,7 +39,7 @@ function initData() {
 
     postAction("/api/admin.php", {action: 'getRewards'}, function (data) {
         $.each(data['val'], function (index, value) {
-            addRewardRow(value['id'], value['name'], value['desc'], value['hours'], value['hidden']);
+            addRewardRow(value['id'], value['name'], value['desc'], value['hours']);
         });
 
         addListeners();
@@ -200,8 +200,7 @@ function addReward(elem) {
     const name = $("#rName").val();
     const desc = $("#rDesc").val();
     const hours = $("#rHours").val();
-    const hidden = parseInt(getButtonSelect(elem));
-    postAction("/api/admin.php", {action: 'addReward', name: name, description: desc, hours: hours, hidden: hidden}, function (data) {
+    postAction("/api/admin.php", {action: 'addReward', name: name, description: desc, hours: hours}, function (data) {
         console.log('2');
 
         if (data['code'] === 0) return;
@@ -209,7 +208,7 @@ function addReward(elem) {
             text: "Reward created",
             icon: "success"
         });
-        addRewardRow(data['val'], name, desc, hours, hidden);
+        addRewardRow(data['val'], name, desc, hours);
         addListeners();
     });
 }
@@ -331,9 +330,9 @@ function addBonusRow(id, start, stop, depts, modifier) {
     addRow(false, $("#bRow"), data)
 }
 
-function addRewardRow(id, name, description, hours, hidden) {
+function addRewardRow(id, name, description, hours) {
     console.log("add: " + id + " / " + name + " / ");
-    const data = [id, "<input type=\"text\" data-type=\"reward\" data-field=\"name\" class=\"form-control\" value=\"" + name + "\" aria-label=\"Name\">", "<input type=\"text\"  data-type=\"reward\" data-field=\"desc\" class=\"form-control\" value=\"" + description + "\" aria-label=\"Description\">", "<input data-type=\"reward\" data-field=\"hours\" type=\"text\" class=\"form-control\" value=\"" + hours + "\" aria-label=\"Hours\">", "<select class=\"form-select\" data-type=\"reward\" data-field=\"hidden\" ><option value=0>No</option><option " + (hidden === 1 ? "selected=\"\"" : "") + "value=1>Yes</option></select>"];
+    const data = [id, "<input type=\"text\" data-type=\"reward\" data-field=\"name\" class=\"form-control\" value=\"" + name + "\" aria-label=\"Name\">", "<input type=\"text\"  data-type=\"reward\" data-field=\"desc\" class=\"form-control\" value=\"" + description + "\" aria-label=\"Description\">", "<input data-type=\"reward\" data-field=\"hours\" type=\"text\" class=\"form-control\" value=\"" + hours + "\" aria-label=\"Hours\">"];
     addRow(true, $("#rRow"), data)
 }
 

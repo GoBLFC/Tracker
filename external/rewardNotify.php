@@ -14,7 +14,7 @@ foreach ($db->listUsers() as $user) {
     // Act upon reward if notification has not already been sent
     echo "User: " . $user['first_name'] . "\n";
     foreach ($rewards as $reward) {
-        if ($reward['claimed'] || !$reward['avail'] || $reward['hidden'] || $reward['hours'] == 0) continue;
+        if ($reward['claimed'] || !$reward['avail'] || $reward['hours'] == 0) continue;
 
         //Check if user has already been notified
         if ($db->hasBeenNotified($user['id'], $reward['id'])) {

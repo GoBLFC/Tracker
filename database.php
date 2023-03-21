@@ -281,14 +281,13 @@ class Database {
     // ## Rewards ##
     // #############
 
-    public function createReward($name, $desc, $hours, $hidden = 0) {
-        $sql = "INSERT INTO `rewards` (`name`, `desc`, `hours`, `hidden`) VALUES (:name, :desc, :hours, :hidden)";
+    public function createReward($name, $desc, $hours) {
+        $sql = "INSERT INTO `rewards` (`name`, `desc`, `hours`) VALUES (:name, :desc, :hours)";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(":name", $name, PDO::PARAM_STR);
         $stmt->bindValue(":desc", $desc, PDO::PARAM_STR);
         $stmt->bindValue(":hours", $hours, PDO::PARAM_INT);
-        $stmt->bindValue(":hidden", $hidden, PDO::PARAM_INT);
         $stmt->execute();
 
         return $this->conn->lastInsertId();
@@ -297,7 +296,7 @@ class Database {
     public function updateReward($id, $field, $value) {
         $sql = "UPDATE `rewards` SET ";
 
-        $fields = ["name", "desc", "hours", "hidden"];
+        $fields = ["name", "desc", "hours"];
 
         // Not a valid field, abort
         if (!in_array($field, $fields)) { return; };
@@ -318,13 +317,8 @@ class Database {
         return $stmt;
     }
 
-    public function listRewards($hidden = 0) {
-        $sql = "SELECT * FROM `rewards`";
-
-        if (!$hidden) { $sql .= " WHERE `hidden` = 0"; }
-
-        $stmt = $this->conn->query($sql);
-
+    public function listRewards() {
+        $stmt = $this->conn->query("SELECT * FROM `rewards`");
         return $stmt;
     }
 
@@ -391,13 +385,8 @@ class Database {
         return $stmt;
     }
 
-    public function listBonuses($hidden = 0) {
-        $sql = "SELECT * FROM `bonuses` WHERE `hidden` = :hidden";
-
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(":hidden", $hidden);
-        $stmt->execute();
-
+    public function listBonuses() {
+        $stmt = $this->conn->query("SELECT * FROM `bonuses`");
         return $stmt;
     }
 

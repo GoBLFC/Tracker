@@ -70,7 +70,6 @@ class RewardsCommand extends SystemCommand
         $rewards = getEligibleRewards($user['id']);
         if (sizeof($rewards) == 0) $rewardText = "No available rewards.";
         foreach ($rewards as $reward) {
-			if ($reward['hidden']) continue;
             $state = ($reward['avail'] ? "⭐" : "⏳");
             if ($reward['claimed']) $state = "✅";
 

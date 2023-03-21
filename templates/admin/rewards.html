@@ -14,7 +14,6 @@
           <th scope="col">Name</th>
           <th scope="col">Description</th>
           <th scope="col">Hours (Optional)</th>
-          <th scope="col">Hidden</th>
         </tr>
       </thead>
       <tbody id="rRow">
@@ -32,11 +31,6 @@
       <input id="rName" type="text" class="form-control" placeholder="Name" aria-label="Name">
       <input id="rDesc" type="text" class="form-control" placeholder="Description" aria-label="Description">
       <input id="rHours" type="text" class="form-control" placeholder="Hours" aria-label="Hours">
-      <select class="form-select">
-        <option value=-1 hidden selected>Hidden</option>
-        <option value=0>No</option>
-        <option value=1>Yes</option>
-      </select>
       <button class="btn btn-success" type="button" onclick="addReward(this)">
         Add Reward
       </button>

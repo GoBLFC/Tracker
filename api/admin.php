@@ -63,7 +63,7 @@ switch ($action) {
         echo json_encode(["code" => 1, "val" => $db->listBonuses()->fetchAll()]);
         break;
     case "getRewards":
-        echo json_encode(["code" => 1, "val" => $db->listRewards(hidden: true)->fetchAll()]);
+        echo json_encode(["code" => 1, "val" => $db->listRewards()->fetchAll()]);
         break;
     case "addDept":
         echo json_encode(["code" => 1, "val" => $db->createDepartment($_POST["name"], $_POST["hidden"])]);

@@ -6,7 +6,7 @@ function getEligibleRewards($uid)
     // Current claims
     $earnedHours = (calculateBonusTime($uid, false) + getMinutesTotal($uid)) / 60;
     $claims = $db->listRewardClaims($uid);
-    $rewards = $db->listRewards(hidden: false);
+    $rewards = $db->listRewards();
 
     $availRewards = [];
     foreach ($rewards as $reward) {
