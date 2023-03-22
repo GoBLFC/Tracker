@@ -11,7 +11,6 @@ if (php_sapi_name() != 'cli') die('No.');
 require "../main.php";
 
 chdir(dirname(__FILE__));
-include('../includes/functions.php');
 
 echo "Checking out active clockins...\n";
 foreach ($db->getActiveCheckIns() as $clockin) {

@@ -6,8 +6,12 @@ define("ROOT_DIR", __DIR__);
 
 require ROOT_DIR . "/config.php";
 
+if ($TIMEZONE) {
+    date_default_timezone_set($TIMEZONE);
+}
+
 include ROOT_DIR . "/database.php";
-include ROOT_DIR . "/includes/functions.php";
+include ROOT_DIR . "/classes.php";
 include ROOT_DIR . "/vendor/autoload.php";
 
 $session = "";

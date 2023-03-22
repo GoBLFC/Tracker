@@ -55,13 +55,29 @@ switch ($action) {
         echo json_encode(["code" => 1, "msg" => "Checked out"]);
         break;
     case "getClockTime":
-        echo json_encode(["code" => 1, "val" => getClockTime($badgeID)]);
+        $time = $db->getCheckIn($badgeID)->fetch();
+
+        // Not clocked in
+        if (!$time) {
+            echo json_encode(["code" => 1, "val" => -1]);
+            break;
+        }
+
+        $result = UserTimeClock::calculateTimeTotal([$time]);
+
+        echo json_encode(["code" => 1, "val" => $result]);
         break;
     case "getMinutesToday":
-        echo json_encode(["code" => 1, "val" => getMinutesToday($badgeID)]);
+        $times = $db->listTimes(uid: $badgeID)->fetchAll();
+        $timeTotal = UserTimeClock::calculateTimeSinceDay($times, new DateTime());
+        echo json_encode(["code" => 1, "val" => $timeTotal]);
         break;
     case "getEarnedTime":
-        echo json_encode(["code" => 1, "val" => calculateBonusTime($badgeID, false) + getMinutesTotal($badgeID)]);
+        $times = $db->listTimes(uid: $badgeID)->fetchAll();
+        $bonuses = $db->listBonuses()->fetchAll();
+        $earnedTime = UserTimeClock::calculateTimeTotal($times, $bonuses);
+
+        echo json_encode(["code" => 1, "val" => $earnedTime]);
         break;
     case "getNotifications":
         echo json_encode(["code" => 1, "val" => $db->listNotifications($badgeID, 0)->fetchAll()]);

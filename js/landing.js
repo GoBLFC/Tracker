@@ -14,6 +14,7 @@ $(document).ready(function () {
             });
         }
     });
+    $('[data-bs-toggle="tooltip"]').tooltip();
 });
 
 var logoutTime = 60;
@@ -29,7 +30,7 @@ function initClock() {
         if (data.val === -1) return;
         shiftTime = data.val;
         onClock = true;
-        $('#currdurr').show();
+        $('#currdurr').removeClass("d-none");
         updateClock();
     });
 
@@ -75,7 +76,7 @@ function toggleStatus(status, data) {
         $dept.prop("disabled", true);
         $checkstatus.html('You are currently checked in.');
         $checkstatus.removeClass("alert-danger").addClass("alert-success");
-        $shiftclock.show();
+        $shiftclock.removeClass("d-none");
     } else {
         shiftTime = 0;
         updateClock();
@@ -84,7 +85,7 @@ function toggleStatus(status, data) {
         $dept.prop("disabled", false);
         $checkstatus.html('You are currently not checked in.');
         $checkstatus.removeClass("alert-success").addClass("alert-danger");
-        $shiftclock.hide();
+        $shiftclock.addClass("d-none");
     }
 
     Swal.fire({

@@ -7,7 +7,6 @@ use Longman\TelegramBot\Request;
 
 require "../main.php";
 require ROOT_DIR . "/vendor/autoload.php";
-include ROOT_DIR . "/includes/functions.php";
 
 // Define all paths for your custom commands in this array (leave as empty array if not used)
 $commands_paths = [

@@ -1,9 +1,10 @@
 <?php
 
+require "../main.php";
+
 //if (php_sapi_name() != 'cli') die('No.');
 
 chdir(dirname(__FILE__));
-include('../includes/functions.php');
 include('sendTelegramMessage.php');
 
 echo "Loading users...\n";

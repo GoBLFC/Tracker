@@ -22,8 +22,10 @@
       {% if devMode %}
       <div class="text-center mb-3">
         <span class="badge rounded-pill text-bg-warning">Dev Mode Enabled</span>
+        {% if user %}
         <span class="badge rounded-pill text-bg-primary">Your ID: #{{ user.id }}</span>
         <span class="badge rounded-pill text-bg-secondary">Role: {% if isAdmin %}Admin{% elseif isManager %}Manager{% elseif isLead %}Lead{% else %}Unknown{% endif %}</span>
+        {% endif %}
         <span class="badge rounded-pill {% if kioskAuth %}text-bg-success{% else %}text-bg-danger{% endif %}">Kiosk: {% if kioskAuth %}Authorized{% else %}Unauthorized{% endif %}</span>
         <span class="badge rounded-pill {% if siteStatus %}text-bg-success{% else %}text-bg-danger{% endif %}">Site: {% if siteStatus %}Enabled{% else %}Disabled{% endif %}</span>
       </div>

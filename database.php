@@ -258,6 +258,18 @@ class Database {
         return $stmt;
     }
 
+    public function listTimes($uid = null) {
+        $sql = "SELECT * FROM `tracker`";
+
+        if ($uid) { $sql .= " WHERE `uid` = :uid"; }
+
+        $stmt = $this->conn->prepare($sql);
+        if ($uid) { $stmt->bindParam(":uid", $uid, PDO::PARAM_INT); }
+        $stmt->execute();
+
+        return $stmt;
+    }
+
     // ---
 
     public function getActiveCheckIns() {

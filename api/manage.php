@@ -35,16 +35,32 @@ switch ($action) {
         echo json_encode(["code" => 1, "user" => $user]);
         break;
     case "getClockTimeOther":
-        echo json_encode(["code" => 1, "val" => getClockTime($_POST["id"])]);
+        $time = $db->getCheckIn($_POST["id"])->fetch();
+
+        // Not clocked in
+        if (!$time) {
+            echo json_encode(["code" => 1, "val" => -1]);
+            break;
+        }
+
+        $result = UserTimeClock::calculateTimeTotal([$time]);
+
+        echo json_encode(["code" => 1, "val" => $result]);
         break;
     case "getMinutesTodayOther":
-        echo json_encode(["code" => 1, "val" => getMinutesToday($_POST["id"])]);
+        $times = $db->listTimes(uid: $_POST["id"])->fetchAll();
+        $timeTotal = UserTimeClock::calculateTimeSinceDay($times, new DateTime());
+        echo json_encode(["code" => 1, "val" => $timeTotal]);
         break;
     case "getEarnedTimeOther":
-        echo json_encode(["code" => 1, "val" => calculateBonusTime($_POST["id"], false) + getMinutesTotal($_POST["id"])]);
+        $times = $db->listTimes(uid: $_POST["id"]);
+        $bonuses = $db->listBonuses();
+        $earnedTime = UserTimeClock::calculateTimeTotal($times, $bonuses);
+
+        echo json_encode(["code" => 1, "val" => $earnedTime]);
         break;
     case "getTimeEntriesOther":
-        echo json_encode(["code" => 1, "val" => calculateBonusTime($_POST["id"], true)]);
+        echo json_encode(["code" => 1, "val" => $db->listTimes(uid: $_POST["id"])->fetchAll()]);
         break;
     case "checkOutOther":
         $result = $db->checkOut($_POST["id"], null);

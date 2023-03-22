@@ -1,7 +1,6 @@
 <?php
 
-require "../config.php";
-require "../database.php";
+require "../main.php";
 
 namespace Longman\TelegramBot\Commands\SystemCommands;
 
@@ -12,7 +11,6 @@ chdir(dirname(__FILE__));
 use Longman\TelegramBot\Request;
 use Longman\TelegramBot\Telegram;
 
-require_once('../includes/functions.php');
 require_once('../vendor/autoload.php');
 
 function sendTGMessage($userID, $message)

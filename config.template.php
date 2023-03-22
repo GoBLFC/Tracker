@@ -6,6 +6,13 @@
 // General configuration
 $CANONICAL_URL = "https://tracker.youreventhere.org";
 
+// Set the timezone for all date/time functions in Tracker
+// List of PHP supported timezones: https://www.php.net/manual/en/timezones.php
+// Use this if you can't change the `date.timezone` setting in php.ini
+// Leaving this unset will use PHP's default timezone
+// Leaving PHP's timezone also unset will default to UTC
+$TIMEZONE = null;
+
 // Database connection information
 $DB_HOST = "localhost";
 $DB_USERNAME = "username";
