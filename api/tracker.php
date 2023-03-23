@@ -2,7 +2,7 @@
 
 require "../api.php";
 
-class General extends API {
+class Tracker extends API {
 
     public function checkIn($params) {
         $dept = $params["dept"];
@@ -58,21 +58,25 @@ class General extends API {
         return $earnedTime;
     }
 
-    public function getNotifications($params) {
-        return $this->db->listNotifications($this->badgeID, 0)->fetchAll();
+    public function addTime($params) {
+        return $this->db->createTime(
+            $params["id"],
+            $params["start"],
+            $params["stop"],
+            $params["dept"],
+            $params["notes"],
+            $this->badgeID
+        );
     }
 
-    public function readNotification($params) {
-        return $this->db->markNotificationRead($params["id"]);
-    }
-
-    public function ackAllNotifs($params) {
-        return $this->db->ackAllNotifs($this->badgeID);
+    public function removeTime($params) {
+        $this->db->deleteTime($params["id"]);
+        return $this->success("Time removed");
     }
 
 }
 
-$api = new General($db, $badgeID);
+$api = new Tracker($db, $badgeID);
 echo apiCall($api, $_POST["func"], $_POST);
 
 ?>

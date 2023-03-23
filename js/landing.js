@@ -153,12 +153,6 @@ function checkOut(callback) {
     });
 }
 
-function ackAllNotifs(callback) {
-    postAction("/api.php", {action: "ackAllNotifs"}, function (data) {
-        callback(data);
-    });
-}
-
 function getClockTime(callback) {
     postAction("/api.php", {action: "getClockTime"}, function (data) {
         callback(data);

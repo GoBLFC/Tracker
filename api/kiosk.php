@@ -2,13 +2,7 @@
 
 require "../api.php";
 
-if (!($isLead || $isManager || $isAdmin)) {
-    http_response_code(403);
-    echo error("Unauthorized");
-    exit();
-}
-
-class Lead extends API {
+class Kiosk extends API {
 
     public function setKioskAuth($params) {
         $status = $params["status"];
@@ -27,7 +21,7 @@ class Lead extends API {
 
 }
 
-$api = new Lead($db, $badgeID);
+$api = new Kiosk($db, $badgeID);
 echo apiCall($api, $_POST["func"], $_POST);
 
 ?>

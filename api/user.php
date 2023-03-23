@@ -2,31 +2,53 @@
 
 require "../api.php";
 
-if (!($isManager || $isAdmin)) {
-    http_response_code(403);
-    echo error("Unauthorized");
-    exit();
-}
+function setRole($db, $id, $role) {
+    $user = $db->getUser($id)->fetch();
 
-class Manager extends API {
-
-    public function getUserSearch($params) {
-        $users = $this->db->searchUsers($params["input"]);
-        $results = [];
-
-        foreach ($users as $user) {
-            $dept = $this->db->getCheckIn($user["id"])->fetch();
-            if ($dept) $user["dept"] = $dept;
-            $results[] = $user;
-        }
-
-        return $results;
+    if ($_SESSION["badgeid"] == $id) {
+        return error("You can't modify your own role");
+    } else if (!$user) {
+        return error("User with ID $id not found");
     }
 
-    public function getDepts($params) {
-        $depts = [];
-        foreach ($this->db->listDepartments() as $dept) $depts[$dept["id"]] = $dept;
-        return $depts;
+    $db->setUserRole($id, $role);
+
+    return $user["username"];
+}
+
+class User extends API {
+
+    public function setAdmin($params) {
+        echo json_encode(setRole($this->db, $params["badgeid"], 3));
+    }
+
+    public function setManager($params) {
+        echo json_encode(setRole($this->db, $params["badgeid"], 2));
+    }
+
+    public function setLead($params) {
+        echo json_encode(setRole($this->db, $params["badgeid"], 1));
+    }
+
+    public function setBanned($params) {
+        $this->db->setUserBan($params["badgeid"], $params["value"]);
+        return $this->success("Updated ban");
+    }
+
+    public function getAdmins($params) {
+        return $this->db->listUsers(role: 3)->fetchAll();
+    }
+
+    public function getManagers($params) {
+        return $this->db->listUsers(role: 2)->fetchAll();
+    }
+
+    public function getLeads($params) {
+        return $this->db->listUsers(role: 1)->fetchAll();
+    }
+
+    public function getBanned($params) {
+        return $this->db->listBans()->fetchAll();
     }
 
     public function getUser($params) {
@@ -99,37 +121,22 @@ class Manager extends API {
         return $this->success("User created");
     }
 
-    public function addTime($params) {
-        return $this->db->createTime(
-            $params["id"],
-            $params["start"],
-            $params["stop"],
-            $params["dept"],
-            $params["notes"],
-            $this->badgeID
-        );
-    }
+    public function getUserSearch($params) {
+        $users = $this->db->searchUsers($params["input"]);
+        $results = [];
 
-    public function removeTime($params) {
-        $this->db->deleteTime($params["id"]);
-        return $this->success("Time removed");
-    }
+        foreach ($users as $user) {
+            $dept = $this->db->getCheckIn($user["id"])->fetch();
+            if ($dept) $user["dept"] = $dept;
+            $results[] = $user;
+        }
 
-    public function getRewardClaims($params) {
-        return $this->db->listRewardClaims($params["id"])->fetchAll();
-    }
-
-    public function claimReward($params) {
-        return $this->db->claimReward($params["uid"], $params["type"]);
-    }
-
-    public function unclaimReward($params) {
-        return $this->db->unclaimReward($params["uid"], $params["type"]);
+        return $results;
     }
 
 }
 
-$api = new Manager($db, $badgeID);
+$api = new User($db, $badgeID);
 echo apiCall($api, $_POST["func"], $_POST);
 
 ?>
