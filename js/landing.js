@@ -36,12 +36,12 @@ function initClock() {
 
     getMinutesToday(function (data) {
         if (data.val === -1) return;
-        $('#hourstoday').html(Math.round((data.val / 60) * 10) / 10);
+        $('#hourstoday').html(Math.round((data.val / 60 / 60) * 10) / 10);
     });
 
     getEarnedTime(function (data) {
         if (data.val === -1) return;
-        $('#earnedtime').html(Math.round((data.val / 60) * 10) / 10);
+        $('#earnedtime').html(Math.round((data.val / 60 / 60) * 10) / 10);
     });
 }
 
