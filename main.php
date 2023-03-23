@@ -27,7 +27,6 @@ if (!isset($_COOKIE["session"])) {
     $session = $_COOKIE["session"];
 }
 
-
 if (isset($_COOKIE["kiosk"])) {
     $kiosksession = $_COOKIE["kiosk"];
 } else {

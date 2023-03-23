@@ -4,123 +4,132 @@ require "../api.php";
 
 if (!($isManager || $isAdmin)) {
     http_response_code(403);
-    echo json_encode(["code" => 0, "msg" => "Unauthorized"]);
+    echo error("Unauthorized");
     exit();
 }
 
-switch ($action) {
-    case "getUserSearch":
-        $users = $db->searchUsers($_POST["input"]);
+class Manager extends API {
+
+    public function getUserSearch($params) {
+        $users = $this->db->searchUsers($params["input"]);
         $results = [];
 
         foreach ($users as $user) {
-            $dept = $db->getCheckIn($user["id"])->fetch();
+            $dept = $this->db->getCheckIn($user["id"])->fetch();
             if ($dept) $user["dept"] = $dept;
             $results[] = $user;
         }
 
-        echo json_encode(["code" => 1, "results" => $results]);
-        break;
-    case "getDepts":
-        $depts = [];
-        foreach ($db->listDepartments() as $dept) $depts[$dept["id"]] = $dept;
-        echo json_encode(["code" => 1, "val" => $depts]);
-        break;
-    case "getUser":
-        $id = $_POST["id"];
+        return $results;
+    }
 
-        $user = $db->getUser($id)->fetch();
-        $dept = $db->getCheckIn($id)->fetch();
+    public function getDepts($params) {
+        $depts = [];
+        foreach ($this->db->listDepartments() as $dept) $depts[$dept["id"]] = $dept;
+        return $depts;
+    }
+
+    public function getUser($params) {
+        $id = $params["id"];
+
+        $user = $this->db->getUser($id)->fetch();
+        $dept = $this->db->getCheckIn($id)->fetch();
         $user["dept"] = $dept ? $dept : null;
-        echo json_encode(["code" => 1, "user" => $user]);
-        break;
-    case "getClockTimeOther":
-        $time = $db->getCheckIn($_POST["id"])->fetch();
+        return $user;
+    }
+
+    public function getClockTimeOther($params) {
+        $time = $this->db->getCheckIn($params["id"])->fetch();
 
         // Not clocked in
         if (!$time) {
-            echo json_encode(["code" => 1, "val" => -1]);
-            break;
+            return $this->error("Not clocked in");
         }
 
         $result = UserTimeClock::calculateTimeTotal([$time]);
 
-        echo json_encode(["code" => 1, "val" => $result]);
-        break;
-    case "getMinutesTodayOther":
-        $times = $db->listTimes(uid: $_POST["id"])->fetchAll();
+        return $result;
+    }
+
+    public function getMinutesTodayOther($params) {
+        $times = $this->db->listTimes(uid: $params["id"])->fetchAll();
         $timeTotal = UserTimeClock::calculateTimeSinceDay($times, new DateTime());
-        echo json_encode(["code" => 1, "val" => $timeTotal]);
-        break;
-    case "getEarnedTimeOther":
-        $times = $db->listTimes(uid: $_POST["id"]);
-        $bonuses = $db->listBonuses();
+        return $timeTotal;
+    }
+
+    public function getEarnedTimeOther($params) {
+        $times = $this->db->listTimes(uid: $params["id"]);
+        $bonuses = $this->db->listBonuses();
         $earnedTime = UserTimeClock::calculateTimeTotal($times, $bonuses);
 
-        echo json_encode(["code" => 1, "val" => $earnedTime]);
-        break;
-    case "getTimeEntriesOther":
-        echo json_encode(["code" => 1, "val" => $db->listTimes(uid: $_POST["id"])->fetchAll()]);
-        break;
-    case "checkOutOther":
-        $result = $db->checkOut($_POST["id"], null);
+        return $earnedTime;
+    }
+
+    public function getTimeEntriesOther($params) {
+        return $this->db->listTimes(uid: $params["id"])->fetchAll();
+    }
+
+    public function checkOutOther($params) {
+        $result = $this->db->checkOut($params["id"], null);
 
         if (!$result->rowCount()) {
-            echo json_encode(["code" => 0, "msg" => "Already checked out"]);
-            break;
+            return $this->error("Already checked out");
         }
 
-        echo json_encode(["code" => 1, "msg" => "Checked out"]);
-        break;
-    case "checkInOther":
-        $result = $db->checkIn($_POST["id"], $_POST["dept"], $_POST["notes"], $badgeID, $_POST["start"]);
+        return $this->success("Checked out");
+    }
+
+    public function checkInOther($params) {
+        $result = $this->db->checkIn($params["id"], $params["dept"], $params["notes"], $this->badgeID, $params["start"]);
 
         if (!$result) {
-            echo json_encode(["code" => 0, "msg" => "Already checked in"]);
-            break;
+            return $this->error("Already checked in");
         }
 
-        echo json_encode(["code" => 1, "msg" => "Checked in"]);
-        break;
-    case "createUser":
-        $result = $db->createUser($_POST["badgeID"]);
+        return $this->success("Checked in");
+    }
+
+    public function createUser($params) {
+        $result = $this->db->createUser($params["badgeID"]);
 
         if (!$result) {
-            echo json_encode(["code" => 0, "msg" => "User already exists"]);
-            break;
+            return $this->error("User already exists");
         }
 
-        echo json_encode(["code" => 1, "msg" => "User created"]);
-        break;
-    case "addTime":
-        echo json_encode(["code" => 1, "val" => $db->createTime($_POST["id"], $_POST["start"], $_POST["stop"], $_POST["dept"], $_POST["notes"], $badgeID)]);
-        break;
-    case "removeTime":
-        $db->deleteTime($_POST["id"]);
-        echo json_encode(["code" => 1]);
-        break;
-    case "getRewardClaims":
-        echo json_encode(["code" => 1, "val" => $db->listRewardClaims($_POST["id"])->fetchAll()]);
-        break;
-    case "claimReward":
-        echo json_encode(["code" => 1, "val" => $db->claimReward($_POST["uid"], $_POST["type"])]);
-        break;
-    case "unclaimReward":
-        echo json_encode(["code" => 1, "val" => $db->unclaimReward($_POST["uid"], $_POST["type"])]);
-        break;
-    case "setKioskAuth":
-        $status = $_POST["status"];
+        return $this->success("User created");
+    }
 
-        if ($status == 1) {
-            $kioskNonce = bin2hex(random_bytes(16));
-            $db->authorizeKiosk($kioskNonce);
-            echo json_encode(["code" => 1, "val" => $kioskNonce]);
-        }
+    public function addTime($params) {
+        return $this->db->createTime(
+            $params["id"],
+            $params["start"],
+            $params["stop"],
+            $params["dept"],
+            $params["notes"],
+            $this->badgeID
+        );
+    }
 
-        if ($status == 0) {
-            $db->deauthorizeKiosk($_COOKIE["kiosknonce"]);
-            echo json_encode(["code" => 1, "val" => 1]);
-        }
+    public function removeTime($params) {
+        $this->db->deleteTime($params["id"]);
+        return $this->success("Time removed");
+    }
+
+    public function getRewardClaims($params) {
+        return $this->db->listRewardClaims($params["id"])->fetchAll();
+    }
+
+    public function claimReward($params) {
+        return $this->db->claimReward($params["uid"], $params["type"]);
+    }
+
+    public function unclaimReward($params) {
+        return $this->db->unclaimReward($params["uid"], $params["type"]);
+    }
+
 }
+
+$api = new Manager($db, $badgeID);
+echo apiCall($api, $_POST["func"], $_POST);
 
 ?>

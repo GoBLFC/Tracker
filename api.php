@@ -4,101 +4,57 @@ header("Content-Type: application/json");
 
 require "main.php";
 
+function error($msg) {
+    // Returns a simple error JSON object
+    return json_encode(["success" => false, "message" => $msg]);
+}
+
+function apiCall($api, $method, $params) {
+    // Calls and returns the provided method, if it exists
+    // Otherwise returns a JSON object representing an error message
+    if (!method_exists($api, $method)) {
+        http_response_code(404);
+        return error("Method does not exist");
+    }
+    return json_encode($api->{$method}($params));
+}
+
 if ($user == null) {
     http_response_code(401);
-    echo json_encode(["code" => 0, "msg" => "Not authenticated"]);
+    echo error("Not authenticated");
     exit();
-} else if (!isset($_POST["action"])) {
+} else if (!isset($_POST["func"])) {
     http_response_code(400);
-    echo json_encode(["code" => 0, "msg" => "No data provided"]);
+    echo error("No method specified");
     exit();
 } else if (!($isManager || $isAdmin)) {
-    if (!$db->getDevMode() && !$db->checkKiosk($_COOKIE["kiosknonce"])->fetch()) {
+    if (!($db->getDevMode() || $db->checkKiosk($_COOKIE["kiosknonce"])->fetch())) {
         http_response_code(403);
-        echo json_encode(["code" => 0, "msg" => "Kiosk not authorized"]);
+        echo error("Kiosk not authorized");
         exit();
     } else if (!$db->getSiteStatus()) {
         http_response_code(403);
-        echo json_encode(["code" => 0, "msg" => "Site is disabled"]);
+        echo error("Site is disabled");
         exit();
     }
 }
 
-$action = $_POST["action"];
+class API {
+    protected $db;
+    protected $badgeID;
 
-switch ($action) {
-    case "checkIn":
-        $dept = $_POST["dept"];
-
-        if ($dept == "-1") {
-            echo json_encode(["code" => 0, "msg" => "Invalid department specified"]);
-            break;
-        }
-
-        $result = $db->checkIn($badgeID, $dept, "", $badgeID);
-
-        if (!$result) {
-            echo json_encode([["code" => 0, "msg" => "Already checked in"]]);
-            break;
-        }
-
-        echo json_encode(["code" => 1, "msg" => "Checked in"]);
-        break;
-    case "checkOut":
-        $result = $db->checkOut($badgeID, null);
-
-        if (!$result->rowCount()) {
-            echo json_encode(["code" => 0, "msg" => "Already checked out"]);
-            break;
-        }
-
-        echo json_encode(["code" => 1, "msg" => "Checked out"]);
-        break;
-    case "getClockTime":
-        $time = $db->getCheckIn($badgeID)->fetch();
-
-        // Not clocked in
-        if (!$time) {
-            echo json_encode(["code" => 1, "val" => -1]);
-            break;
-        }
-
-        $result = UserTimeClock::calculateTimeTotal([$time]);
-
-        echo json_encode(["code" => 1, "val" => $result]);
-        break;
-    case "getMinutesToday":
-        $times = $db->listTimes(uid: $badgeID)->fetchAll();
-        $timeTotal = UserTimeClock::calculateTimeSinceDay($times, new DateTime());
-        echo json_encode(["code" => 1, "val" => $timeTotal]);
-        break;
-    case "getEarnedTime":
-        $times = $db->listTimes(uid: $badgeID)->fetchAll();
-        $bonuses = $db->listBonuses()->fetchAll();
-        $earnedTime = UserTimeClock::calculateTimeTotal($times, $bonuses);
-
-        echo json_encode(["code" => 1, "val" => $earnedTime]);
-        break;
-    case "getNotifications":
-        echo json_encode(["code" => 1, "val" => $db->listNotifications($badgeID, 0)->fetchAll()]);
-        break;
-    case "readNotification":
-        echo json_encode(["code" => 1, "val" => $db->markNotificationRead($_POST['id'])]);
-        break;
-    case "ackAllNotifs":
-        echo json_encode(["code" => 1, "val" => $db->ackAllNotifs($badgeID)]);
-        break;
-}
-
-// Logging
-if (($isManager || $isAdmin || $isLead) && substr($action, 0, 3) !== "get") {
-    $postData = [];
-    foreach ($_POST as $p => $d) {
-        if ($p == "action") continue;
-        $postData[] = "$p:$d";
+    public function __construct($db, $badgeID) {
+        $this->db = $db;
+        $this->badgeID = $badgeID;
     }
 
-    $db->createLog($_SESSION["badgeid"], $action, implode(",", $postData));
+    protected function success($msg) {
+        return ["success" => true, "message" => $msg];
+    }
+
+    protected function error($msg) {
+        return ["success" => false, "message" => $msg];
+    }
 }
 
 ?>
