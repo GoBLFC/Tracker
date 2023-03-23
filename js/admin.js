@@ -218,8 +218,9 @@ function addBonus() {
         alert("Please select a start and stop date.");
         return;
     }
-    const start = moment(bonusStart.dates.picked[0]).format("YYYY-MM-DD HH:mm:ss");
-    const stop = moment(bonusStop.dates.picked[0]).format("YYYY-MM-DD HH:mm:ss");
+
+    const start = luxon.DateTime.fromJSDate(bonusStart.dates.picked[0]).toFormat("yyyy-MM-dd HH:mm:ss");
+    const stop = luxon.DateTime.fromJSDate(bonusStop.dates.picked[0]).toFormat("yyyy-MM-dd HH:mm:ss");
     const depts = $("#depts").val();
     const modifier = $("#bonusmod").val();
     //console.log("Bonus: START: " + start + " STOP: " + stop + " DEPTS: " + depts + " MOD: " + modifier);

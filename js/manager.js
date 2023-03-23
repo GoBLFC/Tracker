@@ -79,9 +79,21 @@ function loadVolunteer(id) {
         // Load entries
         postAction("/api/manage.php", {action: 'getTimeEntriesOther', id: id}, function (data) {
             $.each(data['val'], function (index, value) {
+                check_in = luxon.DateTime.fromSQL(value["check_in"]);
+                check_out = luxon.DateTime.fromSQL(value["check_out"]);
+                worked = check_out.diff(check_in);
                 const earned = value['worked'] + (value['bonus'] * 60);
-
-                addEntryRow(value['id'], value['ongoing'], value['checkin'], value['checkout'], value['dept'], moment.duration(value['worked'], "seconds").format("h:mm:ss", {trim: "both"}), moment.duration(earned, "seconds").format("h:mm:ss", {trim: "both"}), value['notes'], value['auto']);
+                addEntryRow(
+                    value['id'],
+                    value['ongoing'],
+                    value['check_in'],
+                    value['check_out'],
+                    value['dept'],
+                    worked.toFormat("h:mm:ss"),
+                    "",
+                    value['notes'],
+                    value['auto']
+                );
             });
 
             $(function () {
@@ -93,12 +105,12 @@ function loadVolunteer(id) {
 
 function addTime() {
     const uid = window.currUid;
-    const start = moment(timeStart.dates.picked[0]).format("YYYY-MM-DD HH:mm:ss");
-    const stop = moment(timeStop.dates.picked[0]).format("YYYY-MM-DD HH:mm:ss");
+    const start = luxon.DateTime.fromJSDate(timeStart.dates.picked[0]).toFormat("yyyy-MM-DD HH:mm:ss");
+    const stop = luxon.DateTime.fromJSDate(timeStop.dates.picked[0]).toFormat("yyyy-MM-DD HH:mm:ss");
     const dept = $("#dept").val();
     const notes = $("#notes").val();
 
-    if (moment(timeStart.dates.picked[0]) == null || moment(timeStop.dates.picked[0]) == null) {
+    if (luxon.DateTime.fromJSDate(timeStart.dates.picked[0]) == null || luxon.DateTime.fromJSDate(timeStop.dates.picked[0]) == null) {
         alert("Please select a start and stop date.");
         return;
     }
@@ -148,9 +160,9 @@ function checkIn() {
     const notes = $("#notes").val();
     var start = null;
 
-    if (moment(timeStart.dates.picked[0]) != null) start = moment(timeStart.dates.picked[0]).format("YYYY-MM-DD HH:mm:ss");
+    if (luxon.DateTime.fromJSDate(timeStart.dates.picked[0]) != null) start = luxon.DateTime.fromJSDate(timeStart.dates.picked[0]).toFormat("yyyy-MM-DD HH:mm:ss");
 
-    if (moment(timeStart.dates.picked[0]) != null && moment(timeStop.dates.picked[0]) != null) {
+    if (luxon.DateTime.fromJSDate(timeStart.dates.picked[0]) != null && luxon.DateTime.fromJSDate(timeStop.dates.picked[0]) != null) {
         alert("Please use 'Add Time' when Start and Stop dates are filled in.");
         return;
     }

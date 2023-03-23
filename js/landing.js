@@ -110,7 +110,7 @@ function clockCycle() {
 }
 
 function updateClock() {
-    $('#durrval').html(moment.duration(shiftTime, "seconds").format("h:mm:ss"));
+    $("#durrval").text(luxon.Duration.fromObject({seconds: shiftTime}).toFormat("h:mm:ss"));
 }
 
 function decrementLogout() {
