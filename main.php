@@ -59,7 +59,6 @@ $isAdmin = $role ? $role[0] >= 3 : false;
 $isManager = $role ? $role[0] >= 2 : false;
 $isLead = $role ? $role[0] >= 1 : false;
 $isBanned = $db->getUserBan($badgeID);
-$notifs = $db->listNotifications($badgeID)->fetchAll();
 
 $twig->addGlobal("user", $user);
 $twig->addGlobal("devMode", $devMode);
@@ -69,6 +68,5 @@ $twig->addGlobal("isAdmin", $isAdmin);
 $twig->addGlobal("isManager", $isManager);
 $twig->addGlobal("isLead", $isLead);
 $twig->addGlobal("isBanned", $isBanned);
-$twig->addGlobal("notifs", $notifs);
 
 ?>

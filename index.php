@@ -20,8 +20,11 @@ if ($user != null) {
             "description" => $description
         ]);
     } else {
+        $notifs = $db->listNotifications($badgeID)->fetchAll();
         if (sizeof($notifs) > 0) {
-            echo $twig->render("alert.html");
+            echo $twig->render("alert.html", [
+                "notifs" => $notifs
+            ]);
         } else {
             $cDept = $db->getCheckIn($badgeID)->fetch();
             if ($cDept) $cDept = $cDept[0];
