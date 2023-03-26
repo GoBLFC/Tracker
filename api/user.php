@@ -2,141 +2,148 @@
 
 require "../api.php";
 
-function setRole($db, $id, $role) {
-    $user = $db->getUser($id)->fetch();
-
-    if ($_SESSION["badgeid"] == $id) {
-        return error("You can't modify your own role");
-    } else if (!$user) {
-        return error("User with ID $id not found");
-    }
-
-    $db->setUserRole($id, $role);
-
-    return $user["username"];
-}
+$access = [
+    "searchUsers" => Role::Manager,
+    "listUsers" => Role::Admin,
+    "setRole" => Role::Admin,
+    "banUser" => Role::Admin,
+    "unbanUser" => Role::Admin
+];
 
 class User extends API {
 
-    public function setAdmin($params) {
-        echo json_encode(setRole($this->db, $params["badgeid"], 3));
+    public function searchUsers($input) {
+        /*
+
+        Search for a list of users that match the search query `$input`.
+        The query is checked against each user's ID, username, and legal name.
+
+        Parameters:
+            - `input` (str): Search query
+
+        Returns:
+            An array of zero or more associative arrays, representing users. User row format:
+            array(
+                "id" => (int),
+                "username" => (str),
+                "first_name" => (str),
+                "last_name" => (str),
+                "badge_name" => (str || null),
+                "role" => (int)
+            )
+
+        */
+
+        return $this->db->searchUsers($input)->fetchAll();
     }
 
-    public function setManager($params) {
-        echo json_encode(setRole($this->db, $params["badgeid"], 2));
+    public function listUsers($role = null) {
+        /*
+
+        Lists all users, optionally those with the given `$role`.
+
+        Parameters:
+            - `role` (int) (optional): List only users with this role
+
+        Returns:
+            An array of zero or more associative arrays, representing users. User row format:
+            array(
+                "id" => (int),
+                "username" => (str),
+                "first_name" => (str),
+                "last_name" => (str),
+                "badge_name" => (str || null),
+                "role" => (int)
+            )
+
+        */
+
+        $results = $this->db->listUsers(role: $role);
+        return $results->fetchAll();
     }
 
-    public function setLead($params) {
-        echo json_encode(setRole($this->db, $params["badgeid"], 1));
-    }
+    public function setRole($id, $role) {
+        /*
 
-    public function setBanned($params) {
-        $this->db->setUserBan($params["badgeid"], $params["value"]);
-        return $this->success("Updated ban");
-    }
+        Sets the role (access level) of a user.
 
-    public function getAdmins($params) {
-        return $this->db->listUsers(role: 3)->fetchAll();
-    }
+        Parameters:
+            - `id` (int): ID of the user
+            - `role` (int): Role to apply
 
-    public function getManagers($params) {
-        return $this->db->listUsers(role: 2)->fetchAll();
-    }
+        Returns:
+            array("success" => (bool), "message" => (str))
 
-    public function getLeads($params) {
-        return $this->db->listUsers(role: 1)->fetchAll();
-    }
+        */
 
-    public function getBanned($params) {
-        return $this->db->listBans()->fetchAll();
-    }
-
-    public function getUser($params) {
-        $id = $params["id"];
-
-        $user = $this->db->getUser($id)->fetch();
-        $dept = $this->db->getCheckIn($id)->fetch();
-        $user["dept"] = $dept ? $dept : null;
-        return $user;
-    }
-
-    public function getClockTimeOther($params) {
-        $time = $this->db->getCheckIn($params["id"])->fetch();
-
-        // Not clocked in
-        if (!$time) {
-            return $this->error("Not clocked in");
+        if ($_SESSION["badgeid"] == $id) {
+            return $this->error("You can't modify your own role");
         }
 
-        $result = UserTimeClock::calculateTimeTotal([$time]);
-
-        return $result;
-    }
-
-    public function getMinutesTodayOther($params) {
-        $times = $this->db->listTimes(uid: $params["id"])->fetchAll();
-        $timeTotal = UserTimeClock::calculateTimeSinceDay($times, new DateTime());
-        return $timeTotal;
-    }
-
-    public function getEarnedTimeOther($params) {
-        $times = $this->db->listTimes(uid: $params["id"]);
-        $bonuses = $this->db->listBonuses();
-        $earnedTime = UserTimeClock::calculateTimeTotal($times, $bonuses);
-
-        return $earnedTime;
-    }
-
-    public function getTimeEntriesOther($params) {
-        return $this->db->listTimes(uid: $params["id"])->fetchAll();
-    }
-
-    public function checkOutOther($params) {
-        $result = $this->db->checkOut($params["id"], null);
+        $result = $this->db->setUserRole($id, $role);
 
         if (!$result->rowCount()) {
-            return $this->error("Already checked out");
+            return $this->error("User with ID $id not found");
         }
 
-        return $this->success("Checked out");
+        return $this->success("Role updated");
     }
 
-    public function checkInOther($params) {
-        $result = $this->db->checkIn($params["id"], $params["dept"], $params["notes"], $this->badgeID, $params["start"]);
+    public function banUser($id) {
+        /*
 
-        if (!$result) {
-            return $this->error("Already checked in");
+        Ban a user. This also revokes whatever role they have.
+
+        Parameters:
+            - `id` (int): ID of the user
+
+        Returns:
+            array("success" => (bool), "message" => (str))
+
+        */
+
+        if ($_SESSION["badgeid"] == $id) {
+            return $this->error("You can't ban yourself");
         }
 
-        return $this->success("Checked in");
+        $result = $this->db->setUserBan($id, true);
+
+        if (!$result->rowCount()) {
+            return $this->error("User with ID $id not found");
+        }
+
+        return $this->success("User banned");
     }
 
-    public function createUser($params) {
-        $result = $this->db->createUser($params["badgeID"]);
+    public function unbanUser($id) {
+        /*
 
-        if (!$result) {
-            return $this->error("User already exists");
+        Unban a user. This reinstates them with a Volunteer role (no admin permissions).
+
+        Parameters:
+            - `id` (int): ID of the user
+
+        Returns:
+            array("success" => (bool), "message" => (str))
+
+        */
+
+        if ($_SESSION["badgeid"] == $id) {
+            return $this->error("You can't unban yourself");
         }
 
-        return $this->success("User created");
-    }
+        $result = $this->db->setUserBan($id, false);
 
-    public function getUserSearch($params) {
-        $users = $this->db->searchUsers($params["input"]);
-        $results = [];
-
-        foreach ($users as $user) {
-            $dept = $this->db->getCheckIn($user["id"])->fetch();
-            if ($dept) $user["dept"] = $dept;
-            $results[] = $user;
+        if (!$result->rowCount()) {
+            return $this->error("User with ID $id not found");
         }
 
-        return $results;
+        return $this->success("User unbanned");
     }
 
 }
 
-$api = new User($db, $badgeID);
-echo apiCall($api, $_POST["func"], $_POST);
+$api = new User($db);
+echo apiCall($api, $access, $role, $_POST);
 
 ?>

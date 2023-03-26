@@ -9,14 +9,27 @@ function error($msg) {
     return json_encode(["success" => false, "message" => $msg]);
 }
 
-function apiCall($api, $method, $params) {
-    // Calls and returns the provided method, if it exists
+function apiCall($api, $access, $role, $request) {
+    // Calls and returns the provided method, if it exists and user has permission
     // Otherwise returns a JSON object representing an error message
+
+    $method = $request["func"];
+    unset($request["func"]);
+    $params = $request;
+
     if (!method_exists($api, $method)) {
         http_response_code(404);
         return error("Method does not exist");
     }
-    return json_encode($api->{$method}($params));
+
+    // Look up required user role for function
+    // If one is not found, the function defaults to access denied for everyone
+    if (!array_key_exists($method, $access) || $access[$method]->value > $role) {
+        http_response_code(403);
+        return error("Access denied");
+    }
+
+    return json_encode($api->{$method}(...$params));
 }
 
 if ($user == null) {
@@ -41,11 +54,9 @@ if ($user == null) {
 
 class API {
     protected $db;
-    protected $badgeID;
 
-    public function __construct($db, $badgeID) {
+    public function __construct($db) {
         $this->db = $db;
-        $this->badgeID = $badgeID;
     }
 
     protected function success($msg) {
@@ -53,6 +64,7 @@ class API {
     }
 
     protected function error($msg) {
+        http_response_code(400);
         return ["success" => false, "message" => $msg];
     }
 }

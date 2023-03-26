@@ -6,7 +6,7 @@ class Database {
 
     public function __construct($host, $name, $username, $password) {
         $this->conn = new PDO("mysql:host=$host;dbname=$name;charset=utf8mb4", $username, $password,
-            [PDO::ATTR_EMULATE_PREPARES => false, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+            [PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]);
     }
 
     // ###########
@@ -43,12 +43,12 @@ class Database {
     }
 
     public function listUsers($role = null) {
-        $sql = "SELECT * FROM `users`";
+        $sql = "SELECT `id`, `username`, `first_name`, `last_name`, `badge_name`, `role` FROM `users`";
 
-        if ($role) { $sql .= "WHERE `role` = :role"; }
+        if (isset($role)) { $sql .= "WHERE `role` = :role"; }
 
         $stmt = $this->conn->prepare($sql);
-        if ($role) { $stmt->bindParam(":role", $role, PDO::PARAM_INT); }
+        if (isset($role)) { $stmt->bindParam(":role", $role, PDO::PARAM_INT); }
         $stmt->execute();
 
         return $stmt;
@@ -100,7 +100,7 @@ class Database {
         $ban = $stmt->fetch();
 
         // User exists and they have the "ban" role
-        if ($ban && $ban[0] == -1) { return true; }
+        if ($ban && $ban["role"] == -1) { return true; }
 
         return false;
     }
@@ -111,12 +111,12 @@ class Database {
     }
 
     public function searchUsers($input) {
-        $sql = "SELECT * FROM `users` WHERE `id` = :id OR `username` LIKE :username OR CONCAT(first_name, ' ', last_name) LIKE :inputname LIMIT 20";
+        $sql = "SELECT `id`, `username`, `first_name`, `last_name`, `badge_name`, `role` FROM `users` WHERE `id` = :id OR `username` LIKE :username OR CONCAT(first_name, ' ', last_name) LIKE :legalName";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(":id", $input, PDO::PARAM_STR);
         $stmt->bindValue(":username", "%$input%", PDO::PARAM_STR);
-        $stmt->bindValue(":inputname", "%$input%", PDO::PARAM_STR);
+        $stmt->bindValue(":legalName", "%$input%", PDO::PARAM_STR);
         $stmt->execute();
 
         return $stmt;
@@ -176,7 +176,7 @@ class Database {
     }
 
     public function listDepartments($hidden = 0) {
-        $sql = "SELECT * FROM `departments`";
+        $sql = "SELECT `id`, `name` FROM `departments`";
 
         if (!$hidden) { $sql .= " WHERE `hidden` = 0"; }
 
@@ -189,35 +189,43 @@ class Database {
     // ## Time Clock ##
     // ################
 
-    public function checkIn($uid, $dept, $notes, $addedBy, $start = "now") {
+    public function checkIn($uid, $dept, $start = "now", $addedBy = null, $notes = null) {
         // Check for existing check-in first
         if ($this->getCheckIn($uid)->fetch()) {
             return null;
         }
 
-        $sql = "INSERT INTO `tracker` (`uid`, `check_in`, `dept`, `notes`, `added_by`) VALUES (:uid, :checkIn, :dept, :notes, :addedBy)";
+        // If `$addedBy` is not specified, assume the user is checking in themselves.
+        if (!isset($addedBy)) {
+            $addedBy = $uid;
+        }
+
+        $sql = "INSERT INTO `tracker` (`uid`, `check_in`, `dept`, `added_by`";
+        if ($notes) { $sql .= ", `notes`"; }
+        $sql .= ") VALUES (:uid, :start, :dept, :addedBy";
+        if ($notes) { $sql .= ", :notes"; }
+        $sql .= ")";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(":uid", $uid, PDO::PARAM_INT);
-        $stmt->bindValue(":checkIn", date("Y-m-d H:i:s", strtotime($start)), PDO::PARAM_STR);
-        $stmt->bindValue(":notes", $notes, PDO::PARAM_STR);
-        $stmt->bindValue(":addedBy", $addedBy, PDO::PARAM_INT);
+        $stmt->bindValue(":start", date("Y-m-d H:i:s", strtotime($start)), PDO::PARAM_STR);
         $stmt->bindValue(":dept", $dept, PDO::PARAM_INT);
+        $stmt->bindValue(":addedBy", $addedBy, PDO::PARAM_INT);
+        if ($notes) { $stmt->bindValue(":notes", $notes, PDO::PARAM_STR); }
         $stmt->execute();
 
         return $this->conn->lastInsertId();
     }
 
-    public function checkOut($uid, $autoTime) {
+    public function checkOut($uid, $auto = false) {
         $sql = "UPDATE `tracker` SET `check_out` = :time, `auto` = :auto WHERE `uid` = :uid AND `check_out` IS NULL ORDER BY `id` DESC LIMIT 1";
 
         $time = date("Y-m-d H:i:s");
-        if ($autoTime) $time = $autoTime->format('Y-m-d H:i:s');
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(":uid", $uid, PDO::PARAM_INT);
         $stmt->bindValue(":time", $time, PDO::PARAM_STR);
-        $stmt->bindValue(":auto", isset($autoTime), PDO::PARAM_INT);
+        $stmt->bindValue(":auto", $auto, PDO::PARAM_INT);
         $stmt->execute();
 
         return $stmt;
@@ -305,25 +313,14 @@ class Database {
         return $this->conn->lastInsertId();
     }
 
-    public function updateReward($id, $field, $value) {
-        $sql = "UPDATE `rewards` SET ";
-
-        $fields = ["name", "desc", "hours"];
-
-        // Not a valid field, abort
-        if (!in_array($field, $fields)) { return; };
-
-        foreach ($fields as $fieldName) {
-            if ($field == $fieldName) {
-                $sql .= "`$field` = :value";
-            }
-        }
-
-        $sql .= " WHERE `id` = :id";
+    public function updateReward($id, $name, $desc, $hours) {
+        $sql = "UPDATE `rewards` SET `name` = :name, `desc` = :desc, `hours` = :hours WHERE `id` = :id";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindValue(":id", $id, PDO::PARAM_INT);
-        $stmt->bindValue(":value", $value, PDO::PARAM_STR);
+        $stmt->bindValue(":name", $name, PDO::PARAM_STR);
+        $stmt->bindValue(":desc", $desc, PDO::PARAM_STR);
+        $stmt->bindValue(":hours", $hours, PDO::PARAM_INT);
         $stmt->execute();
 
         return $stmt;
@@ -550,12 +547,12 @@ class Database {
 
     public function getDevMode() {
         $stmt = $this->conn->query("SELECT `dev_mode` FROM `settings`");
-        return $stmt->fetch()[0];
+        return $stmt->fetch()["dev_mode"];
     }
 
     public function getSiteStatus() {
         $stmt = $this->conn->query("SELECT `site_status` FROM `settings`");
-        return $stmt->fetch()[0];
+        return $stmt->fetch()["site_status"];
     }
 
     public function setSiteStatus($status) {

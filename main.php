@@ -20,13 +20,6 @@ if(!isset($_SESSION)) session_start();
 $badgeID = "";
 if (isset($_SESSION['badgeid'])) $badgeID = $_SESSION['badgeid'];
 
-if (!isset($_COOKIE["session"])) {
-    setcookie("session", session_id(), 0, "/");
-    $session = session_id();
-} else {
-    $session = $_COOKIE["session"];
-}
-
 if (isset($_COOKIE["kiosk"])) {
     $kiosksession = $_COOKIE["kiosk"];
 } else {
@@ -54,10 +47,25 @@ $devMode = $db->getDevMode();
 $siteStatus = $db->getSiteStatus();
 $kioskAuth = (isset($_COOKIE["kiosknonce"]) && $db->checkKiosk($_COOKIE["kiosknonce"])->fetch()) ? 1 : 0;
 
-$role = $db->getUserRole($badgeID)->fetch();
-$isAdmin = $role ? $role[0] >= 3 : false;
-$isManager = $role ? $role[0] >= 2 : false;
-$isLead = $role ? $role[0] >= 1 : false;
+enum Role: int {
+    case Admin = 3;
+    case Manager = 2;
+    case Lead = 1;
+    case Volunteer = 0;
+}
+
+$roleDB = $db->getUserRole($badgeID)->fetch();
+
+if ($roleDB) {
+    $role = $roleDB["role"];
+} else {
+    $role = false;
+}
+
+$isAdmin = $role ? $role >= Role::Admin->value : false;
+$isManager = $role ? $role >= Role::Manager->value : false;
+$isLead = $role ? $role >= Role::Lead->value : false;
+
 $isBanned = $db->getUserBan($badgeID);
 
 $twig->addGlobal("user", $user);

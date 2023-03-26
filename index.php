@@ -27,7 +27,7 @@ if ($user != null) {
             ]);
         } else {
             $cDept = $db->getCheckIn($badgeID)->fetch();
-            if ($cDept) $cDept = $cDept[0];
+            if ($cDept) $cDept = $cDept["dept"];
             echo $twig->render("landing.html", [
                 "departments" => $db->listDepartments(),
                 "tgBot" => urlencode("https://t.me/{$BOT_USERNAME}?start=" . $user["tg_setup_code"]),
