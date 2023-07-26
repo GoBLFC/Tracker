@@ -11,4 +11,11 @@ class Event extends UuidModel {
 	public function timeEntries(): HasMany {
 		return $this->hasMany(TimeEntry::class);
 	}
+
+	/**
+	 * Get the rewards that are available for this event
+	 */
+	public function rewards(): HasMany {
+		return $this->hasMany(Reward::class);
+	}
 }
