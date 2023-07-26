@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TimeEntry extends UuidModel {
+	use HasFactory;
+
 	protected $casts = [
 		'start' => 'timestamp',
 		'stop' => 'timestamp',

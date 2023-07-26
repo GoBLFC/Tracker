@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Event extends UuidModel {
+	use HasFactory;
+
 	/**
 	 * Get the time entries associated with this event
 	 */
