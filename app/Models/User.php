@@ -87,28 +87,28 @@ class User extends Authenticatable {
 	 * Check whether the user should have access to admin features
 	 */
 	public function isAdmin(): bool {
-		return $this->role >= Role::Admin;
+		return $this->role->value >= Role::Admin->value;
 	}
 
 	/**
 	 * Check whether the user should have access to manager features
 	 */
 	public function isManager(): bool {
-		return $this->role >= Role::Manager;
+		return $this->role->value >= Role::Manager->value;
 	}
 
 	/**
 	 * Check whether the user should have access to lead features
 	 */
 	public function isLead(): bool {
-		return $this->role >= Role::Lead;
+		return $this->role->value >= Role::Lead->value;
 	}
 
 	/**
 	 * Check whether the user has been banned
 	 */
 	public function isBanned(): bool {
-		return $this->role === Role::Banned;
+		return $this->role->value === Role::Banned->value;
 	}
 
 	/**
