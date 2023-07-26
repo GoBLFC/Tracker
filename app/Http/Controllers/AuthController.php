@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\QuickCode;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -25,6 +26,16 @@ class AuthController extends Controller {
 	 */
 	public function getLogout(): RedirectResponse {
 		Auth::logout();
+
+		// Redirect the user to log out of ConCat if applicable
+		$token = session('concatToken');
+		if ($token && !Setting::isDevMode()) {
+			$concatUri = config('services.concat.instance_uri');
+			$concatId = config('services.concat.client_id');
+			$return = urlencode(route('auth.login'));
+			return redirect()->to("{$concatUri}/oauth/logout?client_id={$concatId}&access_token={$token}&next=$return");
+		}
+
 		return redirect()->route('auth.login');
 	}
 
@@ -44,6 +55,7 @@ class AuthController extends Controller {
 	public function getCallback(): RedirectResponse {
 		$oauthUser = Socialite::driver('concat')->user();
 		$user = User::updateOrCreateFromOauthUser($oauthUser);
+		session()->put('concatToken', $oauthUser->token);
 		Auth::login($user);
 		return redirect()->intended();
 	}
