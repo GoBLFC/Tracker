@@ -2,9 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class QuickCode extends UuidModel {
+	use MassPrunable;
+
 	protected static function boot() {
 		parent::boot();
 
@@ -19,5 +23,12 @@ class QuickCode extends UuidModel {
 	 */
 	public function user(): BelongsTo {
 		return $this->belongsTo(User::class);
+	}
+
+	/**
+	 * Get the prunable model query.
+	 */
+	public function prunable(): Builder {
+		return static::where('created_at', '<=', now()->subSeconds(30));
 	}
 }
