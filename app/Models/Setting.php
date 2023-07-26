@@ -33,7 +33,7 @@ class Setting extends Model {
 		// Retrieve the setting value from the cache provider if it exists there, otherwise obtain it from the DB and cache it
 		$value = Cache::remember("setting:{$id}", 60 * 5, function () use ($id, $transformer) {
 			$setting = static::find($id);
-			if ($setting === null || $transformer === null) return $setting?->value;
+			if (!$setting || !$transformer) return $setting?->value;
 			return $transformer($setting->value);
 		});
 

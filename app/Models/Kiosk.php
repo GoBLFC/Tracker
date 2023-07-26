@@ -49,7 +49,7 @@ class Kiosk extends UuidModel {
 	 */
 	public static function deauthorizeSession(): ?bool {
 		$kiosk = static::findFromSession();
-		if ($kiosk === null) return false;
+		if (!$kiosk) return false;
 		Cookie::queue(Cookie::forget('kiosk'));
 		return $kiosk->delete();
 	}
