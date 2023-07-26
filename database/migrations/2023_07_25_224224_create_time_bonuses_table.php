@@ -13,6 +13,7 @@ return new class extends Migration {
 			$table->uuid('id')->primary();
 			$table->datetime('start');
 			$table->datetime('stop');
+			$table->float('modifier', 4, 2);
 			$table->foreignUuid('department_id')->constrained();
 			$table->timestamps();
 		});
