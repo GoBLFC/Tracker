@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Query\Builder as QueryBuilder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use SocialiteProviders\Manager\OAuth2\User as OauthUser;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class User extends Authenticatable {
 	use HasFactory, Notifiable;
@@ -70,10 +70,10 @@ class User extends Authenticatable {
 	}
 
 	/**
-	 * Get unread notifications for the user
+	 * Scope a query to only include users of a given role
 	 */
-	public function unreadNotifications(): QueryBuilder {
-		return $this->notifications()->whereHasRead(false);
+	public function scopeOfRole(Builder $query, Role $role): void {
+		$query->where('role', $role->value);
 	}
 
 	/**

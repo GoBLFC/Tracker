@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class TimeEntry extends UuidModel {
 	use HasFactory;
@@ -33,5 +34,12 @@ class TimeEntry extends UuidModel {
 	 */
 	public function event(): BelongsTo {
 		return $this->belongsTo(Event::class);
+	}
+
+	/**
+	 * Scope a query to only include ongoing entries
+	 */
+	public function scopeOngoing(Builder $query): void {
+		$query->where('stop', null);
 	}
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Notification extends UuidModel {
@@ -21,5 +22,12 @@ class Notification extends UuidModel {
 	 */
 	public function reward(): BelongsTo {
 		return $this->belongsTo(Reward::class);
+	}
+
+	/**
+	 * Scope a query to only include unread notifications
+	 */
+	public function scopeUnread(Builder $query): void {
+		$query->where('has_read', false);
 	}
 }
