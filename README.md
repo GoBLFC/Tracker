@@ -1,62 +1,66 @@
-# BLFC Volunteer Shift Tracker System
+<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-Tracker is an at-con time clock system for volunteers at [BLFC](https://goblfc.org). Volunteers can clock in and clock out for their shifts to log their hours, ensuring they get the rewards they deserve. Staff can manage volunteers and run reports on volunteer hours.
+<p align="center">
+<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+</p>
 
-It is a PHP application, and will run on a typical LAMP stack.
+## About Laravel
 
-## Installation
+Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-### Requirements
+- [Simple, fast routing engine](https://laravel.com/docs/routing).
+- [Powerful dependency injection container](https://laravel.com/docs/container).
+- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
+- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
+- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
+- [Robust background job processing](https://laravel.com/docs/queues).
+- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-- Web server, such as Apache or Nginx
-- PHP 8.0 (minimum), with the following extensions: `PDO` and `pdo_mysql`
-- MySQL or MariaDB server
-- Your event's instance of [ConCat](https://concat.app) to allow volunteers and staff to authenticate with the system
-  - Users log in to the application using ConCat with OAuth.
-  - You will need Developer access to your event's ConCat instance to create the OAuth app. Specifically, you will need the `oauth:manage` permission. Alternatively, have someone else create an OAuth app in ConCat for you and have them provide you the client ID and secret.
-  - The OAuth app will also require the `volunteer:read` application permission for OAuth Bearer tokens, which is used for generating the Volunteer Applications report inside Tracker.
+Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-### Procedure
+## Learning Laravel
 
-Copy the contents of this repo into your web server's document root. Next, install required dependencies using `composer install`. Finally, initialize the database using the provided `schema.sql` file. If you have access to a command line, this is simple to do:
+Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
-```
-$ mysql -u username -p dbname < schema.sql
-```
+You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
 
-Alternatively, if you use a GUI-based database management tool like phpMyAdmin, you can import the file there as well.
+If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
 
-## Configuration
+## Laravel Sponsors
 
-Configuration values are read from `config.php`. There is a template configuration file available at `config.template.php`. Copy and rename this file, then edit the variables as needed.
+We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
 
-- **General configuration**
-  - Set `$CANONICAL_URL` to be the public-facing base URL of your Tracker instance.
-- **MySQL configuration**
-  - Change the variables to reflect your MySQL credentials and database name.
-  - It is recommended to create a user exclusively for this web app that will have full permission over the Tracker database and this database only. No need to make a memorable password here: Make it long and random.
-- **OAuth configuration**
-  - Fill out the client ID and secret variables with the values you got from ConCat.
-  - `$OAUTH_CONCAT_BASE_URL` is the FQDN of your event's ConCat instance.
-- **Telegram bot configuration**
-  - Volunteers can opt into receiving four digit sign in codes from a [Telegram bot](https://core.telegram.org/bots) to make subsequent logins faster. It also allows them to check their hours without logging into Tracker, and receive notifications for when they are given rewards.
-  - You must create and provide the details for the Telegram bot yourself. Specifically, the bot's API key and username must be provided in the configuration file, as well as a list of Telegram user IDs who are to be considered admins.
+### Premium Partners
 
-## Development
+- **[Vehikl](https://vehikl.com/)**
+- **[Tighten Co.](https://tighten.co)**
+- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
+- **[64 Robots](https://64robots.com)**
+- **[Cubet Techno Labs](https://cubettech.com)**
+- **[Cyber-Duck](https://cyber-duck.co.uk)**
+- **[Many](https://www.many.co.uk)**
+- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
+- **[DevSquad](https://devsquad.com)**
+- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
+- **[OP.GG](https://op.gg)**
+- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
+- **[Lendio](https://lendio.com)**
 
-### Environment
+## Contributing
 
-On Windows, installing [XAMPP](https://www.apachefriends.org/download.html) is a quick and easy way to get a full web server stack running on your computer that you can use for local development.
+Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-On Linux, you may wish to install PHP and MySQL through your distributions's package manager. Or, if you use Docker, you can use the provided `docker-compose.yml` file to spin up an Apache web server with PHP and a MySQL server with a pre-configured user and database. Please view this file for the credentials. **Do not use this Docker Compose file in a production environment.** It is intended for local development purposes only.
+## Code of Conduct
 
-In ConCat, you may want to create an OAuth app specifically for local testing. To do this, create a new app and specify these as the callback URIs:
+In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
-- `http://localhost:8080`
-- `http://127.0.0.1:8080`
+## Security Vulnerabilities
 
-If you're developing on a different server internally or you use a different port number, you will need to change the addresses accordingly.
+If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
-### Dependencies
+## License
 
-This project uses [Composer](https://getcomposer.org/) to manage dependencies. See `composer.json` to see which ones are used, and install them using `composer install`.
+The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
