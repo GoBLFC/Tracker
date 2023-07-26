@@ -30,6 +30,7 @@ class AuthController extends Controller {
 		// Redirect the user to log out of ConCat if applicable
 		$token = session('concatToken');
 		if ($token && !Setting::isDevMode()) {
+			session()->remove('concatToken');
 			$concatUri = config('services.concat.instance_uri');
 			$concatId = config('services.concat.client_id');
 			$return = urlencode(route('auth.login'));
