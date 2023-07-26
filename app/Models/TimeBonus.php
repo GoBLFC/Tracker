@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
 class TimeBonus extends UuidModel {
 	protected $casts = [
 		'start' => 'datetime',
@@ -11,7 +13,7 @@ class TimeBonus extends UuidModel {
 	/**
 	 * Get the department this time bonus is for
 	 */
-	public department(): BelongsTo {
+	public function department(): BelongsTo {
 		return $this->belongsTo(Department::class);
 	}
 }
