@@ -14,7 +14,7 @@
 							Quick Sign In Code <span data-bs-toggle="tooltip" data-bs-title="Link your Telegram account after you sign in above to get a quick code anytime!"><i class="fa-regular fa-circle-question"></i></span>
 						</h5>
 						<div class="card-body">
-							<form id="form">
+							<form id="form" autocomplete="off">
 								<div class="input-group input-group-lg mb-3">
 									<input type="text" maxlength="1" pattern="[0-9]" id="c1" class="form-control text-center font-monospace fs-2" autofocus="on">
 									<input type="text" maxlength="1" pattern="[0-9]" id="c2" class="form-control text-center font-monospace fs-2">
