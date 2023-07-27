@@ -15,7 +15,7 @@ return new class extends Migration {
 			$table->timestamp('start');
 			$table->timestamp('stop')->nullable();
 			$table->foreignUuid('department_id')->constrained();
-			$table->text('notes');
+			$table->text('notes')->nullable();
 			$table->foreignId('creator_user_id')->constrained('users');
 			$table->boolean('auto')->default(false);
 			$table->foreignUuid('event_id')->constrained();
