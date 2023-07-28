@@ -16,7 +16,7 @@ class DepartmentFactory extends Factory {
 	 */
 	public function definition(): array {
 		return [
-			'name' => Str::limit(fake()->jobTitle(), 64),
+			'name' => Str::limit(fake()->jobTitle(), 63),
 			'hidden' => false,
 		];
 	}
