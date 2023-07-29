@@ -39,7 +39,7 @@ async function submitCode() {
 			console.error('Server error', data);
 
 			Toast.fire({
-				text: data.message,
+				text: data.error ?? data.message,
 				icon: 'warning',
 			});
 

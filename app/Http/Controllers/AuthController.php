@@ -68,7 +68,7 @@ class AuthController extends Controller {
 		// Prevent too many rapid failed attempts
 		$rateLimitKey = "quickcode:{$request->ip()}";
 		if (RateLimiter::tooManyAttempts($rateLimitKey, $perMinute = 5)) {
-			return response()->json(['message' => 'Too many failed quick code login attempts have been made from this location. Try again in a minute.'], 429);
+			return response()->json(['error' => 'Too many failed quick code login attempts have been made from this location. Try again in a minute.'], 429);
 		}
 
 		// Retrieve the quick code
@@ -80,12 +80,12 @@ class AuthController extends Controller {
 		// Verify the quick code exists
 		if (!$quickcode) {
 			RateLimiter::hit($rateLimitKey);
-			return response()->json(['message' => 'Quick code not recognized'], 401);
+			return response()->json(['error' => 'Quick code not recognized.'], 401);
 		}
 
 		// Delete the quick code to ensure it can't be used again, then log the user in
 		$quickcode->delete();
 		Auth::login($quickcode->user);
-		return response()->json(null);
+		return response()->json(null, 205);
 	}
 }
