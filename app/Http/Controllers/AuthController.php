@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\QuickCodeRequest;
 use App\Models\QuickCode;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\View\View;
@@ -64,11 +64,14 @@ class AuthController extends Controller {
 	/**
 	 * Logs the user in via a quick code
 	 */
-	public function postQuickcode(Request $request): JsonResponse {
+	public function postQuickcode(QuickCodeRequest $request): JsonResponse {
 		// Prevent too many rapid failed attempts
 		$rateLimitKey = "quickcode:{$request->ip()}";
 		if (RateLimiter::tooManyAttempts($rateLimitKey, $perMinute = 5)) {
-			return response()->json(['error' => 'Too many failed quick code login attempts have been made from this location. Try again in a minute.'], 429);
+			$error = 'Too many failed quick code login attempts have been made from this location. Try again in a minute.';
+			return $request->expectsJson()
+				? response()->json(['error' => $error], 429)
+				: redirect()->back()->withError($error)->withInput();
 		}
 
 		// Retrieve the quick code
@@ -80,12 +83,17 @@ class AuthController extends Controller {
 		// Verify the quick code exists
 		if (!$quickcode) {
 			RateLimiter::hit($rateLimitKey);
-			return response()->json(['error' => 'Quick code not recognized.'], 401);
+			$error = 'Quick code not recognized.';
+			return $request->expectsJson()
+				? response()->json(['error' => 'Quick code not recognized.'], 401)
+				: redirect()->back()->withError($error)->withInput();
 		}
 
 		// Delete the quick code to ensure it can't be used again, then log the user in
 		$quickcode->delete();
 		Auth::login($quickcode->user);
-		return response()->json(null, 205);
+		return $request->expectsJson()
+			? response()->json(null, 205)
+			: redirect()->route('tracker.index');
 	}
 }

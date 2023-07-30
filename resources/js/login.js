@@ -13,10 +13,11 @@ const KEYBOARDS = {
 	enter: 13,
 }
 
-var btn = document.getElementById("btn");
+var btnLogin = document.getElementById('btnLogin');
 
-btn.addEventListener("click", function() {
-	submitCode()
+btnLogin.addEventListener('click', function(evt) {
+	evt.preventDefault();
+	submitCode();
 });
 
 async function submitCode() {
