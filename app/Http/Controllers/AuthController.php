@@ -64,7 +64,7 @@ class AuthController extends Controller {
 	/**
 	 * Logs the user in via a quick code
 	 */
-	public function postQuickcode(QuickCodeRequest $request): JsonResponse {
+	public function postQuickcode(QuickCodeRequest $request): JsonResponse|RedirectResponse {
 		// Prevent too many rapid failed attempts
 		$rateLimitKey = "quickcode:{$request->ip()}";
 		if (RateLimiter::tooManyAttempts($rateLimitKey, $perMinute = 5)) {
