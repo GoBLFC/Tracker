@@ -24,35 +24,11 @@ async function submitCode() {
 	const code = Number(Array.from(inputs).reduce((acc, input) => acc + input.value, ''));
 
 	try {
-		const response = await fetch(quickcodePostUrl, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				Accept: 'application/json',
-			},
-			body: JSON.stringify({ code, _token }),
-		});
-
-		if(response.ok) {
-			window.location.reload();
-		} else {
-			const data = await response.json();
-			console.error('Server error', data);
-
-			Toast.fire({
-				text: data.error ?? data.message,
-				icon: 'warning',
-			});
-
-			inputs.forEach(input => { input.value = ''; });
-			inputs[0].focus();
-		}
+		await postAction(quickcodePostUrl, { code });
+		window.location.reload();
 	} catch(err) {
-		console.error(err);
-		Toast.fire({
-			text: `Error: ${err}`,
-			icon: 'warning',
-		});
+		inputs.forEach(input => { input.value = ''; });
+		inputs[0].focus();
 	}
 }
 

@@ -43,6 +43,10 @@
 
 		@yield('content')
 
+		@if(Auth::check())
+			@include('partials.auto-logout')
+		@endif
+
 		<button class="btn btn-sm btn-light float-end me-2" data-bs-toggle="modal" data-bs-target="#aboutModal">About</button>
 	</div>
 
@@ -63,9 +67,5 @@
 			var _token = '{!! csrf_token() !!}';
 		</script>
 	@show
-
-	@if($devMode)
-		<script type="text/javascript">$(() => { logoutTime = 60000; });</script>
-	@endif
 </body>
 </html>

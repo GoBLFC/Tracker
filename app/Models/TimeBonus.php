@@ -10,6 +10,13 @@ class TimeBonus extends UuidModel {
 		'stop' => 'datetime',
 	];
 
+	protected $fillable = [
+		'start',
+		'stop',
+		'modifier',
+		'department_id',
+	];
+
 	/**
 	 * Get the department this time bonus is for
 	 */

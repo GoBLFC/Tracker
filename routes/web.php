@@ -21,6 +21,8 @@ Route::controller(\App\Http\Controllers\AuthController::class)->group(function (
 	Route::post('/auth/quickcode', 'postQuickcode')->name('auth.quickcode.post');
 });
 
-Route::get('/', function () {
-	return view('layouts.master');
-})->middleware('auth');
+Route::controller(\App\Http\Controllers\TrackerController::class)->middleware('auth')->group(function () {
+	Route::get('/', 'getIndex')->name('tracker.index');
+	Route::post('/checkin', 'postCheckIn')->name('tracker.checkin.post');
+	Route::post('/checkout', 'postCheckOut')->name('tracker.checkout.post');
+});

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use SocialiteProviders\Manager\OAuth2\User as OauthUser;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Support\Carbon;
 
 class User extends Authenticatable {
 	use HasFactory, Notifiable;
@@ -109,6 +110,50 @@ class User extends Authenticatable {
 	 */
 	public function isBanned(): bool {
 		return $this->role->value === Role::Banned->value;
+	}
+
+	/**
+	 * Get statistics about the time spent
+	 */
+	public function getTimeStats(Event $event = null, Carbon $date = null): array {
+		if (!$event) $event = Setting::activeEvent();
+		if (!$date) $date = now();
+
+		// Get the date offset by the day boundary hour for day comparisons later
+		$boundaryHour = config('tracker.day_boundary_hour');
+		$offsetDate = $date->avoidMutation()->subHours($boundaryHour);
+
+		// Get all of the time entries from the user for the given event, along with the time bonuses that may apply
+		$timeEntries = $this->timeEntries()->with(['department.timeBonuses'])->forEvent($event)->get();
+		$bonuses = $timeEntries->pluck('department.timeBonuses')->flatten()->unique('id');
+
+		// Add up the duration and bonus time of all time entries to get the total time for the event
+		$totalTime = $timeEntries->reduce(
+			fn (?int $carry, TimeEntry $entry) => $carry + $entry->calculateTotalTime($bonuses),
+			0
+		);
+
+		// Narrow down the time entries to ones that interact with the given date, then get the sum of them all
+		// while taking into account only the time that crosses the day boundary if applicable
+		$dayTime = $timeEntries->filter(
+			fn (TimeEntry $entry) =>
+			$entry->getBoundaryOffsetStart(-1, $boundaryHour)->isSameDay($offsetDate) ||
+				$entry->getBoundaryOffsetStop(-1, $boundaryHour)->isSameDay($offsetDate)
+		)->reduce(
+			fn (?int $carry, TimeEntry $entry) => $carry +
+				(!$entry->isCrossingDayBoundary($boundaryHour)
+					? $entry->getDuration()
+					: $entry->getSecondsPastDayBoundary()
+				),
+			0
+		);
+
+		return [
+			'total' => $totalTime,
+			'day' => $dayTime,
+			'entries' => $timeEntries,
+			'bonuses' => $bonuses,
+		];
 	}
 
 	/**
