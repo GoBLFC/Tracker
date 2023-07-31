@@ -9,21 +9,30 @@
 			<div class="modal-body">
 				<div class="container-fluid">
 					<div class="row mt-4">
-						<div class="col-md-6 text-center">
-							<img src="{!! Vite::asset('resources/img/authors/ghost.jpg') !!}" class="img-fluid rounded mb-3 w-75" alt="Ghost Cabbit" />
+						<div class="col-md-4 text-center">
+							<img src="{!! Vite::asset('resources/img/authors/ghost.jpg') !!}" class="img-fluid rounded mb-3 w-75" alt="Ghost Cabbit's avatar" />
 							<h4 class="mb-1">Ghost Cabbit</h4>
 							<p class="mb-0">Original Developer</p>
 							<p class="fs-2">
 								<a target="_blank" href="https://twitter.com/GhostCabbit"><i class="fa-brands fa-twitter"></i></a>
 							</p>
 						</div>
-						<div class="col-md-6 text-center">
-							<img src="{!! Vite::asset('resources/img/authors/glitch.jpg') !!}" class="img-fluid rounded mb-3 w-75" alt="Glitch" />
+						<div class="col-md-4 text-center">
+							<img src="{!! Vite::asset('resources/img/authors/glitch.jpg') !!}" class="img-fluid rounded mb-3 w-75" alt="Glitch's avatar" />
 							<h4 class="mb-1">Glitch</h4>
 							<p class="mb-0">Developer / Maintainer</p>
 							<p class="fs-2">
 								<a target="_blank" href="https://twitter.com/glitchfur"><i class="fa-brands fa-twitter"></i></a>
 								<a target="_blank" href="https://www.glitchfur.net"><i class="fa-solid fa-globe"></i></a>
+							</p>
+						</div>
+						<div class="col-md-4 text-center">
+							<img src="{!! Vite::asset('resources/img/authors/gawdl3y.webp') !!}" class="img-fluid rounded mb-3 w-75" alt="Gawdl3y's avatar" />
+							<h4 class="mb-1">Gawdl3y</h4>
+							<p class="mb-0">Developer / Maintainer</p>
+							<p class="fs-2">
+								<a target="_blank" href="https://furry.engineer/Gawdl3y"><i class="fa-brands fa-mastodon"></i></a>
+								<a target="_blank" href="https://gawdl3y.dev"><i class="fa-solid fa-globe"></i></a>
 							</p>
 						</div>
 					</div>
@@ -34,7 +43,7 @@
 						<div class="col">
 							<p>
 								Tracker is an online system for tracking the amount of time volunteers have contributed towards conventions.
-								It was originally designed for <a href="https://goblfc.org">BLFC</a> by Ghost Cabbit, with Glitch making more recent developments.
+								It was originally designed for <a href="https://goblfc.org">BLFC</a> by Ghost Cabbit, with Glitch and Gawdl3y making more recent developments.
 							</p>
 							<p>If you find bugs, please let your volunteer managers know so we can fix them!</p>
 						</div>
