@@ -9,6 +9,7 @@ export default defineConfig({
 				'resources/js/app.js',
 				'resources/js/login.js',
 				'resources/js/tracker.js',
+				'resources/js/auto-logout.js',
 			],
 			refresh: true,
 		}),
