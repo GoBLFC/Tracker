@@ -10,7 +10,7 @@
 				<div class="container-fluid">
 					<div class="row mt-4">
 						<div class="col-md-4 text-center">
-							<img src="{!! Vite::asset('resources/img/authors/ghost.jpg') !!}" class="img-fluid rounded mb-3 w-75" alt="Ghost Cabbit's avatar" />
+							<img src="{!! Vite::asset('resources/img/authors/ghost.webp') !!}" class="img-fluid rounded mb-3 w-75" alt="Ghost Cabbit's avatar" />
 							<h4 class="mb-1">Ghost Cabbit</h4>
 							<p class="mb-0">Original Developer</p>
 							<p class="fs-2">
