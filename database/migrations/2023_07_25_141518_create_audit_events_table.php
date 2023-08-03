@@ -11,7 +11,7 @@ return new class extends Migration {
 	public function up(): void {
 		Schema::create('audit_events', function (Blueprint $table) {
 			$table->uuid('id')->primary();
-			$table->foreignId('user_id')->constrained();
+			$table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
 			$table->string('action', 64);
 			$table->text('data');
 			$table->timestamps();

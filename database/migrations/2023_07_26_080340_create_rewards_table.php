@@ -14,7 +14,7 @@ return new class extends Migration {
 			$table->string('name', 64);
 			$table->text('description');
 			$table->tinyInteger('hours');
-			$table->foreignUuid('event_id')->constrained();
+			$table->foreignUuid('event_id')->constrained()->cascadeOnDelete();
 			$table->timestamps();
 		});
 	}

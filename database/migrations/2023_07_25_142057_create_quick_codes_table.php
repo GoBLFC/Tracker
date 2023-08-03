@@ -12,7 +12,7 @@ return new class extends Migration {
 		Schema::create('quick_codes', function (Blueprint $table) {
 			$table->uuid('id')->primary();
 			$table->char('code', 4);
-			$table->foreignId('user_id')->constrained();
+			$table->foreignId('user_id')->constrained()->cascadeOnDelete();
 			$table->timestamps();
 		});
 	}
