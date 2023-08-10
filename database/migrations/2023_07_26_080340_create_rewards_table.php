@@ -13,7 +13,7 @@ return new class extends Migration {
 			$table->uuid('id')->primary();
 			$table->string('name', 64);
 			$table->text('description');
-			$table->tinyInteger('hours');
+			$table->tinyInteger('hours')->unsigned();
 			$table->foreignUuid('event_id')->constrained()->cascadeOnDelete();
 			$table->timestamps();
 		});
