@@ -2,10 +2,8 @@
 
 namespace App\Providers;
 
-use App\Models\Event;
 use App\Models\Kiosk;
 use App\Models\Setting;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
