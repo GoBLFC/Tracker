@@ -42,7 +42,7 @@ class Setting extends Model {
 	 */
 	private static function getAndCacheValue(string $id, ?callable $transformer = null): mixed {
 		// Return the setting value from the in-memory cache if it exists there
-		if (isset(static::$settingsCache[$id])) return static::$settingsCache[$id];
+		if (array_key_exists($id, static::$settingsCache)) return static::$settingsCache[$id];
 
 		// Retrieve the setting value from the cache provider if it exists there, otherwise obtain it from the DB and cache it
 		$value = Cache::remember("setting:{$id}", 60 * 5, function () use ($id, $transformer) {
