@@ -8,7 +8,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | The hour of the day that is treated as the boundary for volunteer
-	| shifts/time entries. Midnight would be 0, and 4am is 4.
+	| shifts/time entries. Midnight (00:00) would be 0, and 4am (04:00) is 4.
     |
     */
 
