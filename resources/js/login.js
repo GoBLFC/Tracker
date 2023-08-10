@@ -21,7 +21,7 @@ btnLogin.addEventListener('click', function(evt) {
 });
 
 async function submitCode() {
-	const code = Number(Array.from(inputs).reduce((acc, input) => acc + input.value, ''));
+	const code = Array.from(inputs).reduce((acc, input) => acc + input.value, '');
 
 	try {
 		await postAction(quickcodePostUrl, { code });

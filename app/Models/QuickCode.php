@@ -14,7 +14,7 @@ class QuickCode extends UuidModel {
 
 		// Add a listener for the model being created to add a random code if one hasn't already been specified
 		static::creating(function ($model) {
-			if (!isset($model->code)) $model->code = random_int(0, 9999);
+			if (!isset($model->code)) $model->code = str_pad(random_int(0, 9999), 4, '0', STR_PAD_LEFT);
 		});
 	}
 
