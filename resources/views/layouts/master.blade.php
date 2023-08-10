@@ -43,9 +43,9 @@
 
 		@yield('content')
 
-		@if(Auth::check())
+		@auth
 			@include('partials.auto-logout')
-		@endif
+		@endauth
 
 		<button class="btn btn-sm btn-light float-end me-2" data-bs-toggle="modal" data-bs-target="#aboutModal">About</button>
 	</div>
