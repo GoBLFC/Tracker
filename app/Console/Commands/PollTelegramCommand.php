@@ -10,12 +10,12 @@ class PollTelegramCommand extends Command implements Isolatable {
 	/**
 	 * The name and signature of the console command.
 	 */
-	protected $signature = 'app:poll-telegram';
+	protected $signature = 'telegram:poll';
 
 	/**
 	 * The console command description.
 	 */
-	protected $description = 'Polls Telegram for updates and handles received commands';
+	protected $description = 'Polls Telegram for updates and handles received commands (primarily for development use)';
 
 	/**
 	 * Whether the command should continue running
