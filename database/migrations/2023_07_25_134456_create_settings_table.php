@@ -20,10 +20,14 @@ return new class extends Migration {
 			[
 				'id' => 'active-event',
 				'value' => 'null',
+				'created_at' => now(),
+				'updated_at' => now(),
 			],
 			[
 				'id' => 'dev-mode',
 				'value' => 'true',
+				'created_at' => now(),
+				'updated_at' => now(),
 			],
 		]);
 	}
