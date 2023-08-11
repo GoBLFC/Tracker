@@ -73,17 +73,17 @@ class User extends Authenticatable {
 	}
 
 	/**
-	 * Scope a query to only include users of a given role
-	 */
-	public function scopeOfRole(Builder $query, Role $role): void {
-		$query->where('role', $role->value);
-	}
-
-	/**
 	 * Get all the departments the user has entered time for
 	 */
 	public function departments(): HasManyThrough {
 		return $this->hasManyThrough(Department::class, TimeEntry::class);
+	}
+
+	/**
+	 * Scope a query to only include users of a given role
+	 */
+	public function scopeOfRole(Builder $query, Role $role): void {
+		$query->where('role', $role->value);
 	}
 
 	/**
@@ -119,6 +119,23 @@ class User extends Authenticatable {
 	 */
 	public function getDisplayName(): string {
 		return $this->badge_name ?? $this->username;
+	}
+
+	/**
+	 * Get the total earned time (in seconds) for an event
+	 */
+	public function getEarnedTime(Event $event = null): int {
+		if (!$event) $event = Setting::activeEvent();
+
+		// Get all of the time entries from the user for the given event, along with the time bonuses that may apply
+		$timeEntries = $this->timeEntries()->with(['department.timeBonuses'])->forEvent($event)->get();
+		$bonuses = $timeEntries->pluck('department.timeBonuses')->flatten()->unique('id');
+
+		// Add up the duration and bonus time of all time entries to get the total time for the event
+		return $timeEntries->reduce(
+			fn (?int $carry, TimeEntry $entry) => $carry + $entry->calculateTotalTime($bonuses),
+			0
+		);
 	}
 
 	/**
@@ -164,6 +181,24 @@ class User extends Authenticatable {
 			'bonuses' => $bonuses,
 		];
 	}
+
+	/**
+	 * Get applicable rewards, claims, eligible/claimed rewards, and earned hours for an event.
+	 * If the event isn't specified, the active event will be used.
+	 */
+	public function getRewardInfo(?Event $event = null): array {
+		if (!$event) $event = Setting::activeEvent();
+		$claims = $event->rewardClaims()->whereUserId($this->id)->get();
+		$earnedHours = $this->getEarnedTime() / 60 / 60;
+		return [
+			'rewards' => $event->rewards,
+			'eligible' => $event->rewards->filter(fn (Reward $reward) => $earnedHours > $reward->hours),
+			'claimed' => $event->rewards->filter(fn (Reward $reward) => $claims->has('reward_id', $reward->id)),
+			'claims' => $claims,
+			'earnedHours' => $earnedHours,
+		];
+	}
+
 
 	/**
 	 * Get a URL to start interacting with the Telegram bot

@@ -120,6 +120,7 @@ return [
 		App\Telegram\Commands\HelpCommand::class,
 		App\Telegram\Commands\QuickCodeCommand::class,
 		App\Telegram\Commands\HoursCommand::class,
+		App\Telegram\Commands\RewardsCommand::class,
 		App\Telegram\Commands\LinkCommand::class,
 		App\Telegram\Commands\UnlinkCommand::class,
 		App\Telegram\Commands\PlzHelpCommand::class,
