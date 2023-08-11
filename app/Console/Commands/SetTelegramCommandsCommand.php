@@ -4,11 +4,10 @@ namespace App\Console\Commands;
 
 use App\Telegram\Commands\Command as TelegramCommand;
 use Illuminate\Console\Command;
-use Illuminate\Contracts\Console\Isolatable;
 use Illuminate\Support\Collection;
 use Telegram\Bot\Laravel\Facades\Telegram;
 
-class SetTelegramCommandsCommand extends Command implements Isolatable {
+class SetTelegramCommandsCommand extends Command {
 	/**
 	 * The name and signature of the console command.
 	 */
