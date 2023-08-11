@@ -16,7 +16,9 @@ class HoursCommand extends Command {
 		if (!$user) return;
 
 		// Ensure there's an active event
-		if (!$this->getActiveEventOrReply()) return;
+		$event = $this->getActiveEventOrReply();
+		if (!$event) return;
+		$eventName = htmlspecialchars($event->name);
 
 		// Calculate the time stats
 		$stats = $user->getTimeStats();
@@ -25,10 +27,10 @@ class HoursCommand extends Command {
 
 		// See if there's a running shift
 		$ongoing = $user->timeEntries()->forEvent()->ongoing()->first();
-		$shiftText = $ongoing ? "<b>You're currently clocked in!</b>\n\n<b>Shift time:</b> {$ongoing->getHumanDuration()}\n" : '';
+		$shiftText = $ongoing ? "<b>🕓 You're currently clocked in!</b>\n\n<b>Shift time:</b> {$ongoing->getHumanDuration()}\n" : '';
 
 		$this->replyWithMessage([
-			'text' => "{$shiftText}<b>Time today:</b> {$timeToday}\n<b>Total time earned:</b> {$timeTotal}",
+			'text' => "<b><u>{$eventName}</u></b>\n{$shiftText}<b>Time today:</b> {$timeToday}\n<b>Total time earned:</b> {$timeTotal}",
 			'parse_mode' => 'HTML',
 			'reply_markup' => $this->buildStandardActionsKeyboard(),
 		]);
