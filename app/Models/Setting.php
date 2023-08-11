@@ -49,7 +49,7 @@ class Setting extends Model {
 	 * Retrieves and caches the active event
 	 */
 	public static function activeEvent(): ?Event {
-		return static::getAndCacheValue('active-event', fn ($val) => Event::find($val));
+		return static::getAndCacheValue('active-event', fn (string $val) => Event::find($val));
 	}
 
 	/**

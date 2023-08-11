@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Telegram\Commands\Command as TelegramCommand;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Isolatable;
 use Illuminate\Support\Collection;
@@ -24,8 +25,8 @@ class SetTelegramCommandsCommand extends Command implements Isolatable {
 	public function handle(): void {
 		$commands = new Collection(Telegram::getCommands());
 		Telegram::setMyCommands([
-			'commands' => $commands->filter(fn ($cmd) => !$cmd->hidden)
-				->map(fn ($cmd) => [
+			'commands' => $commands->filter(fn (TelegramCommand $cmd) => !$cmd->hidden)
+				->map(fn (TelegramCommand $cmd) => [
 					'command' => $cmd->getName(),
 					'description' => $cmd->getDescription()
 				])

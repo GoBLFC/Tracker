@@ -17,7 +17,7 @@ class HelpCommand extends Command {
 		$status = $user ? "<b>Volunteer account:</b>\n{$displayName}" : "You haven't linked a volunteer account yet.";
 
 		// Build a list of commands to display
-		$commands = array_filter($this->telegram->getCommands(), fn ($cmd) => $cmd->isVisible((bool) $user));
+		$commands = array_filter($this->telegram->getCommands(), fn (Command $cmd) => $cmd->isVisible((bool) $user));
 		$commandList = '';
 		foreach ($commands as $name => $handler) {
 			$commandList .= sprintf('/%s - %s' . PHP_EOL, $name, htmlspecialchars($handler->getDescription()));
