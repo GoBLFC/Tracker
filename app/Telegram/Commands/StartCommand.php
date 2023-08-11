@@ -7,7 +7,7 @@ use App\Models\User;
 class StartCommand extends Command {
 	protected string $name = 'start';
 	protected string $description = 'Connect your volunteer account and begin interacting';
-	protected string $pattern = '{setupCode: [a-zA-Z0-9]{32}$}';
+	protected string $pattern = '{setupKey: [a-zA-Z0-9]{32}$}';
 
 	public function handle(): void {
 		// Make sure this chat isn't already known
@@ -21,17 +21,17 @@ class StartCommand extends Command {
 			return;
 		}
 
-		// Ensure the setup code is provided
-		$setupCode = $this->argument('setupCode');
-		if (!$setupCode) {
+		// Ensure the setup key is provided
+		$setupKey = $this->argument('setupKey');
+		if (!$setupKey) {
 			$this->replyWithmessage([
-				'text' => "Please provide the setup code for your volunteer account.\nPerhaps try re-scanning the QR code you were provided?",
+				'text' => "Please provide the setup key for your volunteer account.\nPerhaps try re-scanning the QR code you were provided?",
 			]);
 			return;
 		}
 
-		// Verify the setup code is valid for a user
-		$user = User::whereTgSetupCode($setupCode)->first();
+		// Verify the setup key is valid for a user
+		$user = User::whereTgSetupKey($setupKey)->first();
 		if (!$user) {
 			$this->replyWithMessage([
 				'text' => "Unable to validate volunteer account.\nPerhaps try re-scanning the QR code you were provided?",

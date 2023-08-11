@@ -32,15 +32,15 @@ class User extends Authenticatable {
 	];
 
 	protected $hidden = [
-		'tg_setup_code',
+		'tg_setup_key',
 	];
 
 	protected static function boot() {
 		parent::boot();
 
-		// Add a listener for the model being created to add a random tg_setup_code if one hasn't already been specified
+		// Add a listener for the model being created to add a random tg_setup_key if one hasn't already been specified
 		static::creating(function ($model) {
-			if (!isset($model->tg_setup_code)) $model->tg_setup_code = Str::random(32);
+			if (!isset($model->tg_setup_key)) $model->tg_setup_key = Str::random(32);
 		});
 	}
 
@@ -163,7 +163,7 @@ class User extends Authenticatable {
 	 */
 	public function getTelegramSetupUrl(): string {
 		$bot = Cache::remember('telegram-bot', 60 * 15, fn () => Telegram::getMe());
-		return "https://t.me/{$bot->username}?start={$this->tg_setup_code}";
+		return "https://t.me/{$bot->username}?start={$this->tg_setup_key}";
 	}
 
 	/**

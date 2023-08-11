@@ -22,7 +22,7 @@ class UserFactory extends Factory {
 			'last_name' => fake()->lastName(),
 			'badge_name' => fake()->name(),
 			'role' => 0,
-			'tg_setup_code' => Str::random(32),
+			'tg_setup_key' => Str::random(32),
 			'tg_uid' => fake()->randomNumber(8, true),
 		];
 	}
