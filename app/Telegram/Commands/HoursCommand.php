@@ -27,7 +27,7 @@ class HoursCommand extends Command {
 
 		// See if there's a running shift
 		$ongoing = $user->timeEntries()->forEvent()->ongoing()->first();
-		$shiftText = $ongoing ? "<b>🕓 You're currently clocked in!</b>\n\n<b>Shift time:</b> {$ongoing->getHumanDuration()}\n" : '';
+		$shiftText = $ongoing ? "\n<b>🕓 You're currently clocked in!</b>\n\n<b>Shift time:</b> {$ongoing->getHumanDuration()}\n" : '';
 
 		$this->replyWithMessage([
 			'text' => "<b><u>{$eventName}</u></b>\n{$shiftText}<b>Time today:</b> {$timeToday}\n<b>Total time earned:</b> {$timeTotal}",
