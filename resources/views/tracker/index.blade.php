@@ -81,6 +81,11 @@
 	<button class="btn btn-lg btn-info" data-bs-toggle="modal" data-bs-target="#telegramModal"><i class="fa-brands fa-telegram"></i> Telegram Bot</button>
 @endsection
 
+@section('modals')
+	@parent
+	@include('partials.telegram-modal')
+@endsection
+
 @section('scripts')
 	@parent
 

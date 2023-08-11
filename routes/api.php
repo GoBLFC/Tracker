@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Telegram\Bot\Laravel\Facades\Telegram;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
+$botToken = config('telegram.bots.tracker.token');
+Route::post("/telegram/{$botToken}/webhook", function () {
+	Telegram::commandsHandler(true);
+	return 'ok';
+});

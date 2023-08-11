@@ -3,14 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
+use Telegram\Bot\Laravel\Facades\Telegram;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use SocialiteProviders\Manager\OAuth2\User as OauthUser;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Support\Carbon;
 
 class User extends Authenticatable {
 	use HasFactory, Notifiable;
@@ -154,6 +156,14 @@ class User extends Authenticatable {
 			'entries' => $timeEntries,
 			'bonuses' => $bonuses,
 		];
+	}
+
+	/**
+	 * Get a URL to start interacting with the Telegram bot
+	 */
+	public function getTelegramSetupUrl(): string {
+		$bot = Cache::remember('telegram-bot', 60 * 15, fn () => Telegram::getMe());
+		return "https://t.me/{$bot->username}?start={$this->tg_setup_code}";
 	}
 
 	/**
