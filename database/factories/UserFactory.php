@@ -22,8 +22,7 @@ class UserFactory extends Factory {
 			'last_name' => fake()->lastName(),
 			'badge_name' => fake()->name(),
 			'role' => 0,
-			'tg_setup_key' => Str::random(32),
-			'tg_uid' => fake()->randomNumber(8, true),
+			'tg_chat_id' => fake()->randomNumber(8, true),
 		];
 	}
 
@@ -32,7 +31,7 @@ class UserFactory extends Factory {
 	 */
 	public function telegramUnlinked(): static {
 		return $this->state(fn () => [
-			'tg_uid' => null,
+			'tg_chat_id' => null,
 		]);
 	}
 }
