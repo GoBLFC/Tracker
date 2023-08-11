@@ -14,7 +14,7 @@ class HelpCommand extends Command {
 		$chatId = $this->getUpdate()->getChat()->id;
 		$user = User::whereTgChatId($chatId)->first();
 		$displayName = $user ? htmlspecialchars($user->getDisplayName()) : null;
-		$status = $user ? "<b>Volunteer account:</b>\n{$displayName}" : "You haven't associated a volunteer account yet.";
+		$status = $user ? "<b>Volunteer account:</b>\n{$displayName}" : "You haven't linked a volunteer account yet.";
 
 		// Build a list of commands to display
 		$commands = array_filter($this->telegram->getCommands(), fn ($cmd) => $cmd->isVisible((bool) $user));
