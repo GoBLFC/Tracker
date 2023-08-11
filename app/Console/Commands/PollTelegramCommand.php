@@ -26,6 +26,10 @@ class PollTelegramCommand extends Command implements Isolatable {
 	 * Execute the console command.
 	 */
 	public function handle(): void {
+		if (config('app.env') === 'production') {
+			$this->warn('Polling is not recommended for production environments - the webhook should be relied upon instead.');
+		}
+
 		$this->trap([SIGTERM, SIGQUIT, SIGINT], fn () => $this->shouldKeepRunning = false);
 		$this->info('Polling Telegram for updates...');
 		while ($this->shouldKeepRunning) Telegram::commandsHandler();
