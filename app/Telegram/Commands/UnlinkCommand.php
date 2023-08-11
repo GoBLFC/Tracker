@@ -16,7 +16,7 @@ class UnlinkCommand extends Command {
 		$user->save();
 
 		$this->replyWithMessage([
-			'text' => "Your volunteer account has been unlinked.\nTo continue using the bot, you will need to re-scan the QR code at the volunteer desk.",
+			'text' => "Your volunteer account has been unlinked.\nTo continue using the bot, you will need to scan a new QR code at the volunteer desk.",
 		]);
 	}
 }
