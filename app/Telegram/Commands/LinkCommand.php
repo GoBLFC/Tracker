@@ -37,7 +37,7 @@ class LinkCommand extends Command {
 		$user = User::whereTgSetupKey($setupKey)->first();
 		if (!$user) {
 			$this->replyWithMessage([
-				'text' => "Unable to validate volunteer account.\nTry scanning a new QR code.",
+				'text' => "Unable to validate your volunteer account.\nTry scanning a new QR code.",
 			]);
 			return;
 		}
