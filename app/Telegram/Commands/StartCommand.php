@@ -47,9 +47,11 @@ class StartCommand extends Command {
 			]);
 		}
 
-		// Store the chat ID and reply with confirmation
+		// Store the chat ID and regenerate the setup key (to prevent reuse)
 		$user->tg_chat_id = $chatId;
+		$user->generateTelegramSetupKey();
 		$user->save();
+
 		$this->replyWithMessage([
 			'text' => "Thanks for volunteering!\nPress these buttons to view more info.",
 			'reply_markup' => $this->buildStandardActionsKeyboard(),

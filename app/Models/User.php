@@ -40,7 +40,7 @@ class User extends Authenticatable {
 
 		// Add a listener for the model being created to add a random tg_setup_key if one hasn't already been specified
 		static::creating(function ($model) {
-			if (!isset($model->tg_setup_key)) $model->tg_setup_key = Str::random(32);
+			if (!isset($model->tg_setup_key)) $model->generateTelegramSetupKey();
 		});
 	}
 
@@ -164,6 +164,13 @@ class User extends Authenticatable {
 	public function getTelegramSetupUrl(): string {
 		$bot = Cache::remember('telegram-bot', 60 * 15, fn () => Telegram::getMe());
 		return "https://t.me/{$bot->username}?start={$this->tg_setup_key}";
+	}
+
+	/**
+	 * Generates and assigns a new Telegram setup key (tg_setup_key)
+	 */
+	public function generateTelegramSetupKey(): void {
+		$this->tg_setup_key = Str::random(32);
 	}
 
 	/**

@@ -11,9 +11,10 @@ class UnlinkCommand extends Command {
 		$user = $this->getChatUserOrReply();
 		if (!$user) return;
 
-		// Clear the user's chat and reply
+		// Clear the user's chat ID
 		$user->tg_chat_id = null;
 		$user->save();
+
 		$this->replyWithMessage([
 			'text' => "Your volunteer account has been unlinked.\nTo continue using the bot, you will need to re-scan the QR code at the volunteer desk.",
 		]);
