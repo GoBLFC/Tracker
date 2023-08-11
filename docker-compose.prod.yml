@@ -1,0 +1,36 @@
+version: '3'
+services:
+  app:
+    image: tracker
+    build: .
+    restart: always
+    env_file:
+      - .env.production
+    depends_on:
+      - db
+      # - cache
+  db:
+    image: postgres
+    restart: always
+    env_file:
+      - postgres.env
+  # cache:
+  #   image: redis:7
+  #   command: redis-server --loglevel warning --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD variable is not set}"
+  #   restart: always
+  #   env_file:
+  #     - redis.env
+  nginx:
+    image: nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./.docker/nginx:/etc/nginx/conf.d
+  # certbot:
+  #   image: certbot/certbot
+volumes:
+  db:
+  certbot-conf:
+  certbot-www:
