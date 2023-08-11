@@ -7,6 +7,8 @@ use App\Models\QuickCode;
 class QuickCodeCommand extends Command {
 	protected string $name = 'code';
 	protected string $description = 'Get quick sign-in code';
+	protected array $aliases = ['quickcode', 'quick', 'signin', 'login'];
+	public ?bool $authVisibility = true;
 
 	public function handle(): void {
 		// Make sure we have a user for the chat
@@ -26,8 +28,8 @@ class QuickCodeCommand extends Command {
 		$quickCode->save();
 
 		$this->replyWithMessage([
-			'text' => "***Quick Sign In Code:*** {$quickCode->code}\nExpires in 30 seconds." . ($existingUnexpired ? ' Old code invalidated.' : ''),
-			'parse_mode' => 'Markdown',
+			'text' => "<b>Quick Sign In Code:</b> {$quickCode->code}\nThis code expires in 30 seconds." . ($existingUnexpired ? ' Your old code was invalidated.' : ''),
+			'parse_mode' => 'HTML',
 			'reply_markup' => $this->buildStandardActionsKeyboard(),
 		]);
 	}

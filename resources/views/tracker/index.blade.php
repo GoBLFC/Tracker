@@ -2,7 +2,7 @@
 
 @section('content')
 	<div class="card mb-3">
-		<h5 class="card-header">Welcome, {{ $user->badge_name ?? $user->username }}!</h5>
+		<h5 class="card-header">Welcome, {{ $user->getDisplayName() }}!</h5>
 
 		<div class="card-body">
 			<div class="row">

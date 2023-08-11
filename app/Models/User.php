@@ -115,6 +115,13 @@ class User extends Authenticatable {
 	}
 
 	/**
+	 * Get the user's display name (badge name if available, username otherwise)
+	 */
+	public function getDisplayName(): string {
+		return $this->badge_name ?? $this->username;
+	}
+
+	/**
 	 * Get statistics about the time spent
 	 */
 	public function getTimeStats(Event $event = null, Carbon $date = null): array {

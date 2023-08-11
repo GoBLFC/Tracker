@@ -3,11 +3,14 @@
 namespace App\Telegram\Commands;
 
 use App\Models\User;
+use Telegram\Bot\Keyboard\Keyboard;
 
-class StartCommand extends Command {
-	protected string $name = 'start';
-	protected string $description = 'Connect your volunteer account and begin interacting';
+class LinkCommand extends Command {
+	protected string $name = 'link';
+	protected string $description = 'Link your volunteer account';
+	protected array $aliases = ['start', 'connect'];
 	protected string $pattern = '{setupKey: [a-zA-Z0-9]{32}$}';
+	public ?bool $authVisibility = false;
 
 	public function handle(): void {
 		// Make sure this chat isn't already known
@@ -25,7 +28,7 @@ class StartCommand extends Command {
 		$setupKey = $this->argument('setupKey');
 		if (!$setupKey) {
 			$this->replyWithmessage([
-				'text' => "Please provide the setup key for your volunteer account.\nPerhaps try re-scanning the QR code you were provided?",
+				'text' => "The setup key for your volunteer account wasn't provided.\nYou'll need to scan a QR code at the volunteer desk.",
 			]);
 			return;
 		}
@@ -34,7 +37,7 @@ class StartCommand extends Command {
 		$user = User::whereTgSetupKey($setupKey)->first();
 		if (!$user) {
 			$this->replyWithMessage([
-				'text' => "Unable to validate volunteer account.\nPerhaps try re-scanning the QR code you were provided?",
+				'text' => "Unable to validate volunteer account.\nTry scanning a new QR code.",
 			]);
 			return;
 		}
@@ -43,7 +46,8 @@ class StartCommand extends Command {
 		if ($user->tg_chat_id) {
 			$this->telegram->sendMessage([
 				'chat_id' => $user->tg_chat_id,
-				'text' => "I have been changed to report to another user.\nYou'll have to scan the QR code again to get your volunteer time info from me.",
+				'text' => "I have been changed to report to another user.\nYou'll need to scan a new QR code to continue to get your volunteer time info from me.",
+				'reply_markup' => Keyboard::remove(),
 			]);
 		}
 
@@ -53,7 +57,7 @@ class StartCommand extends Command {
 		$user->save();
 
 		$this->replyWithMessage([
-			'text' => "Thanks for volunteering!\nPress these buttons to view more info.",
+			'text' => "Thanks for volunteering, {$user->getDisplayName()}!\nUse /help or press these buttons to view more info.",
 			'reply_markup' => $this->buildStandardActionsKeyboard(),
 		]);
 	}

@@ -15,6 +15,22 @@ abstract class Command extends BaseCommand {
 	public bool $hidden = false;
 
 	/**
+	 * If true, the command should only be displayed in authenticated chats.
+	 * If false, the command should only be displayed in unauthenticated chats.
+	 * If null, the command should always be displayed.
+	 */
+	public ?bool $authVisibility = null;
+
+	/**
+	 * Check whether the command should be visible in the help command, taking into account authentication status
+	 */
+	public function isVisible(bool $authed): bool {
+		if ($this->hidden) return false;
+		if ($this->authVisibility === null) return true;
+		return $this->authVisibility === $authed;
+	}
+
+	/**
 	 * Gets the user associated with the Telegram chat. If there isn't one, then reply with a message.
 	 */
 	protected function getChatUserOrReply(): ?User {
@@ -46,11 +62,14 @@ abstract class Command extends BaseCommand {
 	 * Builds reply markup for a keyboard that contains a list of standard actions while authenticated
 	 */
 	protected function buildStandardActionsKeyboard(): Keyboard {
-		$keyboard = new Keyboard([
-			'/code - Get quick sign-in code',
-			'/hours - Show my hours clocked',
-			'/rewards - Show available rewards',
-		]);
-		return $keyboard->setResizeKeyboard(true)->setIsPersistent(true)->setSelective(false);
+		$keyboard = new Keyboard();
+		$keyboard->setResizeKeyboard(true)
+			->setIsPersistent(true)
+			->row([
+				'/code',
+				'/hours',
+				'/rewards',
+			]);
+		return $keyboard;
 	}
 }

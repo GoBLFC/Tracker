@@ -2,9 +2,12 @@
 
 namespace App\Telegram\Commands;
 
+use Telegram\Bot\Keyboard\Keyboard;
+
 class UnlinkCommand extends Command {
 	protected string $name = 'unlink';
 	protected string $description = 'Unlink your volunteer account';
+	public ?bool $authVisibility = true;
 
 	public function handle(): void {
 		// Make sure we have a user for the chat
@@ -16,7 +19,8 @@ class UnlinkCommand extends Command {
 		$user->save();
 
 		$this->replyWithMessage([
-			'text' => "Your volunteer account has been unlinked.\nTo continue using the bot, you will need to scan a new QR code at the volunteer desk.",
+			'text' => "Your volunteer account has been unlinked.\nTo continue interacting with me, you will need to scan a new QR code at the volunteer desk.",
+			'reply_markup' => Keyboard::remove(),
 		]);
 	}
 }
