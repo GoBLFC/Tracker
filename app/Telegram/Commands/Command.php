@@ -38,7 +38,7 @@ abstract class Command extends BaseCommand {
 		$user = User::whereTgChatId($chatId)->first();
 		if (!$user) {
 			$this->replyWithMessage([
-				'text' => "I don't have a BLFC volunteer account associated with you yet. Please link your account at the volunteer desk!",
+				'text' => "I don't have a BLFC volunteer account associated with you yet. Please link your account by scanning a QR code at the volunteer desk.",
 			]);
 		}
 		return $user;
@@ -51,7 +51,7 @@ abstract class Command extends BaseCommand {
 		$event = Setting::activeEvent();
 		if (!$event) {
 			$this->replyWithMessage([
-				'text' => "Enthusiastic, are we? There isn't any ongoing event right now.",
+				'text' => "Enthusiastic, are we? There isn't any ongoing event right now. Soon™!",
 				'reply_markup' => $this->buildStandardActionsKeyboard(),
 			]);
 		}
