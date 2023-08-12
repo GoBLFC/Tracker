@@ -16,7 +16,7 @@
 </head>
 <body>
 	<div class="container my-5">
-		<img class="d-block mx-auto mb-4" src="{!! Vite::asset('resources/img/blfc-chip.png') !!}" width="128" />
+		<img class="d-block mx-auto mb-4" src="{!! Vite::asset('resources/img/blfc-chip.png') !!}" width="128" height="146" />
 
 		@if($devMode)
 			<div class="text-center mb-3">
