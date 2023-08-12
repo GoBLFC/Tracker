@@ -26,3 +26,8 @@ Route::controller(\App\Http\Controllers\TrackerController::class)->middleware('a
 	Route::post('/checkin', 'postCheckIn')->name('tracker.checkin.post');
 	Route::post('/checkout', 'postCheckOut')->name('tracker.checkout.post');
 });
+
+Route::controller(\App\Http\Controllers\NotificationsController::class)->middleware('auth')->group(function () {
+	Route::get('/alerts', 'getIndex')->name('notifications.index');
+	Route::post('/alerts/acknowledge', 'postAcknowledge')->name('notifications.acknowledge');
+});

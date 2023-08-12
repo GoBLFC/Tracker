@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Notifications\RewardAvailable;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Telegram\Bot\Laravel\Facades\Telegram;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -66,13 +68,6 @@ class User extends Authenticatable {
 	}
 
 	/**
-	 * Get all notifications for the user
-	 */
-	public function notifications(): HasMany {
-		return $this->hasMany(Notification::class);
-	}
-
-	/**
 	 * Get all the departments the user has entered time for
 	 */
 	public function departments(): HasManyThrough {
@@ -123,12 +118,14 @@ class User extends Authenticatable {
 
 	/**
 	 * Get the total earned time (in seconds) for an event
+	 * @param ?Event $event Event to get the earned time for - if null, then the active event will be used
+	 * @param ?Collection $timeEntries Time entries to look through (to avoid extra queries if already retrieved)
 	 */
-	public function getEarnedTime(Event $event = null): int {
+	public function getEarnedTime(Event $event = null, Collection $timeEntries = null): int {
 		if (!$event) $event = Setting::activeEvent();
 
 		// Get all of the time entries from the user for the given event, along with the time bonuses that may apply
-		$timeEntries = $this->timeEntries()->with(['department.timeBonuses'])->forEvent($event)->get();
+		if (!$timeEntries) $timeEntries = $this->timeEntries()->with(['department.timeBonuses'])->forEvent($event)->get();
 		$bonuses = $timeEntries->pluck('department.timeBonuses')->flatten()->unique('id');
 
 		// Add up the duration and bonus time of all time entries to get the total time for the event
@@ -140,6 +137,9 @@ class User extends Authenticatable {
 
 	/**
 	 * Get statistics about the time spent
+	 * @param ?Event $event Event to get the statistics for - if null, then the active event will be used
+	 * @param ?Carbon $date Day for the day-specific statistics - if null, then today will be used
+	 * @return array{total: int, day: int, entries: Collection<TimeEntry>, bonuses: Collection<TimeBonus>}
 	 */
 	public function getTimeStats(Event $event = null, Carbon $date = null): array {
 		if (!$event) $event = Setting::activeEvent();
@@ -183,22 +183,32 @@ class User extends Authenticatable {
 	}
 
 	/**
-	 * Get applicable rewards, claims, eligible/claimed rewards, and earned hours for an event.
-	 * If the event isn't specified, the active event will be used.
+	 * Get applicable rewards, claims, eligible/claimed rewards, and earned hours for an event
+	 * @param ?Event $event Event to get the reward info for - if null, then the active event will be used
+	 * @param ?Collection $timeEntries Time entries to look through (to avoid extra queries if already retrieved)
+	 * @return array{rewards: Collection<Reward>, eligible: Collection<Reward>, claimed: Collection<Reward>, claims: Collection<RewardClaim>, earnedHours: float}
 	 */
-	public function getRewardInfo(?Event $event = null): array {
+	public function getRewardInfo(?Event $event = null, Collection $timeEntries = null): array {
 		if (!$event) $event = Setting::activeEvent();
-		$claims = $event->rewardClaims()->whereUserId($this->id)->get();
-		$earnedHours = $this->getEarnedTime() / 60 / 60;
+		$earnedHours = $this->getEarnedTime($event, $timeEntries) / 60 / 60;
 		return [
 			'rewards' => $event->rewards,
 			'eligible' => $event->rewards->filter(fn (Reward $reward) => $earnedHours > $reward->hours),
-			'claimed' => $event->rewards->filter(fn (Reward $reward) => $claims->has('reward_id', $reward->id)),
-			'claims' => $claims,
+			'claimed' => $event->rewards->filter(fn (Reward $reward) => $this->rewardClaims->contains('reward_id', $reward->id)),
+			'claims' => $this->rewardClaims->where('event_id', $event->id),
 			'earnedHours' => $earnedHours,
 		];
 	}
 
+	/**
+	 * Check whether the user has been notified of a reward being available
+	 * @param Reward $reward
+	 * @param ?Collection $notifications Notifications to look through (to avoid extra queries if already retrieved)
+	 */
+	public function hasBeenNotifiedForEligibleReward(Reward $reward, Collection $notifications = null): bool {
+		if (!$notifications) $notifications = $this->notifications()->whereType(RewardAvailable::class)->get();
+		return $notifications->contains('data.reward_id', $reward->id);
+	}
 
 	/**
 	 * Get a URL to start interacting with the Telegram bot

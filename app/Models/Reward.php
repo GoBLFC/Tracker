@@ -17,7 +17,7 @@ class Reward extends UuidModel {
 	}
 
 	/**
-	 * Scope a query to only include entries for an event.
+	 * Scope a query to only include rewards for an event.
 	 * If the event is not specified, then the active event will be used.
 	 */
 	public function scopeForEvent(Builder $query, Event|string $event = null): void {

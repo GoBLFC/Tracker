@@ -11,14 +11,19 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\CheckInRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class TrackerController extends Controller {
 	/**
 	 * Render the tracker index
 	 */
-	public function getIndex() {
+	public function getIndex(): View|RedirectResponse {
 		/** @var User */
 		$user = Auth::user();
+
+		// If the user has notifications, present those first
+		if ($user->unreadNotifications()->count() > 0) return redirect()->route('notifications.index');
+
 		$stats = $user->getTimeStats();
 		return view('tracker.index', [
 			'user' => $user,
@@ -71,7 +76,7 @@ class TrackerController extends Controller {
 	/**
 	 * Check out for the ongoing time entry
 	 */
-	public function postCheckOut(Request $request) {
+	public function postCheckOut(Request $request): JsonResponse|RedirectResponse {
 		/** @var User */
 		$user = Auth::user();
 

@@ -20,14 +20,16 @@
 
 				<p>This bot can provide you:</p>
 				<ul>
-					<li>Hours Clocked</li>
-					<li>Eligible Rewards</li>
-					<li>Quick Login Code</li>
+					<li>Hours clocked</li>
+					<li>Reward list</li>
+					<li>Quick login code</li>
 				</ul>
 
 				<p>This bot will also:</p>
 				<ul>
-					<li>Remind you when you can get a reward</li>
+					<li>Remind you when you're eligible for a reward</li>
+					<li>Confirm that you've claimed a reward</li>
+					<li>Notify you if you've forgotten to check out for a shift</li>
 				</ul>
 			</div>
 		</div>
