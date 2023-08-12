@@ -63,7 +63,7 @@ class TimeEntry extends UuidModel {
 	 * Scope a query to only include ongoing entries
 	 */
 	public function scopeOngoing(Builder $query): void {
-		$query->where('stop', null);
+		$query->whereNull('stop');
 	}
 
 	/**
