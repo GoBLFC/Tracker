@@ -34,7 +34,7 @@ class RewardsCommand extends Command {
 				$eligible = !$claimed && $rewardInfo['eligible']->contains($reward);
 				$name = htmlspecialchars($reward->name);
 				$description = htmlspecialchars($reward->description);
-				return ($claimed ? '✅' : ($eligible ? '⭐' : '⏳')) . " <u><b>{$reward->hours}h:</b> {$name}</u>\n{$description}";
+				return ($claimed ? '✅' : ($eligible ? '⭐' : '⏳')) . " <u><b>{$reward->hours}hr:</b> {$name}</u>\n{$description}";
 			})
 			->join("\n\n");
 
