@@ -35,7 +35,7 @@ class TimeEntryAutoStopped extends Notification implements ShouldQueue {
 		return [
 			'time_entry_id' => $this->timeEntry->id,
 			'title' => 'Automatically checked out',
-			'description' => "You were automatically checked out from your shift last night because you may have forgotten to check out.\nYou've been credited with 1 hour for the shift.\nPlease verify your time with your department lead or the volunteer desk!",
+			'description' => "You were automatically checked out from your shift last night because you may have forgotten to check out.\nYou've been credited with <strong>1 hour</strong> for the shift.\n<strong>Please verify your time with your department lead or the volunteer desk!</strong>",
 			'type' => 'warning',
 		];
 	}
@@ -45,7 +45,7 @@ class TimeEntryAutoStopped extends Notification implements ShouldQueue {
 	 *
 	 * @return array<string, mixed>
 	 */
-	public function toTelegram(): array {
+	public function toTelegram(object $notifiable): array {
 		return [
 			'text' => "⚠️ You were <u>automatically checked out</u> from your shift last night because you may have forgotten to check out.\nYou've been credited with <u>1 hour</u> for the shift.\n\n<b>Please verify your time with your department lead or the volunteer desk!</b>",
 			'parse_mode' => 'HTML',

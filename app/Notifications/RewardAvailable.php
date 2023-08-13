@@ -32,10 +32,12 @@ class RewardAvailable extends Notification implements ShouldQueue {
 	 * @return array<string, mixed>
 	 */
 	public function toArray(object $notifiable): array {
+		$name = htmlspecialchars($this->reward->name);
+		$description = htmlspecialchars($this->reward->description);
 		return [
 			'reward_id' => $this->reward->id,
 			'title' => "You've earned a reward!",
-			'description' => "You're now eligible to claim the {$this->reward->hours}hr reward ({$this->reward->name}):\n{$this->reward->description}\n\nAsk the volunteer desk to claim this reward.",
+			'description' => "You're now eligible to claim the <strong>{$this->reward->hours}hr</strong> reward ({$name}):\n{$description}\n\n<strong>Ask the volunteer desk to claim the reward.</strong>",
 			'type' => 'success',
 		];
 	}
@@ -45,7 +47,7 @@ class RewardAvailable extends Notification implements ShouldQueue {
 	 *
 	 * @return array<string, mixed>
 	 */
-	public function toTelegram(): array {
+	public function toTelegram(object $notifiable): array {
 		return [
 			'text' => "🎁 You're now eligible to claim the {$this->reward->hours}hr reward!\nAsk the volunteer desk to claim it.\nUse /rewards for more info.",
 			'parse_mode' => 'HTML',

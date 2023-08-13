@@ -7,7 +7,7 @@
 			@foreach($notifications as $notif)
 				<div class="alert alert-{!! $notif['type'] ?? 'dark' !!}" role="alert">
 					<h5 class="alert-heading">{{ $notif['title'] }}</h5>
-					<p class="mb-0">{!! nl2br(htmlspecialchars($notif['description'])) !!}</p>
+					<p class="mb-0">{!! nl2br($notif['description']) !!}</p>
 				</div>
 			@endforeach
 
