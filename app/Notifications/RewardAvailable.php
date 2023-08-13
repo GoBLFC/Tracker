@@ -47,7 +47,7 @@ class RewardAvailable extends Notification implements ShouldQueue {
 	 */
 	public function toTelegram(): array {
 		return [
-			'text' => "You're now eligible to claim the {$this->reward->hours}hr reward!\nUse /rewards for more info.",
+			'text' => "🎁 You're now eligible to claim the {$this->reward->hours}hr reward!\nUse /rewards for more info.",
 			'parse_mode' => 'HTML',
 		];
 	}

@@ -47,7 +47,7 @@ class TimeEntryAutoStopped extends Notification implements ShouldQueue {
 	 */
 	public function toTelegram(): array {
 		return [
-			'text' => "You were <u>automatically checked out</u> from your shift last night because you may have forgotten to check out.\nYou've been credited with 1 hour for the shift.\n\n<b>Please verify your time with your department lead or the volunteer desk!</b>",
+			'text' => "⚠️ You were <u>automatically checked out</u> from your shift last night because you may have forgotten to check out.\nYou've been credited with 1 hour for the shift.\n\n<b>Please verify your time with your department lead or the volunteer desk!</b>",
 			'parse_mode' => 'HTML',
 		];
 	}
