@@ -23,7 +23,7 @@ class TimeEntryAutoStopped extends Notification implements ShouldQueue {
 	 * @return array<int, string>
 	 */
 	public function via(object $notifiable): array {
-		return ['database'];
+		return ['database', TelegramChannel::class];
 	}
 
 	/**
@@ -37,6 +37,18 @@ class TimeEntryAutoStopped extends Notification implements ShouldQueue {
 			'title' => 'Automatically checked out',
 			'description' => "You were automatically checked out from your shift last night because you may have forgotten to check out.\nYou've been credited with 1 hour for the shift.\nPlease verify your time with your department lead or the volunteer desk!",
 			'type' => 'warning',
+		];
+	}
+
+	/**
+	 * Get the Telegram message representation of the notification
+	 *
+	 * @return array<string, mixed>
+	 */
+	public function toTelegram(): array {
+		return [
+			'text' => "You were <u>automatically checked out</u> from your shift last night because you may have forgotten to check out.\nYou've been credited with 1 hour for the shift.\n\n<b>Please verify your time with your department lead or the volunteer desk!</b>",
+			'parse_mode' => 'HTML',
 		];
 	}
 }

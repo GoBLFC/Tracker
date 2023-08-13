@@ -23,7 +23,7 @@ class RewardClaimed extends Notification implements ShouldQueue {
 	 * @return array<int, string>
 	 */
 	public function via(object $notifiable): array {
-		return ['database'];
+		return ['database', TelegramChannel::class];
 	}
 
 	/**
@@ -37,6 +37,19 @@ class RewardClaimed extends Notification implements ShouldQueue {
 			'title' => "You've claimed a reward",
 			'description' => "You claimed the {$this->reward->hours}hr reward ({$this->reward->name}).\nIf this doesn't seem correct, please let a Volunteer Manager know.",
 			'type' => 'info',
+		];
+	}
+
+	/**
+	 * Get the Telegram message representation of the notification
+	 *
+	 * @return array<string, mixed>
+	 */
+	public function toTelegram(): array {
+		$name = htmlspecialchars($this->reward->name);
+		return [
+			'text' => "You claimed the {$this->reward->hours}hr reward ({$name}). If this doesn't seem correct, please let a Volunteer Manager know.",
+			'parse_mode' => 'HTML',
 		];
 	}
 }
