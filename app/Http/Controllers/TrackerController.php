@@ -26,7 +26,6 @@ class TrackerController extends Controller {
 
 		$stats = $user->getTimeStats();
 		return view('tracker.index', [
-			'user' => $user,
 			'stats' => $stats,
 			'ongoing' => $stats['entries']->first(fn (TimeEntry $entry) => $entry->isOngoing()),
 			'departments' => $user->isAdmin() ? Department::all() : Department::whereHidden(false)->get(),

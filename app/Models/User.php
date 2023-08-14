@@ -128,6 +128,9 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 	public function getEarnedTime(Event $event = null, Collection $timeEntries = null): int {
 		if (!$event) $event = Setting::activeEvent();
 
+		// If there's no event at all, then skip all of the below work and just return empty results
+		if (!$event) return 0;
+
 		// Get all of the time entries from the user for the given event, along with the time bonuses that may apply
 		if (!$timeEntries) $timeEntries = $this->timeEntries()->with(['department.timeBonuses'])->forEvent($event)->get();
 		$bonuses = $timeEntries->pluck('department.timeBonuses')->flatten()->unique('id');
@@ -148,6 +151,16 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 	public function getTimeStats(Event $event = null, Carbon $date = null): array {
 		if (!$event) $event = Setting::activeEvent();
 		if (!$date) $date = now();
+
+		// If there's no event at all, then skip all of the below work and just return empty results
+		if (!$event) {
+			return [
+				'total' => 0,
+				'day' => 0,
+				'entries' => new Collection,
+				'bonuses' => new Collection,
+			];
+		}
 
 		// Get the date offset by the day boundary hour for day comparisons later
 		$boundaryHour = config('tracker.day_boundary_hour');
@@ -194,6 +207,19 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 	 */
 	public function getRewardInfo(?Event $event = null, Collection $timeEntries = null): array {
 		if (!$event) $event = Setting::activeEvent();
+
+		// If there's no event at all, then skip all of the below work and just return empty results
+		if (!$event) {
+			return [
+				'rewards' => new Collection,
+				'eligible' => new Collection,
+				'claimed' => new Collection,
+				'claims' => new Collection,
+				'earnedHours' => 0,
+			];
+		}
+
+		// Build the reward information
 		$earnedHours = $this->getEarnedTime($event, $timeEntries) / 60 / 60;
 		return [
 			'rewards' => $event->rewards,
