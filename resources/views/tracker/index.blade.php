@@ -6,30 +6,36 @@
 
 		<div class="card-body">
 			<div class="row">
-
-				<div class="col-md">
-					<div id="checkstatus" class="alert alert-{!! $ongoing ? 'success' : 'danger' !!} py-2 mb-0 h-100 d-flex align-items-center" role="alert">
-						You are currently {!! !$ongoing ? 'not' : '' !!} checked in.
+				@kiosk
+					<div class="col-md">
+						<div id="checkstatus" class="alert alert-{!! $ongoing ? 'success' : 'danger' !!} py-2 mb-0 h-100 d-flex align-items-center" role="alert">
+							You are currently {!! !$ongoing ? 'not' : '' !!} checked in.
+						</div>
 					</div>
-				</div>
 
-				<div class="col-md">
-					<select class="form-select h-100" {!! $ongoing ? 'disabled ' : '' !!}id="dept">
-						@if(!$ongoing)
-							<option value="" disabled selected hidden>Select Department</option>
-						@endif
-						@foreach($departments as $dept)
-							<option {!! $ongoing && $ongoing->department_id === $dept->id ? 'selected' : '' !!} value="{!! $dept->id !!}">
-								{{ $dept->name . ($dept->hidden ? ' (hidden)' : '') }}
-							</option>
-						@endforeach
-					</select>
-				</div>
+					<div class="col-md">
+						<select class="form-select h-100" {!! $ongoing ? 'disabled ' : '' !!}id="dept">
+							@if(!$ongoing)
+								<option value="" disabled selected hidden>Select Department</option>
+							@endif
+							@foreach($departments as $dept)
+								<option {!! $ongoing && $ongoing->department_id === $dept->id ? 'selected' : '' !!} value="{!! $dept->id !!}">
+									{{ $dept->name . ($dept->hidden ? ' (hidden)' : '') }}
+								</option>
+							@endforeach
+						</select>
+					</div>
 
-				<div class="col-md">
-					<button id="checkinout" class="btn btn-primary w-100 h-100" data-value="{!! $ongoing ? 'out' : 'in' !!}" {!! !$ongoing ? 'disabled' : '' !!}>Check-{!! $ongoing ? 'Out' : 'In' !!}</button>
-				</div>
-
+					<div class="col-md">
+						<button id="checkinout" class="btn btn-primary w-100 h-100" data-value="{!! $ongoing ? 'out' : 'in' !!}" {!! !$ongoing ? 'disabled' : '' !!}>Check-{!! $ongoing ? 'Out' : 'In' !!}</button>
+					</div>
+				@else
+					<div class="col-md">
+						<div class="alert alert-warning mb-0" role="alert">
+							<p class="mb-0">Checking in/out is unavailable since this is not an authorized kiosk.</p>
+						</div>
+					</div>
+				@endkiosk
 			</div>
 		</div>
 	</div>

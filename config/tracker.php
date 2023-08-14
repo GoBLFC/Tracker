@@ -14,4 +14,15 @@ return [
 
 	'day_boundary_hour' => env('TRACKER_DAY_BOUNDARY_HOUR', 4),
 
+	/*
+    |--------------------------------------------------------------------------
+    | Tracker Kiosk Authorization Duration
+    |--------------------------------------------------------------------------
+    |
+    | The duration (in hours) that kiosks remain authorized for.
+    |
+    */
+
+	'kiosk_duration' => env('TRACKER_KIOSK_DURATION', 24 * 7),
+
 ];

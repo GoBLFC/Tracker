@@ -39,6 +39,7 @@ class TrackerController extends Controller {
 	public function postCheckIn(CheckInRequest $request): JsonResponse|RedirectResponse {
 		/** @var User */
 		$user = Auth::user();
+		$this->authorize('create', [TimeEntry::class, $user]);
 
 		// Make sure there's an active event
 		$event = Setting::activeEvent();
@@ -98,7 +99,8 @@ class TrackerController extends Controller {
 				: redirect()->back()->withError($error)->withInput();
 		}
 
-		// End the time entry
+		// End the time entry if the user's permitted
+		$this->authorize('update', $ongoing);
 		$ongoing->stop = now();
 		$ongoing->save();
 

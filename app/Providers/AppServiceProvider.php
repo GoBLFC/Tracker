@@ -21,7 +21,7 @@ class AppServiceProvider extends ServiceProvider {
 	 * Bootstrap any application services.
 	 */
 	public function boot(): void {
-		// Make some values available to all views
+		// Make the active event available to all views
 		try {
 			View::share('activeEvent', Setting::activeEvent());
 		} catch (\Throwable $err) {
@@ -30,6 +30,6 @@ class AppServiceProvider extends ServiceProvider {
 
 		// Set up custom Blade if directives
 		Blade::if('devmode', fn () => Setting::isDevMode());
-		Blade::if('kiosk', fn () => Kiosk::isSessionAuthorized());
+		Blade::if('kiosk', fn (bool $strict = false) => Kiosk::isSessionAuthorized($strict));
 	}
 }

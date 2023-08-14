@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\Kiosk;
 use App\Models\TimeEntry;
 use App\Models\User;
 
@@ -24,14 +25,14 @@ class TimeEntryPolicy {
 	 * Determine whether the user can create models.
 	 */
 	public function create(User $creator, User $target): bool {
-		return $creator->id === $target->id || $creator->isManager();
+		return ($creator->id === $target->id && Kiosk::isSessionAuthorized()) || $creator->isManager();
 	}
 
 	/**
 	 * Determine whether the user can update the model.
 	 */
 	public function update(User $user, TimeEntry $timeEntry): bool {
-		return $user->id === $timeEntry->user_id || $user->isManager();
+		return ($user->id === $timeEntry->user_id && Kiosk::isSessionAuthorized()) || $user->isManager();
 	}
 
 	/**

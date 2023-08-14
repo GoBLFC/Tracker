@@ -27,7 +27,7 @@
 					<span class="badge rounded-pill text-bg-secondary">Role: {!! Auth::user()->role->name !!}</span>
 				@endauth
 
-				@kiosk
+				@kiosk(true)
 					<span class="badge rounded-pill text-bg-success">Kiosk: Authorized</span>
 				@else
 					<span class="badge rounded-pill text-bg-danger">Kiosk: Unauthorized</span>

@@ -31,3 +31,8 @@ Route::controller(\App\Http\Controllers\NotificationsController::class)->middlew
 	Route::get('/alerts', 'getIndex')->name('notifications.index');
 	Route::post('/alerts/acknowledge', 'postAcknowledge')->name('notifications.acknowledge');
 });
+
+Route::controller(\App\Http\Controllers\KioskController::class)->middleware('auth')->group(function () {
+	Route::post('/kiosk/authorize', 'postAuthorize')->name('kiosk.authorize.post');
+	Route::post('/kiosk/deauthorize', 'postDeauthorize')->name('kiosk.deauthorize.post');
+});
