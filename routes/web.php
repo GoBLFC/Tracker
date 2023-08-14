@@ -22,7 +22,7 @@ Route::controller(\App\Http\Controllers\AuthController::class)->group(function (
 	Route::get('/disabled', 'getBanned')->name('auth.banned');
 });
 
-Route::middleware(['auth', 'banned'])->group(function () {
+Route::middleware(['auth', 'not-banned'])->group(function () {
 	Route::controller(\App\Http\Controllers\TrackerController::class)->group(function () {
 		Route::get('/', 'getIndex')->name('tracker.index');
 		Route::post('/checkin', 'postCheckIn')->name('tracker.checkin.post');
