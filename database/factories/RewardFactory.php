@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -15,7 +16,7 @@ class RewardFactory extends Factory {
 	 */
 	public function definition(): array {
 		return [
-			'name' => fake()->words(3, true),
+			'name' => Str::title(fake()->words(3, true)),
 			'description' => fake()->paragraphs(3, true),
 			'hours' => fake()->randomNumber(2),
 			'event_id' => \App\Models\Event::factory(),
