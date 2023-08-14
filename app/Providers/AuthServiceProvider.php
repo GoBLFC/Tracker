@@ -6,7 +6,6 @@ use App\Models\Kiosk;
 use App\Models\User;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Session;
 
 class AuthServiceProvider extends ServiceProvider {
 	/**
@@ -42,8 +41,9 @@ class AuthServiceProvider extends ServiceProvider {
 			return Kiosk::isSessionAuthorized();
 		});
 
-		Gate::before(function (User $user): bool|null {
+		Gate::before(function (User $user): ?bool {
 			if ($user->isBanned()) return false;
+			return null;
 		});
 	}
 }
