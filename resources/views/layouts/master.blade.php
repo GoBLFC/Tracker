@@ -33,7 +33,8 @@
 					<span class="badge rounded-pill text-bg-danger">Kiosk: Unauthorized</span>
 				@endkiosk
 
-				@if($activeEvent !== null)
+				@php $activeEvent = \App\Models\Setting::activeEvent(); @endphp
+				@if($activeEvent)
 					<span class="badge rounded-pill text-bg-success">Event: {{ $activeEvent->name }}</span>
 				@else
 					<span class="badge rounded-pill text-bg-danger">Event: None active</span>

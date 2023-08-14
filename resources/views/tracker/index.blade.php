@@ -40,9 +40,9 @@
 		</div>
 	</div>
 
-	@if($user->isLead())
+	@lead
 		@include('partials.management-nav')
-	@endif
+	@endlead
 
 	<div class="card mb-3">
 		<h5 class="card-header">Your Stats</h5>
