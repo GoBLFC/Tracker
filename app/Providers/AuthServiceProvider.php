@@ -21,13 +21,6 @@ class AuthServiceProvider extends ServiceProvider {
 	 * Register any authentication / authorization services.
 	 */
 	public function boot(): void {
-		// Register custom gates
-		Gate::define('admin', fn (User $user) => $user->isAdmin());
-		Gate::define('manager', fn (User $user) => $user->isManager());
-		Gate::define('lead', fn (User $user) => $user->isLead());
-		Gate::define('banned', fn (User $user) => $user->isBanned());
-		Gate::define('kiosk', fn () => Kiosk::isSessionAuthorized());
-
 		// Allow admins and disallow banned users through all gates
 		Gate::before(function (User $user): ?bool {
 			if ($user->isBanned()) return false;
