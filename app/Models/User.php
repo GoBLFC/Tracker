@@ -15,9 +15,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use SocialiteProviders\Manager\OAuth2\User as OauthUser;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable {
-	use HasFactory, Notifiable;
+	use HasFactory, Notifiable, SoftDeletes;
 
 	public $incrementing = false;
 

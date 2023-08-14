@@ -19,6 +19,7 @@ return new class extends Migration {
 			$table->char('tg_setup_key', 32)->unique();
 			$table->bigInteger('tg_chat_id')->unsigned()->nullable()->unique();
 			$table->timestamps();
+			$table->softDeletes();
 		});
 	}
 
