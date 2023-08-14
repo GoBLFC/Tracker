@@ -19,7 +19,7 @@ class RewardsCommand extends Command {
 		if (!$event) return;
 
 		// Ensure there are some rewards for the event
-		if ($event->rewards()->count() < 1) {
+		if (!$event->rewards()->exists()) {
 			$this->replyWithMessage([
 				'text' => "There are no rewards available for {$event->name}.",
 			]);

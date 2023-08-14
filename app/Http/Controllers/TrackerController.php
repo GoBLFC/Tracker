@@ -22,7 +22,7 @@ class TrackerController extends Controller {
 		$user = Auth::user();
 
 		// If the user has notifications, present those first
-		if ($user->unreadNotifications()->count() > 0) return redirect()->route('notifications.index');
+		if ($user->unreadNotifications()->exists()) return redirect()->route('notifications.index');
 
 		$stats = $user->getTimeStats();
 		return view('tracker.index', [
