@@ -101,7 +101,7 @@ function stopShift(stats) {
 	time.day = stats.day * 1000;
 
 	// Hide the shift duration and re-render the day/total times to ensure accuracy
-	$('#currdurr').hide();
+	$('#currdurr').addClass('d-none');
 	renderTimes(new Date());
 }
 
