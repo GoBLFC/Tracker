@@ -32,7 +32,10 @@
 				@else
 					<div class="col-md">
 						<div class="alert alert-warning mb-0" role="alert">
-							<p class="mb-0">Checking in/out is unavailable since this is not an authorized kiosk.</p>
+							<p class="mb-0">
+								Checking in/out can only be done from authorized devices.
+								Please visit the volunteer desk to do so.
+							</p>
 						</div>
 					</div>
 				@endkiosk
