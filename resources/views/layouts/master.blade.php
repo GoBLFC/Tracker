@@ -23,7 +23,8 @@
 				<span class="badge rounded-pill text-bg-warning">Dev Mode Enabled</span>
 
 				@auth
-					<span class="badge rounded-pill text-bg-primary">Your ID: {!! Auth::user()->id !!}</span>
+					<span class="badge rounded-pill text-bg-primary">Your ConCat ID: {!! Auth::user()->external_id !!}</span>
+					<span class="badge rounded-pill text-bg-primary">Your UUID: {!! Auth::user()->id !!}</span>
 					<span class="badge rounded-pill text-bg-secondary">Role: {!! Auth::user()->role->name !!}</span>
 				@endauth
 

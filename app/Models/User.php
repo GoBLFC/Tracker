@@ -2,23 +2,26 @@
 
 namespace App\Models;
 
-use App\Notifications\RewardAvailable;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
+use Illuminate\Auth\Authenticatable as AuthenticatableTrait;
 use Illuminate\Support\Facades\Cache;
+use App\Notifications\RewardAvailable;
+use Illuminate\Contracts\Auth\Access\Authorizable;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Telegram\Bot\Laravel\Facades\Telegram;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Foundation\Auth\Access\Authorizable as AuthorizableTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use SocialiteProviders\Manager\OAuth2\User as OauthUser;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class User extends Authenticatable {
-	use HasFactory, Notifiable, SoftDeletes;
+class User extends UuidModel implements Authenticatable, Authorizable {
+	use HasFactory, SoftDeletes, AuthenticatableTrait, AuthorizableTrait, Notifiable;
 
 	public $incrementing = false;
 
@@ -27,7 +30,7 @@ class User extends Authenticatable {
 	];
 
 	protected $fillable = [
-		'id',
+		'external_id',
 		'username',
 		'first_name',
 		'last_name',
@@ -231,7 +234,7 @@ class User extends Authenticatable {
 	 * record for it entirely.
 	 */
 	public static function updateOrCreateFromOauthUser(OauthUser $user): static {
-		return static::updateOrCreate(['id' => $user->id], [
+		return static::updateOrCreate(['external_id' => $user->id], [
 			'username' => $user->nickname,
 			'first_name' => $user->user['firstName'],
 			'last_name' => $user->user['lastName'],

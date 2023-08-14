@@ -11,12 +11,12 @@ return new class extends Migration {
 	public function up(): void {
 		Schema::create('time_entries', function (Blueprint $table) {
 			$table->uuid('id')->primary();
-			$table->foreignId('user_id')->constrained()->cascadeOnDelete();
+			$table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
 			$table->timestamp('start');
 			$table->timestamp('stop')->nullable();
 			$table->foreignUuid('department_id')->constrained()->cascadeOnDelete();
 			$table->text('notes')->nullable();
-			$table->foreignId('creator_user_id')->nullable()->constrained('users')->nullOnDelete();
+			$table->foreignUuid('creator_user_id')->nullable()->constrained('users')->nullOnDelete();
 			$table->boolean('auto')->default(false);
 			$table->foreignUuid('event_id')->constrained()->cascadeOnDelete();
 			$table->timestamps();

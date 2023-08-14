@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder {
 
 		// Create an admin user for Gawdl3y with some fake info that will be overwritten upon auth
 		\App\Models\User::factory()->telegramUnlinked()->create([
-			'id' => 19,
+			'external_id' => 19,
 			'username' => 'gawdl3y',
 			'first_name' => 'Bob',
 			'last_name' => 'Malooga',

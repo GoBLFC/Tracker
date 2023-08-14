@@ -11,7 +11,7 @@ return new class extends Migration {
 	public function up(): void {
 		Schema::create('reward_claims', function (Blueprint $table) {
 			$table->uuid('id')->primary();
-			$table->foreignId('user_id')->constrained()->cascadeOnDelete();
+			$table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
 			$table->foreignUuid('reward_id')->constrained()->cascadeOnDelete();
 			$table->timestamps();
 		});
