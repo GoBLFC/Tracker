@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\MassPrunable;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class QuickCode extends UuidModel {
@@ -57,6 +58,6 @@ class QuickCode extends UuidModel {
 	 * Generates and assigns a new code
 	 */
 	public function generateCode(): void {
-		$this->code = str_pad(random_int(0, 9999), 4, '0', STR_PAD_LEFT);
+		$this->code = Str::padLeft(random_int(0, 9999), 4, '0');
 	}
 }

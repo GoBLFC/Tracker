@@ -5,6 +5,7 @@ namespace App\Models;
 use DateTimeInterface;
 use App\Models\UuidModel;
 use Carbon\CarbonInterval;
+use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
@@ -221,8 +222,8 @@ class TimeEntry extends UuidModel {
 		$interval = CarbonInterval::seconds($seconds)->cascade();
 		$string = '';
 		if ($interval->hours > 0) $string .= "{$interval->hours}:";
-		$string .= ($interval->hours > 0 ? str_pad($interval->minutes, 2, '0', STR_PAD_LEFT) : $interval->minutes) . ':';
-		$string .= str_pad($interval->seconds, 2, '0', STR_PAD_LEFT);
+		$string .= ($interval->hours > 0 ? Str::padLeft($interval->minutes, 2, '0') : $interval->minutes) . ':';
+		$string .= Str::padLeft($interval->seconds, 2, '0');
 		return $string;
 	}
 }
