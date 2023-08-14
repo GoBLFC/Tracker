@@ -96,4 +96,12 @@ class AuthController extends Controller {
 			? response()->json(null, 205)
 			: redirect()->route('tracker.index');
 	}
+
+	/**
+	 * Display the banned notice
+	 */
+	public function getBanned(): View|RedirectResponse {
+		if (!Auth::user()?->isBanned()) return redirect()->route('tracker.index');
+		return view('auth.banned');
+	}
 }

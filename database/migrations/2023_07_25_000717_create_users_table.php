@@ -15,7 +15,7 @@ return new class extends Migration {
 			$table->string('first_name', 64);
 			$table->string('last_name', 64);
 			$table->string('badge_name', 64)->nullable();
-			$table->tinyInteger('role')->unsigned()->default(0);
+			$table->tinyInteger('role')->default(0);
 			$table->char('tg_setup_key', 32)->unique();
 			$table->bigInteger('tg_chat_id')->unsigned()->nullable()->unique();
 			$table->timestamps();
