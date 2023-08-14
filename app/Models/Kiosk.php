@@ -98,9 +98,6 @@ class Kiosk extends UuidModel {
 	public static function deauthorizeSession(): ?bool {
 		$kiosk = static::findFromSession();
 		if (!$kiosk) return false;
-
-		static::$authorizedCache = false;
-		Cookie::queue(Cookie::forget('kiosk'));
-		return $kiosk->delete();
+		return $kiosk->deauthorize();
 	}
 }
