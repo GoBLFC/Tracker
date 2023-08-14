@@ -15,7 +15,7 @@ class KioskController extends Controller {
 		$this->authorize('create', Kiosk::class);
 
 		// Make sure the session isn't already authorized
-		if (Kiosk::isSessionAuthorized()) {
+		if (Kiosk::isSessionAuthorized(true)) {
 			return $request->expectsJson()
 				? response()->json(['error' => 'Session is already authorized as a kiosk.'])
 				: redirect()->back()->withError('Session is already authorized as a kiosk.');
