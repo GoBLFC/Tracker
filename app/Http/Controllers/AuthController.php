@@ -55,7 +55,7 @@ class AuthController extends Controller {
 	 */
 	public function getCallback(): RedirectResponse {
 		$oauthUser = Socialite::driver('concat')->user();
-		$user = User::updateOrCreateFromOauthUser($oauthUser);
+		$user = User::updateOrCreateFromOAuthUser($oauthUser);
 		session()->put('concatToken', $oauthUser->token);
 		Auth::login($user);
 		return redirect()->intended();

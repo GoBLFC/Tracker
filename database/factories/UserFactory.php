@@ -15,7 +15,7 @@ class UserFactory extends Factory {
 	 */
 	public function definition(): array {
 		return [
-			'external_id' => fake()->randomNumber(8, true),
+			'badge_id' => fake()->randomNumber(8, true),
 			'username' => fake()->userName(),
 			'first_name' => fake()->firstName(),
 			'last_name' => fake()->lastName(),

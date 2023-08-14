@@ -4,24 +4,24 @@ namespace App\Models;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
-use Illuminate\Auth\Authenticatable as AuthenticatableTrait;
+use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\Cache;
 use App\Notifications\RewardAvailable;
-use Illuminate\Contracts\Auth\Access\Authorizable;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
 use Telegram\Bot\Laravel\Facades\Telegram;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Foundation\Auth\Access\Authorizable as AuthorizableTrait;
+use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use SocialiteProviders\Manager\OAuth2\User as OauthUser;
+use SocialiteProviders\Manager\OAuth2\User as OAuthUser;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 
-class User extends UuidModel implements Authenticatable, Authorizable {
-	use HasFactory, SoftDeletes, AuthenticatableTrait, AuthorizableTrait, Notifiable;
+class User extends UuidModel implements AuthenticatableContract, AuthorizableContract {
+	use HasFactory, SoftDeletes, Authenticatable, Authorizable, Notifiable;
 
 	public $incrementing = false;
 
@@ -30,7 +30,7 @@ class User extends UuidModel implements Authenticatable, Authorizable {
 	];
 
 	protected $fillable = [
-		'external_id',
+		'badge_id',
 		'username',
 		'first_name',
 		'last_name',
@@ -233,8 +233,8 @@ class User extends UuidModel implements Authenticatable, Authorizable {
 	 * Finds an existing user record and updates it with the latest information from an OAuth user, or creates a new
 	 * record for it entirely.
 	 */
-	public static function updateOrCreateFromOauthUser(OauthUser $user): static {
-		return static::updateOrCreate(['external_id' => $user->id], [
+	public static function updateOrCreateFromOAuthUser(OAuthUser $user): static {
+		return static::updateOrCreate(['badge_id' => $user->id], [
 			'username' => $user->nickname,
 			'first_name' => $user->user['firstName'],
 			'last_name' => $user->user['lastName'],
