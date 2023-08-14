@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\MassPrunable;
-use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Str;
 
 class Kiosk extends UuidModel {
 	use MassPrunable;
@@ -46,14 +46,23 @@ class Kiosk extends UuidModel {
 	}
 
 	/**
-	 * Deletes the Kiosk and deletes the kiosk cookie for the current session if it matches
+	 * Sets a cookie that contains the session_key of this kiosk
+	 */
+	public function authorize(): void {
+		static::$authorizedCache = true;
+		Cookie::queue(Cookie::make('kiosk', $this->session_key, 60 * config('tracker.kiosk_duration')));
+	}
+
+	/**
+	 * Deletes the Kiosk from the database and deletes the kiosk cookie for the current session if it matches
 	 * @return ?bool Whether the Kiosk was deleted from the database
 	 */
-	public function deauthorize(): bool {
+	public function deauthorize(): ?bool {
 		if (Cookie::get('kiosk') === $this->session_key) {
 			static::$authorizedCache = false;
 			Cookie::queue(Cookie::forget('kiosk'));
 		}
+
 		return $this->delete();
 	}
 
@@ -74,7 +83,7 @@ class Kiosk extends UuidModel {
 		if (static::$authorizedCache !== null) return static::$authorizedCache || (!$strict && Setting::isDevMode());
 
 		$sessionKey = Cookie::get('kiosk');
-		if (!$sessionKey) return false;
+		if (!$sessionKey) return !$strict && Setting::isDevMode();
 
 		static::$authorizedCache = static::unexpired()->whereSessionKey($sessionKey)->exists();
 		return static::$authorizedCache || (!$strict && Setting::isDevMode());
@@ -84,10 +93,9 @@ class Kiosk extends UuidModel {
 	 * Create a new Kiosk and add it to the session
 	 */
 	public static function authorizeSession(): static {
-		static::$authorizedCache = true;
 		$kiosk = new static;
 		$kiosk->save();
-		Cookie::queue(Cookie::make('kiosk', $kiosk->session_key, 60 * config('tracker.kiosk_duration')));
+		$kiosk->authorize();
 		return $kiosk;
 	}
 
