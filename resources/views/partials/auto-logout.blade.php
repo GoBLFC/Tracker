@@ -7,7 +7,7 @@
 
 	<script type="text/javascript">
 		var logoutUrl = '{!! route('auth.logout') !!}';
-		var logoutTime = {!! $devMode ? 3600 : 60 !!};
+		var logoutTime = @devmode 3600 @else 60 @enddevmode;
 	</script>
 
 	@vite('resources/js/auto-logout.js')

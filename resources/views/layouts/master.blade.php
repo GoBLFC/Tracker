@@ -18,7 +18,7 @@
 	<div class="container my-5">
 		<img class="d-block mx-auto mb-4" src="{!! Vite::asset('resources/img/blfc-chip.png') !!}" width="128" height="146" />
 
-		@if($devMode)
+		@devmode
 			<div class="text-center mb-3">
 				<span class="badge rounded-pill text-bg-warning">Dev Mode Enabled</span>
 
@@ -27,11 +27,11 @@
 					<span class="badge rounded-pill text-bg-secondary">Role: {!! Auth::user()->role->name !!}</span>
 				@endauth
 
-				@if($isKiosk)
+				@kiosk
 					<span class="badge rounded-pill text-bg-success">Kiosk: Authorized</span>
 				@else
 					<span class="badge rounded-pill text-bg-danger">Kiosk: Unauthorized</span>
-				@endif
+				@endkiosk
 
 				@if($activeEvent !== null)
 					<span class="badge rounded-pill text-bg-success">Event: {{ $activeEvent->name }}</span>
@@ -39,7 +39,7 @@
 					<span class="badge rounded-pill text-bg-danger">Event: None active</span>
 				@endif
 			</div>
-		@endif
+		@enddevmode
 
 		@yield('content')
 
