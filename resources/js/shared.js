@@ -27,7 +27,7 @@ export function debounce(func, wait, immediate) {
 export function applyLoading(elem, text) {
     if (text) {
         $(elem).data('original-text', $(elem).html())
-        	.html('<i class="fa fa-circle-o-notch fa-spin"></i> ' + text)
+        	.html('<i class="fa fa-circle-notch fa-spin"></i> ' + text)
 			.prop('disabled', true);
     } else {
 		$(elem).html($(elem).data('original-text'))
