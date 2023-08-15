@@ -58,6 +58,13 @@ class QuickCode extends UuidModel {
 	 * Generates and assigns a new code
 	 */
 	public function generateCode(): void {
-		$this->code = Str::padLeft(random_int(0, 9999), 4, '0');
+		$code = '';
+		while (strlen($code) < 4) {
+			// It is typically unwise to use base_convert for secure string generation due to precision issues,
+			// but in this case we are working with small enough numbers that the precision should never come into question
+			$code = base_convert(bin2hex(random_bytes(3)), 16, 36);
+		}
+
+		$this->code = Str::upper(Str::substr($code, 0, 4));
 	}
 }

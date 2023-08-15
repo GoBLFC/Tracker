@@ -16,10 +16,10 @@
 						<div class="card-body">
 							<form id="form" autocomplete="off">
 								<div class="input-group input-group-lg mb-3">
-									<input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" class="form-control text-center font-monospace fs-2" autofocus="on" />
-									<input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" class="form-control text-center font-monospace fs-2" />
-									<input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" class="form-control text-center font-monospace fs-2" />
-									<input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" class="form-control text-center font-monospace fs-2" />
+									<input type="text" maxlength="1" pattern="[a-zA-Z0-9]" class="form-control text-center font-monospace fs-2" autofocus="on" />
+									<input type="text" maxlength="1" pattern="[a-zA-Z0-9]" class="form-control text-center font-monospace fs-2" />
+									<input type="text" maxlength="1" pattern="[a-zA-Z0-9]" class="form-control text-center font-monospace fs-2" />
+									<input type="text" maxlength="1" pattern="[a-zA-Z0-9]" class="form-control text-center font-monospace fs-2" />
 								</div>
 								<button type="button" class="btn btn-primary w-100" id="btnLogin">Sign In</button>
 							</form>

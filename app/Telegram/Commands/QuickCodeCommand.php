@@ -28,7 +28,7 @@ class QuickCodeCommand extends Command {
 		$quickCode->save();
 
 		$this->replyWithMessage([
-			'text' => "<b>Quick Sign In Code:</b> {$quickCode->code}\nThis code expires in 30 seconds." . ($existingUnexpired ? ' Your old code was invalidated.' : ''),
+			'text' => "<b>Quick Sign In Code:</b> <code>{$quickCode->code}</code>\nThis code expires in 30 seconds." . ($existingUnexpired ? ' Your old code was invalidated.' : ''),
 			'parse_mode' => 'HTML',
 			'reply_markup' => $this->buildStandardActionsKeyboard(),
 		]);
