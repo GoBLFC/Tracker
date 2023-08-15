@@ -1,4 +1,4 @@
-import { postAction, humanDuration, clockDuration } from './shared.js';
+import { postAction, humanDuration, clockDuration, applyLoading } from './shared.js';
 
 $(() => {
     $('#checkinout').on('click', function () {
@@ -28,16 +28,6 @@ $(() => {
 		startShift(shiftStart);
 	}
 });
-
-function applyLoading(elem, text) {
-    const loadingText = '<i class="fa fa-circle-o-notch fa-spin"></i> ' + text;
-
-    if ($(elem).html() !== loadingText) {
-        $(elem).data('original-text', $(elem).html())
-        	.html(loadingText)
-			.prop('disabled', true);
-    }
-}
 
 function toggleStatus(status, success = true) {
     const $dept = $('#dept');
@@ -109,7 +99,6 @@ async function checkIn() {
 	const department = document.getElementById('dept').value;
 	try {
 		const { entry } = await postAction(checkinPostUrl, { department });
-		console.log(entry, new Date(entry.start));
 		startShift(new Date(entry.start));
 		toggleStatus('Out');
 	} catch(err) {

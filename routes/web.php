@@ -39,3 +39,9 @@ Route::middleware(['auth', 'not-banned'])->group(function () {
 		Route::post('/kiosk/deauthorize', 'postDeauthorize')->name('kiosk.deauthorize.post');
 	});
 });
+
+Route::middleware(['auth', 'role:lead'])->group(function () {
+	Route::controller(\App\Http\Controllers\ManagementController::class)->group(function () {
+		Route::get('/lead', 'getLeadIndex')->name('management.lead.index');
+	});
+});

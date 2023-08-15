@@ -29,9 +29,9 @@
 				@endauth
 
 				@kiosk(true)
-					<span class="badge rounded-pill text-bg-success">Kiosk: Authorized</span>
+					<span id="devKioskStatus" class="badge rounded-pill text-bg-success">Kiosk: Authorized</span>
 				@else
-					<span class="badge rounded-pill text-bg-danger">Kiosk: Unauthorized</span>
+					<span id="devKioskStatus" class="badge rounded-pill text-bg-danger">Kiosk: Unauthorized</span>
 				@endkiosk
 
 				@php $activeEvent = \App\Models\Setting::activeEvent(); @endphp

@@ -24,6 +24,17 @@ export function debounce(func, wait, immediate) {
     };
 };
 
+export function applyLoading(elem, text) {
+    if (text) {
+        $(elem).data('original-text', $(elem).html())
+        	.html('<i class="fa fa-circle-o-notch fa-spin"></i> ' + text)
+			.prop('disabled', true);
+    } else {
+		$(elem).html($(elem).data('original-text'))
+			.prop('disabled', false);
+	}
+}
+
 export function addRow(key, elem, data) {
     let innerTable = '';
     for (let i = 0; i < data.length; i++) {
@@ -48,10 +59,10 @@ export function getTableKey(object) {
 /**
  * Make a POST request to a given URL and automatically decode the response from JSON when applicable
  * @param {string|URL} url
- * @param {*} body
+ * @param {Object} body
  * @returns {*}
  */
-export async function postAction(url, body) {
+export async function postAction(url, body = {}) {
 	let response;
 	try {
 		// Make the request

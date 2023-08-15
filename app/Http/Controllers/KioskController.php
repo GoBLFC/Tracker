@@ -24,7 +24,7 @@ class KioskController extends Controller {
 		$kiosk = Kiosk::authorizeSession();
 
 		return $request->expectsJson()
-			? response()->json($kiosk)
+			? response()->json(['kiosk' => $kiosk])
 			: redirect()->back()->withSuccess('Authorized this session as a kiosk.');
 	}
 

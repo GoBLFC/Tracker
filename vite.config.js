@@ -10,6 +10,7 @@ export default defineConfig({
 				'resources/js/login.js',
 				'resources/js/tracker.js',
 				'resources/js/auto-logout.js',
+				'resources/js/toggle-kiosk.js',
 			],
 			refresh: true,
 		}),
