@@ -19,7 +19,7 @@
 								@if(!$ongoing)
 									<option value="" disabled selected hidden>Select Department</option>
 								@endif
-								@foreach($departments as $dept)
+								@foreach($departments->sortBy(['hidden', 'name']) as $dept)
 									<option {!! $ongoing && $ongoing->department_id === $dept->id ? 'selected' : '' !!} value="{!! $dept->id !!}">
 										{{ $dept->name . ($dept->hidden ? ' (hidden)' : '') }}
 									</option>
