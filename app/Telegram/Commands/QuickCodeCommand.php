@@ -15,6 +15,15 @@ class QuickCodeCommand extends Command {
 		$user = $this->getChatUserOrReply();
 		if (!$user) return;
 
+		// Don't allow any fancy users to generate quick codes
+		if ($user->isLead()) {
+			$this->replyWithMessage([
+				'text' => "In the interest of security, staff may not use quick sign-in codes. Sorry!",
+				'reply_markup' => $this->buildStandardActionsKeyboard(),
+			]);
+			return;
+		}
+
 		// Find an existing quick code for the user or make a new one
 		$quickCode = $user->quickCodes()->first();
 		$existingUnexpired = $quickCode && !$quickCode->isExpired();
