@@ -2,10 +2,19 @@
 
 namespace App\Models;
 
+use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class RewardClaim extends UuidModel {
+	use LogsActivity;
+
+	public function getActivitylogOptions(): LogOptions {
+		return LogOptions::defaults()
+			->submitEmptyLogs();
+	}
+
 	/**
 	 * Get the user that made this reward claim
 	 */

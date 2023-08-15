@@ -12,7 +12,8 @@
         "laravel/socialite": "^5.8",
         "laravel/tinker": "^2.8",
         "ramsey/uuid": "*",
-        "socialiteproviders/manager": "^4.3"
+        "socialiteproviders/manager": "^4.3",
+        "spatie/laravel-activitylog": "^4.7"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.8",

@@ -8,12 +8,14 @@ use Carbon\CarbonInterval;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Builder;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class TimeEntry extends UuidModel {
-	use HasFactory;
+	use HasFactory, LogsActivity;
 
 	protected $casts = [
 		'start' => 'datetime',
@@ -31,6 +33,13 @@ class TimeEntry extends UuidModel {
 		'auto',
 		'event_id',
 	];
+
+	public function getActivitylogOptions(): LogOptions {
+		return LogOptions::defaults()
+			->logOnly(['start', 'stop', 'notes', 'department_id', 'auto'])
+			->logOnlyDirty()
+			->submitEmptyLogs();
+	}
 
 	/**
 	 * Get the user this time entry is for

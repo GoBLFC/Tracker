@@ -2,13 +2,22 @@
 
 namespace App\Models;
 
+use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Builder;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Reward extends UuidModel {
-	use HasFactory, SoftDeletes;
+	use HasFactory, SoftDeletes, LogsActivity;
+
+	public function getActivitylogOptions(): LogOptions {
+		return LogOptions::defaults()
+			->logOnly(['name', 'description', 'hours'])
+			->logOnlyDirty()
+			->submitEmptyLogs();
+	}
 
 	/**
 	 * Get the event the reward is a part of

@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Support\Str;
+use Spatie\Activitylog\LogOptions;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Database\Eloquent\Builder;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\MassPrunable;
 
 class Kiosk extends UuidModel {
-	use MassPrunable;
+	use MassPrunable, LogsActivity;
 
 	/**
 	 * Cached authorization status
@@ -22,6 +24,11 @@ class Kiosk extends UuidModel {
 		static::creating(function ($model) {
 			if (!isset($model->session_key)) $model->session_key = Str::random(32);
 		});
+	}
+
+	public function getActivitylogOptions(): LogOptions {
+		return LogOptions::defaults()
+			->submitEmptyLogs();
 	}
 
 	/**

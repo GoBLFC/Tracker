@@ -2,13 +2,22 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Event extends UuidModel {
-	use HasFactory, SoftDeletes;
+	use HasFactory, SoftDeletes, LogsActivity;
+
+	public function getActivitylogOptions(): LogOptions {
+		return LogOptions::defaults()
+			->logOnly(['name'])
+			->logOnlyDirty()
+			->submitEmptyLogs();
+	}
 
 	/**
 	 * Get the time entries associated with this event

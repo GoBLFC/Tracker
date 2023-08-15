@@ -3,10 +3,14 @@
 namespace App\Models;
 
 use App\Casts\JsonValue;
-use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Setting extends Model {
+	use LogsActivity;
+
 	protected $keyType = 'string';
 
 	protected $casts = [
@@ -19,6 +23,13 @@ class Setting extends Model {
 	 * @var array<string, mixed>
 	 */
 	private static array $settingsCache = [];
+
+	public function getActivitylogOptions(): LogOptions {
+		return LogOptions::defaults()
+			->logOnly(['value'])
+			->logOnlyDirty()
+			->submitEmptyLogs();
+	}
 
 	/**
 	 * Stores a setting value in the database and clears any cached value for it

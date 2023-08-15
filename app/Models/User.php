@@ -4,12 +4,14 @@ namespace App\Models;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
+use Spatie\Activitylog\LogOptions;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\Cache;
 use App\Notifications\RewardAvailable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
 use Telegram\Bot\Laravel\Facades\Telegram;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -21,7 +23,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 
 class User extends UuidModel implements AuthenticatableContract, AuthorizableContract {
-	use HasFactory, SoftDeletes, Authenticatable, Authorizable, Notifiable;
+	use HasFactory, SoftDeletes, Authenticatable, Authorizable, Notifiable, LogsActivity;
 
 	public $incrementing = false;
 
@@ -48,6 +50,13 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 		static::creating(function ($model) {
 			if (!isset($model->tg_setup_key)) $model->generateTelegramSetupKey();
 		});
+	}
+
+	public function getActivitylogOptions(): LogOptions {
+		return LogOptions::defaults()
+			->logOnly(['badge_id', 'username', 'first_name', 'last_name', 'badge_name', 'role'])
+			->logOnlyDirty()
+			->dontSubmitEmptyLogs();
 	}
 
 	/**
