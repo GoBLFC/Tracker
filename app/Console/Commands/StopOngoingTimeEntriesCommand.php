@@ -37,7 +37,9 @@ class StopOngoingTimeEntriesCommand extends Command {
 		$hourAgo = now()->subHour();
 		foreach ($entries as $entry) {
 			$entry->stop = $entry->start->lt($hourAgo) ? $entry->start->avoidMutation()->addHour() : $now;
+			$entry->auto = true;
 			$entry->save();
+
 			$entry->user->notify(new TimeEntryAutoStopped($entry));
 			$this->info("TimeEntry {$entry->id} stopped at {$entry->stop}.");
 		}
