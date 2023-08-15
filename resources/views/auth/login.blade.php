@@ -11,7 +11,7 @@
 
 					<div class="card mt-5">
 						<h5 class="card-header text-center">
-							Quick Sign In Code <span data-bs-toggle="tooltip" data-bs-title="Link your Telegram account after you sign in above to get a quick code anytime!"><i class="fa-regular fa-circle-question"></i></span>
+							Quick Sign-in Code <span data-bs-toggle="tooltip" data-bs-title="Link your Telegram account after you sign in above to get a quick code anytime!"><i class="fa-regular fa-circle-question"></i></span>
 						</h5>
 						<div class="card-body">
 							<form id="form" autocomplete="off">
