@@ -1,8 +1,8 @@
-import { postAction } from './shared.js'
+import { initTooltips, postAction } from './shared.js'
 
-$(function () {
-	$('[data-bs-toggle="tooltip"]').tooltip()
-})
+document.addEventListener('DOMContentLoaded', () => {
+	initTooltips();
+});
 
 const form = document.querySelector('form')
 const inputs = form.querySelectorAll('input')

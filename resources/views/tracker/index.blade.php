@@ -6,7 +6,7 @@
 
 		<div class="card-body">
 			<div class="row">
-				@activeevent
+				@activeEvent
 					@kiosk
 						<div class="col-md">
 							<div id="checkstatus" class="alert alert-{!! $ongoing ? 'success' : 'danger' !!} py-2 mb-0 h-100 d-flex align-items-center" role="alert">
@@ -48,7 +48,7 @@
 							</p>
 						</div>
 					</div>
-				@endactiveevent
+				@endactiveEvent
 			</div>
 		</div>
 	</div>
@@ -57,7 +57,7 @@
 		@include('partials.management-nav')
 	@endlead
 
-	@activeevent
+	@activeEvent
 		<div class="card mb-3">
 			<h5 class="card-header">Your Stats</h5>
 
@@ -97,28 +97,27 @@
 				</div>
 			</div>
 		</div>
-	@endactiveevent
+	@endactiveEvent
 
 	<button class="btn btn-lg btn-info" data-bs-toggle="modal" data-bs-target="#telegramModal"><i class="fa-brands fa-telegram"></i> Telegram Bot</button>
 @endsection
 
-@section('modals')
-	@parent
+@push('modals')
 	@include('partials.telegram-modal')
-@endsection
+@endpush
 
-@section('scripts')
-	@parent
+@push('modules')
+	@vite('resources/js/tracker.js')
+@endpush
 
+@push('scripts')
 	<script type="text/javascript">
-		var checkinPostUrl = '{!! route('tracker.checkin.post') !!}';
-		var checkoutPostUrl = '{!! route('tracker.checkout.post') !!}';
-		var time = {
+		const checkinPostUrl = '{!! route('tracker.checkin.post') !!}';
+		const checkoutPostUrl = '{!! route('tracker.checkout.post') !!}';
+		const time = {
 			total: {!! $stats['total'] !!} * 1000,
 			day: {!! $stats['day'] !!} * 1000,
 			ongoingStart: {!! $ongoing?->start?->timestamp * 1000 ?? 'null' !!},
 		};
 	</script>
-
-	@vite('resources/js/tracker.js')
-@endsection
+@endpush

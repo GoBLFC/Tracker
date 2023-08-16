@@ -1,3 +1,8 @@
+import $ from 'jquery';
+import Swal from 'sweetalert2/dist/sweetalert2.js';
+import { Tooltip } from 'bootstrap';
+import { Duration } from 'luxon';
+
 export const Toast = Swal.mixin({
     toast: true,
     position: "top-end",
@@ -127,7 +132,7 @@ export class ServerError extends Error {
  * @returns {string}
  */
 export function humanDuration(timeMs) {
-	const duration = luxon.Duration.fromMillis(timeMs).shiftTo('hours', 'minutes');
+	const duration = Duration.fromMillis(timeMs).shiftTo('hours', 'minutes');
 
 	if(duration.hours > 0) {
 		if(duration.minutes < 1) return duration.toFormat("h'h'");
@@ -143,7 +148,15 @@ export function humanDuration(timeMs) {
  * @returns {string}
  */
 export function clockDuration(timeMs) {
-	const duration = luxon.Duration.fromMillis(timeMs).shiftTo('hours', 'minutes', 'seconds');
+	const duration = Duration.fromMillis(timeMs).shiftTo('hours', 'minutes', 'seconds');
 	if(duration.hours > 0) return duration.toFormat('h:mm:ss');
 	return duration.toFormat('m:ss');
+}
+
+/**
+ * Initializes any Bootstrap tooltips on the page
+ */
+export function initTooltips() {
+	const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+	for(const tooltipEl of tooltipTriggerList) new Tooltip(tooltipEl);
 }

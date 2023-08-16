@@ -2,13 +2,13 @@
 	<a id="logout" class="btn btn-danger btn-sm" role="button" href="{!! route('auth.logout') !!}">Logout</a>
 </div>
 
-@section('scripts')
-	@parent
-
-	<script type="text/javascript">
-		var logoutUrl = '{!! route('auth.logout') !!}';
-		var logoutTime = @devmode 3600 @else 60 @enddevmode;
-	</script>
-
+@push('modules')
 	@vite('resources/js/auto-logout.js')
-@endsection
+@endpush
+
+@push('scripts')
+	<script type="text/javascript">
+		const logoutUrl = '{!! route('auth.logout') !!}';
+		const logoutTime = @devMode 3600 @else 60 @enddevMode;
+	</script>
+@endpush

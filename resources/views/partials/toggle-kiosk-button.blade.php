@@ -4,13 +4,13 @@
 	<button type="button" id="toggleKiosk" class="btn btn-sm btn-warning" data-kiosk="false">Authorize Kiosk</button>
 @endkiosk
 
-@section('scripts')
-	@parent
-
-	<script type="text/javascript">
-		var kioskAuthorizeUrl = '{!! route('kiosk.authorize.post') !!}';
-		var kioskDeauthorizeUrl = '{!! route('kiosk.deauthorize.post') !!}';
-	</script>
-
+@push('modules')
 	@vite('resources/js/toggle-kiosk.js')
-@endsection
+@endpush
+
+@push('scripts')
+	<script type="text/javascript">
+		const kioskAuthorizePostUrl = '{!! route('kiosk.authorize.post') !!}';
+		const kioskDeauthorizePostUrl = '{!! route('kiosk.deauthorize.post') !!}';
+	</script>
+@endpush

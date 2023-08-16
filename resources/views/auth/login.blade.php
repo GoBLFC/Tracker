@@ -31,12 +31,12 @@
 	</div>
 @endsection
 
-@section('scripts')
-	@parent
-
-	<script type="text/javascript">
-		var quickcodePostUrl = '{!! route('auth.quickcode.post') !!}';
-	</script>
-
+@push('modules')
 	@vite('resources/js/login.js')
-@endsection
+@endpush
+
+@push('scripts')
+	<script type="text/javascript">
+		const quickcodePostUrl = '{!! route('auth.quickcode.post') !!}';
+	</script>
+@endpush

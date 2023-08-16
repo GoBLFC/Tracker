@@ -8,7 +8,7 @@ toggleKioskBtn.addEventListener('click', async () => {
 	applyLoading(toggleKioskBtn, `${isKiosk ? 'Deauthorizing' : 'Authorizing'} Kiosk...`, true);
 
 	try {
-		const response = await postAction(isKiosk ? kioskDeauthorizeUrl : kioskAuthorizeUrl);
+		const response = await postAction(isKiosk ? kioskDeauthorizePostUrl : kioskAuthorizePostUrl);
 		isKiosk = Boolean(response?.kiosk);
 		Toast.fire({
 			text: isKiosk ? 'Kiosk authorized.' : 'Kiosk deauthorized.',

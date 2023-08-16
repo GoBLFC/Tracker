@@ -1,4 +1,6 @@
-import { postAction, humanDuration, clockDuration, applyLoading } from './shared.js';
+import $ from 'jquery';
+import Swal from 'sweetalert2/dist/sweetalert2.js';
+import { postAction, humanDuration, clockDuration, applyLoading, initTooltips } from './shared.js';
 
 $(() => {
     $('#checkinout').on('click', function () {
@@ -17,7 +19,7 @@ $(() => {
 		$('#checkinout').prop('disabled', !$(this).val());
 	});
 
-    $('[data-bs-toggle="tooltip"]').tooltip();
+    initTooltips();
 
 	// If a shift is already ongoing, adjust the total and day time for it and then start the clock
 	if(time.ongoingStart) {
