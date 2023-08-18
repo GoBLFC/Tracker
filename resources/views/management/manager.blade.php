@@ -6,6 +6,15 @@
 
 		<div class="card-body">
 
+			@unlessactiveEvent
+				<div class="alert alert-info" role="alert">
+					<p class="mb-0">
+						There isn't currently any event running.
+						Most time-related information/functionality will be unavailable.
+					</p>
+				</div>
+			@endactiveEvent
+
 			<div class="card mb-4">
 				<div class="card-header">Search Volunteers</div>
 
