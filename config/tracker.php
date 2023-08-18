@@ -30,8 +30,7 @@ return [
     | Tracker Timezone
     |--------------------------------------------------------------------------
     |
-    | The timezone to default to displaying dates/times in for any
-	| that are rendered server-side.
+    | The timezone to display dates/times in and interpret user input as.
     |
     */
 	'timezone' => env('TRACKER_TIMEZONE', 'America/Los_Angeles'),
