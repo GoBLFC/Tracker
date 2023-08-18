@@ -1,4 +1,4 @@
-import { initTooltips, postAction } from './shared.js'
+import { initTooltips, sendPostRequest } from './shared.js'
 
 document.addEventListener('DOMContentLoaded', () => {
 	initTooltips();
@@ -24,7 +24,7 @@ async function submitCode() {
 	const code = Array.from(inputs).reduce((acc, input) => acc + input.value, '');
 
 	try {
-		await postAction(quickcodePostUrl, { code });
+		await sendPostRequest(quickcodePostUrl, { code });
 		window.location.reload();
 	} catch(err) {
 		inputs.forEach(input => { input.value = ''; });

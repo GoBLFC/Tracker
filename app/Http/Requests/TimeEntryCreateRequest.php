@@ -2,15 +2,15 @@
 
 namespace App\Http\Requests;
 
-use App\Models\TimeEntry;
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
-class CheckInRequest extends FormRequest {
+class TimeEntryCreateRequest extends FormRequest {
 	/**
 	 * Determine if the user is authorized to make this request.
 	 */
 	public function authorize(): bool {
-		return $this->user()->can('create', [TimeEntry::class, $this->user()]);
+		return $this->user()->isManager();
 	}
 
 	/**
@@ -19,8 +19,13 @@ class CheckInRequest extends FormRequest {
 	 * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
 	 */
 	public function rules(): array {
+		$start = $this->input('start');
 		return [
+			'event_id' => 'sometimes|nullable|uuid|exists:App\Models\Event,id',
 			'department_id' => 'required|uuid|exists:App\Models\Department,id',
+			'start' => 'sometimes|nullable|required_with:stop|date|before_or_equal:now',
+			'stop' => "sometimes|nullable|date|after:{$start}",
+			'notes' => 'sometimes|nullable|string|max:255',
 		];
 	}
 }

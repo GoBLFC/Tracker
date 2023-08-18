@@ -43,7 +43,7 @@ export function applyLoading(elem, text) {
 export function addRow(key, elem, data) {
     let innerTable = '';
     for (let i = 0; i < data.length; i++) {
-        const t = (key && i === 0) ? 'th' : 'td';
+        const t = (key && i === 0) ? 'th scope="row"' : 'td';
         innerTable += '<' + t + '>' + data[i] + '</' + t + '>';
     }
     $(elem).append('<tr>' + innerTable + '</tr>');
@@ -62,22 +62,21 @@ export function getTableKey(object) {
 }
 
 /**
- * Make a POST request to a given URL and automatically decode the response from JSON when applicable
+ * Make a request to a given URL and automatically decode the response from JSON when applicable
  * @param {string|URL} url
- * @param {Object} body
+ * @param {Object} options
  * @returns {*}
  */
-export async function postAction(url, body = {}) {
+export async function sendRequest(url, options) {
 	let response;
 	try {
 		// Make the request
 		response = await fetch(url, {
-			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 				Accept: 'application/json',
 			},
-			body: JSON.stringify({ ...body, _token }),
+			...options,
 		});
 	} catch(err) {
 		// Display a generic error message in the case of a network error
@@ -108,6 +107,59 @@ export async function postAction(url, body = {}) {
 
 	console.error(`Server returned ${response.status} error:`, data);
 	throw new ServerError(response.status, data.error ?? data.message ?? data);
+}
+
+/**
+ * Make a GET request to a given URL and automatically decode the response from JSON when applicable
+ * @param {string|URL} url
+ * @param {Object} parameters
+ * @returns {*}
+ */
+export async function sendGetRequest(url, params = {}) {
+	// Build the URL with the query string for the request
+	const urlQS = new URL(url);
+	for(const [key, val] of Object.entries(params)) urlQS.searchParams.set(key, val);
+
+	return sendRequest(urlQS, { method: 'GET' });
+}
+
+/**
+ * Make a POST request to a given URL and automatically decode the response from JSON when applicable
+ * @param {string|URL} url
+ * @param {Object} body
+ * @returns {*}
+ */
+export async function sendPostRequest(url, body = {}) {
+	return sendRequest(url, {
+		method: 'POST',
+		body: JSON.stringify({ _token, ...body }),
+	});
+}
+
+/**
+ * Make a PUT request to a given URL and automatically decode the response from JSON when applicable
+ * @param {string|URL} url
+ * @param {Object} body
+ * @returns {*}
+ */
+export async function sendPutRequest(url, body = {}) {
+	return sendRequest(url, {
+		method: 'PUT',
+		body: JSON.stringify({ _token, ...body }),
+	});
+}
+
+/**
+ * Make a DELETE request to a given URL and automatically decode the response from JSON when applicable
+ * @param {string|URL} url
+ * @param {Object} body
+ * @returns {*}
+ */
+export async function sendDeleteRequest(url, body = {}) {
+	return sendRequest(url, {
+		method: 'DELETE',
+		body: JSON.stringify({ _token, ...body }),
+	});
 }
 
 /**
@@ -156,7 +208,7 @@ export function clockDuration(timeMs) {
 /**
  * Initializes any Bootstrap tooltips on the page
  */
-export function initTooltips() {
-	const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+export function initTooltips(elem = document) {
+	const tooltipTriggerList = elem.querySelectorAll('[data-bs-toggle="tooltip"]');
 	for(const tooltipEl of tooltipTriggerList) new Tooltip(tooltipEl);
 }

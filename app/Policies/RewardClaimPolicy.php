@@ -9,8 +9,8 @@ class RewardClaimPolicy {
 	/**
 	 * Determine whether the user can view any models.
 	 */
-	public function viewAny(User $user): bool {
-		return $user->isManager();
+	public function viewAny(User $user, ?User $target = null): bool {
+		return $user->id === $target?->id || $user->isManager();
 	}
 
 	/**

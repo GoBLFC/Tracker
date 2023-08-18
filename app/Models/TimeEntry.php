@@ -36,7 +36,7 @@ class TimeEntry extends UuidModel {
 
 	public function getActivitylogOptions(): LogOptions {
 		return LogOptions::defaults()
-			->logOnly(['start', 'stop', 'notes', 'department_id', 'auto'])
+			->logOnly(['start', 'stop', 'notes', 'auto', 'department_id', 'user_id', 'event_id'])
 			->logOnlyDirty()
 			->submitEmptyLogs();
 	}
@@ -220,7 +220,11 @@ class TimeEntry extends UuidModel {
 		$seconds -= $seconds % 60;
 		// Intervals don't seem to support 0 values, instead becoming 1s
 		if ($seconds === 0) return '0m';
-		return CarbonInterval::seconds($seconds)->cascade()->forHumans(['short' => true]);
+		return CarbonInterval::seconds($seconds)->cascade()->forHumans([
+			'short' => true,
+			'skip' => ['day'],
+			'parts' => 2,
+		]);
 	}
 
 	/**

@@ -1,15 +1,16 @@
-import { applyLoading, postAction, Toast } from './shared.js';
+import { applyLoading, sendPostRequest, Toast } from './shared.js';
 
 const toggleKioskBtn = document.getElementById('toggleKiosk');
 const devKioskStatus = document.getElementById('devKioskStatus');
-let isKiosk = JSON.parse(toggleKioskBtn.getAttribute('data-kiosk'));
 
 toggleKioskBtn.addEventListener('click', async () => {
+	let isKiosk = JSON.parse(toggleKioskBtn.getAttribute('data-kiosk'));
 	applyLoading(toggleKioskBtn, `${isKiosk ? 'Deauthorizing' : 'Authorizing'} Kiosk...`, true);
 
 	try {
-		const response = await postAction(isKiosk ? kioskDeauthorizePostUrl : kioskAuthorizePostUrl);
-		isKiosk = Boolean(response?.kiosk);
+		const data = await sendPostRequest(isKiosk ? kioskDeauthorizePostUrl : kioskAuthorizePostUrl);
+		isKiosk = Boolean(data?.kiosk);
+		toggleKioskBtn.setAttribute('data-kiosk', isKiosk);
 		Toast.fire({
 			text: isKiosk ? 'Kiosk authorized.' : 'Kiosk deauthorized.',
 			icon: 'success',

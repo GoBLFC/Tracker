@@ -10,8 +10,8 @@ class TimeEntryPolicy {
 	/**
 	 * Determine whether the user can view any models.
 	 */
-	public function viewAny(User $user): bool {
-		return $user->isManager();
+	public function viewAny(User $user, ?User $target = null): bool {
+		return $user->id === $target?->id || $user->isManager();
 	}
 
 	/**
@@ -24,8 +24,8 @@ class TimeEntryPolicy {
 	/**
 	 * Determine whether the user can create models.
 	 */
-	public function create(User $creator, User $target): bool {
-		return ($creator->id === $target->id && Kiosk::isSessionAuthorized()) || $creator->isManager();
+	public function create(User $creator, ?User $target = null): bool {
+		return ($creator->id === $target?->id && Kiosk::isSessionAuthorized()) || $creator->isManager();
 	}
 
 	/**

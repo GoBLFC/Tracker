@@ -41,6 +41,7 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 
 	protected $hidden = [
 		'tg_setup_key',
+		'tg_chat_id',
 	];
 
 	protected static function boot() {
@@ -130,6 +131,13 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 	}
 
 	/**
+	 * Get the user's full real name
+	 */
+	public function getRealName(): string {
+		return "{$this->first_name} {$this->last_name}";
+	}
+
+	/**
 	 * Get the total earned time (in seconds) for an event
 	 * @param ?Event $event Event to get the earned time for - if null, then the active event will be used
 	 * @param ?Collection $timeEntries Time entries to look through (to avoid extra queries if already retrieved)
@@ -176,7 +184,11 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 		$offsetDate = $date->avoidMutation()->subHours($boundaryHour);
 
 		// Get all of the time entries from the user for the given event, along with the time bonuses that may apply
-		$timeEntries = $this->timeEntries()->with(['department.timeBonuses'])->forEvent($event)->get();
+		$timeEntries = $this->timeEntries()
+			->with(['department.timeBonuses'])
+			->forEvent($event)
+			->orderBy('start')
+			->get();
 		$bonuses = $timeEntries->pluck('department.timeBonuses')->flatten()->unique('id');
 
 		// Add up the duration and bonus time of all time entries to get the total time for the event

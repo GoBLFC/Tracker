@@ -4,12 +4,12 @@
 		<div class="row gx-3">
 			@lead
 				<div class="col-md">
-					<a role="button" class="btn btn-secondary d-block" href="{!! route('management.lead.index') !!}">Lead Panel</a>
+					<a role="button" class="btn btn-secondary d-block" href="{!! route('management.lead') !!}">Lead Panel</a>
 				</div>
 			@endlead
 			@manager
 				<div class="col-md">
-					<a role="button" class="btn btn-secondary d-block" href="/manage.php">Management Panel</a>
+					<a role="button" class="btn btn-secondary d-block" href="{!! route('management.manager') !!}">Management Panel</a>
 				</div>
 			@endmanager
 			@admin

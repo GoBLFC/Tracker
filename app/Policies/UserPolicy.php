@@ -23,7 +23,7 @@ class UserPolicy {
 	 * Determine whether the user can create models.
 	 */
 	public function create(User $user): bool {
-		return $user->isAdmin();
+		return $user->isManager();
 	}
 
 	/**
