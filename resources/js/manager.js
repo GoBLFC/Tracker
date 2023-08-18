@@ -1,13 +1,12 @@
 import $ from 'jquery';
-import { TempusDominus } from '@eonasdan/tempus-dominus';
+import { TempusDominus, Namespace as TDNamespace } from '@eonasdan/tempus-dominus';
 import { DateTime } from 'luxon';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 import { addRow, debounce, sendGetRequest, sendPostRequest, sendPutRequest, sendDeleteRequest, Toast, initTooltips, humanDuration } from './shared.js';
 import { renderTimes, shiftInterval, startShift, stopShift } from './tracker.js';
 
-const timeStart = new TempusDominus(document.getElementById("timeStart"));
-const timeStop = new TempusDominus(document.getElementById("timeStop"));
-
+let timeStart;
+let timeStop;
 let currentUser = null;
 let time = null;
 
@@ -37,6 +36,20 @@ $(() => {
 	$('#addtime').on('click', function() {
 		addTime();
 	});
+
+	// Set up time pickers
+	timeStart = new TempusDominus(document.getElementById("timeStart"), { restrictions: { maxDate: new Date() } });
+	timeStop = new TempusDominus(document.getElementById("timeStop"));
+
+	// Update the minimum datetime of the stop time whenever the start time changes
+	timeStart.subscribe(TDNamespace.events.change, evt => {
+		timeStop.updateOptions({ restrictions: { minDate: evt.date } });
+	});
+
+	// Update the maximum datetime of the start time every 5 seconds
+	setInterval(() => {
+		timeStart.updateOptions({ restrictions: { maxDate: new Date() } });
+	}, 5000);
 });
 
 async function userSearch(input) {
