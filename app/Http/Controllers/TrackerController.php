@@ -155,6 +155,7 @@ class TrackerController extends Controller {
 		$entry->event_id = $input['event_id'];
 		$entry->department_id = $input['department_id'];
 		$entry->user_id = $user->id;
+		$entry->creator_user_id = $request->user()->id;
 		$entry->save();
 
 		return response()->json(['time_entry' => $entry, 'raw' => Carbon::parse($input['start'])]);
