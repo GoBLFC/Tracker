@@ -19,6 +19,9 @@
 
 	@prepend('modules')
 		@vite('resources/js/app.js')
+		@auth
+			@vite('resources/js/auto-logout.js')
+		@endauth
 	@endprepend
 	@stack('modules')
 </head>
@@ -54,7 +57,9 @@
 		@yield('content')
 
 		@auth
-			@include('partials.auto-logout')
+			<div class="autologout float-end mb-3">
+				<a id="logout" class="btn btn-danger btn-sm" role="button" href="{!! route('auth.logout') !!}">Logout</a>
+			</div>
 		@endauth
 
 		<button class="btn btn-sm btn-light float-end me-2" data-bs-toggle="modal" data-bs-target="#aboutModal">About</button>
@@ -68,6 +73,10 @@
 	@prepend('scripts')
 		<script type="text/javascript">
 			const _token = '{!! csrf_token() !!}';
+			@auth
+				const logoutUrl = '{!! route('auth.logout') !!}';
+				const logoutTime = @devMode 3600 @else 60 @enddevMode;
+			@endauth
 		</script>
 	@endprepend
 	@stack('scripts')
