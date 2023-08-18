@@ -25,4 +25,15 @@ return [
 
 	'kiosk_duration' => env('TRACKER_KIOSK_DURATION', 24 * 7),
 
+	/*
+    |--------------------------------------------------------------------------
+    | Tracker Timezone
+    |--------------------------------------------------------------------------
+    |
+    | The timezone to default to displaying dates/times in for any
+	| that are rendered server-side.
+    |
+    */
+	'timezone' => env('TRACKER_TIMEZONE', 'America/Los_Angeles'),
+
 ];

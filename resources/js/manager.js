@@ -2,7 +2,7 @@ import $ from 'jquery';
 import { TempusDominus, Namespace as TDNamespace } from '@eonasdan/tempus-dominus';
 import { DateTime } from 'luxon';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
-import { addRow, debounce, sendGetRequest, sendPostRequest, sendPutRequest, sendDeleteRequest, Toast, initTooltips, humanDuration } from './shared.js';
+import { addRow, debounce, sendGetRequest, sendPostRequest, sendPutRequest, sendDeleteRequest, Toast, initTooltips, humanDuration, prepareDateForInput } from './shared.js';
 import { renderTimes, shiftInterval, startShift, stopShift } from './tracker.js';
 
 let timeStart;
@@ -116,8 +116,8 @@ async function loadVolunteer(id) {
 
 	// Add time entries
 	$.each(timeData.stats.entries, function (index, value) {
-		const checkIn = DateTime.fromISO(value.start);
-		const checkOut = value.stop ? DateTime.fromISO(value.stop) : null;
+		const checkIn = DateTime.fromISO(value.start).setZone(timezone);
+		const checkOut = value.stop ? DateTime.fromISO(value.stop).setZone(timezone) : null;
 		const worked = (checkOut ?? DateTime.now()).diff(checkIn);
 		addEntryRow(
 			value.id,
@@ -191,9 +191,7 @@ async function createUser(badge_id) {
 async function checkIn() {
 	const department_id = $("#dept").val();
 	const notes = $("#notes").val();
-	let start = null;
-
-	if (timeStart.dates.picked[0]) start = timeStart.dates.picked[0].toISOString();
+	const start = timeStart.dates.picked[0] ? prepareDateForInput(timeStart.dates.picked[0], timezone) : null;
 
 	await sendPutRequest(timePutUrl.replace(/id/, currentUser.id), { department_id, start, notes });
 
@@ -205,8 +203,8 @@ async function checkIn() {
 }
 
 async function addTime() {
-	const start = timeStart.dates.picked[0] ? timeStart.dates.picked[0].toISOString() : null;
-	const stop = timeStop.dates.picked[0] ? timeStop.dates.picked[0].toISOString() : null;
+	const start = timeStart.dates.picked[0] ? prepareDateForInput(timeStart.dates.picked[0], timezone) : null;
+	const stop = timeStop.dates.picked[0] ? prepareDateForInput(timeStop.dates.picked[0], timezone) : null;
 	const department_id = $("#dept").val();
 	const notes = $("#notes").val();
 

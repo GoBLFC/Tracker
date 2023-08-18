@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 import { Tooltip } from 'bootstrap';
-import { Duration } from 'luxon';
+import { DateTime, Duration } from 'luxon';
 
 export const Toast = Swal.mixin({
     toast: true,
@@ -207,8 +207,20 @@ export function clockDuration(timeMs) {
 
 /**
  * Initializes any Bootstrap tooltips on the page
+ * @param {Element|Document} [elem=document]
  */
 export function initTooltips(elem = document) {
 	const tooltipTriggerList = elem.querySelectorAll('[data-bs-toggle="tooltip"]');
 	for(const tooltipEl of tooltipTriggerList) new Tooltip(tooltipEl);
+}
+
+/**
+ * Converts a local JS date to the given timezone, modifying the timestamp, and returns it as an ISO string
+ * @param {Date} date
+ * @param {string} timezone
+ */
+export function prepareDateForInput(date, timezone) {
+	return DateTime.fromJSDate(date)
+		.setZone(timezone, { keepLocalTime: true })
+		.toISO();
 }

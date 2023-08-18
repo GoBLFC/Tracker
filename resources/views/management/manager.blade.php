@@ -200,7 +200,7 @@
 												<span class="badge text-bg-success rounded-pill">Checked In</span>
 											@endif
 										</td>
-										<td>{!! $activity->created_at->toDayDateTimeString() !!}</td>
+										<td>{!! $activity->created_at->timezone(config('tracker.timezone'))->toDayDateTimeString() !!}</td>
 										<td>{!! $activity->subject->getHumanDuration() !!}</td>
 									</tr>
 								@endforeach
@@ -237,7 +237,7 @@
 										<td>{{ $entry->user->badge_name }}</td>
 										<td>{{ $entry->user->getRealName() }}</td>
 										<td>{{ $entry->department->name }}</td>
-										<td>{!! $entry->start->toDayDateTimeString() !!}</td>
+										<td>{!! $entry->start->timezone(config('tracker.timezone'))->toDayDateTimeString() !!}</td>
 										<td>{!! $entry->getHumanDuration() !!}</td>
 									</tr>
 								@endforeach
@@ -281,6 +281,7 @@
 
 @push('scripts')
 	<script type="text/javascript">
+		const timezone = '{!! config('tracker.timezone') !!}';
 		const trackerStatsUrl = '{!! route('tracker.user.stats', 'id') !!}';
 		const userClaimsUrl = '{!! route('user.claims', 'id') !!}';
 		const userClaimsPutUrl = '{!! route('user.claims.put', 'id') !!}';
