@@ -39,7 +39,7 @@ class UserController extends Controller {
 				->orWhere('last_name', 'like', $wildQuery)
 				->with([
 					'timeEntries' => function (Builder $query) {
-						$query->ongoing();
+						$query->ongoing()->forEvent();
 					},
 					'timeEntries.department',
 				])
