@@ -140,6 +140,13 @@ class TrackerController extends Controller {
 		if (!isset($input['event_id'])) $input['event_id'] = Setting::activeEvent()->id;
 		if (!$input['event_id']) return response()->json(['error' => 'No event to create time entry for.'], 409);
 
+		// Don't allow an ongoing entry to be created if there already is one
+		if (!isset($input['stop'])) {
+			if ($user->timeEntries()->ongoing()->forEvent($input['event_id'])->exists()) {
+				return response()->json(['error' => 'User already has an ongoing time entry.'], 409);
+			}
+		}
+
 		// Create the time entry
 		$entry = new TimeEntry;
 		$entry->start = isset($input['start']) ? Carbon::parse($input['start'])->timezone(config('app.timezone')) : now();
