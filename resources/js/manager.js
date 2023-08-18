@@ -101,7 +101,7 @@ async function loadVolunteer(id) {
 			.text("Unclaim");
 	});
 
-	// Add entries
+	// Add time entries
 	$.each(timeData.stats.entries, function (index, value) {
 		const checkIn = DateTime.fromISO(value.start);
 		const checkOut = value.stop ? DateTime.fromISO(value.stop) : null;
