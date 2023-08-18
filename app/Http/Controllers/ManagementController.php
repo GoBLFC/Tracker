@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Activity;
 use App\Models\Department;
 use App\Models\Reward;
+use App\Models\Setting;
 use App\Models\TimeEntry;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\View\View;
 
 class ManagementController extends Controller {
@@ -30,8 +32,9 @@ class ManagementController extends Controller {
 				->limit(10)
 				->get(),
 			'recentTimeActivities' => Activity::with(['subject', 'subject.user'])
-				->has('subject')
-				->whereSubjectType(TimeEntry::class)
+				->whereHasMorph('subject', TimeEntry::class, function (Builder $query) {
+					$query->whereEventId(Setting::activeEvent()?->id);
+				})
 				->orderByDesc('created_at')
 				->limit(10)
 				->get()
