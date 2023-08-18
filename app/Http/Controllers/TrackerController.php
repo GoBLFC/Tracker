@@ -137,7 +137,7 @@ class TrackerController extends Controller {
 
 		// Make sure we have an event
 		$input = $request->safe();
-		if (!isset($input['event_id'])) $input['event_id'] = Setting::activeEvent()->id;
+		if (!isset($input['event_id'])) $input['event_id'] = Setting::activeEvent()?->id;
 		if (!$input['event_id']) return response()->json(['error' => 'No event to create time entry for.'], 409);
 
 		// Don't allow an ongoing entry to be created if there already is one
