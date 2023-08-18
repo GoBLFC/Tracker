@@ -64,26 +64,30 @@
 
 					<div class="card mb-3">
 						<div class="card-header">Reward Claims</div>
-						<div class="card-body">
-							<table class="table text-center">
-								<thead>
-									<tr>
-										@foreach($rewards as $reward)
-											<th scope="col">{!! $reward->hours !!}hr: {{ $reward->name }}</th>
-										@endforeach
-									</tr>
-								</thead>
-								<tbody>
-									<tr id="rewards">
-										@foreach($rewards as $reward)
-											<td>
-												<button type="button" class="btn btn-sm btn-danger claim" data-type="reward" data-reward-id="{!! $reward->id !!}">Claim</button>
-											</td>
-										@endforeach
-									</tr>
-								</tbody>
-							</table>
-						</div>
+						@if($rewards->count() > 0)
+							<div class="card-body">
+								<table class="table text-center">
+									<thead>
+										<tr>
+											@foreach($rewards as $reward)
+												<th scope="col">{!! $reward->hours !!}hr: {{ $reward->name }}</th>
+											@endforeach
+										</tr>
+									</thead>
+									<tbody>
+										<tr id="rewards">
+											@foreach($rewards as $reward)
+												<td>
+													<button type="button" class="btn btn-sm btn-danger claim" data-type="reward" data-reward-id="{!! $reward->id !!}">Claim</button>
+												</td>
+											@endforeach
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						@else
+							<p class="card-body mb-0">There are no rewards available.</p>
+						@endif
 					</div>
 
 					<div class="card mb-3">
