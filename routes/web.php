@@ -34,19 +34,14 @@ Route::middleware(['auth', 'not-banned'])->group(function () {
 		Route::delete('/time/{timeEntry}', 'deleteTimeEntry')->name('tracker.time.delete');
 	});
 
-	Route::controller(\App\Http\Controllers\NotificationsController::class)->group(function () {
-		Route::get('/alerts', 'getIndex')->name('notifications.index');
-		Route::post('/alerts/acknowledge', 'postAcknowledge')->name('notifications.acknowledge');
-	});
-
-	Route::controller(\App\Http\Controllers\KioskController::class)->group(function () {
-		Route::post('/kiosk/authorize', 'postAuthorize')->name('kiosk.authorize.post');
-		Route::post('/kiosk/deauthorize', 'postDeauthorize')->name('kiosk.deauthorize.post');
-	});
-
 	Route::controller(\App\Http\Controllers\UserController::class)->group(function () {
 		Route::post('/user/create', 'postCreate')->name('user.create.post');
 		Route::get('/user/search', 'getSearch')->name('user.search');
+	});
+
+	Route::controller(\App\Http\Controllers\NotificationsController::class)->group(function () {
+		Route::get('/alerts', 'getIndex')->name('notifications.index');
+		Route::post('/alerts/acknowledge', 'postAcknowledge')->name('notifications.acknowledge');
 	});
 
 	Route::controller(\App\Http\Controllers\RewardClaimController::class)->group(function () {
@@ -54,6 +49,11 @@ Route::middleware(['auth', 'not-banned'])->group(function () {
 		Route::get('/user/{user}/claims/event/{event}', 'getClaims')->name('user.claims.event');
 		Route::put('/user/{user}/claims', 'putClaim')->name('user.claims.put');
 		Route::delete('/claim/{rewardClaim}', 'deleteClaim')->name('user.claims.delete');
+	});
+
+	Route::controller(\App\Http\Controllers\KioskController::class)->group(function () {
+		Route::post('/kiosk/authorize', 'postAuthorize')->name('kiosk.authorize.post');
+		Route::post('/kiosk/deauthorize', 'postDeauthorize')->name('kiosk.deauthorize.post');
 	});
 
 	Route::controller(\App\Http\Controllers\ManagementController::class)->group(function () {
