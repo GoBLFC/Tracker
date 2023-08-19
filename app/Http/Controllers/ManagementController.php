@@ -22,7 +22,7 @@ class ManagementController extends Controller {
 	 * Render the management panel
 	 */
 	public function getManagerIndex(): View {
-		return view('management.manager', [
+		return view('management.manage', [
 			'rewards' => Reward::forEvent()->orderBy('hours')->get(),
 			'departments' => Department::orderBy('hidden')->orderBy('name')->get(),
 			'longestOngoingEntries' => TimeEntry::with(['user', 'department'])

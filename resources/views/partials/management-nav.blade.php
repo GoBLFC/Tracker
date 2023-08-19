@@ -9,7 +9,7 @@
 			@endlead
 			@manager
 				<div class="col-md">
-					<a role="button" class="btn btn-secondary d-block" href="{!! route('management.manager') !!}">Management Panel</a>
+					<a role="button" class="btn btn-secondary d-block" href="{!! route('management.manage') !!}">Management Panel</a>
 				</div>
 			@endmanager
 			@admin

@@ -276,7 +276,7 @@
 @endsection
 
 @push('modules')
-	@vite('resources/js/manager.js')
+	@vite('resources/js/manage.js')
 @endpush
 
 @push('scripts')
