@@ -62,7 +62,7 @@ Route::middleware(['auth', 'not-banned'])->group(function () {
 		});
 
 		Route::middleware('role:manager')->group(function () {
-			Route::get('/manager', 'getManagerIndex')->name('management.manage');
+			Route::get('/manage', 'getManageIndex')->name('management.manage');
 		});
 	});
 });

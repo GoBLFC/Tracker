@@ -21,7 +21,7 @@ class ManagementController extends Controller {
 	/**
 	 * Render the management panel
 	 */
-	public function getManagerIndex(): View {
+	public function getManageIndex(): View {
 		return view('management.manage', [
 			'rewards' => Reward::forEvent()->orderBy('hours')->get(),
 			'departments' => Department::orderBy('hidden')->orderBy('name')->get(),
