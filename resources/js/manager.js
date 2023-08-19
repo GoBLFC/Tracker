@@ -296,8 +296,8 @@ function addUserRow(uuid, id, username, badgeName, name, dept, banned) {
 }
 
 function addEntryRow(id, checkin, checkout, dept, worked, earned, notes, auto) {
-	let notesPill = notes ? "<span data-toggle=\"tooltip\" title=\"" + notes + "\" class=\"badge rounded-pill text-bg-info\">Notes</span>" : '';
-	if (auto) notesPill = notesPill.concat(" <span class=\"badge rounded-pill text-bg-warning\">AUTO</span>");
+	let notesPill = notes ? `<span data-bs-toggle="tooltip" title="${notes.replace(/"/g, '\\"')}" class="badge rounded-pill text-bg-info info-badge">Notes</span>` : '';
+	if (auto) notesPill += ` <span data-bs-toggle="tooltip" title="This entry was automatically closed at the end of the day." class="badge rounded-pill text-bg-warning info-badge">Auto</span>`;
 	const statusButton = !checkout ? `<button type="button" class="btn btn-sm btn-warning checkout" data-id="${id}">Checkout</button>` : '';
 	const actions = `<div class="btn-group float-end" role="group" aria-label="Time entry actions">
 		${statusButton}
