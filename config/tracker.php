@@ -4,6 +4,17 @@ return [
 
 	/*
     |--------------------------------------------------------------------------
+    | Tracker Timezone
+    |--------------------------------------------------------------------------
+    |
+    | The timezone to display dates/times in and interpret user input as.
+    |
+    */
+
+	'timezone' => env('TRACKER_TIMEZONE', 'America/Los_Angeles'),
+
+	/*
+    |--------------------------------------------------------------------------
     | Tracker Day Boundary Hour
     |--------------------------------------------------------------------------
     |
@@ -24,15 +35,5 @@ return [
     */
 
 	'kiosk_duration' => env('TRACKER_KIOSK_DURATION', 24 * 7),
-
-	/*
-    |--------------------------------------------------------------------------
-    | Tracker Timezone
-    |--------------------------------------------------------------------------
-    |
-    | The timezone to display dates/times in and interpret user input as.
-    |
-    */
-	'timezone' => env('TRACKER_TIMEZONE', 'America/Los_Angeles'),
 
 ];
