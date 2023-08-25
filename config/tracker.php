@@ -8,6 +8,8 @@ return [
     |--------------------------------------------------------------------------
     |
     | The timezone to display dates/times in and interpret user input as.
+	| This must be a valid timezone recognized by PHP. See the manual:
+	| https://www.php.net/manual/en/timezones.php
     |
     */
 
@@ -19,7 +21,10 @@ return [
     |--------------------------------------------------------------------------
     |
     | The hour of the day that is treated as the boundary for volunteer
-	| shifts/time entries. Midnight (00:00) would be 0, and 4am (04:00) is 4.
+	| shifts/time entries. Ongoing entries will auto-close at this hour, and
+	| "Time Today" will consider this the start of the day.
+	|
+	| Midnight (00:00) would be 0, and 4am (04:00) is 4.
     |
     */
 
