@@ -27,13 +27,13 @@ return [
 
 	/*
     |--------------------------------------------------------------------------
-    | Tracker Kiosk Authorization Duration
+    | Tracker Kiosk Authorization Lifetime
     |--------------------------------------------------------------------------
     |
     | The duration (in minutes) that kiosks remain authorized for.
     |
     */
 
-	'kiosk_duration' => env('TRACKER_KIOSK_DURATION', 60 * 24 * 7),
+	'kiosk_lifetime' => env('TRACKER_KIOSK_LIFETIME', 60 * 24 * 7),
 
 ];

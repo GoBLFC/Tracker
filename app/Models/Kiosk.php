@@ -42,14 +42,14 @@ class Kiosk extends UuidModel {
 	 * Scope a query to only include unexpired kiosks
 	 */
 	public function scopeUnexpired(Builder $query): void {
-		$query->where('updated_at', '>', now()->subMinutes(config('tracker.kiosk_duration')));
+		$query->where('updated_at', '>', now()->subMinutes(config('tracker.kiosk_lifetime')));
 	}
 
 	/**
 	 * Scope a query to only include expired kiosks
 	 */
 	public function scopeExpired(Builder $query): void {
-		$query->where('updated_at', '<=', now()->subMinutes(config('tracker.kiosk_duration')));
+		$query->where('updated_at', '<=', now()->subMinutes(config('tracker.kiosk_lifetime')));
 	}
 
 	/**
@@ -57,7 +57,7 @@ class Kiosk extends UuidModel {
 	 */
 	public function authorize(): void {
 		static::$authorizedCache = true;
-		Cookie::queue(Cookie::make('kiosk', $this->session_key, config('tracker.kiosk_duration')));
+		Cookie::queue(Cookie::make('kiosk', $this->session_key, config('tracker.kiosk_lifetime')));
 	}
 
 	/**
