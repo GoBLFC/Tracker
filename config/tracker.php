@@ -30,10 +30,10 @@ return [
     | Tracker Kiosk Authorization Duration
     |--------------------------------------------------------------------------
     |
-    | The duration (in hours) that kiosks remain authorized for.
+    | The duration (in minutes) that kiosks remain authorized for.
     |
     */
 
-	'kiosk_duration' => env('TRACKER_KIOSK_DURATION', 24 * 7),
+	'kiosk_duration' => env('TRACKER_KIOSK_DURATION', 60 * 24 * 7),
 
 ];
