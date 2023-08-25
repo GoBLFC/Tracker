@@ -52,8 +52,7 @@ class TrackerController extends Controller {
 		}
 
 		// Ensure there isn't already an ongoing time entry
-		$ongoing = $user->timeEntries()->forEvent()->ongoing()->count();
-		if ($ongoing > 0) {
+		if ($user->timeEntries()->forEvent()->ongoing()->exists()) {
 			$error = 'Cannot check in with an already-ongoing time entry.';
 			return $request->expectsJson()
 				? response()->json(['error' => $error], 409)
