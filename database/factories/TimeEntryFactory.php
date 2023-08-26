@@ -15,7 +15,6 @@ class TimeEntryFactory extends Factory {
 	 * @return array<string, mixed>
 	 */
 	public function definition(): array {
-		$user = \App\Models\User::factory();
 		$start = new Carbon(fake()->dateTimeInInterval('-7 days', '+5 days'));
 		$stop = $start->avoidMutation()
 			->addHours(fake()->numberBetween(1, 12))
@@ -23,12 +22,12 @@ class TimeEntryFactory extends Factory {
 			->addSeconds(fake()->numberBetween(0, 59));
 
 		return [
-			'user_id' => $user,
+			'user_id' => \App\Models\User::factory(),
 			'start' => $start,
 			'stop' => $stop,
 			'department_id' => \App\Models\Department::factory(),
 			'notes' => fake()->paragraph(),
-			'creator_user_id' => $user,
+			'creator_user_id' => fn (array $attributes) => $attributes['user_id'],
 			'auto' => false,
 			'event_id' => \App\Models\Event::factory(),
 			'created_at' => $start,
