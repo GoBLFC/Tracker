@@ -18,9 +18,9 @@ class TimeEntryFactory extends Factory {
 		$user = \App\Models\User::factory();
 		$start = new Carbon(fake()->dateTimeInInterval('-7 days', '+7 days'));
 		$stop = $start->avoidMutation()
-			->addHours(fake()->randomNumber(1))
-			->addMinutes(fake()->randomNumber(2))
-			->addSeconds(fake()->randomNumber(2));
+			->addHours(fake()->numberBetween(1, 12))
+			->addMinutes(fake()->numberBetween(0, 59))
+			->addSeconds(fake()->numberBetween(0, 59));
 
 		return [
 			'user_id' => $user,
