@@ -39,4 +39,11 @@ class Event extends UuidModel {
 	public function rewardClaims(): HasManyThrough {
 		return $this->hasManyThrough(RewardClaim::class, Reward::class);
 	}
+
+	/**
+	 * Makes this the active event
+	 */
+	public function makeActive(): void {
+		Setting::set('active-event', $this);
+	}
 }
