@@ -33,7 +33,6 @@ class Setting extends Model {
 
 	/**
 	 * Stores a setting value in the database and clears any cached value for it
-	 * @return int Number of affected rows (should always be 1 on success)
 	 */
 	public static function set(string $id, Model|array|bool|int|float|string|null $value): void {
 		// Wipe the cache
