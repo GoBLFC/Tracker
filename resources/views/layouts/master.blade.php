@@ -30,28 +30,7 @@
 		<img class="d-block mx-auto mb-4" src="{!! Vite::asset('resources/img/blfc-chip.png') !!}" width="128" height="146" />
 
 		@devMode
-			<div class="text-center mb-3">
-				<span class="badge rounded-pill text-bg-warning">Dev Mode Enabled</span>
-
-				@auth
-					<span class="badge rounded-pill text-bg-primary">Your Badge ID: {!! Auth::user()->badge_id !!}</span>
-					<span class="badge rounded-pill text-bg-primary">Your UUID: {!! Auth::user()->id !!}</span>
-					<span class="badge rounded-pill text-bg-secondary">Role: {!! Auth::user()->role->name !!}</span>
-				@endauth
-
-				@kiosk(true)
-					<span id="devKioskStatus" class="badge rounded-pill text-bg-success">Kiosk: Authorized</span>
-				@else
-					<span id="devKioskStatus" class="badge rounded-pill text-bg-danger">Kiosk: Unauthorized</span>
-				@endkiosk
-
-				@php $activeEvent = \App\Models\Setting::activeEvent(); @endphp
-				@if($activeEvent)
-					<span class="badge rounded-pill text-bg-success">Event: {{ $activeEvent->name }}</span>
-				@else
-					<span class="badge rounded-pill text-bg-danger">Event: None active</span>
-				@endif
-			</div>
+			@include('partials.dev-badges')
 		@enddevMode
 
 		@yield('content')
