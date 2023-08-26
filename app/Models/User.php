@@ -149,7 +149,13 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 		if (!$event) return 0;
 
 		// Get all of the time entries from the user for the given event, along with the time bonuses that may apply
-		if (!$timeEntries) $timeEntries = $this->timeEntries()->with(['department.timeBonuses'])->forEvent($event)->get();
+		if (!$timeEntries) {
+			$timeEntries = $this->timeEntries()->with([
+				'department.timeBonuses' => function ($query) use ($event) {
+					$query->forEvent($event);
+				}
+			])->forEvent($event)->get();
+		}
 		$bonuses = $timeEntries->pluck('department.timeBonuses')->flatten()->unique('id');
 
 		// Add up the duration and bonus time of all time entries to get the total time for the event
@@ -185,7 +191,11 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 
 		// Get all of the time entries from the user for the given event, along with the time bonuses that may apply
 		$timeEntries = $this->timeEntries()
-			->with(['department.timeBonuses'])
+			->with([
+				'department.timeBonuses' => function ($query) use ($event) {
+					$query->forEvent($event);
+				}
+			])
 			->forEvent($event)
 			->orderBy('start')
 			->get();
