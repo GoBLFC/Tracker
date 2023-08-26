@@ -183,7 +183,8 @@
 									<th scope="col">Real Name</th>
 									<th scope="col">Action</th>
 									<th scope="col">Time</th>
-									<th scope="col"class="rounded-top">Duration</th>
+									<th scope="col">Duration</th>
+									<th scope="col" class="rounded-top"></th>
 								</tr>
 							</thead>
 							<tbody id="uRow">
@@ -202,6 +203,11 @@
 										</td>
 										<td>{!! $activity->created_at->timezone(config('tracker.timezone'))->toDayDateTimeString() !!}</td>
 										<td>{!! $activity->subject->getHumanDuration() !!}</td>
+										<td>
+											<button class="btn btn-link btn-sm float-end mx-1 p-0" data-user-id="{!! $activity->subject->user->id !!}" title="Lookup user">
+												<i class="fa fa-magnifying-glass"></i>
+											</button>
+										</td>
 									</tr>
 								@endforeach
 							</tbody>
@@ -226,7 +232,8 @@
 									<th scope="col">Real Name</th>
 									<th scope="col">Department</th>
 									<th scope="col">Start Time</th>
-									<th scope="col"class="rounded-top">Duration</th>
+									<th scope="col">Duration</th>
+									<th scope="col" class="rounded-top"></th>
 								</tr>
 							</thead>
 							<tbody id="uRow">
@@ -239,6 +246,11 @@
 										<td>{{ $entry->department->name }}</td>
 										<td>{!! $entry->start->timezone(config('tracker.timezone'))->toDayDateTimeString() !!}</td>
 										<td>{!! $entry->getHumanDuration() !!}</td>
+										<td>
+											<button class="btn btn-link btn-sm float-end mx-1 p-0" data-user-id="{!! $activity->subject->user->id !!}" title="Lookup user">
+												<i class="fa fa-magnifying-glass"></i>
+											</button>
+										</td>
 									</tr>
 								@endforeach
 							</tbody>
