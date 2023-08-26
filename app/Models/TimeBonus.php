@@ -6,9 +6,10 @@ use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class TimeBonus extends UuidModel {
-	use LogsActivity;
+	use HasFactory, LogsActivity;
 
 	protected $casts = [
 		'start' => 'datetime',
