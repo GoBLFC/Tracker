@@ -20,8 +20,8 @@ class DatabaseSeeder extends Seeder {
 		\App\Models\Department::factory(4)->hidden()->create();
 
 		// Create a bunch of dummy users with some content
-		\App\Models\User::factory(30)->has(
-			\App\Models\TimeEntry::factory(5)
+		\App\Models\User::factory(30)->telegramUnlinked()->has(
+			\App\Models\TimeEntry::factory(20)
 				->recycle($events)
 				->recycle($departments)
 		)->create();
