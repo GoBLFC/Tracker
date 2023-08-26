@@ -2,10 +2,21 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Str;
+use Spatie\Activitylog\LogOptions;
+use Illuminate\Support\Facades\Cookie;
+use Illuminate\Database\Eloquent\Builder;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Database\Eloquent\MassPrunable;
 
 class Kiosk extends UuidModel {
+	use MassPrunable, LogsActivity;
+
+	/**
+	 * Cached authorization status
+	 */
+	private static ?bool $authorizedCache = null;
+
 	protected static function boot() {
 		parent::boot();
 
@@ -15,22 +26,74 @@ class Kiosk extends UuidModel {
 		});
 	}
 
-	/**
-	 * Get the Kiosk from the session, if there is one
-	 */
-	public static function findFromSession(): static {
-		$sessionKey = Cookie::get('kiosk');
-		if (!$sessionKey) return null;
-		return static::findBySessionKey($sessionKey);
+	public function getActivitylogOptions(): LogOptions {
+		return LogOptions::defaults()
+			->submitEmptyLogs();
 	}
 
 	/**
-	 * Check whether there is a valid Kiosk in the session
+	 * Get the prunable model query.
 	 */
-	public static function isSessionAuthorized(): bool {
+	public function prunable(): Builder {
+		return static::expired();
+	}
+
+	/**
+	 * Scope a query to only include unexpired kiosks
+	 */
+	public function scopeUnexpired(Builder $query): void {
+		$query->where('updated_at', '>', now()->subMinutes(config('tracker.kiosk_lifetime')));
+	}
+
+	/**
+	 * Scope a query to only include expired kiosks
+	 */
+	public function scopeExpired(Builder $query): void {
+		$query->where('updated_at', '<=', now()->subMinutes(config('tracker.kiosk_lifetime')));
+	}
+
+	/**
+	 * Sets a cookie that contains the session_key of this kiosk
+	 */
+	public function authorize(): void {
+		static::$authorizedCache = true;
+		Cookie::queue(Cookie::make('kiosk', $this->session_key, config('tracker.kiosk_lifetime')));
+	}
+
+	/**
+	 * Deletes the Kiosk from the database and deletes the kiosk cookie for the current session if it matches
+	 * @return ?bool Whether the Kiosk was deleted from the database
+	 */
+	public function deauthorize(): ?bool {
+		if (Cookie::get('kiosk') === $this->session_key) {
+			static::$authorizedCache = false;
+			Cookie::queue(Cookie::forget('kiosk'));
+		}
+
+		return $this->delete();
+	}
+
+	/**
+	 * Get the Kiosk from the session, if there is one
+	 */
+	public static function findFromSession(): ?static {
 		$sessionKey = Cookie::get('kiosk');
-		if (!$sessionKey) return false;
-		return static::whereSessionKey($sessionKey)->exists();
+		if (!$sessionKey) return null;
+		return static::unexpired()->whereSessionKey($sessionKey)->firstOrFail();
+	}
+
+	/**
+	 * Check whether the current session is authorized as a kiosk
+	 * @param bool $strict If false, dev mode will always allow authorization (default false)
+	 */
+	public static function isSessionAuthorized(bool $strict = false): bool {
+		if (static::$authorizedCache !== null) return static::$authorizedCache || (!$strict && Setting::isDevMode());
+
+		$sessionKey = Cookie::get('kiosk');
+		if (!$sessionKey) return !$strict && Setting::isDevMode();
+
+		static::$authorizedCache = static::unexpired()->whereSessionKey($sessionKey)->exists();
+		return static::$authorizedCache || (!$strict && Setting::isDevMode());
 	}
 
 	/**
@@ -39,18 +102,17 @@ class Kiosk extends UuidModel {
 	public static function authorizeSession(): static {
 		$kiosk = new static;
 		$kiosk->save();
-		Cookie::queue(Cookie::make('kiosk', $kiosk->session_key, 60 * 24 * 7));
+		$kiosk->authorize();
 		return $kiosk;
 	}
 
 	/**
 	 * Remove the Kiosk that is in the session, if there is one
-	 * @return ?boolean Whether a Kiosk was deleted from the database
+	 * @return ?bool Whether a Kiosk was deleted from the database
 	 */
 	public static function deauthorizeSession(): ?bool {
 		$kiosk = static::findFromSession();
 		if (!$kiosk) return false;
-		Cookie::queue(Cookie::forget('kiosk'));
-		return $kiosk->delete();
+		return $kiosk->deauthorize();
 	}
 }

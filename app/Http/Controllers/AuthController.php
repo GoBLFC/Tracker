@@ -55,7 +55,7 @@ class AuthController extends Controller {
 	 */
 	public function getCallback(): RedirectResponse {
 		$oauthUser = Socialite::driver('concat')->user();
-		$user = User::updateOrCreateFromOauthUser($oauthUser);
+		$user = User::updateOrCreateFromOAuthUser($oauthUser);
 		session()->put('concatToken', $oauthUser->token);
 		Auth::login($user);
 		return redirect()->intended();
@@ -76,8 +76,8 @@ class AuthController extends Controller {
 
 		// Retrieve the quick code
 		$quickcode = QuickCode::with('user')
+			->unexpired()
 			->whereCode($request->input('code'))
-			->where('created_at', '>', now()->subSeconds(30))
 			->first();
 
 		// Verify the quick code exists
@@ -95,5 +95,13 @@ class AuthController extends Controller {
 		return $request->expectsJson()
 			? response()->json(null, 205)
 			: redirect()->route('tracker.index');
+	}
+
+	/**
+	 * Display the banned notice
+	 */
+	public function getBanned(): View|RedirectResponse {
+		if (!Auth::user()?->isBanned()) return redirect()->route('tracker.index');
+		return view('auth.banned');
 	}
 }

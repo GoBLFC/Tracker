@@ -13,7 +13,6 @@ class PlzHelpCommand extends Command {
 		]);
 		$this->replyWithSticker([
 			'sticker' => 'CAACAgQAAxkBAAIwrF5oydGd__NtLqeUzJKHLS07m31pAAKKAQACh7pZBorYn1WQba9kGAQ',
-			'reply_markup' => $this->buildStandardActionsKeyboard(),
 		]);
 	}
 }

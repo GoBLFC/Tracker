@@ -12,7 +12,7 @@ return new class extends Migration {
 	public function up(): void {
 		Schema::create('settings', function (Blueprint $table) {
 			$table->string('id', 32)->primary();
-			$table->string('value', 64);
+			$table->jsonb('value');
 			$table->timestamps();
 		});
 
@@ -20,10 +20,14 @@ return new class extends Migration {
 			[
 				'id' => 'active-event',
 				'value' => 'null',
+				'created_at' => now(),
+				'updated_at' => now(),
 			],
 			[
 				'id' => 'dev-mode',
 				'value' => 'true',
+				'created_at' => now(),
+				'updated_at' => now(),
 			],
 		]);
 	}

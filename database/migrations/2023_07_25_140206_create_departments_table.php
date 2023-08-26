@@ -14,6 +14,7 @@ return new class extends Migration {
 			$table->string('name', 64);
 			$table->boolean('hidden')->default(false);
 			$table->timestamps();
+			$table->softDeletes();
 		});
 	}
 

@@ -1,8 +1,8 @@
-import { Toast, postAction } from './shared.js'
+import { initTooltips, sendPostRequest } from './shared.js'
 
-$(function () {
-	$('[data-bs-toggle="tooltip"]').tooltip()
-})
+document.addEventListener('DOMContentLoaded', () => {
+	initTooltips();
+});
 
 const form = document.querySelector('form')
 const inputs = form.querySelectorAll('input')
@@ -13,7 +13,7 @@ const KEYBOARDS = {
 	enter: 13,
 }
 
-var btnLogin = document.getElementById('btnLogin');
+const btnLogin = document.getElementById('btnLogin');
 
 btnLogin.addEventListener('click', function(evt) {
 	evt.preventDefault();
@@ -24,7 +24,7 @@ async function submitCode() {
 	const code = Array.from(inputs).reduce((acc, input) => acc + input.value, '');
 
 	try {
-		await postAction(quickcodePostUrl, { code });
+		await sendPostRequest(quickcodePostUrl, { code });
 		window.location.reload();
 	} catch(err) {
 		inputs.forEach(input => { input.value = ''; });
@@ -43,11 +43,19 @@ function handleInput(e) {
 	}
 }
 
+let cancelSelect = false;
+
 function handlePaste(e) {
 	e.preventDefault()
 	const paste = e.clipboardData.getData('text')
 	inputs.forEach((input, i) => {
 		input.value = paste[i] || ''
+		if(!paste[i] && paste[i - 1]) {
+			input.focus()
+		} else if (i === 3 && paste[i]) {
+			cancelSelect = true;
+			input.focus()
+		}
 	})
 }
 
@@ -82,6 +90,11 @@ inputs[0].addEventListener('paste', handlePaste)
 
 inputs.forEach(input => {
 	input.addEventListener('focus', e => {
+		if(cancelSelect) {
+			cancelSelect = false;
+			return;
+		}
+
 		setTimeout(() => {
 			e.target.select()
 		}, 0)

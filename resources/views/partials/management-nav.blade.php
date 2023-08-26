@@ -2,17 +2,17 @@
 	<h5 class="card-header">Your Functions</h5>
 	<div class="card-body">
 		<div class="row gx-3">
-			@if($user->isLead())
+			@lead
 				<div class="col-md">
-					<a role="button" class="btn btn-secondary d-block" href="/lead.php">Lead Panel</a>
+					<a role="button" class="btn btn-secondary d-block" href="{!! route('management.lead') !!}">Lead Panel</a>
 				</div>
-			@endif
-			@if($user->isManager())
+			@endlead
+			@manager
 				<div class="col-md">
-					<a role="button" class="btn btn-secondary d-block" href="/manage.php">Management Panel</a>
+					<a role="button" class="btn btn-secondary d-block" href="{!! route('management.manage') !!}">Management Panel</a>
 				</div>
-			@endif
-			@if($user->isAdmin())
+			@endmanager
+			@admin
 				<div class="col-md">
 					<div class="dropdown">
 						<button class="btn btn-secondary w-100 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Admin Panel</button>
@@ -26,7 +26,7 @@
 						</ul>
 					</div>
 				</div>
-			@endif
+			@endadmin
 		</div>
 	</div>
 </div>

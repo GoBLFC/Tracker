@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\TimeEntry;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CheckInRequest extends FormRequest {
@@ -9,7 +10,7 @@ class CheckInRequest extends FormRequest {
 	 * Determine if the user is authorized to make this request.
 	 */
 	public function authorize(): bool {
-		return true;
+		return $this->user()->can('create', [TimeEntry::class, $this->user()]);
 	}
 
 	/**
@@ -19,7 +20,7 @@ class CheckInRequest extends FormRequest {
 	 */
 	public function rules(): array {
 		return [
-			'department' => 'exists:App\Models\Department,id',
+			'department_id' => 'required|uuid|exists:App\Models\Department,id',
 		];
 	}
 }

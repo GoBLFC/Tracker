@@ -10,12 +10,12 @@ class PollTelegramCommand extends Command implements Isolatable {
 	/**
 	 * The name and signature of the console command.
 	 */
-	protected $signature = 'app:poll-telegram';
+	protected $signature = 'telegram:poll';
 
 	/**
 	 * The console command description.
 	 */
-	protected $description = 'Polls Telegram for updates and handles received commands';
+	protected $description = 'Polls Telegram for updates and handles received commands (primarily for development use)';
 
 	/**
 	 * Whether the command should continue running
@@ -26,6 +26,10 @@ class PollTelegramCommand extends Command implements Isolatable {
 	 * Execute the console command.
 	 */
 	public function handle(): void {
+		if (config('app.env') === 'production') {
+			$this->warn('Polling is not recommended for production environments - the webhook should be relied upon instead.');
+		}
+
 		$this->trap([SIGTERM, SIGQUIT, SIGINT], fn () => $this->shouldKeepRunning = false);
 		$this->info('Polling Telegram for updates...');
 		while ($this->shouldKeepRunning) Telegram::commandsHandler();

@@ -6,7 +6,6 @@ use App\Models\Kiosk;
 use App\Models\User;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Session;
 
 class AuthServiceProvider extends ServiceProvider {
 	/**
@@ -22,28 +21,11 @@ class AuthServiceProvider extends ServiceProvider {
 	 * Register any authentication / authorization services.
 	 */
 	public function boot(): void {
-		Gate::define('admin', function (User $user): bool {
-			return $user->isAdmin();
-		});
-
-		Gate::define('manager', function (User $user): bool {
-			return $user->isManager();
-		});
-
-		Gate::define('lead', function (User $user): bool {
-			return $user->isLead();
-		});
-
-		Gate::define('banned', function (User $user): bool {
-			return $user->isBanned();
-		});
-
-		Gate::define('kiosk', function (): bool {
-			return Kiosk::isSessionAuthorized();
-		});
-
-		Gate::before(function (User $user): bool|null {
+		// Allow admins and disallow banned users through all gates
+		Gate::before(function (User $user): ?bool {
 			if ($user->isBanned()) return false;
+			if ($user->isAdmin()) return true;
+			return null;
 		});
 	}
 }

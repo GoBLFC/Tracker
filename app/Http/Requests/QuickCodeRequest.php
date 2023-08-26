@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Support\Str;
 use Illuminate\Foundation\Http\FormRequest;
 
 class QuickCodeRequest extends FormRequest {
@@ -21,5 +22,12 @@ class QuickCodeRequest extends FormRequest {
 		return [
 			'code' => 'required|string|size:4',
 		];
+	}
+
+	/**
+	 * Handle a passed validation attempt.
+	 */
+	public function passedValidation(): void {
+		$this->replace(['code' => Str::upper($this->code)]);
 	}
 }

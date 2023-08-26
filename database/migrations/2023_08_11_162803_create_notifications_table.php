@@ -9,11 +9,12 @@ return new class extends Migration {
 	 * Run the migrations.
 	 */
 	public function up(): void {
-		Schema::create('audit_events', function (Blueprint $table) {
+		Schema::create('notifications', function (Blueprint $table) {
 			$table->uuid('id')->primary();
-			$table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
-			$table->string('action', 64);
+			$table->string('type');
+			$table->uuidMorphs('notifiable');
 			$table->text('data');
+			$table->timestamp('read_at')->nullable();
 			$table->timestamps();
 		});
 	}
@@ -22,6 +23,6 @@ return new class extends Migration {
 	 * Reverse the migrations.
 	 */
 	public function down(): void {
-		Schema::dropIfExists('audit_events');
+		Schema::dropIfExists('notifications');
 	}
 };

@@ -5,14 +5,17 @@ namespace App\Models;
 use DateTimeInterface;
 use App\Models\UuidModel;
 use Carbon\CarbonInterval;
+use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Builder;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class TimeEntry extends UuidModel {
-	use HasFactory;
+	use HasFactory, LogsActivity;
 
 	protected $casts = [
 		'start' => 'datetime',
@@ -30,6 +33,13 @@ class TimeEntry extends UuidModel {
 		'auto',
 		'event_id',
 	];
+
+	public function getActivitylogOptions(): LogOptions {
+		return LogOptions::defaults()
+			->logOnly(['start', 'stop', 'notes', 'auto', 'department_id', 'user_id', 'event_id'])
+			->logOnlyDirty()
+			->submitEmptyLogs();
+	}
 
 	/**
 	 * Get the user this time entry is for
@@ -63,7 +73,7 @@ class TimeEntry extends UuidModel {
 	 * Scope a query to only include ongoing entries
 	 */
 	public function scopeOngoing(Builder $query): void {
-		$query->where('stop', null);
+		$query->whereNull('stop');
 	}
 
 	/**
@@ -210,7 +220,11 @@ class TimeEntry extends UuidModel {
 		$seconds -= $seconds % 60;
 		// Intervals don't seem to support 0 values, instead becoming 1s
 		if ($seconds === 0) return '0m';
-		return CarbonInterval::seconds($seconds)->cascade()->forHumans(['short' => true]);
+		return CarbonInterval::seconds($seconds)->cascade()->forHumans([
+			'short' => true,
+			'skip' => ['day'],
+			'parts' => 2,
+		]);
 	}
 
 	/**
@@ -221,8 +235,8 @@ class TimeEntry extends UuidModel {
 		$interval = CarbonInterval::seconds($seconds)->cascade();
 		$string = '';
 		if ($interval->hours > 0) $string .= "{$interval->hours}:";
-		$string .= ($interval->hours > 0 ? str_pad($interval->minutes, 2, '0', STR_PAD_LEFT) : $interval->minutes) . ':';
-		$string .= str_pad($interval->seconds, 2, '0', STR_PAD_LEFT);
+		$string .= ($interval->hours > 0 ? Str::padLeft($interval->minutes, 2, '0') : $interval->minutes) . ':';
+		$string .= Str::padLeft($interval->seconds, 2, '0');
 		return $string;
 	}
 }

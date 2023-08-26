@@ -16,18 +16,26 @@
 					alt="QR Code"
 					loading="lazy" />
 
-				<p>Scanning the above QR code will give you a URL to add the Telegram bot and link your Telegram profile to your volunteer account automatically.</p>
+				<p>
+					Scanning the above QR code will give you a URL to add the Telegram bot and link your Telegram profile to your volunteer account automatically.
+					@unlesskiosk(true)
+						<span class="me-1">If you can't scan the QR code, use this link instead:</span>
+						<a href="{!! Auth::user()->getTelegramSetupUrl() !!}" target="_blank" class="link-info"><i class="fa-brands fa-telegram me-1"></i>Add&nbsp;Telegram&nbsp;Bot</a>
+					@endkiosk
+				</p>
 
 				<p>This bot can provide you:</p>
 				<ul>
-					<li>Hours Clocked</li>
-					<li>Eligible Rewards</li>
-					<li>Quick Login Code</li>
+					<li>Hours clocked</li>
+					<li>Reward list</li>
+					<li>Quick login code</li>
 				</ul>
 
 				<p>This bot will also:</p>
 				<ul>
-					<li>Remind you when you can get a reward</li>
+					<li>Remind you when you're eligible for a reward</li>
+					<li>Confirm that you've claimed a reward</li>
+					<li>Notify you if you've forgotten to check out for a shift</li>
 				</ul>
 			</div>
 		</div>

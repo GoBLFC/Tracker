@@ -1,8 +1,13 @@
+import $ from 'jquery';
+import Swal from 'sweetalert2/dist/sweetalert2.js';
+import { Tooltip } from 'bootstrap';
+import { DateTime, Duration } from 'luxon';
+
 export const Toast = Swal.mixin({
     toast: true,
     position: "top-end",
     showConfirmButton: false,
-    timer: 5000,
+    timer: 4000,
     timerProgressBar: true,
     showClass: {
         popup: "animate__animated animate__slideInDown animate__faster"
@@ -24,10 +29,21 @@ export function debounce(func, wait, immediate) {
     };
 };
 
+export function applyLoading(elem, text) {
+    if (text) {
+        $(elem).data('original-text', $(elem).html())
+        	.html('<i class="fa fa-circle-notch fa-spin"></i> ' + text)
+			.prop('disabled', true);
+    } else {
+		$(elem).html($(elem).data('original-text'))
+			.prop('disabled', false);
+	}
+}
+
 export function addRow(key, elem, data) {
     let innerTable = '';
     for (let i = 0; i < data.length; i++) {
-        const t = (key && i === 0) ? 'th' : 'td';
+        const t = (key && i === 0) ? 'th scope="row"' : 'td';
         innerTable += '<' + t + '>' + data[i] + '</' + t + '>';
     }
     $(elem).append('<tr>' + innerTable + '</tr>');
@@ -46,22 +62,21 @@ export function getTableKey(object) {
 }
 
 /**
- * Make a POST request to a given URL and automatically decode the response from JSON when applicable
+ * Make a request to a given URL and automatically decode the response from JSON when applicable
  * @param {string|URL} url
- * @param {*} body
+ * @param {Object} options
  * @returns {*}
  */
-export async function postAction(url, body) {
+export async function sendRequest(url, options) {
 	let response;
 	try {
 		// Make the request
 		response = await fetch(url, {
-			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 				Accept: 'application/json',
 			},
-			body: JSON.stringify({ ...body, _token }),
+			...options,
 		});
 	} catch(err) {
 		// Display a generic error message in the case of a network error
@@ -95,6 +110,59 @@ export async function postAction(url, body) {
 }
 
 /**
+ * Make a GET request to a given URL and automatically decode the response from JSON when applicable
+ * @param {string|URL} url
+ * @param {Object} parameters
+ * @returns {*}
+ */
+export async function sendGetRequest(url, params = {}) {
+	// Build the URL with the query string for the request
+	const urlQS = new URL(url);
+	for(const [key, val] of Object.entries(params)) urlQS.searchParams.set(key, val);
+
+	return sendRequest(urlQS, { method: 'GET' });
+}
+
+/**
+ * Make a POST request to a given URL and automatically decode the response from JSON when applicable
+ * @param {string|URL} url
+ * @param {Object} body
+ * @returns {*}
+ */
+export async function sendPostRequest(url, body = {}) {
+	return sendRequest(url, {
+		method: 'POST',
+		body: JSON.stringify({ _token, ...body }),
+	});
+}
+
+/**
+ * Make a PUT request to a given URL and automatically decode the response from JSON when applicable
+ * @param {string|URL} url
+ * @param {Object} body
+ * @returns {*}
+ */
+export async function sendPutRequest(url, body = {}) {
+	return sendRequest(url, {
+		method: 'PUT',
+		body: JSON.stringify({ _token, ...body }),
+	});
+}
+
+/**
+ * Make a DELETE request to a given URL and automatically decode the response from JSON when applicable
+ * @param {string|URL} url
+ * @param {Object} body
+ * @returns {*}
+ */
+export async function sendDeleteRequest(url, body = {}) {
+	return sendRequest(url, {
+		method: 'DELETE',
+		body: JSON.stringify({ _token, ...body }),
+	});
+}
+
+/**
  * Error for a response from the server
  */
 export class ServerError extends Error {
@@ -116,7 +184,7 @@ export class ServerError extends Error {
  * @returns {string}
  */
 export function humanDuration(timeMs) {
-	const duration = luxon.Duration.fromMillis(timeMs).shiftTo('hours', 'minutes');
+	const duration = Duration.fromMillis(timeMs).shiftTo('hours', 'minutes');
 
 	if(duration.hours > 0) {
 		if(duration.minutes < 1) return duration.toFormat("h'h'");
@@ -132,7 +200,27 @@ export function humanDuration(timeMs) {
  * @returns {string}
  */
 export function clockDuration(timeMs) {
-	const duration = luxon.Duration.fromMillis(timeMs).shiftTo('hours', 'minutes', 'seconds');
+	const duration = Duration.fromMillis(timeMs).shiftTo('hours', 'minutes', 'seconds');
 	if(duration.hours > 0) return duration.toFormat('h:mm:ss');
 	return duration.toFormat('m:ss');
+}
+
+/**
+ * Initializes any Bootstrap tooltips on the page
+ * @param {Element|Document} [elem=document]
+ */
+export function initTooltips(elem = document) {
+	const tooltipTriggerList = elem.querySelectorAll('[data-bs-toggle="tooltip"]');
+	for(const tooltipEl of tooltipTriggerList) new Tooltip(tooltipEl);
+}
+
+/**
+ * Converts a local JS date to the given timezone, modifying the timestamp, and returns it as an ISO string
+ * @param {Date} date
+ * @param {string} timezone
+ */
+export function prepareDateForInput(date, timezone) {
+	return DateTime.fromJSDate(date)
+		.setZone(timezone, { keepLocalTime: true })
+		.toISO();
 }

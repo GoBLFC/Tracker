@@ -16,6 +16,7 @@ return new class extends Migration {
 			$table->tinyInteger('hours')->unsigned();
 			$table->foreignUuid('event_id')->constrained()->cascadeOnDelete();
 			$table->timestamps();
+			$table->softDeletes();
 		});
 	}
 

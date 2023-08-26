@@ -1,4 +1,6 @@
-import { postAction, humanDuration, clockDuration } from './shared.js';
+import $ from 'jquery';
+import Swal from 'sweetalert2/dist/sweetalert2.js';
+import { sendPostRequest, humanDuration, clockDuration, applyLoading, initTooltips } from './shared.js';
 
 $(() => {
     $('#checkinout').on('click', function () {
@@ -17,27 +19,17 @@ $(() => {
 		$('#checkinout').prop('disabled', !$(this).val());
 	});
 
-    $('[data-bs-toggle="tooltip"]').tooltip();
+    initTooltips();
 
 	// If a shift is already ongoing, adjust the total and day time for it and then start the clock
-	if(time.ongoingStart) {
+	if(typeof time !== 'undefined' && time.ongoingStart) {
 		const shiftStart = new Date(time.ongoingStart);
 		const shiftTime = Date.now() - shiftStart.getTime();
 		time.total -= shiftTime;
 		time.day -= shiftTime;
-		startShift(shiftStart);
+		startShift(time, shiftStart);
 	}
 });
-
-function applyLoading(elem, text) {
-    const loadingText = '<i class="fa fa-circle-o-notch fa-spin"></i> ' + text;
-
-    if ($(elem).html() !== loadingText) {
-        $(elem).data('original-text', $(elem).html())
-        	.html(loadingText)
-			.prop('disabled', true);
-    }
-}
 
 function toggleStatus(status, success = true) {
     const $dept = $('#dept');
@@ -56,18 +48,12 @@ function toggleStatus(status, success = true) {
 
     let opposite = "Out";
     if (status === "Out") {
-        // onClock = true;
-
         opposite = "In";
         $dept.prop("disabled", true);
         $checkstatus.html('You are currently checked in.');
         $checkstatus.removeClass("alert-danger").addClass("alert-success");
         $shiftclock.removeClass("d-none");
     } else {
-        // shiftTime = 0;
-        // updateClock();
-        // onClock = false;
-
         $dept.prop("disabled", false);
         $checkstatus.html('You are currently not checked in.');
         $checkstatus.removeClass("alert-success").addClass("alert-danger");
@@ -84,14 +70,14 @@ function toggleStatus(status, success = true) {
     });
 }
 
-let shiftInterval = null;
+export let shiftInterval = null;
 
-function startShift(start = new Date()) {
-	renderTimes(start);
-	shiftInterval = setInterval(() => { renderTimes(start); }, 1000);
+export function startShift(time, start = new Date()) {
+	renderTimes(time, start);
+	shiftInterval = setInterval(() => { renderTimes(time, start); }, 1000);
 }
 
-function stopShift(stats) {
+export function stopShift(time, stats) {
 	// Stop the clock
 	clearInterval(shiftInterval);
 	shiftInterval = null;
@@ -101,16 +87,15 @@ function stopShift(stats) {
 	time.day = stats.day * 1000;
 
 	// Hide the shift duration and re-render the day/total times to ensure accuracy
-	$('#currdurr').hide();
-	renderTimes(new Date());
+	$('#currdurr').addClass('d-none');
+	renderTimes(time, new Date());
 }
 
-async function checkIn() {
-	const department = document.getElementById('dept').value;
+export async function checkIn() {
+	const department_id = document.getElementById('dept').value;
 	try {
-		const { entry } = await postAction(checkinPostUrl, { department });
-		console.log(entry, new Date(entry.start));
-		startShift(new Date(entry.start));
+		const { time_entry: entry } = await sendPostRequest(checkinPostUrl, { department_id });
+		startShift(time, new Date(entry.start));
 		toggleStatus('Out');
 	} catch(err) {
 		console.error(err);
@@ -118,10 +103,10 @@ async function checkIn() {
 	}
 }
 
-async function checkOut() {
+export async function checkOut() {
 	try {
-		const { stats } = await postAction(checkoutPostUrl);
-		stopShift(stats);
+		const { stats } = await sendPostRequest(checkoutPostUrl);
+		stopShift(time, stats);
 		toggleStatus('In');
 	} catch(err) {
 		console.error(err);
@@ -129,7 +114,7 @@ async function checkOut() {
 	}
 }
 
-function renderTimes(start) {
+export function renderTimes(time, start) {
 	const shiftTime = Date.now() - start.getTime();
 	$('#durrval').text(clockDuration(shiftTime));
 	$('#timetoday').text(humanDuration(time.day + shiftTime));
