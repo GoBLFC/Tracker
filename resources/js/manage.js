@@ -192,7 +192,7 @@ function initClock(stats, ongoing) {
 async function createUser(badge_id) {
 	const data = await sendPostRequest(userCreatePostUrl, { badge_id });
 	Toast.fire({
-		text: "User (" + data.user.badge_id + ") created",
+		text: `User (${data.user.badge_id}) created.`,
 		icon: "success"
 	});
 }
@@ -206,7 +206,7 @@ async function checkIn() {
 
 	loadVolunteer(currentUser.id);
 	Toast.fire({
-		text: "User checked in",
+		text: "User checked in.",
 		icon: "success"
 	});
 }
@@ -226,7 +226,7 @@ async function addTime() {
 
 	loadVolunteer(currentUser.id);
 	Toast.fire({
-		text: "User checked in",
+		text: !stop ? 'User checked in.' : 'Added time entry.',
 		icon: "success"
 	});
 }
@@ -244,7 +244,7 @@ async function removeTime(id) {
 	await sendDeleteRequest(timeDeleteUrl.replace(/id/, id));
 	loadVolunteer(currentUser.id);
 	Toast.fire({
-		text: "Removed time entry",
+		text: "Removed time entry.",
 		icon: "success"
 	});
 }
@@ -253,7 +253,7 @@ async function checkOut(id) {
 	await sendPostRequest(timeCheckoutPostUrl.replace(/id/, id));
 	loadVolunteer(currentUser.id);
 	Toast.fire({
-		text: "Checked out",
+		text: "User checked out.",
 		icon: "success"
 	});
 }
