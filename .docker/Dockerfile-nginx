@@ -1,0 +1,13 @@
+# Install NPM dependencies and run Vite
+FROM node:20 AS build-npm
+WORKDIR /app
+COPY . .
+RUN npm install
+ENV NODE_ENV=production
+RUN npm run build
+
+# Copy static files over
+FROM nginx
+WORKDIR /var/www/html
+COPY --chown=www-data:www-data public public
+COPY --chown=www-data:www-data --from=build-npm /app/public/build ./public/build

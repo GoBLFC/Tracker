@@ -21,9 +21,9 @@ COPY .docker/fpm-overrides.conf /usr/local/etc/php-fpm.d/zzz-overrides.conf
 COPY .docker/php-overrides.ini $PHP_INI_DIR/conf.d/overrides.ini
 
 # Install necessary packages and PHP extensions
-RUN apt-get update && apt-get install -y libpq-dev && apt-get clean && rm -rf /var/lib/apt/lists/*
-RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql
-RUN docker-php-ext-install pdo_pgsql
+RUN apt-get update && apt-get install -y supervisor cron libpq-dev && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql && docker-php-ext-install pdo_pgsql
+RUN pecl install redis-5.3.7 && docker-php-ext-enable redis
 
 # Copy everything over
 COPY --chown=www-data:www-data . .
@@ -32,10 +32,21 @@ COPY --chown=www-data:www-data --from=build-composer /app/vendor/ ./vendor/
 COPY --chown=www-data:www-data --from=build-npm /app/public/build/ ./public/build/
 
 # Cache all the things!
+USER www-data
 RUN php artisan config:cache
 RUN php artisan route:cache
 RUN php artisan view:cache
+USER root
+
+# Configure cron
+RUN echo '* * * * * cd /var/www/html && /usr/local/bin/php artisan schedule:run >> /dev/null 2>&1' >> /etc/cron.d/laravel-scheduler \
+	&& crontab -u www-data /etc/cron.d/laravel-scheduler \
+	&& chmod u+s /usr/sbin/cron
 
 # Set up basic healthcheck
 HEALTHCHECK --interval=10s --timeout=3s \
   CMD curl -f http://localhost/ping || exit 1
+
+# Configure supervisor
+COPY .docker/supervisord.ini /etc/supervisor.d/supervisord.ini
+ENTRYPOINT ["supervisord", "-n", "-c", "/etc/supervisor.d/supervisord.ini"]
