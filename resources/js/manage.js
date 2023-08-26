@@ -149,7 +149,8 @@ async function loadVolunteer(id) {
 	initTooltips(document.getElementById('userCard'));
 
 	if(!isElementInView(document.getElementById('userCardTitle'))) {
-		document.getElementById('userCard').scrollIntoView({ block: 'center' });
+		const card = document.getElementById('userCard');
+		card.scrollIntoView({ block: card.clientHeight < window.innerHeight ? 'center' : 'start' });
 	}
 }
 
