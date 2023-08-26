@@ -14,6 +14,7 @@ class TimeBonus extends UuidModel {
 	protected $casts = [
 		'start' => 'datetime',
 		'stop' => 'datetime',
+		'modifier' => 'float',
 	];
 
 	protected $fillable = [
