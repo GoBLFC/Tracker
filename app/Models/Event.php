@@ -27,6 +27,13 @@ class Event extends UuidModel {
 	}
 
 	/**
+	 * Get the time bonuses associated with this event
+	 */
+	public function timeBonuses(): HasMany {
+		return $this->hasMany(TimeBonus::class);
+	}
+
+	/**
 	 * Get the rewards that are available for this event
 	 */
 	public function rewards(): HasMany {

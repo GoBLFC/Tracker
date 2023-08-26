@@ -168,10 +168,13 @@ class TimeEntry extends UuidModel {
 	/**
 	 * Calculates how much bonus time (in seconds) to reward from a set of bonuses.
 	 * Supports stacking bonuses and takes the department into account.
+	 *
+	 * @param ?Event $event Event to get the earned time for - if null, then the active event will be used
+	 * @param ?Collection $bonuses Bonuses to look through (to avoid extra queries if already retrieved)
 	 */
-	public function calculateBonusTime(Collection $bonuses = null): int {
+	public function calculateBonusTime(Event $event = null, Collection $bonuses = null): int {
 		// Retrieve a list of potentially applicable bonuses if they haven't been supplied
-		if (!$bonuses) $bonuses = TimeBonus::whereDepartmentId($this->department_id)->get();
+		if (!$bonuses) $bonuses = TimeBonus::forEvent($event)->whereDepartmentId($this->department_id)->get();
 		if ($bonuses->count() <= 0) return 0;
 
 		// Total up all applicable bonus time
@@ -187,9 +190,12 @@ class TimeEntry extends UuidModel {
 
 	/**
 	 * Calculates the total time for the time entry, including bonuses
+	 *
+	 * @param ?Event $event Event to get the earned time for - if null, then the active event will be used
+	 * @param ?Collection $bonuses Bonuses to look through (to avoid extra queries if already retrieved)
 	 */
-	public function calculateTotalTime(Collection $bonuses = null): int {
-		return $this->getDuration() + $this->calculateBonusTime($bonuses);
+	public function calculateTotalTime(Event $event = null, Collection $bonuses = null): int {
+		return $this->getDuration() + $this->calculateBonusTime($event, $bonuses);
 	}
 
 	/**

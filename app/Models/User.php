@@ -154,7 +154,7 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 
 		// Add up the duration and bonus time of all time entries to get the total time for the event
 		return $timeEntries->reduce(
-			fn (?int $carry, TimeEntry $entry) => $carry + $entry->calculateTotalTime($bonuses),
+			fn (?int $carry, TimeEntry $entry) => $carry + $entry->calculateTotalTime($event, $bonuses),
 			0
 		);
 	}
@@ -193,7 +193,7 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 
 		// Add up the duration and bonus time of all time entries to get the total time for the event
 		$totalTime = $timeEntries->reduce(
-			fn (?int $carry, TimeEntry $entry) => $carry + $entry->calculateTotalTime($bonuses),
+			fn (?int $carry, TimeEntry $entry) => $carry + $entry->calculateTotalTime($event, $bonuses),
 			0
 		);
 

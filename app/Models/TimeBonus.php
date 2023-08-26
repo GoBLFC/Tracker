@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Spatie\Activitylog\LogOptions;
+use Illuminate\Database\Eloquent\Builder;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -33,5 +34,13 @@ class TimeBonus extends UuidModel {
 	 */
 	public function department(): BelongsTo {
 		return $this->belongsTo(Department::class);
+	}
+
+	/**
+	 * Scope a query to only include bonuses for an event.
+	 * If the event is not specified, then the active event will be used.
+	 */
+	public function scopeForEvent(Builder $query, Event|string $event = null): void {
+		$query->where('event_id', $event->id ?? $event ?? Setting::activeEvent()?->id);
 	}
 }
