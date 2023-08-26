@@ -29,22 +29,26 @@ class UserController extends Controller {
 	 * Search all users by their badge ID, username, badge name, or real name
 	 */
 	public function getSearch(UserSearchRequest $request): JsonResponse {
-		$query = $request->input('q');
-		$wildQuery = "%{$query}%";
-		return response()->json([
-			'users' => User::whereBadgeId($query)
-				->orWhere('username', 'like', $wildQuery)
-				->orWhere('badge_name', 'like', $wildQuery)
-				->orWhere('first_name', 'like', $wildQuery)
-				->orWhere('last_name', 'like', $wildQuery)
-				->with([
-					'timeEntries' => function (Builder $query) {
-						$query->ongoing()->forEvent();
-					},
-					'timeEntries.department',
-				])
-				->limit(20)
-				->get(),
-		]);
+		// Get the search string and the search string prepped for an SQL LIKE comparison
+		$search = $request->input('q');
+		$wildSearch = "%{$search}%";
+
+		// Build the search query
+		$query = User::where('username', 'like', $wildSearch)
+			->orWhere('badge_name', 'like', $wildSearch)
+			->orWhere('first_name', 'like', $wildSearch)
+			->orWhere('last_name', 'like', $wildSearch)
+			->with([
+				'timeEntries' => function (Builder $query) {
+					$query->ongoing()->forEvent();
+				},
+				'timeEntries.department',
+			])
+			->limit(20);
+
+		// Only add the where clause to match the exact badge ID if the search string is an integer
+		if (filter_var($search, FILTER_VALIDATE_INT)) $query->orWhere('badge_id', $search);
+
+		return response()->json(['users' => $query->get()]);
 	}
 }
