@@ -18,7 +18,7 @@ class RewardFactory extends Factory {
 		return [
 			'name' => Str::title(fake()->words(3, true)),
 			'description' => fake()->paragraphs(3, true),
-			'hours' => fake()->randomNumber(2),
+			'hours' => fake()->numberBetween(4, 48),
 			'event_id' => \App\Models\Event::factory(),
 		];
 	}

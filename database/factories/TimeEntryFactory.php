@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use DateInterval;
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -15,18 +15,23 @@ class TimeEntryFactory extends Factory {
 	 * @return array<string, mixed>
 	 */
 	public function definition(): array {
-		$start = fake()->dateTimeThisYear();
-		$user = \App\Models\User::factory();
+		$start = new Carbon(fake()->dateTimeInInterval('-7 days', '+5 days'));
+		$stop = $start->avoidMutation()
+			->addHours(fake()->numberBetween(1, 12))
+			->addMinutes(fake()->numberBetween(0, 59))
+			->addSeconds(fake()->numberBetween(0, 59));
 
 		return [
-			'user_id' => $user,
+			'user_id' => \App\Models\User::factory(),
 			'start' => $start,
-			'stop' => (clone $start)->add(new DateInterval('PT2H')),
+			'stop' => $stop,
 			'department_id' => \App\Models\Department::factory(),
 			'notes' => fake()->paragraph(),
-			'creator_user_id' => $user,
+			'creator_user_id' => fn (array $attributes) => $attributes['user_id'],
 			'auto' => false,
 			'event_id' => \App\Models\Event::factory(),
+			'created_at' => $start,
+			'updated_at' => $stop,
 		];
 	}
 
@@ -34,8 +39,9 @@ class TimeEntryFactory extends Factory {
 	 * Indicate that the model's stop timestamp should be null
 	 */
 	public function inProgress(): static {
-		return $this->state(fn () => [
+		return $this->state(fn ($state) => [
 			'stop' => null,
+			'created_at' => $state['start'],
 		]);
 	}
 
@@ -45,6 +51,15 @@ class TimeEntryFactory extends Factory {
 	public function autoStopped(): static {
 		return $this->state(fn () => [
 			'auto' => true,
+		]);
+	}
+
+	/**
+	 * Indicate that the model's notes should be null
+	 */
+	public function withoutNotes(): static {
+		return $this->state(fn () => [
+			'notes' => null,
 		]);
 	}
 }

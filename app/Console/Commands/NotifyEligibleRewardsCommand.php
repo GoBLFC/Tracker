@@ -40,7 +40,9 @@ class NotifyEligibleRewardsCommand extends Command {
 			'timeEntries' => function ($query) use ($event) {
 				$query->forEvent($event);
 			},
-			'timeEntries.department.timeBonuses',
+			'timeEntries.department.timeBonuses' => function ($query) use ($event) {
+				$query->forEvent($event);
+			},
 			'rewardClaims' => function ($query) use ($event) {
 				$query->forEvent($event);
 			},

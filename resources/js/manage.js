@@ -2,7 +2,7 @@ import $ from 'jquery';
 import { TempusDominus, Namespace as TDNamespace } from '@eonasdan/tempus-dominus';
 import { DateTime } from 'luxon';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
-import { addRow, debounce, sendGetRequest, sendPostRequest, sendPutRequest, sendDeleteRequest, Toast, initTooltips, humanDuration, prepareDateForInput } from './shared.js';
+import { addRow, debounce, sendGetRequest, sendPostRequest, sendPutRequest, sendDeleteRequest, Toast, initTooltips, humanDuration, prepareDateForInput, isElementInView } from './shared.js';
 import { renderTimes, shiftInterval, startShift, stopShift } from './tracker.js';
 
 let timeStart;
@@ -20,7 +20,7 @@ $(() => {
 		createUser(val);
 	});
 
-	$('#rewards button[data-type="reward"]').on('click', function() {
+	$('#rewards button[data-reward-id]').on('click', function() {
 		toggleClaim($(this));
 	});
 
@@ -35,6 +35,10 @@ $(() => {
 
 	$('#addtime').on('click', function() {
 		addTime();
+	});
+
+	$('button[data-user-id]').on('click', async function() {
+		loadVolunteer($(this).data('user-id'));
 	});
 
 	// Set up time pickers
@@ -77,8 +81,8 @@ async function userSearch(input) {
 				user.time_entries?.[0]?.department?.name, user.role === -1
 			);
 		});
-		$('button[data-type="user"]').on('click', function() {
-			loadVolunteer($(this).data('id'));
+		$('#utable button[data-user-id]').on('click', function() {
+			loadVolunteer($(this).data('user-id'));
 		});
 	} else {
 		$('#uempty').removeClass('d-none');
@@ -101,7 +105,7 @@ async function loadVolunteer(id) {
 
 	initClock(timeData.stats, timeData.ongoing);
 
-	$('#rewards button[data-type="reward"]')
+	$('#rewards button[data-reward-id]')
 		.addClass('btn-success')
 		.removeClass('btn-danger')
 		.text('Claim');
@@ -143,6 +147,11 @@ async function loadVolunteer(id) {
 	});
 
 	initTooltips(document.getElementById('userCard'));
+
+	if(!isElementInView(document.getElementById('userCardTitle'))) {
+		const card = document.getElementById('userCard');
+		card.scrollIntoView({ block: card.clientHeight < window.innerHeight ? 'center' : 'start' });
+	}
 }
 
 function initClock(stats, ongoing) {
@@ -291,7 +300,7 @@ function isCheckinReady() {
 function addUserRow(uuid, id, username, badgeName, name, dept, banned) {
 	let status = "<span class=\"badge rounded-pill text-bg-" + (!dept ? "warning" : "success") + "\">" + (!dept ? "Checked Out" : `Checked In: ${dept}`) + "</span>";
 	if (banned) status = status.concat(" <span class=\"badge rounded-pill text-bg-danger\">Banned</span>");
-	const data = [id, username, badgeName ?? '', name, status, "<button type=\"button\" class=\"btn btn-sm btn-info\" data-type=\"user\" data-id=\"" + uuid + "\">Load</button>"];
+	const data = [id, username, badgeName ?? '', name, status, "<button type=\"button\" class=\"btn btn-sm btn-info\" data-user-id=\"" + uuid + "\">Load</button>"];
 	addRow(true, $("#uRow"), data)
 }
 

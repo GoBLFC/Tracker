@@ -119,7 +119,7 @@ class TrackerController extends Controller {
 
 		// Get the time stats and add a bonus_time property to each time entry
 		$stats = $user->getTimeStats($event);
-		foreach ($stats['entries'] as $entry) $entry->bonus_time = $entry->calculateBonusTime($stats['bonuses']);
+		foreach ($stats['entries'] as $entry) $entry->bonus_time = $entry->calculateBonusTime($event, $stats['bonuses']);
 
 		return response()->json([
 			'user' => $user,
