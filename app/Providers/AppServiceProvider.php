@@ -22,6 +22,7 @@ class AppServiceProvider extends ServiceProvider {
 	public function boot(): void {
 		// Set up custom Blade if directives
 		Blade::if('devMode', fn () => Setting::isDevMode());
+		Blade::if('lockdown', fn () => Setting::isLockedDown());
 		Blade::if('kiosk', fn (bool $strict = false) => Kiosk::isSessionAuthorized($strict));
 		Blade::if('activeEvent', fn () => Setting::activeEvent() !== null);
 		Blade::if('admin', fn () => Auth::user()?->isAdmin() ?? false);

@@ -19,12 +19,13 @@ Route::controller(\App\Http\Controllers\AuthController::class)->group(function (
 	Route::get('/auth/redirect', 'getRedirect')->name('auth.redirect');
 	Route::get('/auth/callback', 'getCallback')->name('auth.callback');
 	Route::post('/auth/quickcode', 'postQuickcode')->name('auth.quickcode.post');
-	Route::get('/disabled', 'getBanned')->name('auth.banned');
+	Route::get('/disabled/account', 'getBanned')->name('auth.banned');
 });
 
-Route::middleware(['auth', 'not-banned'])->group(function () {
+Route::middleware(['auth', 'not-banned', 'lockdown'])->group(function () {
 	Route::controller(\App\Http\Controllers\TrackerController::class)->group(function () {
 		Route::get('/', 'getIndex')->name('tracker.index');
+		Route::get('/disabled/site', 'getLockdown')->name('tracker.lockdown')->withoutMiddleware('lockdown');
 		Route::post('/time/checkin', 'postCheckIn')->name('tracker.checkin.post');
 		Route::post('/time/checkout', 'postCheckOut')->name('tracker.checkout.post');
 		Route::post('/time/{timeEntry}/checkout', 'postCheckOut')->name('tracker.time.checkout.post');
@@ -56,6 +57,11 @@ Route::middleware(['auth', 'not-banned'])->group(function () {
 		Route::post('/kiosk/deauthorize', 'postDeauthorize')->name('kiosk.deauthorize.post');
 	});
 
+	Route::controller(\App\Http\Controllers\SettingsController::class)->group(function () {
+		Route::put('/setting/{setting}', 'putSetting')->name('setting.put');
+		Route::delete('/setting/{setting}', 'deleteSetting')->name('setting.delete');
+	});
+
 	Route::controller(\App\Http\Controllers\ManagementController::class)->group(function () {
 		Route::middleware('role:lead')->group(function () {
 			Route::get('/lead', 'getLeadIndex')->name('management.lead');
@@ -63,6 +69,19 @@ Route::middleware(['auth', 'not-banned'])->group(function () {
 
 		Route::middleware('role:manager')->group(function () {
 			Route::get('/manage', 'getManageIndex')->name('management.manage');
+		});
+
+		Route::middleware('role:admin')->group(function () {
+			Route::get('/admin/site', 'getAdminSiteSettings')->name('admin.site');
+			Route::get('/admin/users', 'getAdminUserRoles')->name('admin.users');
+			Route::get('/admin/departments', 'getAdminDepartments')->name('admin.departments');
+			Route::get('/admin/events', 'getAdminEvents')->name('admin.events');
+			Route::get('/admin/rewards', 'getAdminRewards')->name('admin.rewards');
+			Route::get('/admin/event/{event}/rewards', 'getAdminRewards')->name('admin.event.rewards');
+			Route::get('/admin/bonuses', 'getAdminBonuses')->name('admin.bonuses');
+			Route::get('/admin/event/{event}/bonuses', 'getAdminBonuses')->name('admin.event.bonuses');
+			Route::get('/admin/reports', 'getAdminReports')->name('admin.reports');
+			Route::get('/admin/event/{event}/reports', 'getAdminReports')->name('admin.event.reports');
 		});
 	});
 });

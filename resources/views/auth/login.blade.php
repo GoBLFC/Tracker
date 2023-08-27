@@ -3,7 +3,7 @@
 @section('content')
 	<div class="row justify-content-md-center mt-5">
 		<div class="col-md-4">
-			<div class="card">
+			<div class="card mb-3">
 				<div class="card-body">
 					<h2 class="text-center">BLFC Volunteer Check-In</h2>
 					<div class="alert alert-light text-center" role="alert">Welcome! Click below to sign in.</div>
@@ -30,6 +30,9 @@
 		</div>
 	</div>
 @endsection
+
+@section('footer-class', 'row justify-content-md-center')
+@section('footer-nav-class', 'col-md-4')
 
 @push('modules')
 	@vite('resources/js/login.js')

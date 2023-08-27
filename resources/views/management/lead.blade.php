@@ -20,3 +20,6 @@
 		</div>
 	</div>
 @endsection
+
+@section('footer-class', 'row justify-content-md-center')
+@section('footer-nav-class', 'col-md-10 col-lg-8')

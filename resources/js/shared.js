@@ -236,3 +236,15 @@ export function isElementInView(elem, partial = false) {
 	if(partial) return rect.top < window.innerHeight && rect.bottom > 0;
 	return rect.top >= 0 && rect.bottom <= window.innerHeight;
 }
+
+/**
+ * Builds a loading spinner element
+ * @param {string|string[]} extraClasses
+ * @returns {HTMLElement}
+ */
+export function spinner(extraClasses = []) {
+	const spinner = document.createElement('i');
+	if(typeof extraClasses === 'string') extraClasses = extraClasses.split(' ');
+	spinner.classList.add('fa', 'fa-circle-notch', 'fa-spin', ...extraClasses);
+	return spinner;
+}

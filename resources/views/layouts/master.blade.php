@@ -35,13 +35,19 @@
 
 		@yield('content')
 
-		@auth
-			<div class="autologout float-end mb-3">
-				<a id="logout" class="btn btn-danger btn-sm" role="button" href="{!! route('auth.logout') !!}">Logout</a>
-			</div>
-		@endauth
+		<footer class="@yield('footer-class')">
+			<div class="@yield('footer-nav-class')">
+				@section('footer-nav')
+					@auth
+						<div class="autologout float-end mb-3">
+							<a id="logout" class="btn btn-danger btn-sm" role="button" href="{!! route('auth.logout') !!}">Logout</a>
+						</div>
+					@endauth
 
-		<button class="btn btn-sm btn-light float-end me-2" data-bs-toggle="modal" data-bs-target="#aboutModal">About</button>
+					<button class="btn btn-sm btn-light float-end @auth me-2 @endauth" data-bs-toggle="modal" data-bs-target="#aboutModal">About</button>
+				@show
+			</div>
+		</footer>
 	</div>
 
 	@prepend('modals')

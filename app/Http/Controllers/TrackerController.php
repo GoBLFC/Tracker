@@ -168,4 +168,12 @@ class TrackerController extends Controller {
 		$timeEntry->delete();
 		return response()->json(null, 205);
 	}
+
+	/**
+	 * Display the lockdown notice
+	 */
+	public function getLockdown(): View|RedirectResponse {
+		if (!Setting::isLockedDown()) return redirect()->route('tracker.index');
+		return view('tracker.lockdown');
+	}
 }

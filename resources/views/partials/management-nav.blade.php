@@ -17,12 +17,13 @@
 					<div class="dropdown">
 						<button class="btn btn-secondary w-100 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Admin Panel</button>
 						<ul class="dropdown-menu dropdown-menu-end">
-							<li><a class="dropdown-item" href="/admin.php">Site</a></li>
-							<li><a class="dropdown-item" href="/admin.php?page=users">Users</a></li>
-							<li><a class="dropdown-item" href="/admin.php?page=departments">Departments</a></li>
-							<li><a class="dropdown-item" href="/admin.php?page=bonuses">Bonuses</a></li>
-							<li><a class="dropdown-item" href="/admin.php?page=rewards">Rewards</a></li>
-							<li><a class="dropdown-item" href="/admin.php?page=reports">Reports</a></li>
+							<li><a class="dropdown-item" href="{!! route('admin.site') !!}">Site</a></li>
+							<li><a class="dropdown-item" href="{!! route('admin.users') !!}">Users</a></li>
+							<li><a class="dropdown-item" href="{!! route('admin.departments') !!}">Departments</a></li>
+							<li><a class="dropdown-item" href="{!! route('admin.events') !!}">Events</a></li>
+							<li><a class="dropdown-item" href="{!! route('admin.bonuses') !!}">Bonuses</a></li>
+							<li><a class="dropdown-item" href="{!! route('admin.rewards') !!}">Rewards</a></li>
+							<li><a class="dropdown-item" href="{!! route('admin.reports') !!}">Reports</a></li>
 						</ul>
 					</div>
 				</div>

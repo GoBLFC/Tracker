@@ -32,6 +32,13 @@ class Setting extends Model {
 	}
 
 	/**
+	 * Stores a new value for the setting in the database and clears any cached value for it
+	 */
+	public function setValue(Model|array|bool|int|float|string|null $value): void {
+		static::set($this->id, $value);
+	}
+
+	/**
 	 * Stores a setting value in the database and clears any cached value for it
 	 */
 	public static function set(string $id, Model|array|bool|int|float|string|null $value): void {
@@ -53,6 +60,13 @@ class Setting extends Model {
 	 */
 	public static function isDevMode(): bool {
 		return (bool) static::getAndCacheValue('dev-mode');
+	}
+
+	/**
+	 * Retrieves and caches whether the app should be locked down
+	 */
+	public static function isLockedDown(): bool {
+		return (bool) static::getAndCacheValue('lockdown');
 	}
 
 	/**

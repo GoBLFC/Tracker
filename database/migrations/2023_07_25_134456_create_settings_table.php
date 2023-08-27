@@ -29,6 +29,12 @@ return new class extends Migration {
 				'created_at' => now(),
 				'updated_at' => now(),
 			],
+			[
+				'id' => 'lockdown',
+				'value' => 'true',
+				'created_at' => now(),
+				'updated_at' => now(),
+			],
 		]);
 	}
 

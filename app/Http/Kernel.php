@@ -59,6 +59,7 @@ class Kernel extends HttpKernel {
 		'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
 		'can' => \Illuminate\Auth\Middleware\Authorize::class,
 		'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+		'lockdown' => \App\Http\Middleware\RedirectDuringLockdown::class,
 		'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
 		'precognitive' => \Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests::class,
 		'role' => \App\Http\Middleware\EnsureUserHasRole::class,
