@@ -19,7 +19,7 @@ cp .env.example .env
 
 #### ConCat
 
-1. Get a [test concat](https://reg.gobltc.com) account for OAuth and get developer authorization from Gawdly.
+1. Get a [test concat](https://reg.gobltc.com) account for OAuth and get developer authorization from Glitch, Levi, or Gawdl3y .
 1. Add a new OAuth App at `Housekeeping` -> `Developers` -> `OAuth Applications` -> `Create New` with `http://localhost` as the callback URI, and the `volunteer:read` application permission.
 1. Update `CONCAT_CLIENT_SECRET` and `CONCAT_CLIENT_ID` in `.env`
 
@@ -30,9 +30,9 @@ cp .env.example .env
 
 #### [Sail](https://laravel.com/docs/10.x/sail) Setup (Containerized build environment)
 
- 1. `sudo apt install php8.0`
+ 1. Install the PHP CLI for your environment (ex: `sudo apt install php-cli`)
  1. `php artisan sail:install --devcontainer`
- 1. _(Optional)_ Add `sail` alias `alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'`
+ 1. _(Optional)_ Add `sail` alias `alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'`, possibly to your shell startup (ex: `~/.bashrc`)
 
 #### Running the Developer Environment
 
