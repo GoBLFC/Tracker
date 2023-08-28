@@ -12,11 +12,11 @@ class TelegramChannel {
 
 		// Skip the notification if the user doesn't have a linked Telegram chat
 		if (!$notifiable->tg_chat_id) {
-			Log::debug("Skipping Telegram notification {$notification->id} for {$type} {$notifiable->id}");
+			Log::info("Skipping Telegram notification {$notification->id} for {$type} {$notifiable->id}");
 			return;
 		}
 
-		Log::debug("Sending Telegram notification {$notification->id} for {$type} {$notifiable->id}");
+		Log::info("Sending Telegram notification {$notification->id} for {$type} {$notifiable->id}");
 
 		$message = $notification->toTelegram($notifiable);
 		Telegram::sendMessage(array_merge(['chat_id' => $notifiable->tg_chat_id], $message));
