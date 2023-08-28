@@ -18,4 +18,4 @@ $botToken = config('telegram.bots.tracker.token');
 Route::post("/telegram/{$botToken}/webhook", function () {
 	Telegram::commandsHandler(true);
 	return 'ok';
-});
+})->name('telegram.tracker.webhook');
