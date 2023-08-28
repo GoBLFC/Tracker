@@ -247,7 +247,7 @@
 										<td>{!! $entry->start->timezone(config('tracker.timezone'))->toDayDateTimeString() !!}</td>
 										<td>{!! $entry->getHumanDuration() !!}</td>
 										<td>
-											<button class="btn btn-link btn-sm float-end mx-1 p-0" data-user-id="{!! $activity->subject->user->id !!}" title="Lookup user">
+											<button class="btn btn-link btn-sm float-end mx-1 p-0" data-user-id="{!! $entry->user->id !!}" title="Lookup user">
 												<i class="fa fa-magnifying-glass"></i>
 											</button>
 										</td>
