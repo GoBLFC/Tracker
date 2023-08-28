@@ -12,7 +12,8 @@
 						@csrf
 
 						<div class="input-group float-md-end">
-							<select name="value" class="form-select">
+							<label class="input-group-text" for="activeEventValue">Active Event</label>
+							<select name="value" class="form-select" id="activeEventValue">
 								<option value="" {!! !$activeEvent ? 'selected' : '' !!}>None</option>
 								@foreach($events as $event)
 									<option value="{!! $event->id !!}" {!! $event->id === $activeEvent?->id ? 'selected' : '' !!}>{{ $event->name }}</option>
