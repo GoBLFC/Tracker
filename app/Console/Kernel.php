@@ -23,4 +23,11 @@ class Kernel extends ConsoleKernel {
 
 		require base_path('routes/console.php');
 	}
+
+	/**
+	 * Get the timezone that should be used by default for scheduled events.
+	 */
+	protected function scheduleTimezone(): \DateTimeZone|string|null {
+		return config('tracker.timezone');
+	}
 }
