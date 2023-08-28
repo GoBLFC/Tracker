@@ -27,9 +27,9 @@
 </head>
 <body>
 	<div class="container my-5">
-		<header>
+		<header class="mb-4 text-center">
 			<a href="{!! route('tracker.index') !!}" title="{{ config('app.name') }}">
-				<img class="d-block mx-auto mb-4" src="{!! Vite::asset('resources/img/blfc-chip.png') !!}" width="128" height="146" alt="BLFC Poker Chip Logo" />
+				<img src="{!! Vite::asset('resources/img/blfc-chip.png') !!}" width="128" height="146" alt="BLFC Poker Chip Logo" />
 			</a>
 		</header>
 
