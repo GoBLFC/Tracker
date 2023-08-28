@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use Illuminate\Support\Str;
+use Illuminate\Http\JsonResponse;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserSearchRequest;
-use App\Models\User;
 use Illuminate\Contracts\Database\Eloquent\Builder;
-use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller {
 	/**
@@ -20,9 +21,7 @@ class UserController extends Controller {
 		$user->last_name = 'Unknown';
 		$user->save();
 
-		return response()->json([
-			'user' => $user,
-		]);
+		return response()->json(['user' => $user]);
 	}
 
 	/**
@@ -31,13 +30,13 @@ class UserController extends Controller {
 	public function getSearch(UserSearchRequest $request): JsonResponse {
 		// Get the search string and the search string prepped for an SQL LIKE comparison
 		$search = $request->input('q');
-		$wildSearch = "%{$search}%";
+		$wildSearch = Str::lower("%{$search}%");
 
 		// Build the search query
-		$query = User::where('username', 'like', $wildSearch)
-			->orWhere('badge_name', 'like', $wildSearch)
-			->orWhere('first_name', 'like', $wildSearch)
-			->orWhere('last_name', 'like', $wildSearch)
+		$query = User::whereRaw('lower(username) like ?', $wildSearch)
+			->orWhereRaw('lower(badge_name) like ?', $wildSearch)
+			->orWhereRaw('lower(first_name) like ?', $wildSearch)
+			->orWhereRaw('lower(last_name) like ?', $wildSearch)
 			->with([
 				'timeEntries' => function (Builder $query) {
 					$query->ongoing()->forEvent();
