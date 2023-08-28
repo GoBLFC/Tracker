@@ -44,6 +44,6 @@ class StopOngoingTimeEntriesCommand extends Command {
 			$this->info("TimeEntry {$entry->id} stopped at {$entry->stop}.");
 		}
 
-		$this->info("Ongoing time {$entryWord} stopped.");
+		$this->info("{$entries->count()} ongoing time {$entryWord} stopped.");
 	}
 }
