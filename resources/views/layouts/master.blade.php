@@ -27,13 +27,19 @@
 </head>
 <body>
 	<div class="container my-5">
-		<img class="d-block mx-auto mb-4" src="{!! Vite::asset('resources/img/blfc-chip.png') !!}" width="128" height="146" />
+		<header>
+			<a href="{!! route('tracker.index') !!}" title="{{ config('app.name') }}">
+				<img class="d-block mx-auto mb-4" src="{!! Vite::asset('resources/img/blfc-chip.png') !!}" width="128" height="146" alt="BLFC Poker Chip Logo" />
+			</a>
+		</header>
 
 		@devMode
 			@include('partials.dev-badges')
 		@enddevMode
 
-		@yield('content')
+		<main>
+			@yield('content')
+		</main>
 
 		<footer class="@yield('footer-class')">
 			<div class="@yield('footer-nav-class')">
