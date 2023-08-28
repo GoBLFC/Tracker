@@ -18,9 +18,10 @@ class UnlinkCommand extends Command {
 		$user->tg_chat_id = null;
 		$user->save();
 
-		$url = route('tracker.index');
+		$trackerLink = static::trackerLink('Tracker site');
 		$this->replyWithMessage([
-			'text' => "Your volunteer account has been unlinked.\nTo continue interacting with me, you will need to scan a new QR code at the volunteer desk or {$url}.",
+			'text' => "Your volunteer account has been unlinked.\nTo continue interacting with me, you will need to scan a new QR code at the volunteer desk or the {$trackerLink}.",
+			'parse_mode' => 'HTML',
 			'reply_markup' => Keyboard::remove(),
 		]);
 	}

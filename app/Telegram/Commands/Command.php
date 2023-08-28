@@ -37,8 +37,10 @@ abstract class Command extends BaseCommand {
 		$chatId = $this->getUpdate()->getChat()->id;
 		$user = User::whereTgChatId($chatId)->first();
 		if (!$user) {
+			$trackerLink = static::trackerLink('Tracker site');
 			$this->replyWithMessage([
-				'text' => "I don't have a BLFC volunteer account associated with you yet. Please link your account by scanning a QR code at the volunteer desk.",
+				'text' => "I don't have a BLFC volunteer account associated with you yet. Please link your account by scanning a QR code at the volunteer desk or the {$trackerLink}.",
+				'parse_mode' => 'HTML',
 			]);
 		}
 		return $user;
@@ -71,5 +73,14 @@ abstract class Command extends BaseCommand {
 				'/rewards',
 			]);
 		return $keyboard;
+	}
+
+	/**
+	 * Gets an HTML-formatted link to the Tracker index
+	 */
+	protected static function trackerLink($text = null): string {
+		if (!$text) $text = config('app.name');
+		$escaped = htmlspecialchars($text);
+		return '<a href="' . route('tracker.index') . "\">{$escaped}</a>";
 	}
 }

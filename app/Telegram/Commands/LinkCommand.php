@@ -13,7 +13,7 @@ class LinkCommand extends Command {
 	public ?bool $authVisibility = false;
 
 	public function handle(): void {
-		$url = route('tracker.index');
+		$trackerLink = static::trackerLink('Tracker site');
 
 		// Make sure this chat isn't already known
 		$chatId = $this->getUpdate()->getChat()->id;
@@ -30,7 +30,8 @@ class LinkCommand extends Command {
 		$setupKey = $this->argument('setupKey');
 		if (!$setupKey) {
 			$this->replyWithmessage([
-				'text' => "The setup key for your volunteer account wasn't provided.\nYou'll need to scan a QR code at the volunteer desk or {$url}.",
+				'text' => "The setup key for your volunteer account wasn't provided.\nYou'll need to scan a QR code at the volunteer desk or the {$trackerLink}.",
+				'parse_mode' => 'HTML',
 			]);
 			return;
 		}
@@ -39,7 +40,8 @@ class LinkCommand extends Command {
 		$user = User::whereTgSetupKey($setupKey)->first();
 		if (!$user) {
 			$this->replyWithMessage([
-				'text' => "Unable to validate your volunteer account.\nTry scanning a new QR code at the volunteer desk or {$url}.",
+				'text' => "Unable to validate your volunteer account.\nTry scanning a new QR code at the volunteer desk or the {$trackerLink}.",
+				'parse_mode' => 'HTML',
 			]);
 			return;
 		}
@@ -48,7 +50,8 @@ class LinkCommand extends Command {
 		if ($user->tg_chat_id) {
 			$this->telegram->sendMessage([
 				'chat_id' => $user->tg_chat_id,
-				'text' => "I have been changed to report to another user.\nYou'll need to scan a new QR code (at the volunteer desk or {$url}) to continue to get your volunteer time info from me.",
+				'text' => "I have been changed to report to another user.\nYou'll need to scan a new QR code (at the volunteer desk or the {$trackerLink}) to continue to get your volunteer time info from me.",
+				'parse_mode' => 'HTML',
 				'reply_markup' => Keyboard::remove(),
 			]);
 		}
