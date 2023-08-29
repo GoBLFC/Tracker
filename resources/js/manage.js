@@ -148,8 +148,20 @@ async function loadVolunteer(id) {
 
 	initTooltips(document.getElementById('userCard'));
 
+	// Pulse the card border
+	const card = document.getElementById('userCard');
+	card.classList.remove('transition-border');
+	card.classList.replace('border-info', 'border-info-subtle');
+	setTimeout(() => {
+		card.classList.add('transition-border');
+		card.classList.replace('border-info-subtle', 'border-info');
+	}, 0);
+	setTimeout(() => {
+		card.classList.replace('border-info', 'border-info-subtle');
+	}, 300);
+
+	// Scroll to the card if the title isn't in view
 	if(!isElementInView(document.getElementById('userCardTitle'))) {
-		const card = document.getElementById('userCard');
 		card.scrollIntoView({ block: card.clientHeight < window.innerHeight ? 'center' : 'start' });
 	}
 }
