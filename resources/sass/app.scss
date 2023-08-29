@@ -10,3 +10,36 @@
 .transition-border {
 	transition: border-color ease-out 400ms;
 }
+
+.card-body.p-0 > table,
+.card-body.p-0 > .table-responsive > table {
+	thead {
+		tr:first-child {
+			th:first-child,
+			td:first-child {
+				border-start-start-radius: $border-radius;
+			}
+
+			th:last-child,
+			td:last-child {
+				border-start-end-radius: $border-radius;
+			}
+		}
+	}
+
+	tbody {
+		tr:last-child {
+			border-block-end: transparent;
+
+			th:first-child,
+			td:first-child {
+				border-end-start-radius: $border-radius;
+			}
+
+			th:last-child,
+			td:last-child {
+				border-end-end-radius: $border-radius;
+			}
+		}
+	}
+}

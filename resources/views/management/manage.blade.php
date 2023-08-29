@@ -29,12 +29,12 @@
 								<table id="utable" class="table table-striped w-100 mb-0">
 									<thead>
 										<tr>
-											<th scope="col" class="rounded-top">ID</th>
+											<th scope="col">ID</th>
 											<th scope="col">Username</th>
 											<th scope="col">Badge Name</th>
 											<th scope="col">Real Name</th>
 											<th scope="col">Status</th>
-											<th scope="col" class="rounded-top"></th>
+											<th scope="col"></th>
 										</tr>
 									</thead>
 									<tbody id="uRow"></tbody>
@@ -76,9 +76,9 @@
 					<div class="card mb-3">
 						<div class="card-header">Reward Claims</div>
 						@if($rewards->count() > 0)
-							<div class="card-body">
+							<div class="card-body p-0">
 								<div class="table-responsive">
-									<table class="table text-center">
+									<table class="table table-borderless text-center mb-0">
 										<thead>
 											<tr>
 												@foreach($rewards as $reward)
@@ -184,14 +184,14 @@
 							<table class="table table-striped w-100 mb-0">
 								<thead>
 									<tr>
-										<th scope="col" class="rounded-top">ID</th>
+										<th scope="col">ID</th>
 										<th scope="col">Username</th>
 										<th scope="col">Badge Name</th>
 										<th scope="col">Real Name</th>
 										<th scope="col">Action</th>
 										<th scope="col">Time</th>
 										<th scope="col">Duration</th>
-										<th scope="col" class="rounded-top"></th>
+										<th scope="col"></th>
 									</tr>
 								</thead>
 								<tbody id="uRow">
@@ -235,14 +235,14 @@
 							<table class="table table-striped w-100 mb-0">
 								<thead>
 									<tr>
-										<th scope="col" class="rounded-top">ID</th>
+										<th scope="col">ID</th>
 										<th scope="col">Username</th>
 										<th scope="col">Badge Name</th>
 										<th scope="col">Real Name</th>
 										<th scope="col">Department</th>
 										<th scope="col">Start Time</th>
 										<th scope="col">Duration</th>
-										<th scope="col" class="rounded-top"></th>
+										<th scope="col"></th>
 									</tr>
 								</thead>
 								<tbody id="uRow">
