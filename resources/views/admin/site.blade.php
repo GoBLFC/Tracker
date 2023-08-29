@@ -4,9 +4,9 @@
 	<div class="card mb-3" data-section="Site">
 		<h4 class="card-header">Site Settings</h4>
 		<div class="card-body">
-			<dl class="row">
+			<dl class="row mb-0">
 				{{-- Active event selector --}}
-				<dt class="col-lg-4 col-md-12 p-2">
+				<dt class="col-xl-4 col-lg-4 col-md-12 p-2">
 					<form action="{!! route('setting.put', 'active-event') !!}" method="POST" class="seamless">
 						@method('put')
 						@csrf
@@ -23,8 +23,8 @@
 						</div>
 					</form>
 				</dt>
-				<dd class="col-lg-6 col-md-12 mb-4">
-					<p>
+				<dd class="col-xl-6 col-lg-8 col-md-12 mb-4 mb-md-5">
+					<p class="mb-0">
 						The active event is the event that all volunteers and managers will be entering/managing time for.
 						When there is no active event, volunteers won't be able to check in or out, and managers won't be able to view or edit any time entries.
 					</p>
@@ -53,8 +53,8 @@
 						</button>
 					</form>
 				</dt>
-				<dd class="col-xl-6 col-md-8 col-sm-12">
-					<p>
+				<dd class="col-xl-6 col-md-8 col-sm-12 mb-4 mb-md-5">
+					<p class="mb-0">
 						Dev Mode makes it easier to develop and test Tracker by relaxing the kiosk authorization requirement, greatly extending the auto-logout timer, and disabling logging out of ConCat in parallel with Tracker.<br />
 						<strong>If Tracker is running in a production environment, this should be disabled.</strong>
 					</p>
@@ -83,8 +83,8 @@
 						</button>
 					</form>
 				</dt>
-				<dd class="col-xl-6 col-md-8 col-sm-12 mb-4">
-					<p>
+				<dd class="col-xl-6 col-md-8 col-sm-12 mb-4 mb-md-5">
+					<p class="mb-0">
 						Locking the site down makes it inaccessible to volunteers, prohibiting them from checking in or out.
 						Managers and administrators can still log in and perform staff functions, including checking users in or out on their behalf.
 					</p>
@@ -94,8 +94,8 @@
 				<dt class="col-xl-4 col-md-4 col-sm-12 p-2">
 					@include('partials.toggle-kiosk-button', ['kioskToggleClasses' => 'btn float-md-end'])
 				</dt>
-				<dd class="col-xl-6 col-md-8 col-sm-12 mb-4">
-					<p>
+				<dd class="col-xl-6 col-md-8 col-sm-12 mb-0">
+					<p class="mb-0">
 						Authorizing this device as a kiosk will allow volunteers to check in or out on this device.
 						This is required when setting up dedicated devices pre-con for checking in or out.
 						Kiosks remain authorized for {!! Carbon\CarbonInterval::minutes(config('tracker.kiosk_lifetime'))->cascade()->forHumans() !!}.
