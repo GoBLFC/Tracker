@@ -11,6 +11,20 @@
 @import "bootstrap/scss/variables-dark";
 
 // 4. Include any default map overrides here
+$utilities: (
+	'width': (
+		property: width,
+		class: w,
+		responsive: true,
+		values: (
+			25: 25%,
+			50: 50%,
+			75: 75%,
+			100: 100%,
+			auto: auto,
+		),
+	)
+);
 
 // 5. Include remainder of required parts
 @import "bootstrap/scss/maps";
