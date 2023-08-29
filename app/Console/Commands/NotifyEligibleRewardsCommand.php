@@ -6,9 +6,12 @@ use App\Models\User;
 use App\Models\Setting;
 use Illuminate\Support\Str;
 use Illuminate\Console\Command;
+use App\Console\LogFriendlyOutput;
 use App\Notifications\RewardAvailable;
 
 class NotifyEligibleRewardsCommand extends Command {
+	use LogFriendlyOutput;
+
 	/**
 	 * The name and signature of the console command.
 	 */
