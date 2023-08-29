@@ -173,7 +173,7 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 	 */
 	public function getTimeStats(Event $event = null, Carbon $date = null): array {
 		if (!$event) $event = Setting::activeEvent();
-		if (!$date) $date = now();
+		if (!$date) $date = now(config('tracker.timezone'));
 
 		// If there's no event at all, then skip all of the below work and just return empty results
 		if (!$event) {
@@ -184,10 +184,6 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 				'bonuses' => new Collection,
 			];
 		}
-
-		// Get the date offset by the day boundary hour for day comparisons later
-		$boundaryHour = config('tracker.day_boundary_hour');
-		$offsetDate = $date->avoidMutation()->subHours($boundaryHour);
 
 		// Get all of the time entries from the user for the given event, along with the time bonuses that may apply
 		$timeEntries = $this->timeEntries()
@@ -206,6 +202,10 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 			fn (?int $carry, TimeEntry $entry) => $carry + $entry->calculateTotalTime($event, $bonuses),
 			0
 		);
+
+		// Get the date offset by the day boundary hour for day comparisons
+		$boundaryHour = config('tracker.day_boundary_hour');
+		$offsetDate = $date->avoidMutation()->subHours($boundaryHour);
 
 		// Narrow down the time entries to ones that interact with the given date, then get the sum of them all
 		// while taking into account only the time that crosses the day boundary if applicable

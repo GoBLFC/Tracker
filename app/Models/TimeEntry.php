@@ -117,7 +117,7 @@ class TimeEntry extends UuidModel {
 	}
 
 	/**
-	 * Get the start time of the time entry, offset by the day boundary hour.
+	 * Get the start time of the time entry in the tracker's timezone, offset by the day boundary hour.
 	 * Useful mainly for day comparisons.
 	 *
 	 * @param integer $direction Direction of the offset (1 or -1)
@@ -125,11 +125,13 @@ class TimeEntry extends UuidModel {
 	 */
 	public function getBoundaryOffsetStart(int $direction, int $dayBoundaryHour = null): Carbon {
 		if (!$dayBoundaryHour) $dayBoundaryHour = config('tracker.day_boundary_hour');
-		return $this->start->avoidMutation()->addHours($dayBoundaryHour * $direction);
+		return $this->start->avoidMutation()
+			->timezone(config('tracker.timezone'))
+			->addHours($dayBoundaryHour * $direction);
 	}
 
 	/**
-	 * Get the stop time of the time entry, offset by the day boundary hour.
+	 * Get the stop time of the time entry in the tracker's timezone, offset by the day boundary hour.
 	 * If the time entry is still ongoing, the stop time will be considered to be the current time.
 	 * Useful mainly for day comparisons.
 	 *
@@ -138,7 +140,9 @@ class TimeEntry extends UuidModel {
 	 */
 	public function getBoundaryOffsetStop(int $direction, int $dayBoundaryHour = null): Carbon {
 		if (!$dayBoundaryHour) $dayBoundaryHour = config('tracker.day_boundary_hour');
-		return ($this->stop?->avoidMutation() ?? now())->addHours($dayBoundaryHour * $direction);
+		$tz = config('tracker.timezone');
+		return ($this->stop?->avoidMutation()?->timezone($tz) ?? now($tz))
+			->addHours($dayBoundaryHour * $direction);
 	}
 
 	/**
@@ -157,7 +161,8 @@ class TimeEntry extends UuidModel {
 		if (!$dayBoundaryHour) $dayBoundaryHour = config('tracker.day_boundary_hour');
 		if (!$this->isCrossingDayBoundary($dayBoundaryHour)) return 0;
 
-		$stop = $this->stop ?? now();
+		$tz = config('tracker.timezone');
+		$stop = $this->stop?->avoidMutation()?->timezone($tz) ?? now($tz);
 		return $stop->diffInSeconds(
 			$stop->avoidMutation()
 				->startOfDay()
