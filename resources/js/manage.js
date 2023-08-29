@@ -146,10 +146,10 @@ async function loadVolunteer(id) {
 		checkOut($(this).data('id'));
 	});
 
-	initTooltips(document.getElementById('userCard'));
+	const card = document.getElementById('userCard');
+	initTooltips(card);
 
 	// Pulse the card border
-	const card = document.getElementById('userCard');
 	card.classList.remove('transition-border');
 	card.classList.replace('border-info', 'border-info-subtle');
 	setTimeout(() => {
