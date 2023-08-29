@@ -43,7 +43,7 @@
 				</div>
 			</div>
 
-			<div id="userCard" class="card mb-4 d-none">
+			<div id="userCard" class="card border-info-subtle mb-5 d-none">
 				<h5 id="userCardTitle" class="card-header text-center">User</h5>
 
 				<div class="card-body">
