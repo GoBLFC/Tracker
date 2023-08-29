@@ -289,7 +289,7 @@
 					<dl class="mb-0">
 						{{-- Kiosk toggle --}}
 						<div class="row">
-							<dt class="col-xl-4 col-md-4 col-sm-12 mb-2 mb-md-0 align-self-center">
+							<dt class="col-xl-4 col-md-4 col-sm-12 mb-2 mb-md-0 align-self-center text-center">
 								@include('partials.toggle-kiosk-button', ['kioskToggleClasses' => 'btn float-md-end'])
 							</dt>
 							<dd class="col-xl-6 col-md-8 col-sm-12 mb-0">
