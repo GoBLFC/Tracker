@@ -100,7 +100,7 @@ async function loadVolunteer(id) {
 
 	const user = timeData.user;
 	$("#userCard").removeClass("d-none");
-	$("#userCardTitle").text(user.badge_name ?? user.username);
+	$("#userCardTitle").text(`${user.badge_name ?? user.username} (#${user.badge_id})`);
 	currentUser = user;
 
 	initClock(timeData.stats, timeData.ongoing);
