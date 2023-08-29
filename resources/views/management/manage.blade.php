@@ -275,7 +275,7 @@
 				<div class="card-header">Create User</div>
 				<div class="card-body">
 					<div class="input-group">
-						<input type="text" class="form-control" placeholder="Badge Number" aria-label="Badge Number" />
+						<input type="text" inputmode="numeric" pattern="[0-9]+" class="form-control" placeholder="Badge Number" aria-label="Badge Number" />
 						<button id="createUser" class="btn btn-success" type="button">
 							Create User
 						</button>
