@@ -155,10 +155,10 @@ async function loadVolunteer(id) {
 	setTimeout(() => {
 		card.classList.add('transition-border');
 		card.classList.replace('border-info-subtle', 'border-info');
+		setTimeout(() => {
+			card.classList.replace('border-info', 'border-info-subtle');
+		}, 500);
 	}, 0);
-	setTimeout(() => {
-		card.classList.replace('border-info', 'border-info-subtle');
-	}, 300);
 
 	// Scroll to the card if the title isn't in view
 	if(!isElementInView(document.getElementById('userCardTitle'))) {
