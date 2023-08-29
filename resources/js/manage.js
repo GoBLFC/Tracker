@@ -3,7 +3,7 @@ import { TempusDominus, Namespace as TDNamespace } from '@eonasdan/tempus-dominu
 import { DateTime } from 'luxon';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 import { addRow, debounce, sendGetRequest, sendPostRequest, sendPutRequest, sendDeleteRequest, Toast, initTooltips, humanDuration, prepareDateForInput, isElementInView } from './shared.js';
-import { renderTimes, shiftInterval, startShift, stopShift } from './tracker.js';
+import { renderTimes, shiftInterval, startShift, stopShift } from './time.js';
 
 let timeStart;
 let timeStop;

@@ -8,7 +8,7 @@ export default defineConfig({
 				'resources/sass/app.scss',
 				'resources/js/app.js',
 				'resources/js/login.js',
-				'resources/js/tracker.js',
+				'resources/js/time.js',
 				'resources/js/manage.js',
 				'resources/js/auto-logout.js',
 				'resources/js/toggle-kiosk.js',
