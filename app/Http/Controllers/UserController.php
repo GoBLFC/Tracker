@@ -29,6 +29,11 @@ class UserController extends Controller {
 	 * Update a user's details
 	 */
 	public function update(UserUpdateRequest $request, User $user): JsonResponse {
+		// Prevent modifying a user of a higher role
+		if ($request->user()->role->value < $user->role->value) {
+			return response()->json(['error' => 'Cannot modify a user of a higher role than you.']);
+		}
+
 		// Protect against undesirable role changes
 		if ($request->has('role')) {
 			if ($user->id === $request->user()->id) return response()->json(['error' => 'Cannot change your own role.'], 403);
