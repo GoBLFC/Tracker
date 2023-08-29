@@ -25,19 +25,21 @@
 						<p id="uempty" class="card-body mb-0">There are no users that match your search.</p>
 
 						<div class="card-body p-0">
-							<table id="utable" class="table table-striped w-100 mb-0">
-								<thead>
-									<tr>
-										<th scope="col" class="rounded-top">ID</th>
-										<th scope="col">Username</th>
-										<th scope="col">Badge Name</th>
-										<th scope="col">Real Name</th>
-										<th scope="col">Status</th>
-										<th scope="col" class="rounded-top"></th>
-									</tr>
-								</thead>
-								<tbody id="uRow"></tbody>
-							</table>
+							<div class="table-responsive">
+								<table id="utable" class="table table-striped w-100 mb-0">
+									<thead>
+										<tr>
+											<th scope="col" class="rounded-top">ID</th>
+											<th scope="col">Username</th>
+											<th scope="col">Badge Name</th>
+											<th scope="col">Real Name</th>
+											<th scope="col">Status</th>
+											<th scope="col" class="rounded-top"></th>
+										</tr>
+									</thead>
+									<tbody id="uRow"></tbody>
+								</table>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -75,24 +77,26 @@
 						<div class="card-header">Reward Claims</div>
 						@if($rewards->count() > 0)
 							<div class="card-body">
-								<table class="table text-center">
-									<thead>
-										<tr>
-											@foreach($rewards as $reward)
-												<th scope="col">{!! $reward->hours !!}hr: {{ $reward->name }}</th>
-											@endforeach
-										</tr>
-									</thead>
-									<tbody>
-										<tr id="rewards">
-											@foreach($rewards as $reward)
-												<td>
-													<button type="button" class="btn btn-sm btn-danger claim" data-type="reward" data-reward-id="{!! $reward->id !!}">Claim</button>
-												</td>
-											@endforeach
-										</tr>
-									</tbody>
-								</table>
+								<div class="table-responsive">
+									<table class="table text-center">
+										<thead>
+											<tr>
+												@foreach($rewards as $reward)
+													<th scope="col">{!! $reward->hours !!}hr: {{ $reward->name }}</th>
+												@endforeach
+											</tr>
+										</thead>
+										<tbody>
+											<tr id="rewards">
+												@foreach($rewards as $reward)
+													<td>
+														<button type="button" class="btn btn-sm btn-danger claim" data-type="reward" data-reward-id="{!! $reward->id !!}">Claim</button>
+													</td>
+												@endforeach
+											</tr>
+										</tbody>
+									</table>
+								</div>
 							</div>
 						@else
 							<p class="card-body mb-0">There are no rewards available.</p>
@@ -103,20 +107,22 @@
 						<div class="card-header">Time Log</div>
 						<p class="card-body mb-0" id="eNone">This user doesn't have any time entries.</p>
 						<div class="card-body p-0 d-none" id="eSome">
-							<table id="table" class="table table-striped mb-0">
-								<thead>
-									<tr>
-										<th scope="col">In</th>
-										<th scope="col">Out</th>
-										<th scope="col">Department</th>
-										<th scope="col">Worked</th>
-										<th scope="col">Earned</th>
-										<th scope="col">Notes</th>
-										<th scope="col" class="text-end">Actions</th>
-									</tr>
-								</thead>
-								<tbody id="eRow"></tbody>
-							</table>
+							<div class="table-responsive">
+								<table id="table" class="table table-striped mb-0">
+									<thead>
+										<tr>
+											<th scope="col">In</th>
+											<th scope="col">Out</th>
+											<th scope="col">Department</th>
+											<th scope="col">Worked</th>
+											<th scope="col">Earned</th>
+											<th scope="col">Notes</th>
+											<th scope="col" class="text-end">Actions</th>
+										</tr>
+									</thead>
+									<tbody id="eRow"></tbody>
+								</table>
+							</div>
 						</div>
 					</div>
 
@@ -174,44 +180,46 @@
 
 				@if($recentTimeActivities->isNotEmpty())
 					<div class="card-body p-0">
-						<table class="table table-striped w-100 mb-0">
-							<thead>
-								<tr>
-									<th scope="col" class="rounded-top">ID</th>
-									<th scope="col">Username</th>
-									<th scope="col">Badge Name</th>
-									<th scope="col">Real Name</th>
-									<th scope="col">Action</th>
-									<th scope="col">Time</th>
-									<th scope="col">Duration</th>
-									<th scope="col" class="rounded-top"></th>
-								</tr>
-							</thead>
-							<tbody id="uRow">
-								@foreach($recentTimeActivities as $activity)
+						<div class="table-responsive">
+							<table class="table table-striped w-100 mb-0">
+								<thead>
 									<tr>
-										<th scope="row">{!! $activity->subject->user->badge_id !!}</th>
-										<td>{{ $activity->subject->user->username }}</td>
-										<td>{{ $activity->subject->user->badge_name }}</td>
-										<td>{{ $activity->subject->user->getRealName() }}</td>
-										<td>
-											@if(isset($activity->properties['attributes']['stop']))
-												<span class="badge text-bg-warning rounded-pill">Checked Out</span>
-											@else
-												<span class="badge text-bg-success rounded-pill">Checked In</span>
-											@endif
-										</td>
-										<td>{!! $activity->created_at->timezone(config('tracker.timezone'))->toDayDateTimeString() !!}</td>
-										<td>{!! $activity->subject->getHumanDuration() !!}</td>
-										<td>
-											<button class="btn btn-link btn-sm link-info float-end mx-1 p-0" data-user-id="{!! $activity->subject->user->id !!}" title="Lookup user">
-												<i class="fa fa-magnifying-glass"></i>
-											</button>
-										</td>
+										<th scope="col" class="rounded-top">ID</th>
+										<th scope="col">Username</th>
+										<th scope="col">Badge Name</th>
+										<th scope="col">Real Name</th>
+										<th scope="col">Action</th>
+										<th scope="col">Time</th>
+										<th scope="col">Duration</th>
+										<th scope="col" class="rounded-top"></th>
 									</tr>
-								@endforeach
-							</tbody>
-						</table>
+								</thead>
+								<tbody id="uRow">
+									@foreach($recentTimeActivities as $activity)
+										<tr>
+											<th scope="row">{!! $activity->subject->user->badge_id !!}</th>
+											<td>{{ $activity->subject->user->username }}</td>
+											<td>{{ $activity->subject->user->badge_name }}</td>
+											<td>{{ $activity->subject->user->getRealName() }}</td>
+											<td>
+												@if(isset($activity->properties['attributes']['stop']))
+													<span class="badge text-bg-warning rounded-pill">Checked Out</span>
+												@else
+													<span class="badge text-bg-success rounded-pill">Checked In</span>
+												@endif
+											</td>
+											<td>{!! $activity->created_at->timezone(config('tracker.timezone'))->toDayDateTimeString() !!}</td>
+											<td>{!! $activity->subject->getHumanDuration() !!}</td>
+											<td>
+												<button class="btn btn-link btn-sm link-info float-end mx-1 p-0" data-user-id="{!! $activity->subject->user->id !!}" title="Lookup user">
+													<i class="fa fa-magnifying-glass"></i>
+												</button>
+											</td>
+										</tr>
+									@endforeach
+								</tbody>
+							</table>
+						</div>
 					</div>
 				@else
 					<p class="card-body mb-0">There are no recent check-ins/check-outs.</p>
@@ -223,38 +231,40 @@
 
 				@if($longestOngoingEntries->isNotEmpty())
 					<div class="card-body p-0">
-						<table class="table table-striped w-100 mb-0">
-							<thead>
-								<tr>
-									<th scope="col" class="rounded-top">ID</th>
-									<th scope="col">Username</th>
-									<th scope="col">Badge Name</th>
-									<th scope="col">Real Name</th>
-									<th scope="col">Department</th>
-									<th scope="col">Start Time</th>
-									<th scope="col">Duration</th>
-									<th scope="col" class="rounded-top"></th>
-								</tr>
-							</thead>
-							<tbody id="uRow">
-								@foreach($longestOngoingEntries as $entry)
+						<div class="table-responsive">
+							<table class="table table-striped w-100 mb-0">
+								<thead>
 									<tr>
-										<th scope="row">{!! $entry->user->badge_id !!}</th>
-										<td>{{ $entry->user->username }}</td>
-										<td>{{ $entry->user->badge_name }}</td>
-										<td>{{ $entry->user->getRealName() }}</td>
-										<td>{{ $entry->department->name }}</td>
-										<td>{!! $entry->start->timezone(config('tracker.timezone'))->toDayDateTimeString() !!}</td>
-										<td>{!! $entry->getHumanDuration() !!}</td>
-										<td>
-											<button class="btn btn-link btn-sm link-info float-end mx-1 p-0" data-user-id="{!! $entry->user->id !!}" title="Lookup user">
-												<i class="fa fa-magnifying-glass"></i>
-											</button>
-										</td>
+										<th scope="col" class="rounded-top">ID</th>
+										<th scope="col">Username</th>
+										<th scope="col">Badge Name</th>
+										<th scope="col">Real Name</th>
+										<th scope="col">Department</th>
+										<th scope="col">Start Time</th>
+										<th scope="col">Duration</th>
+										<th scope="col" class="rounded-top"></th>
 									</tr>
-								@endforeach
-							</tbody>
-						</table>
+								</thead>
+								<tbody id="uRow">
+									@foreach($longestOngoingEntries as $entry)
+										<tr>
+											<th scope="row">{!! $entry->user->badge_id !!}</th>
+											<td>{{ $entry->user->username }}</td>
+											<td>{{ $entry->user->badge_name }}</td>
+											<td>{{ $entry->user->getRealName() }}</td>
+											<td>{{ $entry->department->name }}</td>
+											<td>{!! $entry->start->timezone(config('tracker.timezone'))->toDayDateTimeString() !!}</td>
+											<td>{!! $entry->getHumanDuration() !!}</td>
+											<td>
+												<button class="btn btn-link btn-sm link-info float-end mx-1 p-0" data-user-id="{!! $entry->user->id !!}" title="Lookup user">
+													<i class="fa fa-magnifying-glass"></i>
+												</button>
+											</td>
+										</tr>
+									@endforeach
+								</tbody>
+							</table>
+						</div>
 					</div>
 				@else
 					<p class="card-body mb-0">There are no ongoing shifts.</p>
