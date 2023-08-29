@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\CheckInRequest;
-use App\Http\Requests\TimeEntryCreateRequest;
+use App\Http\Requests\TimeEntryStoreRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Carbon;
 
@@ -131,7 +131,7 @@ class TrackerController extends Controller {
 	/**
 	 * Create a time entry for a user
 	 */
-	public function putTimeEntry(TimeEntryCreateRequest $request, User $user): JsonResponse {
+	public function putTimeEntry(TimeEntryStoreRequest $request, User $user): JsonResponse {
 		// Make sure we have an event
 		$input = $request->safe();
 		if (!isset($input['event_id'])) $input['event_id'] = Setting::activeEvent()?->id;

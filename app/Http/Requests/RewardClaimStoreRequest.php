@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use App\Models\RewardClaim;
 use Illuminate\Foundation\Http\FormRequest;
 
-class RewardClaimCreateRequest extends FormRequest {
+class RewardClaimStoreRequest extends FormRequest {
 	/**
 	 * Determine if the user is authorized to make this request.
 	 */

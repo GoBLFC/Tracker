@@ -6,8 +6,7 @@ use App\Models\User;
 use App\Models\Event;
 use App\Models\RewardClaim;
 use Illuminate\Http\JsonResponse;
-use App\Http\Requests\RewardClaimCreateRequest;
-use App\Models\Setting;
+use App\Http\Requests\RewardClaimStoreRequest;
 
 class RewardClaimController extends Controller {
 	/**
@@ -23,7 +22,7 @@ class RewardClaimController extends Controller {
 	/**
 	 * Claim a reward for a user
 	 */
-	public function putClaim(RewardClaimCreateRequest $request, User $user): JsonResponse {
+	public function putClaim(RewardClaimStoreRequest $request, User $user): JsonResponse {
 		// Make sure there isn't an existing claim
 		$rewardId = $request->input('reward_id');
 		if ($user->rewardClaims()->whereRewardId($rewardId)->exists()) {

@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\View\View;
 
-class NotificationsController extends Controller {
+class NotificationController extends Controller {
 	/**
 	 * List all unread notifications
 	 */

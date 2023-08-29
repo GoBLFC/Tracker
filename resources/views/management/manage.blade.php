@@ -319,11 +319,11 @@
 	<script type="text/javascript">
 		const timezone = '{!! config('tracker.timezone') !!}';
 		const trackerStatsUrl = '{!! route('tracker.user.stats', 'id') !!}';
-		const userClaimsUrl = '{!! route('user.claims', 'id') !!}';
-		const userClaimsPutUrl = '{!! route('user.claims.put', 'id') !!}';
-		const userClaimsDeleteUrl = '{!! route('user.claims.delete', 'id') !!}';
-		const userSearchUrl = '{!! route('user.search') !!}';
-		const userPutUrl = '{!! route('user.put') !!}';
+		const userClaimsUrl = '{!! route('users.claims', 'id') !!}';
+		const userClaimsPutUrl = '{!! route('users.claims.put', 'id') !!}';
+		const claimsDeleteUrl = '{!! route('claims.delete', 'id') !!}';
+		const userSearchUrl = '{!! route('users.search') !!}';
+		const userPutUrl = '{!! route('users.put') !!}';
 		const timeCheckoutPostUrl = '{!! route('tracker.time.checkout.post', 'id') !!}';
 		const timePutUrl = '{!! route('tracker.time.put', 'id') !!}';
 		const timeDeleteUrl = '{!! route('tracker.time.delete', 'id') !!}';

@@ -286,7 +286,7 @@ async function toggleClaim(button) {
 		});
 		if(!result.isConfirmed) return;
 
-		await sendDeleteRequest(userClaimsDeleteUrl.replace(/id/, claimId));
+		await sendDeleteRequest(claimsDeleteUrl.replace(/id/, claimId));
 		button.removeClass("btn-danger")
 			.addClass("btn-success")
 			.data('claim-id', null)

@@ -6,13 +6,13 @@ use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use App\Http\Requests\SettingSetRequest;
+use App\Http\Requests\SettingUpdateRequest;
 
-class SettingsController extends Controller {
+class SettingController extends Controller {
 	/**
 	 * Update the value of a setting
 	 */
-	public function putSetting(SettingSetRequest $request, Setting $setting): JsonResponse|RedirectResponse {
+	public function update(SettingUpdateRequest $request, Setting $setting): JsonResponse|RedirectResponse {
 		$setting->setValue($request->input('value'));
 		return $request->expectsJson()
 			? response()->json(null, 205)
@@ -22,7 +22,7 @@ class SettingsController extends Controller {
 	/**
 	 * Clear the value of a setting
 	 */
-	public function deleteSetting(Request $request, Setting $setting): JsonResponse|RedirectResponse {
+	public function delete(Request $request, Setting $setting): JsonResponse|RedirectResponse {
 		$this->authorize('update', $setting);
 		$setting->setValue(null);
 		return $request->expectsJson()

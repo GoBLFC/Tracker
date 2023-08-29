@@ -8,7 +8,7 @@
 				{{-- Active event selector --}}
 				<div class="row gy-2 mb-5">
 					<dt class="col-xl-4 col-lg-4 col-md-12 align-self-center text-center">
-						<form action="{!! route('setting.put', 'active-event') !!}" method="POST" class="seamless">
+						<form action="{!! route('settings.update', 'active-event') !!}" method="POST" class="seamless">
 							@method('put')
 							@csrf
 
@@ -35,7 +35,7 @@
 				{{-- Dev mode toggle --}}
 				<div class="row gy-2 mb-5">
 					<dt class="col-xl-4 col-md-4 col-sm-12 align-self-center text-center">
-						<form action="{!! route('setting.put', 'dev-mode') !!}" method="POST" class="seamless">
+						<form action="{!! route('settings.update', 'dev-mode') !!}" method="POST" class="seamless">
 							@method('put')
 							@csrf
 
@@ -67,7 +67,7 @@
 				{{-- Lockdown toggle --}}
 				<div class="row gy-2 mb-5">
 					<dt class="col-xl-4 col-md-4 col-sm-12 align-self-center text-center">
-						<form action="{!! route('setting.put', 'lockdown') !!}" method="POST" class="seamless">
+						<form action="{!! route('settings.update', 'lockdown') !!}" method="POST" class="seamless">
 							@method('put')
 							@csrf
 

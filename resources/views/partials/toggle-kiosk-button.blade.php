@@ -10,7 +10,7 @@
 
 @push('scripts')
 	<script type="text/javascript">
-		const kioskAuthorizePostUrl = '{!! route('kiosk.authorize.post') !!}';
-		const kioskDeauthorizePostUrl = '{!! route('kiosk.deauthorize.post') !!}';
+		const kioskAuthorizePostUrl = '{!! route('kiosks.authorize.post') !!}';
+		const kioskDeauthorizePostUrl = '{!! route('kiosks.deauthorize.post') !!}';
 	</script>
 @endpush

@@ -30,37 +30,37 @@ Route::middleware(['auth', 'not-banned', 'lockdown'])->group(function () {
 		Route::post('/time/checkout', 'postCheckOut')->name('tracker.checkout.post');
 		Route::post('/time/{timeEntry}/checkout', 'postCheckOut')->name('tracker.time.checkout.post');
 		Route::delete('/time/{timeEntry}', 'deleteTimeEntry')->name('tracker.time.delete');
-		Route::get('/user/{user}/stats', 'getStats')->name('tracker.user.stats');
-		Route::put('/user/{user}/time', 'putTimeEntry')->name('tracker.time.put');
-		Route::get('/user/{user}/time/event/{event}', 'getStats')->name('tracker.user.stats.event');
+		Route::get('/users/{user}/stats', 'getStats')->name('tracker.user.stats');
+		Route::put('/users/{user}/time', 'putTimeEntry')->name('tracker.time.put');
+		Route::get('/users/{user}/time/event/{event}', 'getStats')->name('tracker.user.stats.event');
 	});
 
 	Route::controller(\App\Http\Controllers\UserController::class)->group(function () {
-		Route::get('/user/search', 'getSearch')->name('user.search');
-		Route::put('/user', 'create')->name('user.put');
-		Route::patch('/user/{user}', 'update')->name('user.patch');
+		Route::get('/users/search', 'getSearch')->name('users.search');
+		Route::put('/users', 'create')->name('users.put');
+		Route::patch('/users/{user}', 'update')->name('users.update');
 	});
 
-	Route::controller(\App\Http\Controllers\NotificationsController::class)->group(function () {
+	Route::controller(\App\Http\Controllers\NotificationController::class)->group(function () {
 		Route::get('/alerts', 'getIndex')->name('notifications.index');
 		Route::post('/alerts/acknowledge', 'postAcknowledge')->name('notifications.acknowledge');
 	});
 
 	Route::controller(\App\Http\Controllers\RewardClaimController::class)->group(function () {
-		Route::get('/user/{user}/claims', 'getClaims')->name('user.claims');
-		Route::get('/user/{user}/claims/event/{event}', 'getClaims')->name('user.claims.event');
-		Route::put('/user/{user}/claims', 'putClaim')->name('user.claims.put');
-		Route::delete('/claim/{rewardClaim}', 'deleteClaim')->name('user.claims.delete');
+		Route::get('/users/{user}/claims', 'getClaims')->name('users.claims');
+		Route::get('/users/{user}/claims/event/{event}', 'getClaims')->name('users.claims.event');
+		Route::put('/users/{user}/claims', 'putClaim')->name('users.claims.put');
+		Route::delete('/claims/{rewardClaim}', 'deleteClaim')->name('claims.delete');
 	});
 
 	Route::controller(\App\Http\Controllers\KioskController::class)->group(function () {
-		Route::post('/kiosk/authorize', 'postAuthorize')->name('kiosk.authorize.post');
-		Route::post('/kiosk/deauthorize', 'postDeauthorize')->name('kiosk.deauthorize.post');
+		Route::post('/kiosks/authorize', 'postAuthorize')->name('kiosks.authorize.post');
+		Route::post('/kiosks/deauthorize', 'postDeauthorize')->name('kiosks.deauthorize.post');
 	});
 
-	Route::controller(\App\Http\Controllers\SettingsController::class)->group(function () {
-		Route::put('/setting/{setting}', 'putSetting')->name('setting.put');
-		Route::delete('/setting/{setting}', 'deleteSetting')->name('setting.delete');
+	Route::controller(\App\Http\Controllers\SettingController::class)->group(function () {
+		Route::put('/settings/{setting}', 'update')->name('settings.update');
+		Route::delete('/settings/{setting}', 'delete')->name('settings.delete');
 	});
 
 	Route::controller(\App\Http\Controllers\ManagementController::class)->group(function () {

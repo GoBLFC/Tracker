@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\JsonResponse;
-use App\Http\Requests\UserCreateRequest;
+use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\UserSearchRequest;
 use App\Http\Requests\UserUpdateRequest;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -14,7 +14,7 @@ class UserController extends Controller {
 	/**
 	 * Create a user with just a badge ID
 	 */
-	public function create(UserCreateRequest $request): JsonResponse {
+	public function create(UserStoreRequest $request): JsonResponse {
 		$user = new User;
 		$user->badge_id = $request->input('badge_id');
 		$user->username = 'Unknown';

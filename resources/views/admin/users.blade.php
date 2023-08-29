@@ -81,8 +81,8 @@
 
 @push('scripts')
 	<script type="text/javascript">
-		const userSearchUrl = '{!! route('user.search') !!}';
-		const userPatchUrl = '{!! route('user.patch', 'id') !!}';
+		const userSearchUrl = '{!! route('users.search') !!}';
+		const userPatchUrl = '{!! route('users.update', 'id') !!}';
 		const roles = {{ Js::from(array_combine(
 			array_column(\App\Models\Role::cases(), 'value'),
 			array_column(\App\Models\Role::cases(), 'name'),
