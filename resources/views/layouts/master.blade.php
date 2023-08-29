@@ -26,7 +26,7 @@
 	@stack('modules')
 </head>
 <body>
-	<div class="container my-4 my-md-5">
+	<div class="container my-4 my-md-5 {!! config('debugbar.enabled') ?? config('app.debug') ? 'mb-5 pb-5' : '' !!}">
 		<header class="mb-3 mb-md-4 text-center">
 			<a href="{!! route('tracker.index') !!}" title="{{ config('app.name') }}">
 				<img src="{!! Vite::asset('resources/img/blfc-chip.png') !!}" width="128" height="146" alt="BLFC Poker Chip Logo" class="img-fluid mw-25" />
