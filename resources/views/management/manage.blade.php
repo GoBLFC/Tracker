@@ -174,7 +174,7 @@
 
 				@if($recentTimeActivities->isNotEmpty())
 					<div class="card-body p-0">
-						<table id="utable" class="table table-striped w-100 mb-0">
+						<table class="table table-striped w-100 mb-0">
 							<thead>
 								<tr>
 									<th scope="col" class="rounded-top">ID</th>
@@ -223,7 +223,7 @@
 
 				@if($longestOngoingEntries->isNotEmpty())
 					<div class="card-body p-0">
-						<table id="utable" class="table table-striped w-100 mb-0">
+						<table class="table table-striped w-100 mb-0">
 							<thead>
 								<tr>
 									<th scope="col" class="rounded-top">ID</th>
