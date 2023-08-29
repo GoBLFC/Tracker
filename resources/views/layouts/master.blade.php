@@ -26,10 +26,10 @@
 	@stack('modules')
 </head>
 <body>
-	<div class="container my-5">
-		<header class="mb-4 text-center">
+	<div class="container my-4 my-md-5">
+		<header class="mb-3 mb-md-4 text-center">
 			<a href="{!! route('tracker.index') !!}" title="{{ config('app.name') }}">
-				<img src="{!! Vite::asset('resources/img/blfc-chip.png') !!}" width="128" height="146" alt="BLFC Poker Chip Logo" />
+				<img src="{!! Vite::asset('resources/img/blfc-chip.png') !!}" width="128" height="146" alt="BLFC Poker Chip Logo" class="img-fluid mw-25" />
 			</a>
 		</header>
 
