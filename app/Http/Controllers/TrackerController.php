@@ -132,8 +132,6 @@ class TrackerController extends Controller {
 	 * Create a time entry for a user
 	 */
 	public function putTimeEntry(TimeEntryCreateRequest $request, User $user): JsonResponse {
-		$this->authorize('create', [TimeEntry::class, $user]);
-
 		// Make sure we have an event
 		$input = $request->safe();
 		if (!isset($input['event_id'])) $input['event_id'] = Setting::activeEvent()?->id;
