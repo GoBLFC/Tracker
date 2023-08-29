@@ -82,14 +82,14 @@
 										<thead>
 											<tr>
 												@foreach($rewards as $reward)
-													<th scope="col">{!! $reward->hours !!}hr: {{ $reward->name }}</th>
+													<th scope="col" class="pt-3">{!! $reward->hours !!}hr: {{ $reward->name }}</th>
 												@endforeach
 											</tr>
 										</thead>
 										<tbody>
 											<tr id="rewards">
 												@foreach($rewards as $reward)
-													<td>
+													<td class="pb-3">
 														<button type="button" class="btn btn-sm btn-danger claim" data-type="reward" data-reward-id="{!! $reward->id !!}">Claim</button>
 													</td>
 												@endforeach
