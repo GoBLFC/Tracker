@@ -29,15 +29,16 @@ Route::middleware(['auth', 'not-banned', 'lockdown'])->group(function () {
 		Route::post('/time/checkin', 'postCheckIn')->name('tracker.checkin.post');
 		Route::post('/time/checkout', 'postCheckOut')->name('tracker.checkout.post');
 		Route::post('/time/{timeEntry}/checkout', 'postCheckOut')->name('tracker.time.checkout.post');
+		Route::delete('/time/{timeEntry}', 'deleteTimeEntry')->name('tracker.time.delete');
 		Route::get('/user/{user}/stats', 'getStats')->name('tracker.user.stats');
 		Route::put('/user/{user}/time', 'putTimeEntry')->name('tracker.time.put');
 		Route::get('/user/{user}/time/event/{event}', 'getStats')->name('tracker.user.stats.event');
-		Route::delete('/time/{timeEntry}', 'deleteTimeEntry')->name('tracker.time.delete');
 	});
 
 	Route::controller(\App\Http\Controllers\UserController::class)->group(function () {
-		Route::post('/user/create', 'postCreate')->name('user.create.post');
 		Route::get('/user/search', 'getSearch')->name('user.search');
+		Route::put('/user', 'create')->name('user.put');
+		Route::patch('/user/{user}', 'update')->name('user.patch');
 	});
 
 	Route::controller(\App\Http\Controllers\NotificationsController::class)->group(function () {

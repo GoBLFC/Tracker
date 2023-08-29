@@ -13,6 +13,7 @@ export default defineConfig({
 				'resources/js/auto-logout.js',
 				'resources/js/toggle-kiosk.js',
 				'resources/js/seamless-forms.js',
+				'resources/js/admin/users.js',
 			],
 			refresh: true,
 		}),

@@ -96,31 +96,44 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 	}
 
 	/**
-	 * Check whether the user should have access to admin features
+	 * Check whether the user should have access to a role's features
+	 * @param Role $role
+	 * @param bool [$strict=false] Whether to check specifically for the given role
 	 */
-	public function isAdmin(): bool {
-		return $this->role->value >= Role::Admin->value;
+	public function isRole(Role $role, bool $strict = false): bool {
+		if ($strict) return $this->role->value === $role->value;
+		return $this->role->value >= $role->value;
+	}
+
+	/**
+	 * Check whether the user should have access to admin features
+	 * @param bool [$strict=false] Whether to check specifically for the admin role
+	 */
+	public function isAdmin($strict = false): bool {
+		return $this->isRole(Role::Admin, $strict);
 	}
 
 	/**
 	 * Check whether the user should have access to manager features
+	 * @param bool [$strict=false] Whether to check specifically for the manager role
 	 */
-	public function isManager(): bool {
-		return $this->role->value >= Role::Manager->value;
+	public function isManager($strict = false): bool {
+		return $this->isRole(Role::Manager, $strict);
 	}
 
 	/**
 	 * Check whether the user should have access to lead features
+	 * @param bool [$strict=false] Whether to check specifically for the lead role
 	 */
-	public function isLead(): bool {
-		return $this->role->value >= Role::Lead->value;
+	public function isLead($strict = false): bool {
+		return $this->isRole(Role::Lead, $strict);
 	}
 
 	/**
 	 * Check whether the user has been banned
 	 */
 	public function isBanned(): bool {
-		return $this->role->value === Role::Banned->value;
+		return $this->isRole(Role::Banned, true);
 	}
 
 	/**

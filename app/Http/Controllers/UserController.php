@@ -7,13 +7,14 @@ use Illuminate\Support\Str;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserSearchRequest;
+use App\Http\Requests\UserUpdateRequest;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class UserController extends Controller {
 	/**
 	 * Create a user with just a badge ID
 	 */
-	public function postCreate(UserCreateRequest $request): JsonResponse {
+	public function create(UserCreateRequest $request): JsonResponse {
 		$user = new User;
 		$user->badge_id = $request->input('badge_id');
 		$user->username = 'Unknown';
@@ -21,6 +22,24 @@ class UserController extends Controller {
 		$user->last_name = 'Unknown';
 		$user->save();
 
+		return response()->json(['user' => $user]);
+	}
+
+	/**
+	 * Update a user's details
+	 */
+	public function update(UserUpdateRequest $request, User $user): JsonResponse {
+		// Protect against undesirable role changes
+		if ($request->has('role')) {
+			if ($user->id === $request->user()->id) return response()->json(['error' => 'Cannot change your own role.'], 403);
+			if ($request->user()->role->value < $request->input('role')) {
+				return response()->json(['error' => 'Cannot change a user to a higher role than your own.'], 403);
+			}
+		}
+
+		// Update the user with the validated input (safe to fill here as we know only allowed fields will be present)
+		$user->forceFill($request->validated());
+		$user->save();
 		return response()->json(['user' => $user]);
 	}
 

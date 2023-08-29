@@ -11,6 +11,26 @@ enum Role: int {
 	case Volunteer = 0;
 	case Banned = -1;
 
+	public function colorClass(): string {
+		return [
+			3 => 'danger',
+			2 => 'warning',
+			1 => 'success',
+			0 => 'info',
+			-1 => 'danger',
+		][$this->value];
+	}
+
+	public function actionLabel(): string {
+		return [
+			3 => 'Make Admin',
+			2 => 'Make Manager',
+			1 => 'Make Lead',
+			0 => 'Make Volunteer',
+			-1 => 'BAN',
+		][$this->value];
+	}
+
 	/**
 	 * Get the enumeration case with the specified name
 	 */

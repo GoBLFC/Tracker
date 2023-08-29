@@ -202,7 +202,7 @@ function initClock(stats, ongoing) {
 }
 
 async function createUser(badge_id) {
-	const data = await sendPostRequest(userCreatePostUrl, { badge_id });
+	const data = await sendPutRequest(userPutUrl, { badge_id });
 	Toast.fire({
 		text: `User (${data.user.badge_id}) created.`,
 		icon: "success"

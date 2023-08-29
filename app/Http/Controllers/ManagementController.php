@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Activity;
-use App\Models\Department;
+use App\Models\Role;
+use App\Models\User;
 use App\Models\Event;
 use App\Models\Reward;
 use App\Models\Setting;
+use App\Models\Activity;
 use App\Models\TimeEntry;
-use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\View\View;
+use App\Models\Department;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class ManagementController extends Controller {
 	/**
@@ -56,7 +58,7 @@ class ManagementController extends Controller {
 	 * Render the user roles admin page
 	 */
 	public function getAdminUserRoles(): View {
-		return view('admin.users');
+		return view('admin.users', ['users' => User::where('role', '!=', Role::Volunteer)->get()]);
 	}
 
 	/**

@@ -150,6 +150,19 @@ export async function sendPutRequest(url, body = {}) {
 }
 
 /**
+ * Make a PATCH request to a given URL and automatically decode the response from JSON when applicable
+ * @param {string|URL} url
+ * @param {Object} body
+ * @returns {*}
+ */
+export async function sendPatchRequest(url, body = {}) {
+	return sendRequest(url, {
+		method: 'PATCH',
+		body: JSON.stringify({ _token, ...body }),
+	});
+}
+
+/**
  * Make a DELETE request to a given URL and automatically decode the response from JSON when applicable
  * @param {string|URL} url
  * @param {Object} body
@@ -247,4 +260,25 @@ export function spinner(extraClasses = []) {
 	if(typeof extraClasses === 'string') extraClasses = extraClasses.split(' ');
 	spinner.classList.add('fa', 'fa-circle-notch', 'fa-spin', ...extraClasses);
 	return spinner;
+}
+
+/**
+ * Fetches a user by badge ID and notifies upon failure
+ * @param {number} badgeId
+ * @returns {?Object}
+ */
+export async function findUserByBadgeId(badgeId) {
+	let { users } = await sendGetRequest(userSearchUrl, { q: badgeId });
+	users = users.filter(user => user.badge_id === badgeId);
+
+	// Bail if we don't have a single exact match
+	if(users.length !== 1) {
+		Toast.fire({
+			text: "Couldn't find user.",
+			icon: 'error',
+		});
+		return null;
+	}
+
+	return users[0];
 }
