@@ -4,13 +4,13 @@
 	<div class="card mb-3">
 		<h4 class="card-header">User Roles</h4>
 		<div class="card-body">
-			<div class="row gx-lg-3 mb-3">
+			<div class="row g-3 mb-5 mb-lg-4">
 				@foreach(\App\Models\Role::cases() as $role)
 					@if($role->value === \App\Models\Role::Volunteer->value) @continue @endif
 					@php($roleUsers = $users->filter(fn($user) => $user->isRole($role, true)))
 
 					<div class="col-sm-12 col-lg-6">
-						<div class="card mb-3">
+						<div class="card h-100">
 							<h5 class="card-header">{{ $role->name }}</h5>
 
 							<div class="card-body p-0 {!! $roleUsers->isEmpty() ? 'd-none' : '' !!}">
@@ -48,7 +48,7 @@
 				@endforeach
 			</div>
 
-			<div class="card mb-3">
+			<div class="card">
 				<h5 class="card-header">Promote User</h5>
 				<div class="card-body row gx-md-3 gy-2">
 					<div class="input-group">
