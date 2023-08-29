@@ -6,8 +6,8 @@
 		<div class="card-body">
 			<dl class="mb-0">
 				{{-- Active event selector --}}
-				<div class="row mb-5">
-					<dt class="col-xl-4 col-lg-4 col-md-12 mb-2 mb-lg-0 align-self-center">
+				<div class="row gy-2 mb-5">
+					<dt class="col-xl-4 col-lg-4 col-md-12 align-self-center text-center">
 						<form action="{!! route('setting.put', 'active-event') !!}" method="POST" class="seamless">
 							@method('put')
 							@csrf
@@ -33,8 +33,8 @@
 				</div>
 
 				{{-- Dev mode toggle --}}
-				<div class="row mb-5">
-					<dt class="col-xl-4 col-md-4 col-sm-12 mb-2 mb-md-0 align-self-center">
+				<div class="row gy-2 mb-5">
+					<dt class="col-xl-4 col-md-4 col-sm-12 align-self-center text-center">
 						<form action="{!! route('setting.put', 'dev-mode') !!}" method="POST" class="seamless">
 							@method('put')
 							@csrf
@@ -65,8 +65,8 @@
 				</div>
 
 				{{-- Lockdown toggle --}}
-				<div class="row mb-5">
-					<dt class="col-xl-4 col-md-4 col-sm-12 mb-2 mb-md-0 align-self-center">
+				<div class="row gy-2 mb-5">
+					<dt class="col-xl-4 col-md-4 col-sm-12 align-self-center text-center">
 						<form action="{!! route('setting.put', 'lockdown') !!}" method="POST" class="seamless">
 							@method('put')
 							@csrf
@@ -98,7 +98,7 @@
 
 				{{-- Kiosk toggle --}}
 				<div class="row">
-					<dt class="col-xl-4 col-md-4 col-sm-12 mb-2 mb-md-0 align-self-center">
+					<dt class="col-xl-4 col-md-4 col-sm-12 mb-2 mb-md-0 align-self-center text-center">
 						@include('partials.toggle-kiosk-button', ['kioskToggleClasses' => 'btn float-md-end'])
 					</dt>
 					<dd class="col-xl-6 col-md-8 col-sm-12 mb-0">
