@@ -3,12 +3,12 @@
 	<div class="card-body">
 		<div class="row gx-3">
 			@lead
-				<div class="col-md">
+				<div class="col-md mb-2 mb-md-0">
 					<a role="button" class="btn btn-secondary d-block" href="{!! route('management.lead') !!}">Lead Panel</a>
 				</div>
 			@endlead
 			@manager
-				<div class="col-md">
+				<div class="col-md mb-2 mb-md-0">
 					<a role="button" class="btn btn-secondary d-block" href="{!! route('management.manage') !!}">Management Panel</a>
 				</div>
 			@endmanager

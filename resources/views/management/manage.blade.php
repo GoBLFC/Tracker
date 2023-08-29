@@ -132,7 +132,7 @@
 
 							<div class="row gx-3">
 
-								<div class="col-md-3">
+								<div class="col-md-4 col-lg-3 mb-2 mb-md-0">
 									<div class="input-group" id="timeStart" data-td-target-input="nearest" data-td-target-toggle="nearest">
 										<input id="timeStartInput" type="text" class="form-control" data-td-target="#timeStart" placeholder="Start" />
 										<span class="input-group-text" data-td-target="#timeStart" data-td-toggle="datetimepicker">
@@ -141,7 +141,7 @@
 									</div>
 								</div>
 
-								<div class="col-md-3">
+								<div class="col-md-4 col-lg-3 mb-2 mb-md-0">
 									<div class="input-group" id="timeStop" data-td-target-input="nearest" data-td-target-toggle="nearest">
 										<input id="timeStopInput" type="text" class="form-control" data-td-target="#timeStop" placeholder="Stop" />
 										<span class="input-group-text" data-td-target="#timeStop" data-td-toggle="datetimepicker">
@@ -150,7 +150,7 @@
 									</div>
 								</div>
 
-								<div class="col-md-2">
+								<div class="col-md-4 col-lg-2 mb-2 mb-md-0">
 									<select class="form-select w-100" title="Department" id="dept">
 										<option value="" disabled selected hidden>Select Department</option>
 										@foreach($departments as $dept)
@@ -159,7 +159,7 @@
 									</select>
 								</div>
 
-								<div class="col-md-4">
+								<div class="col-md-12 col-lg-4 mt-md-3 mt-lg-0">
 									<div class="input-group">
 										<input type="text" class="form-control" placeholder="Notes" aria-label="Notes" id="notes" />
 										<button id="checkin" class="btn btn-success" type="button" disabled>Check In</button>

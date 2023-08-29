@@ -8,13 +8,13 @@
 			<div class="row">
 				@activeEvent
 					@kiosk
-						<div class="col-md">
+						<div class="col-md mb-2 mb-md-0">
 							<div id="checkstatus" class="alert alert-{!! $ongoing ? 'success' : 'danger' !!} py-2 mb-0 h-100 d-flex align-items-center" role="alert">
 								You are currently {!! !$ongoing ? 'not' : '' !!} checked in.
 							</div>
 						</div>
 
-						<div class="col-md">
+						<div class="col-md mb-2 mb-md-0">
 							<select class="form-select h-100" {!! $ongoing ? 'disabled ' : '' !!}id="dept">
 								@if(!$ongoing)
 									<option value="" disabled selected hidden>Select Department</option>
