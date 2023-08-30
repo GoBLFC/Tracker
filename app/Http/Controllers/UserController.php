@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\UserSearchRequest;
 use App\Http\Requests\UserUpdateRequest;
+use App\Models\Role;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class UserController extends Controller {
@@ -16,7 +17,7 @@ class UserController extends Controller {
 	 */
 	public function store(UserStoreRequest $request): JsonResponse {
 		$user = new User;
-		$user->badge_id = $request->input('badge_id');
+		$user->badge_id = $request->integer('badge_id');
 		$user->username = 'Unknown';
 		$user->first_name = 'Unknown';
 		$user->last_name = 'Unknown';
@@ -37,7 +38,7 @@ class UserController extends Controller {
 		// Protect against undesirable role changes
 		if ($request->has('role')) {
 			if ($user->id === $request->user()->id) return response()->json(['error' => 'Cannot change your own role.'], 403);
-			if ($request->user()->role->value < $request->input('role')) {
+			if ($request->user()->role->value < $request->enum('role', Role::class)->value) {
 				return response()->json(['error' => 'Cannot change a user to a higher role than your own.'], 403);
 			}
 		}

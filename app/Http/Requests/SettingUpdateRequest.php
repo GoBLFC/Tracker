@@ -36,7 +36,7 @@ class SettingUpdateRequest extends FormRequest {
 		switch ($this->setting->id) {
 			case 'dev-mode':
 			case 'lockdown':
-				$this->replace(['value' => filter_var($this->input('value'), FILTER_VALIDATE_BOOL)]);
+				$this->replace(['value' => $this->boolean('value')]);
 				break;
 		}
 	}
