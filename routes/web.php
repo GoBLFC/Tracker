@@ -37,7 +37,7 @@ Route::middleware(['auth', 'not-banned', 'lockdown'])->group(function () {
 
 	Route::controller(\App\Http\Controllers\UserController::class)->group(function () {
 		Route::get('/users/search', 'getSearch')->name('users.search');
-		Route::put('/users', 'create')->name('users.put');
+		Route::post('/users', 'store')->name('users.store');
 		Route::patch('/users/{user}', 'update')->name('users.update');
 	});
 

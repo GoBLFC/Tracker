@@ -14,7 +14,7 @@ class UserController extends Controller {
 	/**
 	 * Create a user with just a badge ID
 	 */
-	public function create(UserStoreRequest $request): JsonResponse {
+	public function store(UserStoreRequest $request): JsonResponse {
 		$user = new User;
 		$user->badge_id = $request->input('badge_id');
 		$user->username = 'Unknown';

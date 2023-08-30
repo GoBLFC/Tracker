@@ -323,7 +323,7 @@
 		const userClaimsStoreUrl = '{!! route('users.claims.store', 'id') !!}';
 		const claimsDeleteUrl = '{!! route('claims.destroy', 'id') !!}';
 		const userSearchUrl = '{!! route('users.search') !!}';
-		const userStoreUrl = '{!! route('users.put') !!}';
+		const userStoreUrl = '{!! route('users.store') !!}';
 		const timeCheckoutPostUrl = '{!! route('tracker.time.checkout.post', 'id') !!}';
 		const timeStoreUrl = '{!! route('tracker.time.put', 'id') !!}';
 		const timeDeleteUrl = '{!! route('tracker.time.delete', 'id') !!}';
