@@ -1,3 +1,62 @@
+# VTracker - BLFC Terminal
+
+## Architecture Overview
+
+## Developer Setup
+
+For a container based dev environment
+
+### Pre-requisites
+
+* **All:** [Docker](https://www.docker.com/)
+* **Windows Only:** Enable [WSL 2](https://learn.microsoft.com/en-us/windows/wsl/install) with a linux distro. Run all commands in WSL.
+
+### .Env Config
+
+```bash
+cp .env.example .env
+```
+
+#### ConCat
+
+1. Get a [test concat](https://reg.gobltc.com) account for OAuth and get developer authorization from Glitch, Levi, or Gawdl3y .
+1. Add a new OAuth App at `Housekeeping` -> `Developers` -> `OAuth Applications` -> `Create New` with `http://localhost` as the callback URI, and the `volunteer:read` application permission.
+1. Update `CONCAT_CLIENT_SECRET` and `CONCAT_CLIENT_ID` in `.env`
+
+#### Telegram Bot
+
+ 1. Create a bot via [@BotFather](https://t.me/botfather) (`/newbot`)
+ 1. Update `TELEGRAM_BOT_TOKEN` in `.env`
+
+#### [Sail](https://laravel.com/docs/10.x/sail) Setup (Containerized build environment)
+
+ 1. Install the PHP CLI for your environment (ex: `sudo apt install php-cli`)
+ 1. Install [Composer](https://getcomposer.org/download/)
+ 1. `composer install`
+ 1. _(Optional)_ Add `sail` alias `alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'`, possibly to your shell startup (ex: `~/.bashrc`)
+
+#### Running the Developer Environment
+
+ 1. `sail up` _(Ctrl+C to stop)_
+ 1. _If this is the first time the env has been run:_
+    1. `sail artisan key:generate` (Updates `APP_KEY` in `.env`)
+    1. `sail npm install`
+ 1. `sail npm run dev` _(Ctrl+C to stop)_
+ 1. _If this is the first time the env has been run:_
+    1. Initialize the database schema `sail artisan migrate`
+    1. _(Optional)_ Seed the database with dummy accounts `sail artisan db:seed`
+ 1. Open the project on [http://localhost](http://localhost) (it may be slow)
+    * If you see an apache splash screen, apache2 instance is already bound to 80.
+
+## Glossary
+
+* [Laravel](https://laravel.com/) - PHP web server framework
+* [Sail](https://laravel.com/docs/10.x/sail) - Laravel system that manages a developer container, proxying commands into the container
+* [Artisan](https://laravel.com/docs/10.x/artisan) - Laravel command line helper application (Used to run Sail)
+* [Vite](https://vitejs.dev/) - Asset bundling and cache-breaking for the js and image assets
+* [Blade](https://laravel.com/docs/10.x/blade) - Laravel template engine.
+
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
