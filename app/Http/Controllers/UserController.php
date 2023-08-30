@@ -42,9 +42,7 @@ class UserController extends Controller {
 			}
 		}
 
-		// Update the user with the validated input
-		$user->fill($request->validated());
-		$user->save();
+		$user->update($request->validated());
 		return response()->json(['user' => $user]);
 	}
 
