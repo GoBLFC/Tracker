@@ -82,6 +82,7 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 		'first_name',
 		'last_name',
 		'badge_name',
+		'role',
 	];
 
 	protected $hidden = [

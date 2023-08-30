@@ -42,8 +42,8 @@ class UserController extends Controller {
 			}
 		}
 
-		// Update the user with the validated input (safe to fill here as we know only allowed fields will be present)
-		$user->forceFill($request->validated());
+		// Update the user with the validated input
+		$user->fill($request->validated());
 		$user->save();
 		return response()->json(['user' => $user]);
 	}
