@@ -59,10 +59,9 @@ Route::middleware(['auth', 'not-banned', 'lockdown'])->group(function () {
 	});
 
 	Route::resource('settings', \App\Http\Controllers\SettingController::class)->only(['update', 'destroy']);
-	Route::apiResources([
-		'departments' => \App\Http\Controllers\DepartmentController::class,
-		'events' => \App\Http\Controllers\EventController::class,
-	]);
+	Route::apiResource('departments', \App\Http\Controllers\DepartmentController::class);
+	Route::apiResource('events', \App\Http\Controllers\EventController::class);
+	Route::apiResource('events.bonuses', \App\Http\Controllers\TimeBonusController::class)->shallow();
 
 	Route::controller(\App\Http\Controllers\ManagementController::class)->group(function () {
 		Route::middleware('role:lead')->group(function () {

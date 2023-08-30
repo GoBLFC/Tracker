@@ -55,6 +55,7 @@ class TimeBonus extends UuidModel {
 		'stop',
 		'modifier',
 		'department_id',
+		'event_id',
 	];
 
 	public function getActivitylogOptions(): LogOptions {
