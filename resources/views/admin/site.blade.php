@@ -90,8 +90,9 @@
 					</dt>
 					<dd class="col-xl-6 col-md-8 col-sm-12 mb-0">
 						<p class="mb-0">
-							Locking the site down makes it inaccessible to volunteers, prohibiting them from checking in or out.
-							Managers and administrators can still log in and perform staff functions, including checking users in or out on their behalf.
+							Locking the site down makes it entirely inaccessible to volunteers, prohibiting them from checking in/out or even getting their Telegram QR code.
+							Managers and administrators can still log in and perform staff functions, including checking users in/out on their behalf.
+							To simply prevent further time entry for an event, it's recommended to instead clear the active event above and leave this disabled.
 						</p>
 					</dd>
 				</div>
