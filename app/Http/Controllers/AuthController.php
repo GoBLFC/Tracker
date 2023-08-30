@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\QuickCodeLogin;
 use App\Http\Requests\QuickCodeRequest;
 use App\Models\QuickCode;
 use App\Models\Setting;
@@ -89,9 +90,11 @@ class AuthController extends Controller {
 				: redirect()->back()->withError($error)->withInput();
 		}
 
-		// Delete the quick code to ensure it can't be used again, then log the user in
-		$quickcode->delete();
+		// Log the user in and delete the quick code to ensure it can't be used again
+		QuickCodeLogin::dispatch($quickcode);
 		Auth::login($quickcode->user);
+		$quickcode->delete();
+
 		return $request->expectsJson()
 			? response()->json(null, 205)
 			: redirect()->route('tracker.index');

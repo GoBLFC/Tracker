@@ -2,6 +2,7 @@
 
 namespace App\Telegram\Commands;
 
+use App\Events\QuickCodeGenerated;
 use App\Models\QuickCode;
 
 class QuickCodeCommand extends Command {
@@ -35,6 +36,7 @@ class QuickCodeCommand extends Command {
 		// (re)Generate the code and save
 		$quickCode->generateCode();
 		$quickCode->save();
+		QuickCodeGenerated::dispatch($quickCode);
 
 		$this->replyWithMessage([
 			'text' => "<b>Quick Sign-in Code:</b> <code>{$quickCode->code}</code>\nThis code expires in 30 seconds." . ($existingUnexpired ? ' Your old code was invalidated.' : ''),
