@@ -23,10 +23,10 @@ class TimeBonusController extends Controller {
 	 * Store a newly created resource in storage.
 	 */
 	public function store(TimeBonusStoreRequest $request, Event $event) {
-		$timeBonus = new TimeBonus($request->validated());
-		$timeBonus->event_id = $event->id;
-		$timeBonus->save();
-		return response()->json(['bonus' => $timeBonus]);
+		$bonus = new TimeBonus($request->validated());
+		$bonus->event_id = $event->id;
+		$bonus->save();
+		return response()->json(['bonus' => $bonus]);
 	}
 
 	/**
