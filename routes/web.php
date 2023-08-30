@@ -58,10 +58,11 @@ Route::middleware(['auth', 'not-banned', 'lockdown'])->group(function () {
 		Route::post('/kiosks/deauthorize', 'postDeauthorize')->name('kiosks.deauthorize.post');
 	});
 
-	Route::resource('settings', \App\Http\Controllers\SettingController::class)->only(['update', 'destroy']);
+	Route::apiResource('settings', \App\Http\Controllers\SettingController::class)->only(['update', 'destroy']);
 	Route::apiResource('departments', \App\Http\Controllers\DepartmentController::class);
 	Route::apiResource('events', \App\Http\Controllers\EventController::class);
 	Route::apiResource('events.bonuses', \App\Http\Controllers\TimeBonusController::class)->shallow();
+	Route::apiResource('events.rewards', \App\Http\Controllers\RewardController::class)->shallow();
 
 	Route::controller(\App\Http\Controllers\ManagementController::class)->group(function () {
 		Route::middleware('role:lead')->group(function () {

@@ -45,6 +45,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Reward extends UuidModel {
 	use HasFactory, SoftDeletes, LogsActivity;
 
+	protected $fillable = [
+		'name',
+		'description',
+		'hours',
+	];
+
 	public function getActivitylogOptions(): LogOptions {
 		return LogOptions::defaults()
 			->logOnly(['name', 'description', 'hours'])
