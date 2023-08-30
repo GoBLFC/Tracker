@@ -45,6 +45,11 @@ class Department extends UuidModel {
 		'hidden' => 'boolean',
 	];
 
+	protected $fillable = [
+		'name',
+		'hidden',
+	];
+
 	public function getActivitylogOptions(): LogOptions {
 		return LogOptions::defaults()
 			->logOnly(['name', 'hidden'])

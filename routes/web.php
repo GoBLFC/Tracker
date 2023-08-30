@@ -59,6 +59,7 @@ Route::middleware(['auth', 'not-banned', 'lockdown'])->group(function () {
 	});
 
 	Route::resource('settings', \App\Http\Controllers\SettingController::class)->only(['update', 'destroy']);
+	Route::apiResource('departments', \App\Http\Controllers\DepartmentController::class);
 
 	Route::controller(\App\Http\Controllers\ManagementController::class)->group(function () {
 		Route::middleware('role:lead')->group(function () {
