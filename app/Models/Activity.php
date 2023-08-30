@@ -16,7 +16,6 @@ use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 /**
  * Spatie\Activitylog\Models\Activity.
  *
- * @property string $id
  * @property string|null $log_name
  * @property string $description
  * @property string|null $subject_type

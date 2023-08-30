@@ -19,7 +19,7 @@ class HelpCommand extends Command {
 		// Get the user status
 		$chatId = $this->getUpdate()->getChat()->id;
 		$user = User::whereTgChatId($chatId)->first();
-		$displayName = $user ? htmlspecialchars($user->getDisplayName()) : null;
+		$displayName = $user ? htmlspecialchars($user->display_name) : null;
 		$status .= "<b>Volunteer account:</b>\n" . ($user ? "{$displayName} (#{$user->badge_id})" : "You haven't linked a volunteer account to me.") . "\n\n";
 
 		// Build a list of commands to display

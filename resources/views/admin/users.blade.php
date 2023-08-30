@@ -29,7 +29,7 @@
 												<tr data-user-id="{!! $user->id !!}">
 													<th scope="row">{!! $user->badge_id !!}</th>
 													<td>{{ $user->username }}</td>
-													<td>{{ $user->getRealName() }}</td>
+													<td>{{ $user->full_name }}</td>
 													<td>
 														<button type="button" class="btn btn-sm btn-danger float-end" data-role="0">Remove</button>
 													</td>

@@ -22,6 +22,51 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 
+/**
+ * @property int $badge_id
+ * @property string $username
+ * @property string $first_name
+ * @property string $last_name
+ * @property string|null $badge_name
+ * @property \App\Models\Role $role
+ * @property string $tg_setup_key
+ * @property int|null $tg_chat_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read string $full_name
+ * @property-read string $display_name
+ * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\TimeEntry>|\App\Models\TimeEntry[] $timeEntries
+ * @property-read int|null $time_entries_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\RewardClaim>|\App\Models\RewardClaim[] $rewardClaims
+ * @property-read int|null $reward_claims_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\QuickCode>|\App\Models\QuickCode[] $quickCodes
+ * @property-read int|null $quick_codes_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Department>|\App\Models\Department[] $departments
+ * @property-read int|null $departments_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Activity>|\App\Models\Activity[] $activities
+ * @property-read int|null $activities_count
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User ofRole(\App\Models\Role $role)
+ * @method static \Database\Factories\UserFactory<self> factory($count = null, $state = [])
+ *
+ * @mixin \Illuminate\Database\Eloquent\Builder
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|static query()
+ * @method static static make(array $attributes = [])
+ * @method static static create(array $attributes = [])
+ * @method static static forceCreate(array $attributes)
+ * @method \App\Models\User firstOrNew(array $attributes = [], array $values = [])
+ * @method \App\Models\User firstOrFail($columns = ['*'])
+ * @method \App\Models\User firstOrCreate(array $attributes, array $values = [])
+ * @method \App\Models\User firstOr($columns = ['*'], \Closure $callback = null)
+ * @method \App\Models\User firstWhere($column, $operator = null, $value = null, $boolean = 'and')
+ * @method \App\Models\User updateOrCreate(array $attributes, array $values = [])
+ * @method null|static first($columns = ['*'])
+ * @method static static findOrFail($id, $columns = ['*'])
+ * @method static static findOrNew($id, $columns = ['*'])
+ * @method static null|static find($id, $columns = ['*'])
+ */
 class User extends UuidModel implements AuthenticatableContract, AuthorizableContract {
 	use HasFactory, SoftDeletes, Authenticatable, Authorizable, Notifiable, LogsActivity;
 
@@ -58,6 +103,20 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 			->logOnly(['badge_id', 'username', 'first_name', 'last_name', 'badge_name', 'role'])
 			->logOnlyDirty()
 			->dontSubmitEmptyLogs();
+	}
+
+	/**
+	 * Get the full name of the user (first + last name)
+	 */
+	public function getFullNameAttribute(): string {
+		return "{$this->first_name} {$this->last_name}";
+	}
+
+	/**
+	 * Get the display name of the user (badge name if available, username otherwise)
+	 */
+	public function getDisplayNameAttribute(): string {
+		return $this->badge_name ?? $this->username;
 	}
 
 	/**
@@ -134,20 +193,6 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 	 */
 	public function isBanned(): bool {
 		return $this->isRole(Role::Banned, true);
-	}
-
-	/**
-	 * Get the user's display name (badge name if available, username otherwise)
-	 */
-	public function getDisplayName(): string {
-		return $this->badge_name ?? $this->username;
-	}
-
-	/**
-	 * Get the user's full real name
-	 */
-	public function getRealName(): string {
-		return "{$this->first_name} {$this->last_name}";
 	}
 
 	/**

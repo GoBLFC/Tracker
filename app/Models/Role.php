@@ -11,6 +11,9 @@ enum Role: int {
 	case Volunteer = 0;
 	case Banned = -1;
 
+	/**
+	 * Gets the Bootstrap color class (like "danger" or "warning") for the case
+	 */
 	public function colorClass(): string {
 		return [
 			3 => 'danger',
@@ -21,6 +24,9 @@ enum Role: int {
 		][$this->value];
 	}
 
+	/**
+	 * Get the action label (like "Make Admin" or "BAN") for the case
+	 */
 	public function actionLabel(): string {
 		return [
 			3 => 'Make Admin',

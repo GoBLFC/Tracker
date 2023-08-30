@@ -200,7 +200,7 @@
 											<th scope="row">{!! $activity->subject->user->badge_id !!}</th>
 											<td>{{ $activity->subject->user->username }}</td>
 											<td>{{ $activity->subject->user->badge_name }}</td>
-											<td>{{ $activity->subject->user->getRealName() }}</td>
+											<td>{{ $activity->subject->user->full_name }}</td>
 											<td>
 												@if(isset($activity->properties['attributes']['stop']))
 													<span class="badge text-bg-warning rounded-pill">Checked Out</span>
@@ -251,7 +251,7 @@
 											<th scope="row">{!! $entry->user->badge_id !!}</th>
 											<td>{{ $entry->user->username }}</td>
 											<td>{{ $entry->user->badge_name }}</td>
-											<td>{{ $entry->user->getRealName() }}</td>
+											<td>{{ $entry->user->full_name }}</td>
 											<td>{{ $entry->department->name }}</td>
 											<td>{!! $entry->start->timezone(config('tracker.timezone'))->toDayDateTimeString() !!}</td>
 											<td>{!! $entry->getHumanDuration() !!}</td>

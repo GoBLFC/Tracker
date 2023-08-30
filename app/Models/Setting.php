@@ -8,6 +8,30 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 
+/**
+ * @property string $value
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Activity>|\App\Models\Activity[] $activities
+ * @property-read int|null $activities_count
+ *
+ * @mixin \Illuminate\Database\Eloquent\Builder
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|static query()
+ * @method static static make(array $attributes = [])
+ * @method static static create(array $attributes = [])
+ * @method static static forceCreate(array $attributes)
+ * @method \App\Models\Setting firstOrNew(array $attributes = [], array $values = [])
+ * @method \App\Models\Setting firstOrFail($columns = ['*'])
+ * @method \App\Models\Setting firstOrCreate(array $attributes, array $values = [])
+ * @method \App\Models\Setting firstOr($columns = ['*'], \Closure $callback = null)
+ * @method \App\Models\Setting firstWhere($column, $operator = null, $value = null, $boolean = 'and')
+ * @method \App\Models\Setting updateOrCreate(array $attributes, array $values = [])
+ * @method null|static first($columns = ['*'])
+ * @method static static findOrFail($id, $columns = ['*'])
+ * @method static static findOrNew($id, $columns = ['*'])
+ * @method static null|static find($id, $columns = ['*'])
+ */
 class Setting extends Model {
 	use LogsActivity;
 

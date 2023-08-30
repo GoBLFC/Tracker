@@ -61,7 +61,7 @@ class LinkCommand extends Command {
 		$user->generateTelegramSetupKey();
 		$user->save();
 
-		$displayName = htmlspecialchars($user->getDisplayName());
+		$displayName = htmlspecialchars($user->display_name);
 		$this->replyWithMessage([
 			'text' => "Thanks for volunteering, <b>{$displayName}</b>!\nUse /help or press these buttons to view more info.",
 			'parse_mode' => 'HTML',

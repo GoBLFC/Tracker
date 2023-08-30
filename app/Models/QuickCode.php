@@ -7,6 +7,34 @@ use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property string $code
+ * @property string $user_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User|null $user
+ * @property-read int|null $users_count
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\QuickCode unexpired()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\QuickCode expired()
+ *
+ * @mixin \Illuminate\Database\Eloquent\Builder
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|static query()
+ * @method static static make(array $attributes = [])
+ * @method static static create(array $attributes = [])
+ * @method static static forceCreate(array $attributes)
+ * @method \App\Models\QuickCode firstOrNew(array $attributes = [], array $values = [])
+ * @method \App\Models\QuickCode firstOrFail($columns = ['*'])
+ * @method \App\Models\QuickCode firstOrCreate(array $attributes, array $values = [])
+ * @method \App\Models\QuickCode firstOr($columns = ['*'], \Closure $callback = null)
+ * @method \App\Models\QuickCode firstWhere($column, $operator = null, $value = null, $boolean = 'and')
+ * @method \App\Models\QuickCode updateOrCreate(array $attributes, array $values = [])
+ * @method null|static first($columns = ['*'])
+ * @method static static findOrFail($id, $columns = ['*'])
+ * @method static static findOrNew($id, $columns = ['*'])
+ * @method static null|static find($id, $columns = ['*'])
+ */
 class QuickCode extends UuidModel {
 	use MassPrunable;
 
