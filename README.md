@@ -31,7 +31,8 @@ cp .env.example .env
 #### [Sail](https://laravel.com/docs/10.x/sail) Setup (Containerized build environment)
 
  1. Install the PHP CLI for your environment (ex: `sudo apt install php-cli`)
- 1. `php artisan sail:install --devcontainer`
+ 1. Install [Composer](https://getcomposer.org/download/)
+ 1. `composer install`
  1. _(Optional)_ Add `sail` alias `alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'`, possibly to your shell startup (ex: `~/.bashrc`)
 
 #### Running the Developer Environment
