@@ -11,7 +11,7 @@ use App\Models\Activity;
 use App\Models\TimeEntry;
 use Illuminate\View\View;
 use App\Models\Department;
-use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder;
 
 class ManagementController extends Controller {
 	/**
