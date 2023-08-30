@@ -13,8 +13,12 @@ class EventServiceProvider extends ServiceProvider {
 	 */
 	protected $listen = [
 		\SocialiteProviders\Manager\SocialiteWasCalled::class => [
-			\App\Listeners\ConCatExtendSocialite::class . '@handle',
+			\App\Listeners\ConCatExtendSocialite::class,
 		],
+	];
+
+	protected $subscribe = [
+		\App\Listeners\UserEventSubscriber::class,
 	];
 
 	/**
