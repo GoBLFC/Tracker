@@ -36,6 +36,7 @@ USER www-data
 RUN php artisan config:cache
 RUN php artisan route:cache
 RUN php artisan view:cache
+RUN php artisan event:cache
 USER root
 
 # Configure cron
