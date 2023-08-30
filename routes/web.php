@@ -49,8 +49,8 @@ Route::middleware(['auth', 'not-banned', 'lockdown'])->group(function () {
 	Route::controller(\App\Http\Controllers\RewardClaimController::class)->group(function () {
 		Route::get('/users/{user}/claims', 'getClaims')->name('users.claims');
 		Route::get('/users/{user}/claims/event/{event}', 'getClaims')->name('users.claims.event');
-		Route::put('/users/{user}/claims', 'putClaim')->name('users.claims.put');
-		Route::delete('/claims/{rewardClaim}', 'deleteClaim')->name('claims.delete');
+		Route::put('/users/{user}/claims', 'store')->name('users.claims.store');
+		Route::delete('/claims/{rewardClaim}', 'destroy')->name('claims.destroy');
 	});
 
 	Route::controller(\App\Http\Controllers\KioskController::class)->group(function () {
@@ -58,10 +58,7 @@ Route::middleware(['auth', 'not-banned', 'lockdown'])->group(function () {
 		Route::post('/kiosks/deauthorize', 'postDeauthorize')->name('kiosks.deauthorize.post');
 	});
 
-	Route::controller(\App\Http\Controllers\SettingController::class)->group(function () {
-		Route::put('/settings/{setting}', 'update')->name('settings.update');
-		Route::delete('/settings/{setting}', 'delete')->name('settings.delete');
-	});
+	Route::resource('settings', \App\Http\Controllers\SettingController::class)->only(['update', 'destroy']);
 
 	Route::controller(\App\Http\Controllers\ManagementController::class)->group(function () {
 		Route::middleware('role:lead')->group(function () {

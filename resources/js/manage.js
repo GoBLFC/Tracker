@@ -202,7 +202,7 @@ function initClock(stats, ongoing) {
 }
 
 async function createUser(badge_id) {
-	const data = await sendPutRequest(userPutUrl, { badge_id });
+	const data = await sendPutRequest(userStoreUrl, { badge_id });
 	Toast.fire({
 		text: `User (${data.user.badge_id}) created.`,
 		icon: "success"
@@ -214,7 +214,7 @@ async function checkIn() {
 	const notes = $("#notes").val();
 	const start = timeStart.dates.picked[0] ? prepareDateForInput(timeStart.dates.picked[0], timezone) : null;
 
-	await sendPutRequest(timePutUrl.replace(/id/, currentUser.id), { department_id, start, notes });
+	await sendPutRequest(timeStoreUrl.replace(/id/, currentUser.id), { department_id, start, notes });
 
 	loadVolunteer(currentUser.id);
 	Toast.fire({
@@ -229,7 +229,7 @@ async function addTime() {
 	const department_id = $("#dept").val();
 	const notes = $("#notes").val();
 
-	await sendPutRequest(timePutUrl.replace(/id/, currentUser.id), {
+	await sendPutRequest(timeStoreUrl.replace(/id/, currentUser.id), {
 		department_id,
 		start,
 		stop,
@@ -293,7 +293,7 @@ async function toggleClaim(button) {
 			.text("Claim");
 	} else {
 		const reward_id = button.data('reward-id');
-		const { reward_claim: claim } = await sendPutRequest(userClaimsPutUrl.replace(/id/, currentUser.id), { reward_id });
+		const { reward_claim: claim } = await sendPutRequest(userClaimsStoreUrl.replace(/id/, currentUser.id), { reward_id });
 		button.removeClass("btn-success")
 			.addClass("btn-danger")
 			.data("claim-id", claim.id)

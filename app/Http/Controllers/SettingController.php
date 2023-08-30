@@ -22,7 +22,7 @@ class SettingController extends Controller {
 	/**
 	 * Clear the value of a setting
 	 */
-	public function delete(Request $request, Setting $setting): JsonResponse|RedirectResponse {
+	public function destroy(Request $request, Setting $setting): JsonResponse|RedirectResponse {
 		$this->authorize('update', $setting);
 		$setting->setValue(null);
 		return $request->expectsJson()

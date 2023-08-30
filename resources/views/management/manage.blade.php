@@ -320,12 +320,12 @@
 		const timezone = '{!! config('tracker.timezone') !!}';
 		const trackerStatsUrl = '{!! route('tracker.user.stats', 'id') !!}';
 		const userClaimsUrl = '{!! route('users.claims', 'id') !!}';
-		const userClaimsPutUrl = '{!! route('users.claims.put', 'id') !!}';
-		const claimsDeleteUrl = '{!! route('claims.delete', 'id') !!}';
+		const userClaimsStoreUrl = '{!! route('users.claims.store', 'id') !!}';
+		const claimsDeleteUrl = '{!! route('claims.destroy', 'id') !!}';
 		const userSearchUrl = '{!! route('users.search') !!}';
-		const userPutUrl = '{!! route('users.put') !!}';
+		const userStoreUrl = '{!! route('users.put') !!}';
 		const timeCheckoutPostUrl = '{!! route('tracker.time.checkout.post', 'id') !!}';
-		const timePutUrl = '{!! route('tracker.time.put', 'id') !!}';
+		const timeStoreUrl = '{!! route('tracker.time.put', 'id') !!}';
 		const timeDeleteUrl = '{!! route('tracker.time.delete', 'id') !!}';
 		const departments = {{ Js::from($departments) }};
 		const rewards = {{ JS::from($rewards) }};

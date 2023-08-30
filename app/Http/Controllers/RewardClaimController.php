@@ -22,7 +22,7 @@ class RewardClaimController extends Controller {
 	/**
 	 * Claim a reward for a user
 	 */
-	public function putClaim(RewardClaimStoreRequest $request, User $user): JsonResponse {
+	public function store(RewardClaimStoreRequest $request, User $user): JsonResponse {
 		// Make sure there isn't an existing claim
 		$rewardId = $request->input('reward_id');
 		if ($user->rewardClaims()->whereRewardId($rewardId)->exists()) {
@@ -41,7 +41,7 @@ class RewardClaimController extends Controller {
 	/**
 	 * Unclaim a reward for a user
 	 */
-	public function deleteClaim(RewardClaim $rewardClaim): JsonResponse {
+	public function destroy(RewardClaim $rewardClaim): JsonResponse {
 		$this->authorize('delete', $rewardClaim);
 		$rewardClaim->delete();
 		return response()->json(null, 205);
