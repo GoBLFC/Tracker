@@ -275,7 +275,7 @@ export async function findUserByBadgeId(badgeId) {
 	if(users.length !== 1) {
 		Toast.fire({
 			text: "Couldn't find user.",
-			icon: 'error',
+			icon: 'warning',
 		});
 		return null;
 	}
