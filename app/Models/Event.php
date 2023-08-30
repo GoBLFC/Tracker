@@ -47,6 +47,10 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 class Event extends UuidModel {
 	use HasFactory, SoftDeletes, LogsActivity;
 
+	protected $fillable = [
+		'name',
+	];
+
 	public function getActivitylogOptions(): LogOptions {
 		return LogOptions::defaults()
 			->logOnly(['name'])
