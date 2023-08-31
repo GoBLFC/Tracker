@@ -127,7 +127,7 @@ async function loadVolunteer(id) {
 			value.id,
 			`${checkIn.toLocaleString({ weekday: 'short' })}, ${checkIn.toLocaleString({ dateStyle: 'medium', timeStyle: 'short' })}`,
 			checkOut ? `${checkOut.toLocaleString({ weekday: 'short' })}, ${checkOut.toLocaleString({ dateStyle: 'medium', timeStyle: 'short' })}` : null,
-			departments.find(dept => dept.id === value.department_id).name,
+			departments.find(dept => dept.id === value.department_id)?.name ?? 'Unknown',
 			humanDuration(worked),
 			humanDuration(worked.plus(value.bonus_time * 1000)),
 			value.notes,

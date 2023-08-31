@@ -1,0 +1,104 @@
+@extends('layouts.admin')
+
+@section('admin-content')
+	<div class="card mb-3">
+		<h4 class="card-header">Department Management</h4>
+		<div class="card-body">
+			<div class="card mb-4">
+				<h5 class="card-header">Departments</h5>
+				<div class="card-body p-0">
+					<div class="table-responsive">
+						<table class="table table-striped mb-0">
+							<thead>
+								<tr>
+									<th scope="col">Name</th>
+									<th scope="col">Hide</th>
+									<th scope="col"></th>
+									<th scope="col"></th>
+								</tr>
+							</thead>
+							<tbody id="dptRows">
+								@foreach($departments->sortBy('name') as $department)
+									<tr>
+										<td class="w-100">
+											<input form="update-{!! $department->id !!}""
+												type="text"
+												class="form-control dptName"
+												name="name"
+												value="{{ $department->display_name }}" />
+										</td>
+										<td class="align-middle">
+											<div class="form-check form-switch">
+												<input form="update-{!! $department->id !!}" type="hidden" name="hidden" value="0" />
+												<input form="update-{!! $department->id !!}"
+													type="checkbox"
+													role="switch"
+													class="form-check-input dptHidden"
+													name="hidden"
+													value="1"
+													{!! $department->hidden ? 'checked' : '' !!} />
+											</div>
+										</td>
+										<td>
+											<form action="{!! route('departments.update', $department->id) !!}" method="POST" id="update-{!! $department->id !!}" class="seamless update">
+												@method('PUT')
+												@csrf
+												<button type="submit" class="btn btn-success float-end" data-success="Updated the department.">Save</button>
+											</form>
+										</td>
+										<td>
+											<form action="{!! route('departments.destroy', $department->id) !!}" method="POST" id="delete-{!! $department->id !!}" class="seamless delete">
+												@method('DELETE')
+												@csrf
+												<button type="submit"
+													class="btn btn-danger float-end"
+													data-success="Deleted the department."
+													data-confirm-title="Delete department?"
+													data-confirm-text="{{ $department->display_name }}">
+
+													Delete
+												</button>
+											</form>
+										</td>
+									</tr>
+								@endforeach
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+
+			<div class="card">
+				<h5 class="card-header">Create Department</h5>
+				<div class="card-body">
+					<form action="{!! route('departments.store') !!}" method="POST" id="dptCreate" class="seamless">
+						@csrf
+						<div class="d-flex flex-column flex-md-row gap-3 gap-md-4 align-items-md-center">
+							<div class="flex-grow-1">
+								<div class="input-group">
+									<label for="dptName" class="input-group-text">Name</label>
+									<input type="text" name="name" id="dptName" class="form-control" />
+								</div>
+							</div>
+							<div>
+								<div class="form-check form-switch mb-0">
+									<input type="hidden" name="hidden" value="0" />
+									<input type="checkbox" name="hidden" value="1" id="dptHidden" class="form-check-input" role="switch"  />
+									<label for="dptHidden" class="form-label mb-0">Hide</label>
+								</div>
+							</div>
+							<div>
+								<button type="submit" class="btn btn-success">Create</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+@endsection
+
+@push('modules')
+	@vite('resources/js/seamless-forms.js')
+	@vite('resources/js/admin/departments.js')
+@endpush

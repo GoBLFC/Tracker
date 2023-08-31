@@ -18,9 +18,10 @@ class DepartmentUpdateRequest extends FormRequest {
 	 * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
 	 */
 	public function rules(): array {
+		$requiredOrSometimes = $this->isMethod('PUT') ? 'required' : 'sometimes';
 		return [
-			'name' => 'sometimes|string|max:64',
-			'hidden' => 'sometimes|boolean',
+			'name' => "{$requiredOrSometimes}|string|max:64",
+			'hidden' => "{$requiredOrSometimes}|boolean",
 		];
 	}
 }

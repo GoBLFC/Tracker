@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\DepartmentStoreRequest;
-use App\Http\Requests\DepartmentUpdateRequest;
 use App\Models\Department;
 use Illuminate\Http\JsonResponse;
+use App\Http\Requests\DepartmentStoreRequest;
+use App\Http\Requests\DepartmentUpdateRequest;
 
 class DepartmentController extends Controller {
 	public function __construct() {
@@ -25,6 +25,7 @@ class DepartmentController extends Controller {
 	public function store(DepartmentStoreRequest $request): JsonResponse {
 		$department = new Department($request->validated());
 		$department->save();
+		session()->flash('success', 'Department created.');
 		return response()->json(['department' => $department]);
 	}
 
@@ -47,6 +48,9 @@ class DepartmentController extends Controller {
 	 * Remove the specified resource from storage.
 	 */
 	public function destroy(Department $department): JsonResponse {
+		// TODO: Once determination is made on what to do with soft-deletables, we may want to ensure relations get
+		// deleted or soft-deleted along with the parent. At the moment, we just try to gracefully handle the parent,
+		// Department in this case, being soft-deleted.
 		$department->delete();
 		return response()->json(null, 205);
 	}

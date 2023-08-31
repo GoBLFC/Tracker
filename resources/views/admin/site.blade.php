@@ -17,7 +17,7 @@
 								<select name="value" class="form-select" id="activeEventValue">
 									<option value="" {!! !$activeEvent ? 'selected' : '' !!}>None</option>
 									@foreach($events as $event)
-										<option value="{!! $event->id !!}" {!! $event->id === $activeEvent?->id ? 'selected' : '' !!}>{{ $event->name }}</option>
+										<option value="{!! $event->id !!}" {!! $event->id === $activeEvent?->id ? 'selected' : '' !!}>{{ $event->display_name }}</option>
 									@endforeach
 								</select>
 								<button type="submit" class="btn btn-primary" data-success="Updated the active event.">Save</button>
