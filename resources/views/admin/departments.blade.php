@@ -18,7 +18,7 @@
 								</tr>
 							</thead>
 							<tbody id="dptRows">
-								@foreach($departments->sortBy('name') as $department)
+								@foreach($departments->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE) as $department)
 									<tr>
 										<td class="w-100">
 											<input form="update-{!! $department->id !!}""
