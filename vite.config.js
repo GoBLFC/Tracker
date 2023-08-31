@@ -14,6 +14,8 @@ export default defineConfig({
 				'resources/js/toggle-kiosk.js',
 				'resources/js/seamless-forms.js',
 				'resources/js/admin/users.js',
+				'resources/js/admin/departments.js',
+				'resources/js/admin/events.js',
 			],
 			refresh: true,
 		}),
