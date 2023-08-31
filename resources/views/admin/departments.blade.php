@@ -51,7 +51,7 @@
 											<form action="{!! route('departments.update', $department->id) !!}" method="POST" id="update-{!! $department->id !!}" class="seamless update">
 												@method('PUT')
 												@csrf
-												<button type="submit" class="btn btn-success float-end" data-success="Updated the department.">Save</button>
+												<button type="submit" class="btn btn-success float-end" data-success="Updated department.">Save</button>
 											</form>
 										</td>
 										<td>
@@ -60,7 +60,7 @@
 												@csrf
 												<button type="submit"
 													class="btn btn-danger float-end"
-													data-success="Deleted the department."
+													data-success="Deleted department."
 													data-confirm-title="Delete department?"
 													data-confirm-text="{{ $department->display_name }}">
 

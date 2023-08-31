@@ -40,7 +40,7 @@
 											<form action="{!! route('events.update', $event->id) !!}" method="POST" id="update-{!! $event->id !!}" class="seamless update">
 												@method('PUT')
 												@csrf
-												<button type="submit" class="btn btn-success float-end" data-success="Updated the event.">Save</button>
+												<button type="submit" class="btn btn-success float-end" data-success="Updated event.">Save</button>
 											</form>
 										</td>
 										<td>
@@ -49,7 +49,7 @@
 												@csrf
 												<button type="submit"
 													class="btn btn-danger float-end"
-													data-success="Deleted the event."
+													data-success="Deleted event."
 													data-confirm-title="Delete event?"
 													data-confirm-text="{{ $event->display_name }}">
 
