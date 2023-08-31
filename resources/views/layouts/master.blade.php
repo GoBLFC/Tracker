@@ -64,10 +64,17 @@
 	@prepend('scripts')
 		<script type="text/javascript">
 			const _token = '{!! csrf_token() !!}';
+
 			@auth
 				const logoutUrl = '{!! route('auth.logout') !!}';
 				const logoutTime = @devMode 3600 @else 60 @enddevMode;
 			@endauth
+
+			@if(Session::has('success'))
+				const flashSuccess = {{ Js::from(Session::get('success')) }};
+			@elseif(Session::has('error'))
+				const flashError = {{ Js::from(Session::get('error')) }};
+			@endif
 		</script>
 	@endprepend
 	@stack('scripts')
