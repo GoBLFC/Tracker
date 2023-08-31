@@ -62,7 +62,7 @@ class Reward extends UuidModel {
 	 * Get the event the reward is a part of
 	 */
 	public function event(): BelongsTo {
-		return $this->belongsTo(Event::class);
+		return $this->belongsTo(Event::class)->withTrashed();
 	}
 
 	/**

@@ -68,7 +68,7 @@ class TimeBonus extends UuidModel {
 	 * Get the department this time bonus is for
 	 */
 	public function department(): BelongsTo {
-		return $this->belongsTo(Department::class);
+		return $this->belongsTo(Department::class)->withTrashed();
 	}
 
 	/**

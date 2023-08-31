@@ -88,28 +88,28 @@ class TimeEntry extends UuidModel {
 	 * Get the user this time entry is for
 	 */
 	public function user(): BelongsTo {
-		return $this->belongsTo(User::class);
+		return $this->belongsTo(User::class)->withTrashed();
 	}
 
 	/**
 	 * Get the department this timem entry is foro
 	 */
 	public function department(): BelongsTo {
-		return $this->belongsTo(Department::class);
+		return $this->belongsTo(Department::class)->withTrashed();
 	}
 
 	/**
 	 * Get the user that created this time entry
 	 */
 	public function creator(): BelongsTo {
-		return $this->belongsTo(User::class, null, 'creator_user_id');
+		return $this->belongsTo(User::class, null, 'creator_user_id')->withTrashed();
 	}
 
 	/**
 	 * Get the event this time entry is for
 	 */
 	public function event(): BelongsTo {
-		return $this->belongsTo(Event::class);
+		return $this->belongsTo(Event::class)->withTrashed();
 	}
 
 	/**

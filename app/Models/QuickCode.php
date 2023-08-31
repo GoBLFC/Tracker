@@ -51,7 +51,7 @@ class QuickCode extends UuidModel {
 	 * Get the user this quick code is for
 	 */
 	public function user(): BelongsTo {
-		return $this->belongsTo(User::class);
+		return $this->belongsTo(User::class)->withTrashed();
 	}
 
 	/**

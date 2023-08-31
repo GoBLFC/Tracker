@@ -50,14 +50,14 @@ class RewardClaim extends UuidModel {
 	 * Get the user that made this reward claim
 	 */
 	public function user(): BelongsTo {
-		return $this->belongsTo(User::class);
+		return $this->belongsTo(User::class)->withTrashed();
 	}
 
 	/**
 	 * Get the reward this claim is for
 	 */
 	public function reward(): BelongsTo {
-		return $this->belongsTo(Reward::class);
+		return $this->belongsTo(Reward::class)->withTrashed();
 	}
 
 	/**
