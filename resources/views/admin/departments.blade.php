@@ -4,6 +4,14 @@
 	<div class="card mb-3">
 		<h4 class="card-header">Department Management</h4>
 		<div class="card-body">
+			<p>
+				Departments are the section of your organization that deal with a specific set of tasks or goals before, during, and after your event.<br />
+				Users choose what department to check in to for their shifts, and so every time entry always has one associated with it.
+			</p>
+			<p>
+				Deleting departments does <strong>not</strong> delete their associated time entries.
+			</p>
+
 			<div class="card mb-4">
 				<h5 class="card-header">Departments</h5>
 				<div class="card-body p-0">
