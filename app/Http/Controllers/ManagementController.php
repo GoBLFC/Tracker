@@ -58,7 +58,10 @@ class ManagementController extends Controller {
 	 * Render the user roles admin page
 	 */
 	public function getAdminUserRoles(): View {
-		return view('admin.users', ['users' => User::where('role', '!=', Role::Volunteer)->get()]);
+		return view('admin.users', [
+			'users' => User::where('role', '!=', Role::Volunteer)->get(),
+			'roles' => Role::cases(),
+		]);
 	}
 
 	/**

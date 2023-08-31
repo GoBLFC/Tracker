@@ -5,7 +5,7 @@
 		<h4 class="card-header">User Roles</h4>
 		<div class="card-body">
 			<div class="row g-3 mb-5 mb-lg-4">
-				@foreach(\App\Models\Role::cases() as $role)
+				@foreach($roles as $role)
 					@if($role->value === \App\Models\Role::Volunteer->value) @continue @endif
 					@php($roleUsers = $users->filter(fn($user) => $user->isRole($role, true)))
 
@@ -53,7 +53,7 @@
 				<div class="card-body row gx-md-3 gy-2">
 					<div class="input-group">
 						<input type="text" inputmode="numeric" pattern="[0-9]+" id="badgeNumber" class="form-control" placeholder="Badge Number" aria-label="Badge Number" />
-						@foreach(\App\Models\Role::cases() as $role)
+						@foreach($roles as $role)
 							@if($role->value === \App\Models\Role::Volunteer->value) @continue @endif
 							<button type="button" class="btn btn-{!! $role->colorClass() !!} d-none d-md-block" data-role="{!! $role->value !!}" disabled>
 								{{ $role->actionLabel() }}
@@ -62,7 +62,7 @@
 					</div>
 
 					<div class="btn-group d-md-none">
-						@foreach(\App\Models\Role::cases() as $role)
+						@foreach($roles as $role)
 							@if($role->value === \App\Models\Role::Volunteer->value) @continue @endif
 							<button type="button" class="btn btn-{!! $role->colorClass() !!}" data-role="{!! $role->value !!}" disabled>
 								{{ $role->actionLabel() }}
@@ -84,8 +84,8 @@
 		const userSearchUrl = '{!! route('users.search') !!}';
 		const userUpdateUrl = '{!! route('users.update', 'id') !!}';
 		const roles = {{ Js::from(array_combine(
-			array_column(\App\Models\Role::cases(), 'value'),
-			array_column(\App\Models\Role::cases(), 'name'),
+			array_column($roles, 'value'),
+			array_column($roles, 'name'),
 		)) }};
 	</script>
 @endpush
