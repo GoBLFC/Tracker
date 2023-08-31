@@ -21,6 +21,7 @@ use SocialiteProviders\Manager\OAuth2\User as OAuthUser;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Spatie\Activitylog\Traits\CausesActivity;
 
 /**
  * @property int $badge_id
@@ -68,7 +69,7 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
  * @method static null|static find($id, $columns = ['*'])
  */
 class User extends UuidModel implements AuthenticatableContract, AuthorizableContract {
-	use HasFactory, SoftDeletes, Authenticatable, Authorizable, Notifiable, LogsActivity;
+	use HasFactory, SoftDeletes, Authenticatable, Authorizable, Notifiable, LogsActivity, CausesActivity;
 
 	public $incrementing = false;
 
