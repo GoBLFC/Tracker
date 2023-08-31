@@ -43,6 +43,10 @@
 							<div class="card-body placeholder {!! !$roleUsers->isEmpty() ? 'd-none' : '' !!}">
 								<p class="mb-0">There aren't any {{ Str::lower($role->name) }} users.</p>
 							</div>
+
+							<div class="card-footer">
+								<p class="mb-0">{{ $role->description() }}</p>
+							</div>
 						</div>
 					</div>
 				@endforeach

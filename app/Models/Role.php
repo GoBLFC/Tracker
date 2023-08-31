@@ -37,6 +37,16 @@ enum Role: int {
 		][$this->value];
 	}
 
+	public function description(): string {
+		return [
+			3 => 'Administrators can do anything.',
+			2 => 'Managers can view, edit, and create time entries on behalf of other users, as well as create new users with a badge ID and authorize kiosks.',
+			1 => 'Leads can authorize kiosks.',
+			0 => 'Volunteers can only check in and out for shifts.',
+			-1 => 'Banned users can\'t do anything.',
+		][$this->value];
+	}
+
 	/**
 	 * Get the enumeration case with the specified name
 	 */
