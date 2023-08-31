@@ -26,6 +26,7 @@ class AuthController extends Controller {
 	 * Logs the user out and redirects to the login page
 	 */
 	public function getLogout(): RedirectResponse {
+		if (!Auth::check()) return redirect()->route('auth.login');
 		Auth::logout();
 
 		// Redirect the user to log out of ConCat if applicable
