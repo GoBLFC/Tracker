@@ -21,7 +21,7 @@
 								@endif
 								@foreach($departments->sortBy(['hidden', 'name']) as $dept)
 									<option {!! $ongoing && $ongoing->department_id === $dept->id ? 'selected' : '' !!} value="{!! $dept->id !!}">
-										{{ $dept->name . ($dept->hidden ? ' (hidden)' : '') }}
+										{{ $dept->display_name . ($dept->hidden ? ' (hidden)' : '') }}
 									</option>
 								@endforeach
 							</select>

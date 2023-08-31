@@ -18,7 +18,7 @@ class HoursCommand extends Command {
 		// Ensure there's an active event
 		$event = $this->getActiveEventOrReply();
 		if (!$event) return;
-		$eventName = htmlspecialchars($event->name);
+		$eventName = htmlspecialchars($event->display_name);
 
 		// Calculate the time stats
 		$stats = $user->getTimeStats();

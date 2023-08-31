@@ -32,7 +32,7 @@ class RewardAvailable extends Notification implements ShouldQueue {
 	 * @return array<string, mixed>
 	 */
 	public function toArray(object $notifiable): array {
-		$name = htmlspecialchars($this->reward->name);
+		$name = htmlspecialchars($this->reward->display_name);
 		$description = htmlspecialchars($this->reward->description);
 		return [
 			'reward_id' => $this->reward->id,

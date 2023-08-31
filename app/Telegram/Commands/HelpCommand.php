@@ -13,7 +13,7 @@ class HelpCommand extends Command {
 	public function handle(): void {
 		// Get the event status
 		$event = Setting::activeEvent();
-		$eventName = $event ? htmlspecialchars($event->name) : 'None 😔';
+		$eventName = $event ? htmlspecialchars($event->display_name) : 'None 😔';
 		$status = "<b>Ongoing event:</b>\n{$eventName}\n\n";
 
 		// Get the user status

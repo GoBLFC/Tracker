@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read string $display_name
  * @property-read \App\Models\Event|null $event
  * @property-read int|null $events_count
  * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Activity>|\App\Models\Activity[] $activities
@@ -56,6 +57,13 @@ class Reward extends UuidModel {
 			->logOnly(['name', 'description', 'hours'])
 			->logOnlyDirty()
 			->submitEmptyLogs();
+	}
+
+	/**
+	 * Get the display name of the reward (usually just the name)
+	 */
+	public function getDisplayNameAttribute(): string {
+		return !$this->deleted_at ? $this->name : "{$this->name} (del)";
 	}
 
 	/**

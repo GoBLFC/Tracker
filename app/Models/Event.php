@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read string $display_name
  * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\TimeEntry>|\App\Models\TimeEntry[] $timeEntries
  * @property-read int|null $time_entries_count
  * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\TimeBonus>|\App\Models\TimeBonus[] $timeBonuses
@@ -56,6 +57,13 @@ class Event extends UuidModel {
 			->logOnly(['name'])
 			->logOnlyDirty()
 			->submitEmptyLogs();
+	}
+
+	/**
+	 * Get the display name of the event (usually just the name)
+	 */
+	public function getDisplayNameAttribute(): string {
+		return !$this->deleted_at ? $this->name : "{$this->name} (del)";
 	}
 
 	/**

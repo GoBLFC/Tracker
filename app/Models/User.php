@@ -117,7 +117,8 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 	 * Get the display name of the user (badge name if available, username otherwise)
 	 */
 	public function getDisplayNameAttribute(): string {
-		return $this->badge_name ?? $this->username;
+		$name = $this->badge_name ?? $this->username;
+		return !$this->deleted_at ? $name : "{$name} (del)";
 	}
 
 	/**

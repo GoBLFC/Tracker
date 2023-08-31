@@ -15,7 +15,7 @@
 
 	@php($activeEvent = \App\Models\Setting::activeEvent())
 	@if($activeEvent)
-		<span class="badge rounded-pill text-bg-success">Event: {{ $activeEvent->name }}</span>
+		<span class="badge rounded-pill text-bg-success">Event: {{ $activeEvent->display_name }}</span>
 	@else
 		<span class="badge rounded-pill text-bg-danger">Event: None active</span>
 	@endif

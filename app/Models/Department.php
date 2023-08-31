@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read string $display_name
  * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\TimeBonus>|\App\Models\TimeBonus[] $timeBonuses
  * @property-read int|null $time_bonuses_count
  * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\TimeEntry>|\App\Models\TimeEntry[] $timeEntries
@@ -57,6 +58,13 @@ class Department extends UuidModel {
 			->logOnly(['name', 'hidden'])
 			->logOnlyDirty()
 			->submitEmptyLogs();
+	}
+
+	/**
+	 * Get the display name of the department (usually just the name)
+	 */
+	public function getDisplayNameAttribute(): string {
+		return !$this->deleted_at ? $this->name : "{$this->name} (del)";
 	}
 
 	/**

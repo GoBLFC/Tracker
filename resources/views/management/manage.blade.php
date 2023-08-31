@@ -82,7 +82,7 @@
 										<thead>
 											<tr>
 												@foreach($rewards as $reward)
-													<th scope="col" class="pt-3">{!! $reward->hours !!}hr: {{ $reward->name }}</th>
+													<th scope="col" class="pt-3">{!! $reward->hours !!}hr: {{ $reward->display_name }}</th>
 												@endforeach
 											</tr>
 										</thead>
@@ -154,7 +154,7 @@
 									<select class="form-select w-100" title="Department" id="dept">
 										<option value="" disabled selected hidden>Select Department</option>
 										@foreach($departments as $dept)
-											<option value="{!! $dept->id !!}">{{ $dept->name . ($dept->hidden ? ' (hidden)' : '') }}</option>
+											<option value="{!! $dept->id !!}">{{ $dept->display_name . ($dept->hidden ? ' (hidden)' : '') }}</option>
 										@endforeach
 									</select>
 								</div>
@@ -252,7 +252,7 @@
 											<td>{{ $entry->user->username }}</td>
 											<td>{{ $entry->user->badge_name }}</td>
 											<td>{{ $entry->user->full_name }}</td>
-											<td>{{ $entry->department->name }}</td>
+											<td>{{ $entry->department->display_name }}</td>
 											<td>{!! $entry->start->timezone(config('tracker.timezone'))->toDayDateTimeString() !!}</td>
 											<td>{!! $entry->getHumanDuration() !!}</td>
 											<td>

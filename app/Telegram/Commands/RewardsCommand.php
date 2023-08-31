@@ -21,7 +21,7 @@ class RewardsCommand extends Command {
 		// Ensure there are some rewards for the event
 		if (!$event->rewards()->exists()) {
 			$this->replyWithMessage([
-				'text' => "There are no rewards available for {$event->name}.",
+				'text' => "There are no rewards available for {$event->display_name}.",
 			]);
 			return;
 		}
@@ -32,13 +32,13 @@ class RewardsCommand extends Command {
 			->map(function (Reward $reward) use ($rewardInfo): string {
 				$claimed = $rewardInfo['claimed']->contains($reward);
 				$eligible = !$claimed && $rewardInfo['eligible']->contains($reward);
-				$name = htmlspecialchars($reward->name);
+				$name = htmlspecialchars($reward->display_name);
 				$description = htmlspecialchars($reward->description);
 				return ($claimed ? '✅' : ($eligible ? '⭐' : '⏳')) . " <u><b>{$reward->hours}hr:</b> {$name}</u>\n{$description}";
 			})
 			->join("\n\n");
 
-		$eventName = htmlspecialchars($event->name);
+		$eventName = htmlspecialchars($event->display_name);
 		$this->replyWithMessage([
 			'text' => "<b><u>{$eventName} Rewards</u></b>\n✅ = Claimed | ⭐ = Available | ⏳ = Locked\n\n{$rewardList}",
 			'parse_mode' => 'HTML',
