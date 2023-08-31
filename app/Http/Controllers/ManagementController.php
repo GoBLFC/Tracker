@@ -75,7 +75,7 @@ class ManagementController extends Controller {
 	 * Render the events admin page
 	 */
 	public function getAdminEvents(): View {
-		return view('admin.rewards', ['events' => Event::all()]);
+		return view('admin.events', ['events' => Event::all()]);
 	}
 
 	/**

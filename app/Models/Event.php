@@ -52,6 +52,15 @@ class Event extends UuidModel {
 		'name',
 	];
 
+	protected static function boot() {
+		parent::boot();
+
+		// Add a listener for the model being deleted to clear the active event if it's this one
+		static::deleting(function ($model) {
+			if ($model->id === Setting::activeEvent()?->id) Setting::set('active-event', null);
+		});
+	}
+
 	public function getActivitylogOptions(): LogOptions {
 		return LogOptions::defaults()
 			->logOnly(['name'])
