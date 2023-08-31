@@ -12,7 +12,7 @@ class CreateActivityLogTable extends Migration {
 			$table->text('description');
 			$table->nullableUuidMorphs('subject', 'subject');
 			$table->nullableUuidMorphs('causer', 'causer');
-			$table->json('properties')->nullable();
+			$table->jsonb('properties')->nullable();
 			$table->timestamps();
 		});
 	}
