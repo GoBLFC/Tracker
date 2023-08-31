@@ -102,7 +102,7 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 
 	public function getActivitylogOptions(): LogOptions {
 		return LogOptions::defaults()
-			->logOnly(['badge_id', 'username', 'first_name', 'last_name', 'badge_name', 'role'])
+			->logOnly(['badge_id', 'username', 'first_name', 'last_name', 'badge_name', 'role', 'tg_chat_id'])
 			->logOnlyDirty()
 			->dontSubmitEmptyLogs();
 	}
@@ -343,8 +343,39 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 	/**
 	 * Generates and assigns a new Telegram setup key (tg_setup_key)
 	 */
-	public function generateTelegramSetupKey(): void {
+	public function generateTelegramSetupKey(): static {
 		$this->tg_setup_key = Str::random(32);
+		return $this;
+	}
+
+	/**
+	 * Updates the user's tg_chat_id, saves, and manually logs an activity for it with the causer being the same user
+	 * (for use in Telegram commands, since they won't have a proper auth context)
+	 *
+	 * The manual log entry will only include the tg_chat_id change.
+	 */
+	public function saveWithNewTelegramChat(?int $chatId): bool {
+		$oldChatId = $this->tg_chat_id;
+		$this->tg_chat_id = $chatId;
+		$saved = $this->disableLogging()->save();
+
+		if (!$saved) {
+			$this->enableLogging();
+			return $saved;
+		}
+
+		activity()
+			->causedBy($this)
+			->performedOn($this)
+			->withProperties([
+				'attributes' => ['tg_chat_id' => $this->tg_chat_id],
+				'old' => ['tg_chat_id' => $oldChatId],
+			])
+			->event('updated')
+			->log('Telegram ' . ($chatId ? 'linked' : 'unlinked'));
+		$this->enableLogging();
+
+		return $saved;
 	}
 
 	/**
