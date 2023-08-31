@@ -81,7 +81,7 @@ class LinkCommand extends Command {
 				'old' => ['tg_chat_id' => $oldChatId],
 			])
 			->event('updated')
-			->log('updated');
+			->log('Telegram linked');
 		$user->enableLogging();
 
 		$displayName = htmlspecialchars($user->display_name);

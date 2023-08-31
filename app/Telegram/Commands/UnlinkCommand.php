@@ -26,7 +26,7 @@ class UnlinkCommand extends Command {
 				'old' => ['tg_chat_id' => $oldChatId],
 			])
 			->event('updated')
-			->log('updated');
+			->log('Telegram unlinked');
 		$user->enableLogging();
 
 
