@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\TimeBonus>|\App\Models\TimeBonus[] $timeBonuses
  * @property-read int|null $time_bonuses_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\TimeEntry>|\App\Models\TimeEntry[] $timeEntries
+ * @property-read int|null $time_entries_count
  * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Activity>|\App\Models\Activity[] $activities
  * @property-read int|null $activities_count
  *
@@ -62,5 +64,12 @@ class Department extends UuidModel {
 	 */
 	public function timeBonuses(): HasMany {
 		return $this->hasMany(TimeBonus::class);
+	}
+
+	/**
+	 * Get the time entries associated with this department
+	 */
+	public function timeEntries(): HasMany {
+		return $this->hasMany(TimeEntry::class);
 	}
 }
