@@ -31,18 +31,28 @@ abstract class Command extends BaseCommand {
 	}
 
 	/**
-	 * Gets the user associated with the Telegram chat. If there isn't one, then reply with a message.
+	 * Gets the user associated with the Telegram chat. If there isn't one, or they're banned, then reply with a message.
 	 */
 	protected function getChatUserOrReply(): ?User {
 		$chatId = $this->getUpdate()->getChat()->id;
 		$user = User::whereTgChatId($chatId)->first();
+
 		if (!$user) {
 			$trackerLink = static::trackerLink('Tracker site');
 			$this->replyWithMessage([
 				'text' => "I don't have a BLFC volunteer account associated with you yet. Please link your account by scanning a QR code at the volunteer desk or the {$trackerLink}.",
 				'parse_mode' => 'HTML',
 			]);
+			return null;
 		}
+
+		if ($user->isBanned()) {
+			$this->replyWithMessage([
+				'text' => "There is a hold on your volunteer account.\nPlease talk to a Volunteer Manager at the volunteer desk.",
+			]);
+			return null;
+		}
+
 		return $user;
 	}
 
