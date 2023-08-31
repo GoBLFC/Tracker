@@ -11,7 +11,7 @@ class UnlinkCommand extends Command {
 
 	public function handle(): void {
 		// Make sure we have a user for the chat
-		$user = $this->getChatUserOrReply();
+		$user = $this->getChatUserOrReply(true);
 		if (!$user) return;
 
 		// Clear the user's chat ID

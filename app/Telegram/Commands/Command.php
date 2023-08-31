@@ -33,7 +33,7 @@ abstract class Command extends BaseCommand {
 	/**
 	 * Gets the user associated with the Telegram chat. If there isn't one, or they're banned, then reply with a message.
 	 */
-	protected function getChatUserOrReply(): ?User {
+	protected function getChatUserOrReply(bool $allowBanned = false): ?User {
 		$chatId = $this->getUpdate()->getChat()->id;
 		$user = User::whereTgChatId($chatId)->first();
 
@@ -46,7 +46,7 @@ abstract class Command extends BaseCommand {
 			return null;
 		}
 
-		if ($user->isBanned()) {
+		if ($user->isBanned() && !$allowBanned) {
 			$this->replyWithMessage([
 				'text' => "There is a hold on your volunteer account.\nPlease talk to a Volunteer Manager at the volunteer desk.",
 			]);
