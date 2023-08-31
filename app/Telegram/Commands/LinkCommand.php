@@ -68,10 +68,21 @@ class LinkCommand extends Command {
 			}
 		}
 
-		// Store the chat ID and regenerate the setup key (to prevent reuse)
+		// Store the chat ID, regenerate the setup key (to prevent reuse), and manually log an activity with the correct user
+		$oldChatId = $user->tg_chat_id;
 		$user->tg_chat_id = $chatId;
 		$user->generateTelegramSetupKey();
-		$user->save();
+		$user->disableLogging()->save();
+		activity()
+			->causedBy($user)
+			->performedOn($user)
+			->withProperties([
+				'attributes' => ['tg_chat_id' => $user->tg_chat_id],
+				'old' => ['tg_chat_id' => $oldChatId],
+			])
+			->event('updated')
+			->log('updated');
+		$user->enableLogging();
 
 		$displayName = htmlspecialchars($user->display_name);
 		$this->replyWithMessage([

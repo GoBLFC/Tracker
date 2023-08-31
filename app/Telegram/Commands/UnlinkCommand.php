@@ -14,9 +14,21 @@ class UnlinkCommand extends Command {
 		$user = $this->getChatUserOrReply(true);
 		if (!$user) return;
 
-		// Clear the user's chat ID
+		// Clear the user's chat ID and manually log an activity with the correct user
+		$oldChatId = $user->tg_chat_id;
 		$user->tg_chat_id = null;
-		$user->save();
+		$user->disableLogging()->save();
+		activity()
+			->causedBy($user)
+			->performedOn($user)
+			->withProperties([
+				'attributes' => ['tg_chat_id' => null],
+				'old' => ['tg_chat_id' => $oldChatId],
+			])
+			->event('updated')
+			->log('updated');
+		$user->enableLogging();
+
 
 		$trackerLink = static::trackerLink('Tracker site');
 		$this->replyWithMessage([
