@@ -14,66 +14,73 @@
 
 			<div class="card mb-4">
 				<h5 class="card-header">Departments</h5>
-				<div class="card-body p-0">
-					<div class="table-responsive">
-						<table class="table table-striped mb-0">
-							<thead>
-								<tr>
-									<th scope="col">Name</th>
-									<th scope="col">Hide</th>
-									<th scope="col"></th>
-									<th scope="col"></th>
-								</tr>
-							</thead>
-							<tbody id="dptRows">
-								@foreach($departments->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE) as $department)
-									<tr>
-										<td class="w-100">
-											<input form="update-{!! $department->id !!}""
-												type="text"
-												class="form-control dptName"
-												name="name"
-												value="{{ $department->display_name }}" />
-										</td>
-										<td class="align-middle">
-											<div class="form-check form-switch">
-												<input form="update-{!! $department->id !!}" type="hidden" name="hidden" value="0" />
-												<input form="update-{!! $department->id !!}"
-													type="checkbox"
-													role="switch"
-													class="form-check-input dptHidden"
-													name="hidden"
-													value="1"
-													{!! $department->hidden ? 'checked' : '' !!} />
-											</div>
-										</td>
-										<td>
-											<form action="{!! route('departments.update', $department->id) !!}" method="POST" id="update-{!! $department->id !!}" class="seamless update">
-												@method('PUT')
-												@csrf
-												<button type="submit" class="btn btn-success float-end" data-success="Updated department.">Save</button>
-											</form>
-										</td>
-										<td>
-											<form action="{!! route('departments.destroy', $department->id) !!}" method="POST" id="delete-{!! $department->id !!}" class="seamless delete">
-												@method('DELETE')
-												@csrf
-												<button type="submit"
-													class="btn btn-danger float-end"
-													data-success="Deleted department."
-													data-confirm-title="Delete department?"
-													data-confirm-text="{{ $department->display_name }}">
 
-													Delete
-												</button>
-											</form>
-										</td>
+				@if(!$departments->isEmpty())
+					<div class="card-body p-0">
+						<div class="table-responsive">
+							<table class="table table-striped mb-0">
+								<thead>
+									<tr>
+										<th scope="col">Name</th>
+										<th scope="col">Hide</th>
+										<th scope="col"></th>
+										<th scope="col"></th>
 									</tr>
-								@endforeach
-							</tbody>
-						</table>
+								</thead>
+								<tbody id="dptRows">
+									@foreach($departments->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE) as $department)
+										<tr>
+											<td class="w-100">
+												<input form="update-{!! $department->id !!}""
+													type="text"
+													class="form-control dptName"
+													name="name"
+													value="{{ $department->display_name }}" />
+											</td>
+											<td class="align-middle">
+												<div class="form-check form-switch">
+													<input form="update-{!! $department->id !!}" type="hidden" name="hidden" value="0" />
+													<input form="update-{!! $department->id !!}"
+														type="checkbox"
+														role="switch"
+														class="form-check-input dptHidden"
+														name="hidden"
+														value="1"
+														{!! $department->hidden ? 'checked' : '' !!} />
+												</div>
+											</td>
+											<td>
+												<form action="{!! route('departments.update', $department->id) !!}" method="POST" id="update-{!! $department->id !!}" class="seamless update">
+													@method('PUT')
+													@csrf
+													<button type="submit" class="btn btn-success float-end" data-success="Updated department.">Save</button>
+												</form>
+											</td>
+											<td>
+												<form action="{!! route('departments.destroy', $department->id) !!}" method="POST" id="delete-{!! $department->id !!}" class="seamless delete">
+													@method('DELETE')
+													@csrf
+													<button type="submit"
+														class="btn btn-danger float-end"
+														data-success="Deleted department."
+														data-confirm-title="Delete department?"
+														data-confirm-text="{{ $department->display_name }}">
+
+														Delete
+													</button>
+												</form>
+											</td>
+										</tr>
+									@endforeach
+								</tbody>
+							</table>
+						</div>
 					</div>
-				</div>
+				@else
+					<div class="card-body">
+						<p class="mb-0">There are no departments.</p>
+					</div>
+				@endif
 			</div>
 
 			<div class="card">
