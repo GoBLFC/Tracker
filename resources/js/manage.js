@@ -42,8 +42,11 @@ $(() => {
 	});
 
 	// Set up time pickers
-	timeStart = new TempusDominus(document.getElementById("timeStart"), { restrictions: { maxDate: new Date() } });
-	timeStop = new TempusDominus(document.getElementById("timeStop"));
+	timeStart = new TempusDominus(document.getElementById("timeStart"), {
+		restrictions: { maxDate: maxStartDate() },
+		localization: { format: 'yyyy-MM-dd hh:mm:ss T' },
+	});
+	timeStop = new TempusDominus(document.getElementById("timeStop"), { localization: { format: 'yyyy-MM-dd hh:mm:ss T' } });
 
 	// Update the minimum datetime of the stop time whenever the start time changes
 	timeStart.subscribe(TDNamespace.events.change, evt => {
@@ -52,9 +55,13 @@ $(() => {
 
 	// Update the maximum datetime of the start time every 5 seconds
 	setInterval(() => {
-		timeStart.updateOptions({ restrictions: { maxDate: new Date() } });
+		timeStart.updateOptions({ restrictions: { maxDate: maxStartDate() } });
 	}, 5000);
 });
+
+function maxStartDate() {
+	return DateTime.now().setZone(timezone).toJSDate();
+}
 
 async function userSearch(input) {
 	$("#uRow").empty();
@@ -226,6 +233,7 @@ async function checkIn() {
 async function addTime() {
 	const start = timeStart.dates.picked[0] ? prepareDateForInput(timeStart.dates.picked[0], timezone) : null;
 	const stop = timeStop.dates.picked[0] ? prepareDateForInput(timeStop.dates.picked[0], timezone) : null;
+	console.log(start, stop);
 	const department_id = $("#dept").val();
 	const notes = $("#notes").val();
 
