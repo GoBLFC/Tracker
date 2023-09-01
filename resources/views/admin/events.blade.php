@@ -28,7 +28,7 @@
 										<th scope="col"></th>
 									</tr>
 								</thead>
-								<tbody id="evtRows">
+								<tbody>
 									@foreach($events->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE) as $event)
 										<tr>
 											<td class="w-100">

@@ -27,7 +27,7 @@
 										<th scope="col"></th>
 									</tr>
 								</thead>
-								<tbody id="dptRows">
+								<tbody>
 									@foreach($departments->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE) as $department)
 										<tr>
 											<td class="w-100">
