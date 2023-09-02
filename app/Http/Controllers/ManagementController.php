@@ -89,7 +89,7 @@ class ManagementController extends Controller {
 		}
 
 		return view('admin.rewards', [
-			'activeEvent' => $event,
+			'event' => $event,
 			'events' => Event::all(),
 			'rewards' => $event?->rewards,
 		]);
@@ -122,7 +122,7 @@ class ManagementController extends Controller {
 		}
 
 		return view('admin.reports', [
-			'activeEvent' => $event,
+			'event' => $event,
 			'events' => Event::all(),
 		]);
 	}

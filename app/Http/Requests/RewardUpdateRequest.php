@@ -18,8 +18,11 @@ class RewardUpdateRequest extends FormRequest {
 	 * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
 	 */
 	public function rules(): array {
+		$requiredOrSometimes = $this->isMethod('PUT') ? 'required' : 'sometimes';
 		return [
-			//
+			'name' => "{$requiredOrSometimes}|string|max:64",
+			'description' => "{$requiredOrSometimes}|string|max:1000",
+			'hours' => "{$requiredOrSometimes}|integer|min:0|max:168",
 		];
 	}
 }

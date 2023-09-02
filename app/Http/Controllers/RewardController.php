@@ -27,6 +27,7 @@ class RewardController extends Controller {
 		$reward = new Reward($request->validated());
 		$reward->event_id = $event->id;
 		$reward->save();
+		session()->flash('success', 'Reward created.');
 		return response()->json(['reward' => $reward]);
 	}
 
