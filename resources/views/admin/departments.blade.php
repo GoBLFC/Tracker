@@ -31,11 +31,12 @@
 									@foreach($departments->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE) as $department)
 										<tr>
 											<td class="w-100">
-												<input form="update-{!! $department->id !!}""
+												<input form="update-{!! $department->id !!}"
 													type="text"
 													class="form-control dptName"
 													name="name"
-													value="{{ $department->display_name }}" />
+													value="{{ $department->display_name }}"
+													required />
 											</td>
 											<td class="align-middle">
 												<div class="form-check form-switch">
@@ -92,7 +93,7 @@
 							<div class="flex-grow-1">
 								<div class="input-group">
 									<label for="dptName" class="input-group-text">Name</label>
-									<input type="text" name="name" id="dptName" class="form-control" />
+									<input type="text" name="name" id="dptName" class="form-control" required />
 								</div>
 							</div>
 							<div>

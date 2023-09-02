@@ -32,11 +32,12 @@
 									@foreach($events->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE) as $event)
 										<tr>
 											<td class="w-100">
-												<input form="update-{!! $event->id !!}""
+												<input form="update-{!! $event->id !!}"
 													type="text"
 													class="form-control evtName"
 													name="name"
-													value="{{ $event->display_name }}" />
+													value="{{ $event->display_name }}"
+													required />
 											</td>
 											<td>
 												<form action="{!! route('events.update', $event->id) !!}" method="POST" id="update-{!! $event->id !!}" class="seamless update">
@@ -78,7 +79,7 @@
 					<form action="{!! route('events.store') !!}" method="POST" id="evtCreate" class="seamless">
 						@csrf
 						<div class="input-group">
-							<input type="text" name="name" placeholder="Event Name" id="evtName" class="form-control" aria-label="Event Name" />
+							<input type="text" name="name" placeholder="Event Name" id="evtName" class="form-control" required aria-label="Event Name" />
 							<button type="submit" class="btn btn-success">Create</button>
 						</div>
 					</form>
