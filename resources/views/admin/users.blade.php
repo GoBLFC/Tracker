@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('admin-content')
-	<div class="card mb-3">
+	<div class="card mb-4">
 		<h4 class="card-header">User Roles</h4>
 		<div class="card-body">
 			<div class="row g-3 mb-5 mb-lg-4">
@@ -52,7 +52,7 @@
 				@endforeach
 			</div>
 
-			<div class="card mb-3">
+			<div class="card mb-4">
 				<h5 class="card-header">Promote User</h5>
 				<div class="card-body row gx-md-3 gy-2">
 					<div class="input-group">

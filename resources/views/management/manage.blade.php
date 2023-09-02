@@ -271,7 +271,7 @@
 				@endif
 			</div>
 
-			@include('partials.create-user', ['tag' => 'div'])
+			@include('partials.create-user', ['headerTag' => 'div', 'cardClasses' => 'mb-4'])
 
 			<div class="card mb-4">
 				<div class="card-header">Kiosk Settings</div>
