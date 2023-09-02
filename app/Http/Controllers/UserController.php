@@ -52,7 +52,7 @@ class UserController extends Controller {
 	 */
 	public function getSearch(UserSearchRequest $request): JsonResponse {
 		// Get the search string and the search string prepped for an SQL LIKE comparison
-		$search = $request->input('q');
+		$search = $request->validated('q');
 		$wildSearch = Str::lower("%{$search}%");
 
 		// Build the search query

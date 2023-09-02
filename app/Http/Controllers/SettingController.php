@@ -13,7 +13,7 @@ class SettingController extends Controller {
 	 * Update the value of a setting
 	 */
 	public function update(SettingUpdateRequest $request, Setting $setting): JsonResponse|RedirectResponse {
-		$setting->setValue($request->input('value'));
+		$setting->setValue($request->validated('value'));
 		return $request->expectsJson()
 			? response()->json(null, 205)
 			: redirect()->back()->withSuccess("Updated value of {$setting->id} setting.");

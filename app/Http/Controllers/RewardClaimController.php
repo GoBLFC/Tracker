@@ -24,7 +24,7 @@ class RewardClaimController extends Controller {
 	 */
 	public function store(RewardClaimStoreRequest $request, User $user): JsonResponse {
 		// Make sure there isn't an existing claim
-		$rewardId = $request->input('reward_id');
+		$rewardId = $request->validated('reward_id');
 		if ($user->rewardClaims()->whereRewardId($rewardId)->exists()) {
 			return response()->json(['error' => 'Reward is already claimed by user.'], 422);
 		}

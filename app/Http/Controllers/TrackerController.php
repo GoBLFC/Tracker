@@ -64,7 +64,7 @@ class TrackerController extends Controller {
 			'user_id' => $user->id,
 			'creator_user_id' => $user->id,
 			'event_id' => $event->id,
-			'department_id' => $request->input('department_id'),
+			'department_id' => $request->validated('department_id'),
 			'start' => now(),
 		]);
 		$entry->save();

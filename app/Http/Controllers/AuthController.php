@@ -79,7 +79,7 @@ class AuthController extends Controller {
 		// Retrieve the quick code
 		$quickcode = QuickCode::with('user')
 			->unexpired()
-			->whereCode($request->input('code'))
+			->whereCode($request->validated('code'))
 			->first();
 
 		// Verify the quick code exists
