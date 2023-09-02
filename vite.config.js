@@ -12,6 +12,7 @@ export default defineConfig({
 				'resources/js/manage.js',
 				'resources/js/auto-logout.js',
 				'resources/js/toggle-kiosk.js',
+				'resources/js/create-user.js',
 				'resources/js/event-selector.js',
 				'resources/js/seamless-forms.js',
 				'resources/js/admin/users.js',

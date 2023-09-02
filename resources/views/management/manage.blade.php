@@ -271,17 +271,7 @@
 				@endif
 			</div>
 
-			<div class="card mb-4">
-				<div class="card-header">Create User</div>
-				<div class="card-body">
-					<div class="input-group">
-						<input type="text" inputmode="numeric" pattern="[0-9]+" class="form-control" placeholder="Badge Number" aria-label="Badge Number" />
-						<button id="createUser" class="btn btn-success" type="button">
-							Create User
-						</button>
-					</div>
-				</div>
-			</div>
+			@include('partials.create-user', ['tag' => 'div'])
 
 			<div class="card mb-4">
 				<div class="card-header">Kiosk Settings</div>
@@ -323,7 +313,6 @@
 		const userClaimsStoreUrl = '{!! route('users.claims.store', 'id') !!}';
 		const claimsDeleteUrl = '{!! route('claims.destroy', 'id') !!}';
 		const userSearchUrl = '{!! route('users.search') !!}';
-		const userStoreUrl = '{!! route('users.store') !!}';
 		const timeCheckoutPostUrl = '{!! route('tracker.time.checkout.post', 'id') !!}';
 		const timeStoreUrl = '{!! route('tracker.time.put', 'id') !!}';
 		const timeDeleteUrl = '{!! route('tracker.time.delete', 'id') !!}';

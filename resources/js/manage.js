@@ -15,11 +15,6 @@ $(() => {
 		userSearch($("#searchinput").val())
 	}, 250));
 
-	$('#createUser').on('click', function() {
-		const val = $(this).parent().find('.form-control').val();
-		createUser(val);
-	});
-
 	$('#rewards button[data-reward-id]').on('click', function() {
 		toggleClaim($(this));
 	});
@@ -206,14 +201,6 @@ function initClock(stats, ongoing) {
 	time.total -= shiftTime;
 	time.day -= shiftTime;
 	startShift(time, shiftStart);
-}
-
-async function createUser(badge_id) {
-	const data = await sendPostRequest(userStoreUrl, { badge_id });
-	Toast.fire({
-		text: `User (${data.user.badge_id}) created.`,
-		icon: "success"
-	});
 }
 
 async function checkIn() {

@@ -52,7 +52,7 @@
 				@endforeach
 			</div>
 
-			<div class="card">
+			<div class="card mb-3">
 				<h5 class="card-header">Promote User</h5>
 				<div class="card-body row gx-md-3 gy-2">
 					<div class="input-group">
@@ -75,6 +75,8 @@
 					</div>
 				</div>
 			</div>
+
+			@include('partials.create-user')
 		</div>
 	</div>
 @endsection
