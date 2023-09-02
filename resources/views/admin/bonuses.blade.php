@@ -171,7 +171,7 @@
 					</div>
 				</div>
 			@else
-				<div class="alert alert-info" role="alert">Please select an event to manage the time bonuses for.</div>
+				<div class="alert alert-info mb-0" role="alert">Please select an event to manage the time bonuses for.</div>
 			@endif
 		</div>
 	</div>
