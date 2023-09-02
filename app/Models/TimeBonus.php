@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * @property \Illuminate\Support\Carbon $start
@@ -16,7 +17,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string $event_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Department|null $department
+ * @property-read \App\Models\Event|null $event
+ * @property-read int|null $events_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Department>|\App\Models\Department[] $departments
  * @property-read int|null $departments_count
  * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Activity>|\App\Models\Activity[] $activities
  * @property-read int|null $activities_count
@@ -54,7 +57,6 @@ class TimeBonus extends UuidModel {
 		'start',
 		'stop',
 		'modifier',
-		'department_id',
 	];
 
 	public function getActivitylogOptions(): LogOptions {
@@ -65,10 +67,17 @@ class TimeBonus extends UuidModel {
 	}
 
 	/**
-	 * Get the department this time bonus is for
+	 * Get the event this time bonus is for
 	 */
-	public function department(): BelongsTo {
-		return $this->belongsTo(Department::class)->withTrashed();
+	public function event(): BelongsTo {
+		return $this->belongsTo(Event::class)->withTrashed();
+	}
+
+	/**
+	 * Get the departments this time bonus affects
+	 */
+	public function departments(): BelongsToMany {
+		return $this->belongsToMany(Department::class)->withTrashed();
 	}
 
 	/**

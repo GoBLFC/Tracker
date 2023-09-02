@@ -222,7 +222,12 @@ class TimeEntry extends UuidModel {
 	 */
 	public function calculateBonusTime(Event $event = null, Collection $bonuses = null): int {
 		// Retrieve a list of potentially applicable bonuses if they haven't been supplied
-		if (!$bonuses) $bonuses = TimeBonus::forEvent($event)->whereDepartmentId($this->department_id)->get();
+		if (!$bonuses) {
+			$bonuses = TimeBonus::forEvent($event)
+				->whereRelation('departments', 'id', $this->department_id)
+				->get();
+		}
+
 		if ($bonuses->count() <= 0) return 0;
 
 		// Total up all applicable bonus time

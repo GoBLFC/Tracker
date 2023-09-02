@@ -24,7 +24,7 @@ class TimeBonusStoreRequest extends FormRequest {
 			'start' => 'required|date',
 			'stop' => "required|date|after:{$start}",
 			'modifier' => 'required|decimal:0,2|min:1|max:10',
-			'department_id' => 'required|uuid|exists:App\Models\Department,id',
+			'departments' => 'required|array|exists:App\Models\Department,id',
 		];
 	}
 }

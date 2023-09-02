@@ -11,6 +11,7 @@ use App\Models\Activity;
 use App\Models\TimeEntry;
 use Illuminate\View\View;
 use App\Models\Department;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Database\Eloquent\Builder;
 
 class ManagementController extends Controller {
@@ -81,8 +82,12 @@ class ManagementController extends Controller {
 	/**
 	 * Render the rewards admin page
 	 */
-	public function getAdminRewards(?Event $event = null): View {
-		if (!$event) $event = Setting::activeEvent();
+	public function getAdminRewards(?Event $event = null): View|RedirectResponse {
+		if (!$event) {
+			$event = Setting::activeEvent();
+			if ($event) return redirect()->route('admin.event.rewards', $event);
+		}
+
 		return view('admin.rewards', [
 			'activeEvent' => $event,
 			'events' => Event::all(),
@@ -93,19 +98,29 @@ class ManagementController extends Controller {
 	/**
 	 * Render the bonuses admin page
 	 */
-	public function getAdminBonuses(?Event $event = null): View {
-		if (!$event) $event = Setting::activeEvent();
+	public function getAdminBonuses(?Event $event = null): View|RedirectResponse {
+		if (!$event) {
+			$event = Setting::activeEvent();
+			if ($event) return redirect()->route('admin.event.bonuses', $event);
+		}
+
 		return view('admin.bonuses', [
-			'activeEvent' => $event,
+			'event' => $event,
 			'events' => Event::all(),
-			'bonuses' => $event?->timeBonuses,
+			'departments' => Department::all()->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE),
+			'bonuses' => $event?->timeBonuses()?->with('departments')?->get(),
 		]);
 	}
 
 	/**
 	 * Render the reports admin page
 	 */
-	public function getAdminReports(?Event $event = null): View {
+	public function getAdminReports(?Event $event = null): View|RedirectResponse {
+		if (!$event) {
+			$event = Setting::activeEvent();
+			if ($event) return redirect()->route('admin.event.reports', $event);
+		}
+
 		return view('admin.reports', [
 			'activeEvent' => $event,
 			'events' => Event::all(),

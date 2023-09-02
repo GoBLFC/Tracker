@@ -7,6 +7,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * @property string $name
@@ -70,8 +71,8 @@ class Department extends UuidModel {
 	/**
 	 * Get the time bonuses associated with this department
 	 */
-	public function timeBonuses(): HasMany {
-		return $this->hasMany(TimeBonus::class);
+	public function timeBonuses(): BelongsToMany {
+		return $this->belongsToMany(TimeBonus::class);
 	}
 
 	/**

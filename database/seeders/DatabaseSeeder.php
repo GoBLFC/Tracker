@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\Department;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder {
@@ -17,7 +19,10 @@ class DatabaseSeeder extends Seeder {
 		// Create some events
 		$events = \App\Models\Event::factory(5)
 			->hasRewards(4)
-			->has(\App\Models\TimeBonus::factory(5)->recycle($departments))
+			->has(
+				\App\Models\TimeBonus::factory(5)
+					->hasAttached($departments)
+			)
 			->create();
 
 		// Create a bunch of dummy users with some content

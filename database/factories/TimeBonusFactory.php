@@ -22,7 +22,6 @@ class TimeBonusFactory extends Factory {
 			'start' => $start,
 			'stop' => $stop,
 			'modifier' => fake()->randomElement([1.25, 1.5, 2, 3, 4]),
-			'department_id' => \App\Models\Department::factory(),
 			'event_id' => \App\Models\Event::factory(),
 		];
 	}

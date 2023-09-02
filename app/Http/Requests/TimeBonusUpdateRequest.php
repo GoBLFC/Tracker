@@ -20,11 +20,12 @@ class TimeBonusUpdateRequest extends FormRequest {
 	public function rules(): array {
 		$start = $this->input('start');
 		$afterStartRule = $start ? "|after:{$start}" : '';
+		$requiredOrSometimes = $this->isMethod('PUT') ? 'required' : 'sometimes';
 		return [
-			'start' => 'sometimes|date',
-			'stop' => "sometimes|date{$afterStartRule}",
-			'modifier' => 'sometimes|decimal:0,2|min:1|max:10',
-			'department_id' => 'sometimes|uuid|exists:App\Models\Department,id',
+			'start' => "{$requiredOrSometimes}|date",
+			'stop' => "{$requiredOrSometimes}|date{$afterStartRule}",
+			'modifier' => "{$requiredOrSometimes}|decimal:0,2|min:1|max:10",
+			'departments' => "{$requiredOrSometimes}|array|exists:App\Models\Department,id",
 		];
 	}
 }

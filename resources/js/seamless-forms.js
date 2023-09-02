@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				// Get the form's data and add the correct state input if applicable
 				const data = new FormData(form);
 				if(hasState) data.set(submitBtn.getAttribute('data-state-input'), Number(!state));
-				const dataObj = Object.fromEntries(data);
+				const dataObj = formDataToObject(data);
 
 				// Make the request
 				const response = await sendRequest(form.action, {
@@ -80,3 +80,23 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
 	}
 });
+
+/**
+ * Serializes form data into a plain object, taking arrays into account
+ * @param {FormData} data
+ * @returns {Object}
+ */
+export function formDataToObject(data) {
+	const dataObj = {};
+	for(const [key, val] of data) {
+		if(key.endsWith('[]')) {
+			const plainKey = key.slice(0, -2);
+			if(!dataObj[plainKey]) dataObj[plainKey] = [];
+			dataObj[plainKey].push(val);
+			continue;
+		}
+
+		dataObj[key] = val;
+	}
+	return dataObj;
+}

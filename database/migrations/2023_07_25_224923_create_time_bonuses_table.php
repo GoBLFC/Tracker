@@ -14,7 +14,6 @@ return new class extends Migration {
 			$table->timestamp('start');
 			$table->timestamp('stop');
 			$table->float('modifier', 4, 2);
-			$table->foreignUuid('department_id')->constrained()->cascadeOnDelete();
 			$table->foreignUuid('event_id')->constrained()->cascadeOnDelete();
 			$table->timestamps();
 		});
