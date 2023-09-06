@@ -6,7 +6,7 @@ services:
       dockerfile: .docker/Dockerfile-app
     restart: always
     env_file:
-      - app.env
+      - .docker/env/app.env
     volumes:
       - app-logs:/var/www/html/storage/logs
     depends_on:
@@ -17,7 +17,7 @@ services:
     image: postgres:15
     restart: always
     env_file:
-      - postgres.env
+      - .docker/env/postgres.env
     volumes:
       - postgres:/var/lib/postgresql/data
 
@@ -26,7 +26,7 @@ services:
     command: sh -c 'exec redis-server --save 60 1 --loglevel warning --requirepass "${REDIS_PASSWORD:?REDIS_PASSWORD not provided}"'
     restart: always
     env_file:
-      - redis.env
+      - .docker/env/redis.env
     volumes:
       - redis:/data
 
@@ -36,7 +36,7 @@ services:
       dockerfile: .docker/Dockerfile-nginx
     restart: always
     env_file:
-      - nginx.env
+      - .docker/env/nginx.env
     ports:
       - '80:80'
       - '443:443'
@@ -54,7 +54,7 @@ services:
     image: certbot/certbot
     restart: unless-stopped
     env_file:
-      - certbot.env
+      - .docker/env/certbot.env
     volumes:
       - certbot-conf:/etc/letsencrypt
       - certbot-www:/var/www/certbot
