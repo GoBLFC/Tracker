@@ -13,9 +13,7 @@
 /resources/js/ziggy.js
 /vendor
 /node_modules
-/.services
 npm-debug.log
 yarn-error.log
 *.env
 .env.*
-!.env

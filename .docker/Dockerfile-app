@@ -31,10 +31,8 @@ COPY --chown=www-data:www-data --from=build-composer /usr/bin/composer /usr/bin/
 COPY --chown=www-data:www-data --from=build-composer /app/vendor/ ./vendor/
 COPY --chown=www-data:www-data --from=build-npm /app/public/build/ ./public/build/
 
-# Cache all the things!
+# Pre-cache the views and discovered event listeners, as they are guaranteed to not change or rely on configuration
 USER www-data
-RUN php artisan config:cache
-RUN php artisan route:cache
 RUN php artisan view:cache
 RUN php artisan event:cache
 USER root
