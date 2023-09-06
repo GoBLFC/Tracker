@@ -1,6 +1,7 @@
 /.git
 /.idea
 /.vscode
+/.docker/env
 /storage/logs/*
 /storage/debugbar/*
 /storage/framework/cache/*
