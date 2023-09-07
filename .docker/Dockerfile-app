@@ -27,7 +27,7 @@ RUN pecl install redis-5.3.7 && docker-php-ext-enable redis
 
 # Copy everything over
 COPY --chown=www-data:www-data . .
-COPY --chown=www-data:www-data --from=build-composer /usr/bin/composer /usr/bin/composer
+COPY --from=build-composer /usr/bin/composer /usr/bin/composer
 COPY --chown=www-data:www-data --from=build-composer /app/vendor/ ./vendor/
 COPY --chown=www-data:www-data --from=build-npm /app/public/build/ ./public/build/
 
