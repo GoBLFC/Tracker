@@ -7,7 +7,7 @@
 			<div class="row g-3 mb-5 mb-lg-4">
 				@foreach($roles as $role)
 					@if($role->value === \App\Models\Role::Volunteer->value) @continue @endif
-					@php($roleUsers = $users->filter(fn($user) => $user->isRole($role, true)))
+					@php($roleUsers = $users->filter(fn($user) => $user->isRole($role, true))->sortBy('badge_id'))
 
 					<div class="col-sm-12 col-lg-6">
 						<div class="card h-100">
