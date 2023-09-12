@@ -4,17 +4,17 @@
 			<li class="col">
 				@php($selected = isset($reportType) && $reportType === $slug)
 				@php($classes = ['btn', 'w-100', 'btn-outline-info' => !$selected, 'btn-info' => $selected])
-				@php($hasExtraData = in_array(\App\Reports\Concerns\WithExtraData::class, class_implements($class)))
+				@php($hasExtraParam = in_array(\App\Reports\Concerns\WithExtraParam::class, class_implements($class)))
 
-				@if($hasExtraData)
+				@if($hasExtraParam)
 					<div class="dropdown">
 						<button type="button" @class(array_merge($classes, ['dropdown-toggle'])) data-bs-toggle="dropdown" aria-expanded="false" @if($selected) aria-current="true" @endif>
 							{{ $class::name() }}
 						</button>
 						<ul class="dropdown-menu">
-							@php($key = $class::extraDataKey())
-							@foreach($class::extraDataChoices() as $val => $label)
-								@php($active = Request::integer($key, $class::extraDataDefaultValue()) === $val)
+							@php($key = $class::extraParamKey())
+							@foreach($class::extraParamChoices() as $val => $label)
+								@php($active = Request::integer($key, $class::extraParamDefaultValue()) === $val)
 								<li>
 									<a @class(['dropdown-item', 'active' => $active])
 										href="{!! $event ? route('admin.event.reports.view', [$event->id, $slug, $key => $val]) : route('admin.reports.view', [$slug, $key => $val]) !!}"

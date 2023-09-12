@@ -5,7 +5,7 @@ namespace App\Reports;
 use App\Models\User;
 use App\Models\Event;
 use Illuminate\Support\Collection;
-use App\Reports\Concerns\WithExtraData;
+use App\Reports\Concerns\WithExtraParam;
 use App\Reports\Concerns\FormatsAsTable;
 use Maatwebsite\Excel\Events\AfterSheet;
 use Maatwebsite\Excel\Concerns\WithEvents;
@@ -18,10 +18,10 @@ use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
 use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 
-class VolunteerTimeReport extends EventReport implements FromCollection, WithMapping, WithHeadings, WithColumnFormatting, WithExtraData, WithStrictNullComparison, WithEvents, ShouldAutoSize {
+class VolunteerTimeReport extends EventReport implements FromCollection, WithMapping, WithHeadings, WithColumnFormatting, WithExtraParam, WithStrictNullComparison, WithEvents, ShouldAutoSize {
 	use RegistersEventListeners, FormatsAsTable;
 
-	public function __construct(Event $event, public int $extraData) {
+	public function __construct(Event $event, public int $extraParam) {
 		parent::__construct($event);
 	}
 
@@ -40,7 +40,7 @@ class VolunteerTimeReport extends EventReport implements FromCollection, WithMap
 				$query->forEvent($this->event);
 			})
 			->get()
-			->filter(fn ($user) => $user->getEarnedTime($this->event, $user->timeEntries) / 60 / 60 > $this->extraData);
+			->filter(fn ($user) => $user->getEarnedTime($this->event, $user->timeEntries) / 60 / 60 > $this->extraParam);
 	}
 
 	/** @var User $user */
@@ -88,15 +88,15 @@ class VolunteerTimeReport extends EventReport implements FromCollection, WithMap
 		return 'desc';
 	}
 
-	public static function extraDataKey(): string {
+	public static function extraParamKey(): string {
 		return 'threshold';
 	}
 
-	public static function extraDataDefaultValue(): int {
+	public static function extraParamDefaultValue(): int {
 		return 0;
 	}
 
-	public static function extraDataChoices(): array {
+	public static function extraParamChoices(): array {
 		return [
 			1 => '> 1 Hour',
 			4 => '> 4 Hours',

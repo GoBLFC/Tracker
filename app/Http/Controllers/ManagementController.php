@@ -13,7 +13,7 @@ use Illuminate\View\View;
 use App\Models\Department;
 use App\Reports\VolunteerTimeReport;
 use Illuminate\Http\RedirectResponse;
-use App\Reports\Concerns\WithExtraData;
+use App\Reports\Concerns\WithExtraParam;
 use App\Reports\DepartmentSummaryReport;
 use Illuminate\Database\Eloquent\Builder;
 use App\Reports\AutoClosedTimeEntriesReport;
@@ -167,8 +167,8 @@ class ManagementController extends Controller {
 		// Instantiate the report
 		$report = null;
 		if ($event) {
-			if (in_array(WithExtraData::class, class_implements($reportClass))) {
-				$report = new $reportClass($event, request()->input($reportClass::extraDataKey(), $reportClass::extraDataDefaultValue()));
+			if (in_array(WithExtraParam::class, class_implements($reportClass))) {
+				$report = new $reportClass($event, request()->input($reportClass::extraParamKey(), $reportClass::extraParamDefaultValue()));
 			} else {
 				$report = new $reportClass($event);
 			}
@@ -204,8 +204,8 @@ class ManagementController extends Controller {
 		// Instantiate the report
 		$report = null;
 		if ($event) {
-			if (in_array(WithExtraData::class, class_implements($reportClass))) {
-				$report = new $reportClass($event, request()->input($reportClass::extraDataKey(), $reportClass::extraDataDefaultValue()));
+			if (in_array(WithExtraParam::class, class_implements($reportClass))) {
+				$report = new $reportClass($event, request()->input($reportClass::extraParamKey(), $reportClass::extraParamDefaultValue()));
 			} else {
 				$report = new $reportClass($event);
 			}

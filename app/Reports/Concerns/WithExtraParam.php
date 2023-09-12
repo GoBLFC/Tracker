@@ -2,19 +2,19 @@
 
 namespace App\Reports\Concerns;
 
-interface WithExtraData {
+interface WithExtraParam {
 	/**
 	 * Get the extra data key (used for the GET parameter)
 	 */
-	public static function extraDataKey(): string;
+	public static function extraParamKey(): string;
 
 	/**
 	 * Get the default value for the extra data
 	 */
-	public static function extraDataDefaultValue(): int;
+	public static function extraParamDefaultValue(): int;
 
 	/**
 	 * Get the premade choices for the extra data
 	 */
-	public static function extraDataChoices(): array;
+	public static function extraParamChoices(): array;
 }
