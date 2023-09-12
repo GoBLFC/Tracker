@@ -28,7 +28,28 @@
 							</ul>
 						</div>
 					</div>
+
 					<div class="card-body">
+						@if(isset($data['totals']))
+							<dl class="d-flex gap-4 justify-content-center mb-4">
+								@php($totalLabel = Str::singular($data['totals'][0]))
+
+								@foreach($data['totals'] as $index => $val)
+									@if($index === 0) @continue @endif
+									@if($val !== null)
+										<div>
+											<dt class="d-inline">
+												{{ $totalLabel }} {{ $data['head'][$index] }}:
+											</dt>
+											<dl class="d-inline">
+												{{ is_numeric($val) ? round($val, 2) : $val }}
+											</dl>
+										</div>
+									@endif
+								@endforeach
+							</dl>
+						@endif
+
 						<table id="report" class="table table-dark table-striped">
 							@if(isset($data['head']))
 								<thead>
@@ -49,7 +70,13 @@
 										@foreach($row as $val)
 											@php($isDate = $val instanceof \Carbon\Carbon)
 											<td @if($isDate) data-order="{!! $val->timestamp !!}" @endif>
-												{{ !$isDate ? $val : $val->toDayDateTimeString() }}
+												@if($isDate)
+													{{ $val->toDayDateTimeString() }}
+												@elseif(is_numeric($val))
+													{!! round($val, 2) !!}
+												@else
+													{{ $val }}
+												@endif
 											</td>
 										@endforeach
 									</tr>

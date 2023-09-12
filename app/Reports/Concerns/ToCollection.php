@@ -60,8 +60,28 @@ trait ToCollection {
 			// }
 		}
 
+		// Assemble all data
 		$data['body'] = $collection;
 		if ($this instanceof WithHeadings) $data['head'] = new Collection($this->headings());
+		if ($this instanceof WithTotals) {
+			$data['totals'] = new Collection();
+			$data['totals'][] = $this->totalsLabel();
+
+			$functions = $this->totalsFunctions();
+			foreach ($functions as $index => $function) {
+				if ($index === 0) continue;
+				switch ($function) {
+					case 'sum':
+						$data['totals'][] = $collection->sum($index);
+						break;
+					case 'none':
+						$data['totals'][] = null;
+						break;
+					default:
+						$data['totals'][] = $function;
+				}
+			}
+		}
 
 		return $data;
 	}
