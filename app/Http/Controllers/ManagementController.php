@@ -11,14 +11,17 @@ use App\Models\Activity;
 use App\Models\TimeEntry;
 use Illuminate\View\View;
 use App\Models\Department;
-use App\Reports\AutoClosedTimeEntriesReport;
+use App\Reports\VolunteerTimeReport;
 use Illuminate\Http\RedirectResponse;
+use App\Reports\Concerns\WithExtraData;
 use App\Reports\DepartmentSummaryReport;
 use Illuminate\Database\Eloquent\Builder;
+use App\Reports\AutoClosedTimeEntriesReport;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ManagementController extends Controller {
 	public const REPORTS = [
+		'hours' => VolunteerTimeReport::class,
 		'departments' => DepartmentSummaryReport::class,
 		'unclocked' => AutoClosedTimeEntriesReport::class,
 	];
@@ -161,8 +164,18 @@ class ManagementController extends Controller {
 		$reportClass = static::REPORTS[$reportType] ?? null;
 		if (!$reportClass) abort(404);
 
+		// Instantiate the report
+		$report = null;
+		if ($event) {
+			if (in_array(WithExtraData::class, class_implements($reportClass))) {
+				$report = new $reportClass($event, request()->input($reportClass::extraDataKey(), $reportClass::extraDataDefaultValue()));
+			} else {
+				$report = new $reportClass($event);
+			}
+		}
+
 		return view('admin.report', [
-			'report' => $event ? new $reportClass($event) : null,
+			'report' => $report,
 			'reportType' => $reportType,
 			'event' => $event,
 			'events' => Event::all(),
@@ -185,9 +198,19 @@ class ManagementController extends Controller {
 		$reportClass = static::REPORTS[$reportType] ?? null;
 		if (!$reportClass) abort(404);
 
-		// Validate the file type and export the report
+		// Validate the file type
 		if (!isset(static::REPORT_FILE_TYPES[$fileType])) abort(404);
-		$report = new $reportClass($event);
+
+		// Instantiate the report
+		$report = null;
+		if ($event) {
+			if (in_array(WithExtraData::class, class_implements($reportClass))) {
+				$report = new $reportClass($event, request()->input($reportClass::extraDataKey(), $reportClass::extraDataDefaultValue()));
+			} else {
+				$report = new $reportClass($event);
+			}
+		}
+
 		return $report->download($report->filename($fileType));
 	}
 }
