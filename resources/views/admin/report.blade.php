@@ -16,7 +16,14 @@
 
 				<div class="card">
 					<div class="card-header d-flex justify-content-between align-items-center">
-						<h5 class="mb-0">{{ $report->name() }}</h5>
+						<h5 class="mb-0">
+							{{ $report->name() }}
+							@if($report instanceof \App\Reports\Concerns\WithExtraParam)
+								@php($extraLabel = $report->extraParamChoices()[request()->integer($report->extraParamKey(), $report->extraParamDefaultValue())] ?? '')
+								{{ $extraLabel ? "({$extraLabel})" : '' }}
+							@endif
+						</h5>
+
 						<div class="btn-group" role="group">
 							<button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
 								Export
