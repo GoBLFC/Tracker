@@ -92,7 +92,7 @@ class TimeEntry extends UuidModel {
 	}
 
 	/**
-	 * Get the department this timem entry is foro
+	 * Get the department this timem entry is for
 	 */
 	public function department(): BelongsTo {
 		return $this->belongsTo(Department::class)->withTrashed();
@@ -233,7 +233,7 @@ class TimeEntry extends UuidModel {
 		// Total up all applicable bonus time
 		$bonusTotal = 0;
 		foreach ($bonuses as $bonus) {
-			if ($bonus->department_id !== $this->department_id) continue;
+			if ($bonus->pivot->department_id !== $this->department_id) continue;
 			$bonusTime = static::calculateOverlap($this->start, $this->stop ?? now(), $bonus->start, $bonus->stop);
 			$bonusTotal += round($bonusTime * ($bonus->modifier - 1));
 		}
