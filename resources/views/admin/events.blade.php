@@ -20,7 +20,7 @@
 				@if(!$events->isEmpty())
 					<div class="card-body p-0">
 						<div class="table-responsive">
-							<table class="table table-striped mb-0">
+							<table class="table table-dark table-striped mb-0">
 								<thead>
 									<tr>
 										<th scope="col">Name</th>

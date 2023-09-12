@@ -26,7 +26,7 @@
 
 						<div class="card-body p-0">
 							<div class="table-responsive">
-								<table id="utable" class="table table-striped w-100 mb-0">
+								<table id="utable" class="table table-dark table-striped w-100 mb-0">
 									<thead>
 										<tr>
 											<th scope="col">ID</th>
@@ -78,7 +78,7 @@
 						@if($rewards->count() > 0)
 							<div class="card-body p-0">
 								<div class="table-responsive">
-									<table class="table table-borderless text-center mb-0">
+									<table class="table table-dark table-borderless text-center mb-0">
 										<thead>
 											<tr>
 												@foreach($rewards as $reward)
@@ -108,7 +108,7 @@
 						<p class="card-body mb-0" id="eNone">This user doesn't have any time entries.</p>
 						<div class="card-body p-0 d-none" id="eSome">
 							<div class="table-responsive">
-								<table id="table" class="table table-striped mb-0">
+								<table id="table" class="table table-dark table-striped mb-0">
 									<thead>
 										<tr>
 											<th scope="col">In</th>
@@ -181,7 +181,7 @@
 				@if($recentTimeActivities->isNotEmpty())
 					<div class="card-body p-0">
 						<div class="table-responsive">
-							<table class="table table-striped w-100 mb-0">
+							<table class="table table-dark table-striped w-100 mb-0">
 								<thead>
 									<tr>
 										<th scope="col">ID</th>
@@ -232,7 +232,7 @@
 				@if($longestOngoingEntries->isNotEmpty())
 					<div class="card-body p-0">
 						<div class="table-responsive">
-							<table class="table table-striped w-100 mb-0">
+							<table class="table table-dark table-striped w-100 mb-0">
 								<thead>
 									<tr>
 										<th scope="col">ID</th>
