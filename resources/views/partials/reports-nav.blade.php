@@ -14,7 +14,7 @@
 						<ul class="dropdown-menu">
 							@php($key = $class::extraParamKey())
 							@foreach($class::extraParamChoices() as $val => $label)
-								@php($active = Request::integer($key, $class::extraParamDefaultValue()) === $val)
+								@php($active = $selected && Request::integer($key, $class::extraParamDefaultValue()) === $val)
 								<li>
 									<a @class(['dropdown-item', 'active' => $active])
 										href="{!! $event ? route('admin.event.reports.view', [$event->id, $slug, $key => $val]) : route('admin.reports.view', [$slug, $key => $val]) !!}"
