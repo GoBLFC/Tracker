@@ -45,7 +45,7 @@ class DepartmentSummaryReport extends EventReport implements FromQuery, WithMapp
 			'Department',
 			'Hours',
 			'Volunteers',
-			'Time entries',
+			'Time Entries',
 		];
 	}
 
