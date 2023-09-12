@@ -1,5 +1,5 @@
 <div class="card mb-4">
-	<div class="card-header">Edit for Event</div>
+	<div class="card-header">{!! $actionWord ?? 'Edit' !!} for Event</div>
 	<div class="card-body">
 		@if($events)
 			<div class="input-group">

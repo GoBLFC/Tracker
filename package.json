@@ -19,6 +19,7 @@
         "jquery": "^3.7.0",
         "luxon": "^3.4.0",
         "sass": "^1.65.1",
+        "simple-datatables": "^8.0.0",
         "sweetalert2": "^11.7.23"
     }
 }

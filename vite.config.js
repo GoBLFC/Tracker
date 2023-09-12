@@ -20,6 +20,7 @@ export default defineConfig({
 				'resources/js/admin/events.js',
 				'resources/js/admin/bonuses.js',
 				'resources/js/admin/rewards.js',
+				'resources/js/admin/report.js',
 			],
 			refresh: true,
 		}),

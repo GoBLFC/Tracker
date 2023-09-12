@@ -11,10 +11,26 @@ use App\Models\Activity;
 use App\Models\TimeEntry;
 use Illuminate\View\View;
 use App\Models\Department;
+use App\Reports\AutoClosedTimeEntriesReport;
 use Illuminate\Http\RedirectResponse;
+use App\Reports\DepartmentSummaryReport;
 use Illuminate\Database\Eloquent\Builder;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ManagementController extends Controller {
+	public const REPORTS = [
+		'departments' => DepartmentSummaryReport::class,
+		'unclocked' => AutoClosedTimeEntriesReport::class,
+	];
+
+	public const REPORT_FILE_TYPES = [
+		'xlsx' => 'Excel',
+		'ods' => 'LibreOffice',
+		'csv' => 'CSV',
+		'pdf' => 'PDF',
+		'html' => 'HTML',
+	];
+
 	/**
 	 * Render the lead panel
 	 */
@@ -83,6 +99,7 @@ class ManagementController extends Controller {
 	 * Render the rewards admin page
 	 */
 	public function getAdminRewards(?Event $event = null): View|RedirectResponse {
+		// Get the event and redirect to the page for the active event, if applicable
 		if (!$event) {
 			$event = Setting::activeEvent();
 			if ($event) return redirect()->route('admin.event.rewards', $event);
@@ -99,6 +116,7 @@ class ManagementController extends Controller {
 	 * Render the bonuses admin page
 	 */
 	public function getAdminBonuses(?Event $event = null): View|RedirectResponse {
+		// Get the event and redirect to the page for the active event, if applicable
 		if (!$event) {
 			$event = Setting::activeEvent();
 			if ($event) return redirect()->route('admin.event.bonuses', $event);
@@ -113,9 +131,10 @@ class ManagementController extends Controller {
 	}
 
 	/**
-	 * Render the reports admin page
+	 * Render the reports list admin page
 	 */
-	public function getAdminReports(?Event $event = null): View|RedirectResponse {
+	public function getAdminReportList(?Event $event = null): View|RedirectResponse {
+		// Get the event and redirect to the page for the active event, if applicable
 		if (!$event) {
 			$event = Setting::activeEvent();
 			if ($event) return redirect()->route('admin.event.reports', $event);
@@ -124,6 +143,51 @@ class ManagementController extends Controller {
 		return view('admin.reports', [
 			'event' => $event,
 			'events' => Event::all(),
+			'reports' => static::REPORTS,
 		]);
+	}
+
+	/**
+	 * Render a report
+	 */
+	public function getAdminReport(?Event $event = null, string $reportType) {
+		// Get the event and redirect to the page for the active event, if applicable
+		if (!$event || !$event->id) {
+			$event = Setting::activeEvent();
+			if ($event) return redirect()->route('admin.event.reports.view', [$event, $reportType]);
+		}
+
+		// Get the report class to use
+		$reportClass = static::REPORTS[$reportType] ?? null;
+		if (!$reportClass) abort(404);
+
+		return view('admin.report', [
+			'report' => $event ? new $reportClass($event) : null,
+			'reportType' => $reportType,
+			'event' => $event,
+			'events' => Event::all(),
+			'reports' => static::REPORTS,
+			'exportTypes' => static::REPORT_FILE_TYPES,
+		]);
+	}
+
+	/**
+	 * Provide an exported report file to download
+	 */
+	public function getAdminReportExport(?Event $event = null, string $reportType, string $fileType): BinaryFileResponse {
+		// Get the event and redirect to the page for the active event, if applicable
+		if (!$event || !$event->id) {
+			$event = Setting::activeEvent();
+			if ($event) return redirect()->route('admin.event.reports', $event);
+		}
+
+		// Get the report class to use
+		$reportClass = static::REPORTS[$reportType] ?? null;
+		if (!$reportClass) abort(404);
+
+		// Validate the file type and export the report
+		if (!array_key_exists($fileType, static::REPORT_FILE_TYPES)) abort(404);
+		$report = new $reportClass($event);
+		return $report->download($report->filename($fileType));
 	}
 }

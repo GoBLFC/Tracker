@@ -82,8 +82,12 @@ Route::middleware(['auth', 'not-banned', 'lockdown'])->group(function () {
 			Route::get('/admin/event/{event}/rewards', 'getAdminRewards')->name('admin.event.rewards');
 			Route::get('/admin/bonuses', 'getAdminBonuses')->name('admin.bonuses');
 			Route::get('/admin/event/{event}/bonuses', 'getAdminBonuses')->name('admin.event.bonuses');
-			Route::get('/admin/reports', 'getAdminReports')->name('admin.reports');
-			Route::get('/admin/event/{event}/reports', 'getAdminReports')->name('admin.event.reports');
+			Route::get('/admin/reports', 'getAdminReportList')->name('admin.reports');
+			Route::get('/admin/event/{event}/reports', 'getAdminReportList')->name('admin.event.reports');
+			Route::get('/admin/reports/{reportType}', 'getAdminReport')->name('admin.reports.view');
+			Route::get('/admin/event/{event}/reports/{reportType}', 'getAdminReport')->name('admin.event.reports.view');
+			Route::get('/admin/reports/{reportType}/{fileType}', 'getAdminReportExport')->name('admin.reports.export');
+			Route::get('/admin/event/{event}/reports/{reportType}/{fileType}', 'getAdminReportExport')->name('admin.event.reports.export');
 		});
 	});
 });

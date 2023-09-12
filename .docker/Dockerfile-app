@@ -2,7 +2,7 @@
 FROM composer:2 AS build-composer
 WORKDIR /app
 COPY . .
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN composer install --no-dev --classmap-authoritative --ignore-platform-reqs --no-interaction
 
 # Install NPM dependencies and run Vite
 FROM node:20 AS build-npm
@@ -16,14 +16,36 @@ RUN npm run build
 FROM php:8.2-fpm AS app
 WORKDIR /var/www/html
 
+# Install necessary packages and PHP extensions
+RUN apt update \
+	&& apt install -y \
+		supervisor \
+		cron \
+		libfcgi-bin \
+		libpq-dev \
+		libzip-dev \
+		libfreetype-dev \
+		libjpeg62-turbo-dev \
+		libpng-dev \
+	&& apt clean \
+	&& rm -rf /var/lib/apt/lists/*
+RUN docker-php-ext-configure pgsql --with-pgsql=/usr/local/pgsql && docker-php-ext-install -j$(nproc) pdo_pgsql
+RUN docker-php-ext-configure zip && docker-php-ext-install -j$(nproc) zip
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg && docker-php-ext-install -j$(nproc) gd
+RUN pecl install redis-5.3.7 && docker-php-ext-enable redis
+
 # Override some PHP configuration
 COPY .docker/fpm-overrides.conf /usr/local/etc/php-fpm.d/zzz-overrides.conf
 COPY .docker/php-overrides.ini $PHP_INI_DIR/conf.d/overrides.ini
 
-# Install necessary packages and PHP extensions
-RUN apt-get update && apt-get install -y supervisor cron libfcgi-bin libpq-dev && apt-get clean && rm -rf /var/lib/apt/lists/*
-RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql && docker-php-ext-install pdo_pgsql
-RUN pecl install redis-5.3.7 && docker-php-ext-enable redis
+# Configure cron
+RUN echo '* * * * * cd /var/www/html && /usr/local/bin/php artisan schedule:run >> /dev/null 2>&1' >> /etc/cron.d/laravel-scheduler \
+	&& crontab -u www-data /etc/cron.d/laravel-scheduler \
+	&& chmod u+s /usr/sbin/cron
+
+# Configure supervisor
+COPY .docker/supervisord.ini /etc/supervisor.d/supervisord.ini
+ENTRYPOINT ["supervisord", "-n", "-c", "/etc/supervisor.d/supervisord.ini"]
 
 # Copy everything over
 COPY --chown=www-data:www-data . .
@@ -36,15 +58,6 @@ USER www-data
 RUN php artisan view:cache
 RUN php artisan event:cache
 USER root
-
-# Configure cron
-RUN echo '* * * * * cd /var/www/html && /usr/local/bin/php artisan schedule:run >> /dev/null 2>&1' >> /etc/cron.d/laravel-scheduler \
-	&& crontab -u www-data /etc/cron.d/laravel-scheduler \
-	&& chmod u+s /usr/sbin/cron
-
-# Configure supervisor
-COPY .docker/supervisord.ini /etc/supervisor.d/supervisord.ini
-ENTRYPOINT ["supervisord", "-n", "-c", "/etc/supervisor.d/supervisord.ini"]
 
 # Set up basic healthcheck
 HEALTHCHECK --interval=10s --timeout=3s \
