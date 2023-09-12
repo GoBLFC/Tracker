@@ -57,7 +57,7 @@
 							</dl>
 						@endif
 
-						<table id="report" class="table table-dark table-striped">
+						<table id="report" class="table table-dark table-striped mb-0">
 							@if(isset($data['head']))
 								<thead>
 									<tr>

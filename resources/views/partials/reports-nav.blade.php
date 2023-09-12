@@ -1,13 +1,13 @@
 <nav>
-	<ul class="row list-unstyled mb-4">
+	<ul class="list-unstyled row g-2 g-md-4 mb-4">
 		@foreach($reports as $slug => $class)
 			<li class="col">
 				@php($selected = isset($reportType) && $reportType === $slug)
-				@php($classes = ['btn', 'w-100', 'btn-outline-info' => !$selected, 'btn-info' => $selected])
+				@php($classes = ['btn', 'w-100', 'h-100', 'btn-outline-info' => !$selected, 'btn-info' => $selected])
 				@php($hasExtraParam = in_array(\App\Reports\Concerns\WithExtraParam::class, class_implements($class)))
 
 				@if($hasExtraParam)
-					<div class="dropdown">
+					<div class="dropdown h-100">
 						<button type="button" @class(array_merge($classes, ['dropdown-toggle'])) data-bs-toggle="dropdown" aria-expanded="false" @if($selected) aria-current="true" @endif>
 							{{ $class::name() }}
 						</button>

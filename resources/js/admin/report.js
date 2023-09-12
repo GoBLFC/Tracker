@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					''
 			}
 			</div>
-			<div class="${options.classes.container}"${options.scrollY.length ? ` style="height: ${options.scrollY}; overflow-Y: auto;"` : ''}></div>
+			<div class="${options.classes.container} table-responsive mb-3"${options.scrollY.length ? ` style="height: ${options.scrollY}; overflow-Y: auto;"` : ''}></div>
 			<div class="${options.classes.bottom} row g-2 g-md-4">
 				${
 					options.paging ?
