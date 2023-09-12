@@ -186,7 +186,7 @@ class ManagementController extends Controller {
 		if (!$reportClass) abort(404);
 
 		// Validate the file type and export the report
-		if (!array_key_exists($fileType, static::REPORT_FILE_TYPES)) abort(404);
+		if (!isset(static::REPORT_FILE_TYPES[$fileType])) abort(404);
 		$report = new $reportClass($event);
 		return $report->download($report->filename($fileType));
 	}

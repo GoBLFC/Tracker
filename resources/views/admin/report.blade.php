@@ -23,7 +23,7 @@
 							</button>
 							<ul class="dropdown-menu">
 								@foreach($exportTypes as $extension => $label)
-									<li><a class="dropdown-item" href="{!! route('admin.event.reports.export', [$event->id, $report->slug(), $extension]) !!}">{{ $label }}</a></li>
+									<li><a class="dropdown-item" href="{!! route('admin.event.reports.export', [$event->id, $reportType, $extension]) !!}">{{ $label }}</a></li>
 								@endforeach
 							</ul>
 						</div>
@@ -67,4 +67,13 @@
 
 @push('modules')
 	@vite('resources/js/admin/report.js')
+@endpush
+
+@push('scripts')
+	@if($event)
+		<script type="text/javascript">
+			const defaultSortColumn = {!! $report->defaultSortColumn() !!};
+			const defaultSortDirection = '{!! $report->defaultSortDirection() !!}';
+		</script>
+	@endif
 @endpush

@@ -24,7 +24,7 @@ class AutoClosedTimeEntriesReport extends EventReport implements FromQuery, With
 		return TimeEntry::with('user', 'department')
 			->forEvent($this->event)
 			->whereAuto(true)
-			->orderBy('updated_at');
+			->orderBy('updated_at', 'desc');
 	}
 
 	/** @var TimeEntry $entry */
@@ -64,6 +64,14 @@ class AutoClosedTimeEntriesReport extends EventReport implements FromQuery, With
 
 	public static function slug(): string {
 		return 'unclocked';
+	}
+
+	public static function defaultSortColumn(): int {
+		return 3;
+	}
+
+	public static function defaultSortDirection(): string {
+		return 'desc';
 	}
 
 	public static function afterSheet(AfterSheet $event) {

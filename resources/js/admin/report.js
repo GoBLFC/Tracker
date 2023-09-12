@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const dataTable = new DataTable('#report', {
 		perPage: 25,
 		perPageSelect: [10, 25, 50, 100, 200, ['All', 0]],
-		columns: [{ select: 0, sort: 'asc' }],
+		columns: [{ select: defaultSortColumn, sort: defaultSortDirection }],
 		classes: {
 			active: 'active',
 			disabled: 'disabled',

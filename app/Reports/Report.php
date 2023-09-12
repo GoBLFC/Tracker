@@ -20,6 +20,20 @@ abstract class Report implements WithProperties {
 	public static abstract function slug(): string;
 
 	/**
+	 * Get the default column index to sort by
+	 */
+	public static function defaultSortColumn(): int {
+		return 0;
+	}
+
+	/**
+	 * Get the default direction to sort in
+	 */
+	public static function defaultSortDirection(): string {
+		return 'asc';
+	}
+
+	/**
 	 * Get a filename for the report
 	 */
 	public function filename(string $extension): string {
