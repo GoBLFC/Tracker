@@ -34,6 +34,13 @@ abstract class Report implements WithProperties {
 	}
 
 	/**
+	 * Prefetch any data that may be needed for the report
+	 */
+	public function prefetch(): void {
+		// nothing to do
+	}
+
+	/**
 	 * Get a filename for the report
 	 */
 	public function filename(string $extension): string {

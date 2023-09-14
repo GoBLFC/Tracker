@@ -64,7 +64,7 @@
 										@for($h = 0; $h < count($data['head']); $h++)
 											@php($type = isset($data['body'][0]) && (is_numeric($data['body'][0][$h]) || $data['body'][0][$h] instanceof \Carbon\Carbon) ? 'number' : 'string')
 											<th scope="col" data-type="{!! $type !!}">
-												{{ $data['head'][$h] }}
+												{!! Str::replace(' ', '&nbsp;', htmlspecialchars($data['head'][$h])) !!}
 											</th>
 										@endfor
 									</tr>

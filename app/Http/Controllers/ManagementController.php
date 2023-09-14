@@ -17,6 +17,8 @@ use App\Reports\Concerns\WithExtraParam;
 use App\Reports\DepartmentSummaryReport;
 use Illuminate\Database\Eloquent\Builder;
 use App\Reports\AutoClosedTimeEntriesReport;
+use App\Reports\Report;
+use App\Reports\VolunteerApplicationsReport;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ManagementController extends Controller {
@@ -24,6 +26,7 @@ class ManagementController extends Controller {
 		'hours' => VolunteerTimeReport::class,
 		'departments' => DepartmentSummaryReport::class,
 		'unclocked' => AutoClosedTimeEntriesReport::class,
+		'applications' => VolunteerApplicationsReport::class,
 	];
 
 	public const REPORT_FILE_TYPES = [
@@ -160,19 +163,10 @@ class ManagementController extends Controller {
 			if ($event) return redirect()->route('admin.event.reports.view', [$event, $reportType]);
 		}
 
-		// Get the report class to use
+		// Get the report class to use and create the report
 		$reportClass = static::REPORTS[$reportType] ?? null;
 		if (!$reportClass) abort(404);
-
-		// Instantiate the report
-		$report = null;
-		if ($event) {
-			if (in_array(WithExtraParam::class, class_implements($reportClass))) {
-				$report = new $reportClass($event, request()->input($reportClass::extraParamKey(), $reportClass::extraParamDefaultValue()));
-			} else {
-				$report = new $reportClass($event);
-			}
-		}
+		$report = $this->createReport($event, $reportClass);
 
 		return view('admin.report', [
 			'report' => $report,
@@ -201,7 +195,14 @@ class ManagementController extends Controller {
 		// Validate the file type
 		if (!isset(static::REPORT_FILE_TYPES[$fileType])) abort(404);
 
-		// Instantiate the report
+		$report = $this->createReport($event, $reportClass);
+		return $report->download($report->filename($fileType));
+	}
+
+	/**
+	 * Instantiate a report and prefetch data for it
+	 */
+	private function createReport(Event $event, string $reportClass): Report {
 		$report = null;
 		if ($event) {
 			if (in_array(WithExtraParam::class, class_implements($reportClass))) {
@@ -209,8 +210,10 @@ class ManagementController extends Controller {
 			} else {
 				$report = new $reportClass($event);
 			}
+
+			$report->prefetch();
 		}
 
-		return $report->download($report->filename($fileType));
+		return $report;
 	}
 }

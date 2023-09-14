@@ -20,7 +20,7 @@ cp .env.example .env
 #### ConCat
 
 1. Get a [test concat](https://reg.gobltc.com) account for OAuth and get developer authorization from Glitch, Levi, or Gawdl3y .
-1. Add a new OAuth App at `Housekeeping` -> `Developers` -> `OAuth Applications` -> `Create New` with `http://localhost` as the callback URI, and the `volunteer:read` application permission.
+1. Add a new OAuth App at `Housekeeping` -> `Developers` -> `OAuth Applications` -> `Create New` with `http://localhost` as the callback URI, and the `registration:read` and `volunteer:read` application permissions.
 1. Update `CONCAT_CLIENT_SECRET` and `CONCAT_CLIENT_ID` in `.env`
 
 #### Telegram Bot
