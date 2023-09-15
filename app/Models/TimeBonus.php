@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property \Illuminate\Support\Carbon $start
  * @property \Illuminate\Support\Carbon $stop
  * @property float $modifier
- * @property string $department_id
  * @property string $event_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -61,7 +60,7 @@ class TimeBonus extends UuidModel {
 
 	public function getActivitylogOptions(): LogOptions {
 		return LogOptions::defaults()
-			->logOnly(['start', 'stop', 'modifier', 'department_id'])
+			->logOnly(['start', 'stop', 'modifier'])
 			->logOnlyDirty()
 			->submitEmptyLogs();
 	}
