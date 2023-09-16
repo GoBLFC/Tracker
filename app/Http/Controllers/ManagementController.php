@@ -11,12 +11,14 @@ use App\Models\Activity;
 use App\Models\TimeEntry;
 use Illuminate\View\View;
 use App\Models\Department;
+use App\Reports\AuditLogReport;
 use App\Reports\VolunteerTimeReport;
 use Illuminate\Http\RedirectResponse;
 use App\Reports\Concerns\WithExtraParam;
 use App\Reports\DepartmentSummaryReport;
 use Illuminate\Database\Eloquent\Builder;
 use App\Reports\AutoClosedTimeEntriesReport;
+use App\Reports\EventReport;
 use App\Reports\Report;
 use App\Reports\VolunteerApplicationsReport;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -27,6 +29,7 @@ class ManagementController extends Controller {
 		'departments' => DepartmentSummaryReport::class,
 		'unclocked' => AutoClosedTimeEntriesReport::class,
 		'applications' => VolunteerApplicationsReport::class,
+		'audit' => AuditLogReport::class,
 	];
 
 	public const REPORT_FILE_TYPES = [
@@ -204,16 +207,22 @@ class ManagementController extends Controller {
 	 */
 	private function createReport(Event $event, string $reportClass): Report {
 		$report = null;
-		if ($event) {
-			if (in_array(WithExtraParam::class, class_implements($reportClass))) {
-				$report = new $reportClass($event, request()->input($reportClass::extraParamKey(), $reportClass::extraParamDefaultValue()));
-			} else {
-				$report = new $reportClass($event);
-			}
+		$args = [];
 
-			$report->prefetch();
+		if (is_subclass_of($reportClass, EventReport::class)) {
+			if (!$event) return null;
+			$args[] = $event;
 		}
 
+		if (is_subclass_of($reportClass, WithExtraParam::class)) {
+			$args[] = request()->input(
+				$reportClass::extraParamKey(),
+				$reportClass::extraParamDefaultValue(),
+			);
+		}
+
+		$report = new $reportClass(...$args);
+		$report->prefetch();
 		return $report;
 	}
 }

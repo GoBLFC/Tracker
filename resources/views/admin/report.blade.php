@@ -62,7 +62,7 @@
 								<thead>
 									<tr>
 										@for($h = 0; $h < count($data['head']); $h++)
-											@php($type = isset($data['body'][0]) && (is_numeric($data['body'][0][$h]) || $data['body'][0][$h] instanceof \Carbon\Carbon) ? 'number' : 'string')
+											@php($type = isset($data['body'][0]) && (is_numeric($data['body'][0][$h]) || $data['body'][0][$h] instanceof \Carbon\Carbon) ? 'number' : 'html')
 											<th scope="col" data-type="{!! $type !!}">
 												{!! Str::replace(' ', '&nbsp;', htmlspecialchars($data['head'][$h])) !!}
 											</th>
@@ -82,7 +82,7 @@
 												@elseif(is_numeric($val))
 													{!! round($val, 2) !!}
 												@else
-													{{ $val }}
+													{!! nl2br(htmlspecialchars($val)) !!}
 												@endif
 											</td>
 										@endforeach
