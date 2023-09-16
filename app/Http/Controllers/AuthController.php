@@ -30,9 +30,9 @@ class AuthController extends Controller {
 		Auth::logout();
 
 		// Redirect the user to log out of ConCat if applicable
-		$token = session('concatToken');
+		$token = session('conCatToken');
 		if ($token && !Setting::isDevMode()) {
-			session()->remove('concatToken');
+			session()->remove('conCatToken');
 			$concatUri = config('services.concat.instance_uri');
 			$concatId = config('services.concat.client_id');
 			$return = urlencode(route('auth.login'));
@@ -58,7 +58,7 @@ class AuthController extends Controller {
 	public function getCallback(): RedirectResponse {
 		$oauthUser = Socialite::driver('concat')->user();
 		$user = User::updateOrCreateFromOAuthUser($oauthUser);
-		session()->put('concatToken', $oauthUser->token);
+		session()->put('conCatToken', $oauthUser->token);
 		Auth::login($user);
 		return redirect()->intended();
 	}
