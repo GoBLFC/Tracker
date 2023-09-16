@@ -56,7 +56,7 @@ class Department extends UuidModel {
 
 	public function getActivitylogOptions(): LogOptions {
 		return LogOptions::defaults()
-			->logOnly(['name', 'hidden'])
+			->logOnly(['name', 'hidden', 'event_id'])
 			->logOnlyDirty()
 			->submitEmptyLogs();
 	}

@@ -54,7 +54,7 @@ class Reward extends UuidModel {
 
 	public function getActivitylogOptions(): LogOptions {
 		return LogOptions::defaults()
-			->logOnly(['name', 'description', 'hours'])
+			->logOnly(['name', 'description', 'hours', 'event_id'])
 			->logOnlyDirty()
 			->submitEmptyLogs();
 	}

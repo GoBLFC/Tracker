@@ -60,7 +60,7 @@ class TimeBonus extends UuidModel {
 
 	public function getActivitylogOptions(): LogOptions {
 		return LogOptions::defaults()
-			->logOnly(['start', 'stop', 'modifier'])
+			->logOnly(['start', 'stop', 'modifier', 'event_id'])
 			->logOnlyDirty()
 			->submitEmptyLogs();
 	}
