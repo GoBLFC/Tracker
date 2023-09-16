@@ -22,7 +22,7 @@ use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 class VolunteerTimeReport extends EventReport implements FromCollection, WithMapping, WithHeadings, WithColumnFormatting, WithExtraParam, WithTotals, WithStrictNullComparison, WithEvents, ShouldAutoSize {
 	use RegistersEventListeners, FormatsAsTable;
 
-	public function __construct(Event $event, public int $extraParam) {
+	public function __construct(Event $event, public int $hours) {
 		parent::__construct($event);
 	}
 
@@ -41,7 +41,7 @@ class VolunteerTimeReport extends EventReport implements FromCollection, WithMap
 				$query->forEvent($this->event);
 			})
 			->get()
-			->filter(fn ($user) => $user->getEarnedTime($this->event, $user->timeEntries) / 60 / 60 > $this->extraParam);
+			->filter(fn ($user) => $user->getEarnedTime($this->event, $user->timeEntries) / 60 / 60 > $this->hours);
 	}
 
 	/** @var User $user */
@@ -104,7 +104,7 @@ class VolunteerTimeReport extends EventReport implements FromCollection, WithMap
 	}
 
 	public static function extraParamKey(): string {
-		return 'threshold';
+		return 'hours';
 	}
 
 	public static function extraParamDefaultValue(): int {
