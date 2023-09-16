@@ -15,7 +15,8 @@ class UnlinkCommand extends Command {
 		if (!$user) return;
 
 		// Clear the user's chat ID
-		$user->saveWithNewTelegramChat(null);
+		$user->tg_chat_id = null;
+		$user->save();
 
 		$trackerLink = static::trackerLink('Tracker site');
 		$this->replyWithMessage([

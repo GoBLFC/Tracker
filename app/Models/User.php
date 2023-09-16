@@ -349,36 +349,6 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 	}
 
 	/**
-	 * Updates the user's tg_chat_id, saves, and manually logs an activity for it with the causer being the same user
-	 * (for use in Telegram commands, since they won't have a proper auth context)
-	 *
-	 * The manual log entry will only include the tg_chat_id change.
-	 */
-	public function saveWithNewTelegramChat(?int $chatId): bool {
-		$oldChatId = $this->tg_chat_id;
-		$this->tg_chat_id = $chatId;
-		$saved = $this->disableLogging()->save();
-
-		if (!$saved) {
-			$this->enableLogging();
-			return $saved;
-		}
-
-		activity()
-			->causedBy($this)
-			->performedOn($this)
-			->withProperties([
-				'attributes' => ['tg_chat_id' => $this->tg_chat_id],
-				'old' => ['tg_chat_id' => $oldChatId],
-			])
-			->event('updated')
-			->log('Telegram ' . ($chatId ? 'linked' : 'unlinked'));
-		$this->enableLogging();
-
-		return $saved;
-	}
-
-	/**
 	 * Finds an existing user record and updates it with the latest information from an OAuth user, or creates a new
 	 * record for it entirely.
 	 */

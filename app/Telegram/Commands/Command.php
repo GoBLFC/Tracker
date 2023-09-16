@@ -2,11 +2,12 @@
 
 namespace App\Telegram\Commands;
 
+use App\Models\User;
 use App\Models\Event;
 use App\Models\Setting;
-use App\Models\User;
-use Telegram\Bot\Commands\Command as BaseCommand;
 use Telegram\Bot\Keyboard\Keyboard;
+use Spatie\Activitylog\Facades\CauserResolver;
+use Telegram\Bot\Commands\Command as BaseCommand;
 
 abstract class Command extends BaseCommand {
 	/**
@@ -32,6 +33,7 @@ abstract class Command extends BaseCommand {
 
 	/**
 	 * Gets the user associated with the Telegram chat. If there isn't one, or they're banned, then reply with a message.
+	 * Also sets the causer of any future activity logs triggered by model changes to the associated user.
 	 */
 	protected function getChatUserOrReply(bool $allowBanned = false): ?User {
 		$chatId = $this->getUpdate()->getChat()->id;
@@ -53,6 +55,7 @@ abstract class Command extends BaseCommand {
 			return null;
 		}
 
+		CauserResolver::setCauser($user);
 		return $user;
 	}
 

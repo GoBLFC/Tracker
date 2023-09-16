@@ -4,8 +4,9 @@ namespace App\Telegram\Commands;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
-use Telegram\Bot\Exceptions\TelegramSDKException;
 use Telegram\Bot\Keyboard\Keyboard;
+use Spatie\Activitylog\Facades\CauserResolver;
+use Telegram\Bot\Exceptions\TelegramSDKException;
 
 class LinkCommand extends Command {
 	protected string $name = 'link';
@@ -69,8 +70,9 @@ class LinkCommand extends Command {
 		}
 
 		// Store the chat ID and regenerate the setup key (to prevent reuse)
-		$user->generateTelegramSetupKey()
-			->saveWithNewTelegramChat($chatId);
+		CauserResolver::setCauser($user);
+		$user->tg_chat_id = $chatId;
+		$user->generateTelegramSetupKey()->save();
 
 		$displayName = htmlspecialchars($user->display_name);
 		$this->replyWithMessage([
