@@ -68,7 +68,7 @@
 					</div>
 				@else
 					<div class="card-body">
-						<p class="mb-0">There are no departments.</p>
+						<p class="mb-0">There are no events.</p>
 					</div>
 				@endif
 			</div>
