@@ -13,15 +13,19 @@
 
 			@if($event)
 				@php($data = $report->toCollection())
+				@if($report instanceof \App\Reports\Concerns\WithExtraParam)
+					@php($extraParamValue = request()->integer($report->extraParamKey(), $report->extraParamDefaultValue()))
+				@endif
 
 				<div class="card">
 					<div class="card-header d-flex justify-content-between align-items-center">
 						<h5 class="mb-0">
 							{{ $report->name() }}
-							@if($report instanceof \App\Reports\Concerns\WithExtraParam)
-								@php($extraLabel = $report->extraParamChoices()[request()->integer($report->extraParamKey(), $report->extraParamDefaultValue())] ?? '')
+
+							@isset($extraParamValue)
+								@php($extraLabel = $report->extraParamChoices()[$extraParamValue] ?? '')
 								{{ $extraLabel ? "({$extraLabel})" : '' }}
-							@endif
+							@endisset
 						</h5>
 
 						<div class="btn-group" role="group">
@@ -30,7 +34,14 @@
 							</button>
 							<ul class="dropdown-menu">
 								@foreach($exportTypes as $extension => $label)
-									<li><a class="dropdown-item" href="{!! route('admin.event.reports.export', [$event->id, $reportType, $extension]) !!}">{{ $label }}</a></li>
+									@php($routeParams = [$event->id, $reportType, $extension])
+									@php($route = route('admin.event.reports.export',
+										isset($extraParamValue)
+											? array_merge($routeParams, [$report->extraParamKey() => $extraParamValue])
+											: $routeParams
+									))
+
+									<li><a class="dropdown-item" href="{!! $route !!}">{{ $label }}</a></li>
 								@endforeach
 							</ul>
 						</div>
