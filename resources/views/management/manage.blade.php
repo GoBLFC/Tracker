@@ -315,6 +315,8 @@
 
 		</div>
 	</div>
+
+	@include('partials.management-nav', ['cardClass' => 'mb-3 mt-4'])
 @endsection
 
 @push('modules')

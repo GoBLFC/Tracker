@@ -1,4 +1,4 @@
-<div class="card mb-3">
+<div class="card {!! $cardClass ?? 'mb-3' !!}">
 	<h5 class="card-header">Your Functions</h5>
 	<div class="card-body">
 		<div class="row gx-3 gy-2">
