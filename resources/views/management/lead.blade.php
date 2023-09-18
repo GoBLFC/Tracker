@@ -33,7 +33,7 @@
 			</div>
 
 			@manager
-				@include('partials.management-nav', ['cardClass' => 'mb-3 mt-4'])
+				@include('partials.management-nav', ['cardClass' => 'mb-3 mt-5'])
 			@endmanager
 		</div>
 	</div>
