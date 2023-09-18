@@ -2,7 +2,7 @@
 
 @section('admin-content')
 	<div class="card mb-4">
-		<h4 class="card-header">User Roles</h4>
+		<h4 class="card-header">Users</h4>
 		<div class="card-body">
 			<div class="row g-3 mb-5 mb-lg-4">
 				@foreach($roles as $role)
