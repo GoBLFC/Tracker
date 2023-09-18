@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Event;
+use App\Models\Reward;
 use App\Models\RewardClaim;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\RewardClaimStoreRequest;
@@ -23,8 +24,12 @@ class RewardClaimController extends Controller {
 	 * Claim a reward for a user
 	 */
 	public function store(RewardClaimStoreRequest $request, User $user): JsonResponse {
-		// Make sure there isn't an existing claim
+		// Authorize the creation based on the target reward
 		$rewardId = $request->validated('reward_id');
+		$reward = Reward::whereId($rewardId)->with('event')->firstOrFail();
+		$this->authorize('create', [RewardClaim::class, $reward]);
+
+		// Make sure there isn't an existing claim
 		if ($user->rewardClaims()->whereRewardId($rewardId)->exists()) {
 			return response()->json(['error' => 'Reward is already claimed by user.'], 422);
 		}

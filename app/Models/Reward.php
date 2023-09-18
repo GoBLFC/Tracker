@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Spatie\Activitylog\LogOptions;
+use App\Models\Traits\ChecksActiveEvent;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -44,7 +45,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @method static null|static find($id, $columns = ['*'])
  */
 class Reward extends UuidModel {
-	use HasFactory, SoftDeletes, LogsActivity;
+	use HasFactory, SoftDeletes, LogsActivity, ChecksActiveEvent;
 
 	protected $fillable = [
 		'name',

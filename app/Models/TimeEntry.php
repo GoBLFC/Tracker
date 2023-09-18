@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\LogOptions;
+use App\Models\Traits\ChecksActiveEvent;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -58,7 +59,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @method static null|static find($id, $columns = ['*'])
  */
 class TimeEntry extends UuidModel {
-	use HasFactory, LogsActivity;
+	use HasFactory, LogsActivity, ChecksActiveEvent;
 
 	protected $casts = [
 		'start' => 'datetime',

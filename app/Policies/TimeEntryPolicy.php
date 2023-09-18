@@ -2,9 +2,10 @@
 
 namespace App\Policies;
 
+use App\Models\User;
+use App\Models\Event;
 use App\Models\Kiosk;
 use App\Models\TimeEntry;
-use App\Models\User;
 
 class TimeEntryPolicy {
 	/**
@@ -24,29 +25,35 @@ class TimeEntryPolicy {
 	/**
 	 * Determine whether the user can create models.
 	 */
-	public function create(User $creator, User $target): bool {
-		return ($creator->id === $target->id && Kiosk::isSessionAuthorized()) || $creator->isManager();
+	public function create(User $creator, User $target, Event $event = null): bool {
+		$validEvent = !$event || $event->isActive();
+		return ($creator->id === $target->id && $validEvent && Kiosk::isSessionAuthorized())
+			|| ($creator->isManager() && $validEvent)
+			|| $creator->isAdmin();
 	}
 
 	/**
 	 * Determine whether the user can update the model.
 	 */
 	public function update(User $user, TimeEntry $timeEntry): bool {
-		return ($user->id === $timeEntry->user_id && Kiosk::isSessionAuthorized()) || $user->isManager();
+		$validEvent = $timeEntry->isForActiveEvent();
+		return ($user->id === $timeEntry->user_id && $validEvent && Kiosk::isSessionAuthorized())
+			|| ($user->isManager() && $validEvent)
+			|| $user->isAdmin();
 	}
 
 	/**
 	 * Determine whether the user can delete the model.
 	 */
 	public function delete(User $user, TimeEntry $timeEntry): bool {
-		return $user->isManager();
+		return ($user->isManager() && $timeEntry->isForActiveEvent()) || $user->isAdmin();
 	}
 
 	/**
 	 * Determine whether the user can restore the model.
 	 */
 	public function restore(User $user, TimeEntry $timeEntry): bool {
-		return $user->isManager();
+		return $user->isAdmin();
 	}
 
 	/**

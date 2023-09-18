@@ -5,17 +5,33 @@
 		<h4 class="card-header text-bg-warning">Management Controls</h4>
 
 		<div class="card-body">
+			@include('partials.event-selector', [
+				'actionWord' => 'Manage',
+				'cardClass' => 'mb-3',
+				'route' => route('management.manage', 'event-id'),
+			])
 
-			@unlessactiveEvent
+			@if($event)
+				@unless($event->isActive())
+					<div class="alert alert-info" role="alert">
+						<p class="mb-0">
+							You are managing data for an inactive event.
+							@unlessadmin
+								Everything will be read-only.
+							@endunless
+						</p>
+					</div>
+				@endunless
+			@else
 				<div class="alert alert-info" role="alert">
 					<p class="mb-0">
-						There isn't currently any event running.
-						Most time-related information/functionality will be unavailable.
+						There isn't currently any event running, and you haven't selected one above.
+						All time-related information/functionality will be unavailable.
 					</p>
 				</div>
-			@endactiveEvent
+			@endif
 
-			<div class="card mb-4">
+			<div class="card mb-4 mt-4">
 				<div class="card-header">Search Volunteers</div>
 
 				<div class="card-body">
@@ -308,15 +324,16 @@
 @push('scripts')
 	<script type="text/javascript">
 		const timezone = '{!! config('tracker.timezone') !!}';
-		const trackerStatsUrl = '{!! route('tracker.user.stats', 'id') !!}';
-		const userClaimsUrl = '{!! route('users.claims', 'id') !!}';
-		const userClaimsStoreUrl = '{!! route('users.claims.store', 'id') !!}';
-		const claimsDeleteUrl = '{!! route('claims.destroy', 'id') !!}';
+		const trackerStatsUrl = '{!! $event ? route('tracker.user.stats.event', ['user-id', $event->id]) : route('tracker.user.stats', 'user-id') !!}';
+		const userClaimsUrl = '{!! $event ? route('users.claims.event', ['user-id', $event->id]) : route('users.claims', 'user-id') !!}';
+		const userClaimsStoreUrl = '{!! route('users.claims.store', 'user-id') !!}';
+		const claimsDestroyUrl = '{!! route('claims.destroy', 'claim-id') !!}';
 		const userSearchUrl = '{!! route('users.search') !!}';
-		const timeCheckoutPostUrl = '{!! route('tracker.time.checkout.post', 'id') !!}';
-		const timeStoreUrl = '{!! route('tracker.time.put', 'id') !!}';
-		const timeDeleteUrl = '{!! route('tracker.time.delete', 'id') !!}';
+		const timeCheckoutPostUrl = '{!! route('tracker.time.checkout.post', 'entry-id') !!}';
+		const timeStoreUrl = '{!! route('tracker.time.store', 'user-id') !!}';
+		const timeDestroyUrl = '{!! route('tracker.time.destroy', 'entry-id') !!}';
 		const departments = {{ Js::from($departments) }};
 		const rewards = {{ JS::from($rewards) }};
+		const eventId = {{ JS::from($event?->id) }};
 	</script>
 @endpush

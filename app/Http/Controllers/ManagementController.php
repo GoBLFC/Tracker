@@ -21,6 +21,7 @@ use App\Reports\AutoClosedTimeEntriesReport;
 use App\Reports\EventReport;
 use App\Reports\Report;
 use App\Reports\VolunteerApplicationsReport;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ManagementController extends Controller {
@@ -50,19 +51,23 @@ class ManagementController extends Controller {
 	/**
 	 * Render the management panel
 	 */
-	public function getManageIndex(): View {
+	public function getManageIndex(?Event $event = null): View {
+		if (!$event) $event = Setting::activeEvent();
+
 		return view('management.manage', [
-			'rewards' => Reward::forEvent()->orderBy('hours')->get(),
+			'event' => $event,
+			'events' => Event::orderBy('name')->get(),
+			'rewards' => Reward::forEvent($event)->orderBy('hours')->get(),
 			'departments' => Department::orderBy('hidden')->orderBy('name')->get(),
 			'longestOngoingEntries' => TimeEntry::with(['user', 'department'])
-				->forEvent()
+				->forEvent($event)
 				->ongoing()
 				->orderBy('start')
 				->limit(10)
 				->get(),
 			'recentTimeActivities' => Activity::with(['subject', 'subject.user'])
-				->whereHasMorph('subject', TimeEntry::class, function (Builder $query) {
-					$query->whereEventId(Setting::activeEvent()?->id);
+				->whereHasMorph('subject', TimeEntry::class, function (Builder $query) use ($event) {
+					$query->whereEventId($event?->id);
 				})
 				->orderByDesc('created_at')
 				->limit(10)

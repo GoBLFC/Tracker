@@ -1,4 +1,4 @@
-<div class="card mb-4">
+<div class="card {!! $cardClass ?? 'mb-4' !!}">
 	<div class="card-header">{!! $actionWord ?? 'Edit' !!} for Event</div>
 	<div class="card-body">
 		@if($events)
@@ -15,7 +15,11 @@
 			</div>
 		@else
 			<p class="mb-0">
-				There aren't any events yet - you'll need to <a href="{!! route('admin.events') !!}">create one</a> to manage.
+				@admin
+					There aren't any events yet - you'll need to <a href="{!! route('admin.events') !!}">create one</a> to manage.
+				@else
+					There aren't any events yet.
+				@endif
 			</p>
 		@endif
 	</div>

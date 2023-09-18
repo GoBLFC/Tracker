@@ -29,9 +29,9 @@ Route::middleware(['auth', 'not-banned', 'lockdown'])->group(function () {
 		Route::post('/time/checkin', 'postCheckIn')->name('tracker.checkin.post');
 		Route::post('/time/checkout', 'postCheckOut')->name('tracker.checkout.post');
 		Route::post('/time/{timeEntry}/checkout', 'postCheckOut')->name('tracker.time.checkout.post');
-		Route::delete('/time/{timeEntry}', 'deleteTimeEntry')->name('tracker.time.delete');
+		Route::delete('/time/{timeEntry}', 'destroyTimeEntry')->name('tracker.time.destroy');
 		Route::get('/users/{user}/stats', 'getStats')->name('tracker.user.stats');
-		Route::put('/users/{user}/time', 'putTimeEntry')->name('tracker.time.put');
+		Route::put('/users/{user}/time', 'storeTimeEntry')->name('tracker.time.store');
 		Route::get('/users/{user}/time/event/{event}', 'getStats')->name('tracker.user.stats.event');
 	});
 
@@ -70,7 +70,7 @@ Route::middleware(['auth', 'not-banned', 'lockdown'])->group(function () {
 		});
 
 		Route::middleware('role:manager')->group(function () {
-			Route::get('/manage', 'getManageIndex')->name('management.manage');
+			Route::get('/manage/{event?}', 'getManageIndex')->name('management.manage');
 		});
 
 		Route::middleware('role:admin')->group(function () {

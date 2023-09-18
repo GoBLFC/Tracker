@@ -94,8 +94,8 @@ async function userSearch(input) {
 
 async function loadVolunteer(id) {
 	const [timeData, claimData] = await Promise.all([
-		sendGetRequest(trackerStatsUrl.replace(/id/, id)),
-		sendGetRequest(userClaimsUrl.replace(/id/, id)),
+		sendGetRequest(trackerStatsUrl.replace(/user-id/, id)),
+		sendGetRequest(userClaimsUrl.replace(/user-id/, id)),
 	]);
 
 	$("#eRow").empty();
@@ -208,7 +208,12 @@ async function checkIn() {
 	const notes = $("#notes").val();
 	const start = timeStart.dates.picked[0] ? prepareDateForInput(timeStart.dates.picked[0], timezone) : null;
 
-	await sendPutRequest(timeStoreUrl.replace(/id/, currentUser.id), { department_id, start, notes });
+	await sendPutRequest(timeStoreUrl.replace(/user-id/, currentUser.id), {
+		event_id: eventId,
+		department_id,
+		start,
+		notes,
+	});
 
 	loadVolunteer(currentUser.id);
 	Toast.fire({
@@ -224,7 +229,8 @@ async function addTime() {
 	const department_id = $("#dept").val();
 	const notes = $("#notes").val();
 
-	await sendPutRequest(timeStoreUrl.replace(/id/, currentUser.id), {
+	await sendPutRequest(timeStoreUrl.replace(/user-id/, currentUser.id), {
+		event_id: eventId,
 		department_id,
 		start,
 		stop,
@@ -248,7 +254,7 @@ async function removeTime(id) {
 	});
 	if(!result.isConfirmed) return;
 
-	await sendDeleteRequest(timeDeleteUrl.replace(/id/, id));
+	await sendDeleteRequest(timeDestroyUrl.replace(/entry-id/, id));
 	loadVolunteer(currentUser.id);
 	Toast.fire({
 		text: "Removed time entry.",
@@ -257,7 +263,7 @@ async function removeTime(id) {
 }
 
 async function checkOut(id) {
-	await sendPostRequest(timeCheckoutPostUrl.replace(/id/, id));
+	await sendPostRequest(timeCheckoutPostUrl.replace(/entry-id/, id));
 	loadVolunteer(currentUser.id);
 	Toast.fire({
 		text: "User checked out.",
@@ -281,14 +287,14 @@ async function toggleClaim(button) {
 		});
 		if(!result.isConfirmed) return;
 
-		await sendDeleteRequest(claimsDeleteUrl.replace(/id/, claimId));
+		await sendDeleteRequest(claimsDestroyUrl.replace(/claim-id/, claimId));
 		button.removeClass("btn-danger")
 			.addClass("btn-success")
 			.data('claim-id', null)
 			.text("Claim");
 	} else {
 		const reward_id = button.data('reward-id');
-		const { reward_claim: claim } = await sendPutRequest(userClaimsStoreUrl.replace(/id/, currentUser.id), { reward_id });
+		const { reward_claim: claim } = await sendPutRequest(userClaimsStoreUrl.replace(/user-id/, currentUser.id), { reward_id });
 		button.removeClass("btn-success")
 			.addClass("btn-danger")
 			.data("claim-id", claim.id)

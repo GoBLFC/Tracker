@@ -104,6 +104,13 @@ class Event extends UuidModel {
 	}
 
 	/**
+	 * Checks whether this is the active event
+	 */
+	public function isActive(): bool {
+		return Setting::activeEvent()?->id === $this->id;
+	}
+
+	/**
 	 * Makes this the active event
 	 */
 	public function makeActive(): void {

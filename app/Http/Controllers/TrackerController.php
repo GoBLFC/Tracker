@@ -131,11 +131,15 @@ class TrackerController extends Controller {
 	/**
 	 * Create a time entry for a user
 	 */
-	public function putTimeEntry(TimeEntryStoreRequest $request, User $user): JsonResponse {
+	public function storeTimeEntry(TimeEntryStoreRequest $request, User $user): JsonResponse {
 		// Make sure we have an event
 		$input = $request->safe();
 		if (!isset($input['event_id'])) $input['event_id'] = Setting::activeEvent()?->id;
 		if (!$input['event_id']) return response()->json(['error' => 'No event to create time entry for.'], 409);
+
+		// Authorize the creation based on the target event
+		$event = Event::findOrFail($input['event_id']);
+		$this->authorize('create', [TimeEntry::class, $user, $event]);
 
 		// Don't allow an ongoing entry to be created if there already is one
 		if (!isset($input['stop'])) {
@@ -161,7 +165,7 @@ class TrackerController extends Controller {
 	/**
 	 * Delete a time entry
 	 */
-	public function deleteTimeEntry(TimeEntry $timeEntry) {
+	public function destroyTimeEntry(TimeEntry $timeEntry) {
 		$this->authorize('delete', $timeEntry);
 		$timeEntry->delete();
 		return response()->json(null, 205);
