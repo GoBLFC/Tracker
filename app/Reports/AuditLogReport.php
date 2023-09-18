@@ -35,6 +35,7 @@ class AuditLogReport extends Report implements FromQuery, WithMapping, WithHeadi
 
 	public function query(): Builder {
 		$query = Activity::query()
+			->withoutGlobalScope(SoftDeletingScope::class)
 			->with([
 				'causer',
 				'subject' => function (MorphTo $morphTo) {
@@ -46,14 +47,6 @@ class AuditLogReport extends Report implements FromQuery, WithMapping, WithHeadi
 					]);
 				},
 			])
-			->whereHasMorph(
-				'subject',
-				'*',
-				function (Builder $query, string $type) {
-					$query->withoutGlobalScope(SoftDeletingScope::class);
-					if ($type === TimeEntry::class) $query->whereRaw('time_entries.user_id is distinct from causer_id');
-				}
-			)
 			->whereRaw('causer_id is distinct from subject_id')
 			->orderByDesc('created_at');
 
@@ -63,13 +56,16 @@ class AuditLogReport extends Report implements FromQuery, WithMapping, WithHeadi
 
 	/** @var Activity $activity */
 	public function map($activity, $excelDates = true): array {
+		// Skip activities for time entries done by the owner themself
+		if ($activity->subject_type === TimeEntry::class && $activity->subject?->user_id === $activity->causer_id) return [];
+
 		$created = $activity->created_at->timezone(config('tracker.timezone'));
 
 		return [
 			$excelDates ? Date::dateTimeToExcel($created) : $created,
 			$activity->causer?->audit_name,
 			Str::replace('App\\Models\\', '', $activity->subject_type),
-			$activity->subject->audit_name ?? $activity->subject->display_name ?? $activity->subject->id,
+			$activity->subject->audit_name ?? $activity->subject->display_name ?? $activity->subject_id,
 			static::buildParentList($activity),
 			$activity->description,
 			static::buildChangesList($activity),

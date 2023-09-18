@@ -31,6 +31,7 @@ trait ToCollection {
 		$data = new Collection;
 		if ($this instanceof WithMapping) {
 			$collection = $collection->map(fn ($item) => $this->map($item, false));
+			$collection = $collection->filter(fn ($item) => count($item) > 0);
 
 			// if ($this instanceof WithColumnFormatting) {
 			// 	// Build an array of formats, replacing the column letters with array indices
