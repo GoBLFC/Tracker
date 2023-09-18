@@ -18,7 +18,7 @@ class SettingUpdateRequest extends FormRequest {
 	 * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
 	 */
 	public function rules(): array {
-		switch ($this->setting->id) {
+		switch ($this->setting->name) {
 			case 'active-event':
 				return ['value' => 'present|nullable|uuid|exists:App\Models\Event,id'];
 			case 'dev-mode':
@@ -33,7 +33,7 @@ class SettingUpdateRequest extends FormRequest {
 	 * Handle a passed validation attempt.
 	 */
 	protected function passedValidation(): void {
-		switch ($this->setting->id) {
+		switch ($this->setting->name) {
 			case 'dev-mode':
 			case 'lockdown':
 				$this->replace(['value' => $this->boolean('value')]);

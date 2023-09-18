@@ -16,7 +16,7 @@ class SettingController extends Controller {
 		$setting->setValue($request->validated('value'));
 		return $request->expectsJson()
 			? response()->json(null, 205)
-			: redirect()->back()->withSuccess("Updated value of {$setting->id} setting.");
+			: redirect()->back()->withSuccess("Updated value of {$setting->name} setting.");
 	}
 
 	/**
@@ -27,6 +27,6 @@ class SettingController extends Controller {
 		$setting->setValue(null);
 		return $request->expectsJson()
 			? response()->json(null, 205)
-			: redirect()->back()->withSuccess("Cleared value of {$setting->id} setting.");
+			: redirect()->back()->withSuccess("Cleared value of {$setting->name} setting.");
 	}
 }
