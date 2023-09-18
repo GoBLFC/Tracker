@@ -43,7 +43,7 @@ class AuditLogReport extends Report implements FromQuery, WithMapping, WithHeadi
 						Reward::class => ['event:id,name'],
 						RewardClaim::class => ['reward:id,name', 'user:id,username,badge_id,badge_name'],
 						TimeBonus::class => ['event:id,name'],
-						TimeEntry::class => ['event:id,name', 'user:id,username,badge_id,badge_name'],
+						TimeEntry::class => ['event:id,name', 'department:id,name', 'user:id,username,badge_id,badge_name'],
 					]);
 				},
 			])
@@ -142,6 +142,7 @@ class AuditLogReport extends Report implements FromQuery, WithMapping, WithHeadi
 		if (isset($activity->subject->user)) $parents[] = "- User: {$activity->subject->user->audit_name}";
 		if (isset($activity->subject->event)) $parents[] = "- Event: {$activity->subject->event->display_name}";
 		if (isset($activity->subject->reward)) $parents[] = "- Reward: {$activity->subject->reward->display_name}";
+		if (isset($activity->subject->department)) $parents[] = "- Department: {$activity->subject->department->display_name}";
 
 		if (count($parents) === 0) return null;
 		return implode("\n", $parents);
