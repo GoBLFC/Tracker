@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Contracts\HasAuditName;
+use App\Models\Contracts\HasDisplayName;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Spatie\Activitylog\LogOptions;
@@ -68,7 +70,7 @@ use Spatie\Activitylog\Traits\CausesActivity;
  * @method static static findOrNew($id, $columns = ['*'])
  * @method static null|static find($id, $columns = ['*'])
  */
-class User extends UuidModel implements AuthenticatableContract, AuthorizableContract {
+class User extends UuidModel implements AuthenticatableContract, AuthorizableContract, HasDisplayName, HasAuditName {
 	use HasFactory, SoftDeletes, Authenticatable, Authorizable, Notifiable, LogsActivity, CausesActivity;
 
 	public $incrementing = false;
@@ -107,19 +109,20 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 			->dontSubmitEmptyLogs();
 	}
 
+	public function getDisplayNameAttribute(): string {
+		$name = $this->badge_name ?? $this->username;
+		return !$this->deleted_at ? $name : "{$name} (del)";
+	}
+
+	public function getAuditNameAttribute(): string {
+		return "{$this->display_name} (#{$this->badge_id})";
+	}
+
 	/**
 	 * Get the full name of the user (first + last name)
 	 */
 	public function getFullNameAttribute(): string {
 		return "{$this->first_name} {$this->last_name}";
-	}
-
-	/**
-	 * Get the display name of the user (badge name if available, username otherwise)
-	 */
-	public function getDisplayNameAttribute(): string {
-		$name = $this->badge_name ?? $this->username;
-		return !$this->deleted_at ? $name : "{$name} (del)";
 	}
 
 	/**

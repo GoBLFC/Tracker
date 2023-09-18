@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Spatie\Activitylog\LogOptions;
+use App\Models\Contracts\HasDisplayName;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -42,7 +43,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @method static static findOrNew($id, $columns = ['*'])
  * @method static null|static find($id, $columns = ['*'])
  */
-class Department extends UuidModel {
+class Department extends UuidModel implements HasDisplayName {
 	use HasFactory, SoftDeletes, LogsActivity;
 
 	protected $casts = [
@@ -56,14 +57,11 @@ class Department extends UuidModel {
 
 	public function getActivitylogOptions(): LogOptions {
 		return LogOptions::defaults()
-			->logOnly(['name', 'hidden', 'event_id'])
+			->logOnly(['name', 'hidden'])
 			->logOnlyDirty()
 			->submitEmptyLogs();
 	}
 
-	/**
-	 * Get the display name of the department (usually just the name)
-	 */
 	public function getDisplayNameAttribute(): string {
 		return !$this->deleted_at ? $this->name : "{$this->name} (del)";
 	}

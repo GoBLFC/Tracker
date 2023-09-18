@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Casts\JsonValue;
+use App\Models\Contracts\HasDisplayName;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
@@ -33,7 +34,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @method static static findOrNew($id, $columns = ['*'])
  * @method static null|static find($id, $columns = ['*'])
  */
-class Setting extends UuidModel {
+class Setting extends UuidModel implements HasDisplayName {
 	use LogsActivity;
 
 	protected $casts = [
@@ -52,6 +53,10 @@ class Setting extends UuidModel {
 			->logOnly(['value'])
 			->logOnlyDirty()
 			->submitEmptyLogs();
+	}
+
+	public function getDisplayNameAttribute(): string {
+		return $this->name;
 	}
 
 	/**

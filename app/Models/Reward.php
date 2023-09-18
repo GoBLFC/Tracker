@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Spatie\Activitylog\LogOptions;
+use App\Models\Contracts\HasDisplayName;
 use App\Models\Traits\ChecksActiveEvent;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -44,7 +45,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @method static static findOrNew($id, $columns = ['*'])
  * @method static null|static find($id, $columns = ['*'])
  */
-class Reward extends UuidModel {
+class Reward extends UuidModel implements HasDisplayName {
 	use HasFactory, SoftDeletes, LogsActivity, ChecksActiveEvent;
 
 	protected $fillable = [
@@ -60,9 +61,6 @@ class Reward extends UuidModel {
 			->submitEmptyLogs();
 	}
 
-	/**
-	 * Get the display name of the reward (usually just the name)
-	 */
 	public function getDisplayNameAttribute(): string {
 		return !$this->deleted_at ? $this->name : "{$this->name} (del)";
 	}

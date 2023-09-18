@@ -43,6 +43,7 @@ class RewardClaim extends UuidModel {
 
 	public function getActivitylogOptions(): LogOptions {
 		return LogOptions::defaults()
+			->logOnly(['user_id', 'reward_id'])
 			->submitEmptyLogs();
 	}
 

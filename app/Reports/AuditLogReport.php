@@ -2,17 +2,19 @@
 
 namespace App\Reports;
 
-use App\Models\User;
+use App\Models\Reward;
 use App\Models\Activity;
+use App\Models\TimeBonus;
 use App\Models\TimeEntry;
+use App\Models\RewardClaim;
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use App\Reports\Concerns\FormatsAsTable;
 use App\Reports\Concerns\WithExtraParam;
 use Maatwebsite\Excel\Events\AfterSheet;
+use Illuminate\Database\Eloquent\Builder;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
-use Illuminate\Database\Eloquent\Builder;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -37,7 +39,10 @@ class AuditLogReport extends Report implements FromQuery, WithMapping, WithHeadi
 				'causer',
 				'subject' => function (MorphTo $morphTo) {
 					$morphTo->morphWith([
-						TimeEntry::class => ['user:id,username,badge_id,badge_name'],
+						Reward::class => ['event:id,name'],
+						RewardClaim::class => ['reward:id,name', 'user:id,username,badge_id,badge_name'],
+						TimeBonus::class => ['event:id,name'],
+						TimeEntry::class => ['event:id,name', 'user:id,username,badge_id,badge_name'],
 					]);
 				},
 			])
@@ -62,11 +67,10 @@ class AuditLogReport extends Report implements FromQuery, WithMapping, WithHeadi
 
 		return [
 			$excelDates ? Date::dateTimeToExcel($created) : $created,
-			$activity->causer ? "{$activity->causer->display_name} (#{$activity->causer->badge_id})" : null,
+			$activity->causer?->audit_name,
 			Str::replace('App\\Models\\', '', $activity->subject_type),
-			($activity->subject->display_name ?? $activity->subject->id)
-				. ($activity->subject_type === User::class ? " (#{$activity->subject->badge_id})" : ''),
-			$activity->subject->user ? "{$activity->subject->user->display_name} (#{$activity->subject->user->badge_id})" : null,
+			$activity->subject->audit_name ?? $activity->subject->display_name ?? $activity->subject->id,
+			static::buildParentList($activity),
 			$activity->description,
 			static::buildChangesList($activity),
 		];
@@ -76,9 +80,9 @@ class AuditLogReport extends Report implements FromQuery, WithMapping, WithHeadi
 		return [
 			'Time',
 			'Causer',
-			'Subject',
-			'Subject Name/ID',
-			'Subject Owner',
+			'Type',
+			'Name/ID',
+			'Parent Entities',
 			'Description',
 			'Changes',
 		];
@@ -132,6 +136,22 @@ class AuditLogReport extends Report implements FromQuery, WithMapping, WithHeadi
 	}
 
 	/**
+	 * Builds a semi-formatted list of parent names from an activity's subject. Example output:
+	 *
+	 * - User: Glitch is cute (#19)
+	 * - Event: BLFC 2023
+	 */
+	private static function buildParentList(Activity $activity): ?string {
+		$parents = [];
+		if (isset($activity->subject->user)) $parents[] = "- User: {$activity->subject->user->audit_name}";
+		if (isset($activity->subject->event)) $parents[] = "- Event: {$activity->subject->event->display_name}";
+		if (isset($activity->subject->reward)) $parents[] = "- Reward: {$activity->subject->reward->display_name}";
+
+		if (count($parents) === 0) return null;
+		return implode("\n", $parents);
+	}
+
+	/**
 	 * Builds a semi-formatted list of changes from an activity's change set. Example output:
 	 *
 	 * - stop: 2023-09-03T00:02:30.000000Z -> 2023-09-04T00:02:30.000000Z
@@ -150,7 +170,7 @@ class AuditLogReport extends Report implements FromQuery, WithMapping, WithHeadi
 					if (is_bool($old)) $old = $old ? 'true' : 'false';
 					$new = $changes['attributes'][$key] ?? 'null';
 					if (is_bool($new)) $new = $new ? 'true' : 'false';
-					return "- {$key}: {$old} -> {$new}";
+					return "- {$key}: {$old} → {$new}";
 				})
 				->join("\n");
 		}

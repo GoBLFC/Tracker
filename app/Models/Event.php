@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Spatie\Activitylog\LogOptions;
+use App\Models\Contracts\HasDisplayName;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -45,7 +46,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
  * @method static static findOrNew($id, $columns = ['*'])
  * @method static null|static find($id, $columns = ['*'])
  */
-class Event extends UuidModel {
+class Event extends UuidModel implements HasDisplayName {
 	use HasFactory, SoftDeletes, LogsActivity;
 
 	protected $fillable = [
@@ -68,9 +69,6 @@ class Event extends UuidModel {
 			->submitEmptyLogs();
 	}
 
-	/**
-	 * Get the display name of the event (usually just the name)
-	 */
 	public function getDisplayNameAttribute(): string {
 		return !$this->deleted_at ? $this->name : "{$this->name} (del)";
 	}
