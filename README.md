@@ -45,6 +45,7 @@ Certbot-based Let's Encrypt automatic SSL renewal support is provided out-of-the
 	* ZIP
 	* GD
 - [Composer](https://getcomposer.org)
+- [Node.js](https://nodejs.org) & NPM
 - PostgreSQL, MariaDB, or MySQL (8.0+) server
 - Your event's instance of [ConCat](https://concat.app) to allow volunteers and staff to authenticate with the system
 	* All users log in to the application using ConCat with OAuth.
@@ -55,7 +56,9 @@ Certbot-based Let's Encrypt automatic SSL renewal support is provided out-of-the
 
 #### Procedure
 1. Clone this repository in your web server's document root (or download a tarball and extract it to it).
-1. Run `composer install --no-dev --classmap-authoritative` to install all production dependencies and optimize the autoloader automatically.
+1. Run `composer install --no-dev --classmap-authoritative` to download all production PHP dependencies and optimize the autoloader automatically.
+1. Run `npm install` to download all JS dependencies.
+1. Run `npm run build` to bundle and optimize the frontend assets.
 1. Copy `.env.example` to `.env` and update the values appropriately.
 1. Run `php artisan key:generate` to generate an encryption key and automatically fill in the `APP_KEY` value in `.env`.
 	This key should be kept the same between all instances of Tracker connected to the same environment (production, QA, etc.) and should only be regenerated when absolutely necessary (compromise, improved algorithm).
