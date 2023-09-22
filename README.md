@@ -63,6 +63,17 @@ Certbot-based Let's Encrypt automatic SSL renewal support is provided out-of-the
 1. Run `php artisan migrate` to run migrations on the database. This will need to be done whenever updating Tracker (if there are new migrations in the update).
 1. Log in to Tracker to make sure a user is created for you.
 1. Run `php artisan auth:set-role` to set your user's role to admin.
+1. Run `php artisan telegram:set-commands` to send the list of bot commands to Telegram.
+1. Run `php artisan telegram:set-webhook` to inform Telegram of the bot's webhook URL.
+1. Add a cron entry to run `php artisan schedule:run` every minute so that reward notifications can be triggered and ongoing shifts automatically stopped at the configured day boundary.
+	- Example crontab entry: `* * * * * cd /var/www/html && /usr/local/bin/php artisan schedule:run >> /dev/null 2>&1'`
+1. Run `php artisan queue:work` in a separate process (using [supervisor](http://supervisord.org) or something similar) to process queue entries as they come in.
+	You can have multiple of these running at once if the queue becomes backed up.
+1. To greatly improve boot performance of the application on each hit, run the following:
+	- `php artisan config:cache` to cache the fully-resolved configuration to a file
+	- `php artisan route:cache` to cache the routes to a file
+	- `php artisan event:cache` to cache the auto-discovered event listeners to a file (not used at the moment)
+	- `php artisan view:cache` to pre-compile and cache all of the Blade templates
 
 ## Development
 ### Architecture Overview
