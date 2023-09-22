@@ -34,7 +34,7 @@ Certbot-based Let's Encrypt automatic SSL renewal support is provided out-of-the
 #### Requirements
 - A web server, such as Nginx or Apache
 - PHP 8.1+ with the following extensions:
-	* PDO + Your database extension of choice
+	* PDO + your database extension of choice
 	* openssl
 	* ctype
 	* filter
@@ -44,6 +44,7 @@ Certbot-based Let's Encrypt automatic SSL renewal support is provided out-of-the
 	* tokenizer
 	* ZIP
 	* GD
+- [Composer](https://getcomposer.org)
 - PostgreSQL, MariaDB, or MySQL (8.0+) server
 - Your event's instance of [ConCat](https://concat.app) to allow volunteers and staff to authenticate with the system
 	* All users log in to the application using ConCat with OAuth.
