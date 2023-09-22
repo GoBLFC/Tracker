@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Support\Str;
+use Throwable;
 
 enum Role: int {
 	case Admin = 3;
@@ -70,8 +71,13 @@ enum Role: int {
 	 */
 	public static function fromName(string $roleName): static {
 		$roleName = Str::title($roleName);
-		$role = constant("static::{$roleName}");
-		if ($role === null) throw new \ValueError("Unknown role name: {$roleName}");
+
+		try {
+			$role = constant("static::{$roleName}");
+		} catch (Throwable $err) {
+			throw new \ValueError("Unknown role name: {$roleName}", previous: $err);
+		}
+
 		return $role;
 	}
 }
