@@ -56,8 +56,8 @@ Certbot-based Let's Encrypt automatic SSL renewal support is provided out-of-the
 
 #### Procedure
 1. Clone this repository in your web server's document root (or download a tarball and extract it to it).
-1. Run `composer install --no-dev --classmap-authoritative` to download all production PHP dependencies and optimize the autoloader automatically.
-1. Run `npm install` to download all JS dependencies.
+1. Run `composer install --no-dev --classmap-authoritative` to download all production backend dependencies and optimize the autoloader automatically.
+1. Run `npm install` to download all frontend dependencies.
 1. Run `npm run build` to bundle and optimize the frontend assets.
 1. Copy `.env.example` to `.env` and update the values appropriately.
 1. Run `php artisan key:generate` to generate an encryption key and automatically fill in the `APP_KEY` value in `.env`.
