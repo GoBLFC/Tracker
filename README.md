@@ -1,41 +1,105 @@
-# VTracker - BLFC Terminal
+# BLFC Volunteer Shift Tracker System
+Tracker is an at-con time clock system for volunteers at [BLFC](https://goblfc.org).
+Volunteers can clock in and clock out for their shifts to log their hours, ensuring they get the rewards they deserve.
+Staff can manage volunteers and run reports on volunteer hours.
 
-## Architecture Overview
+## Installation
+### Docker
+Docker is recommended to run Tracker, as a Docker Compose file and corresponding Dockerfiles are already built to make the process as easy as possible.
+Certbot-based Let's Encrypt automatic SSL renewal support is provided out-of-the-box with the default production Compose file.
 
-## Developer Setup
+1. Clone this repository whereever you will be building/running the Docker containers
+1. Copy all of the `*.env.example` files in `.docker/env` to just `*.env` (in the same directory).
+	`.docker/env` should have `app.env`, `certbot.env`, `nginx.env`, `postgres.env`, and `redis.env`.
+1. Modify the `.env` files in `.docker/env` for your configuration.
+	Specifically, you should ensure the following keys are updated at least:
+	- `app.env`: `APP_KEY`, `APP_URL`, `DB_PASSWORD`, `REDIS_PASSWORD`, `CONCAT_CLIENT_ID`, `CONCAT_CLIENT_SECRET`, `TELEGRAM_BOT_TOKEN` (see details in the manual section for the ConCat and Telegram config keys, as well as for generating a key for `APP_KEY`)
+	- `certbot.env`: `LETSENCRYPT_DOMAIN`, `LETSENCRYPT_EMAIL`, `LETSENCRYPT_DRY_RUN` (clear the value for this once confirmed working)
+	- `nginx.env`: `NGINX_HOST`
+	- `postgres.env`: `POSTGRES_PASSWORD` (should match `DB_PASSWORD` in `app.env`)
+	- `redis.env`: `REDIS_PASSWORD` (should match `REDIS_PASSWORD` in `app.env`)
+1. Run `docker compose -f docker-compose.prod.yml build` to build the necessary (app and nginx) images
+1. Run `REDIS_PASSWORD=<redis password here> docker compose -f docker-compose.prod.yml up -d` to run the images in the Docker daemon
+	- Defining `REDIS_PASSWORD` is sadly currently required to start the Redis container properly due to the way the variable is obtained
+1. Once everything has started up, the application will not yet be functional if it's the first time running.
+	Follow these steps once the containers are up:
+	1. Run `docker compose -f docker-compose.prod.yml exec app php artisan migrate` to run migrations on the database. This will need to be done whenever updating Tracker (if there are new migrations in the update).
+	1. Wait for output from certbot in `docker compose -f docker-compose.prod.yml logs certbot` to confirm that the dry-run succeeded
+	1. Clear the value for `CERTBOT_DRY_RUN` in `certbot.env`
+	1. Run `docker compose -f docker-compose.prod.yml restart certbot`
+	1. Log in to Tracker to make sure a user is created for you
+	1. Run `docker compose -f docker-compose.prod.yml exec app php artisan auth:set-role` to set your user's role to admin
+
+### Manual
+#### Requirements
+- A web server, such as Nginx or Apache
+- PHP 8.1+ with the following extensions:
+	* PDO + Your database extension of choice
+	* openssl
+	* ctype
+	* filter
+	* hash
+	* mbstring
+	* session
+	* tokenizer
+	* ZIP
+	* GD
+- PostgreSQL, MariaDB, or MySQL (8.0+) server
+- Your event's instance of [ConCat](https://concat.app) to allow volunteers and staff to authenticate with the system
+	* All users log in to the application using ConCat with OAuth.
+	* You will need Developer access to your event's ConCat instance to create the OAuth app.
+	  Specifically, you will need the `oauth:manage` permission.
+	  Alternatively, have someone else create an OAuth app in ConCat for you and have them provide you the client ID and secret.
+	* The OAuth app itself will require the `volunteer:read` and `registration:read` application permissions for OAuth Bearer tokens, which are used for generating the Volunteer Applications reports and retrieving badge details inside Tracker.
+
+#### Procedure
+1. Clone this repository in your web server's document root (or download a tarball and extract it to it).
+1. Run `composer install --no-dev --classmap-authoritative` to install all production dependencies and optimize the autoloader automatically.
+1. Copy `.env.example` to `.env` and update the values appropriately.
+1. Run `php artisan key:generate` to generate an encryption key and automatically fill in the `APP_KEY` value in `.env`.
+	This key should be kept the same between all instances of Tracker connected to the same environment (production, QA, etc.) and should only be regenerated when absolutely necessary (compromise, improved algorithm).
+	Regenerating or using a different key will result in any encrypted (not hashed!) values in the database or cache becoming unreadable.
+1. Run `php artisan migrate` to run migrations on the database. This will need to be done whenever updating Tracker (if there are new migrations in the update).
+1. Log in to Tracker to make sure a user is created for you.
+1. Run `php artisan auth:set-role` to set your user's role to admin.
+
+## Development
+### Architecture Overview
+
+### Developer Setup
 
 For a container based dev environment
 
-### Pre-requisites
+#### Pre-requisites
 
 * **All:** [Docker](https://www.docker.com/)
 * **Windows Only:** Enable [WSL 2](https://learn.microsoft.com/en-us/windows/wsl/install) with a linux distro. Run all commands in WSL.
 
-### .Env Config
+#### .Env Config
 
 ```bash
 cp .env.example .env
 ```
 
-#### ConCat
+##### ConCat
 
 1. Get a [test concat](https://reg.gobltc.com) account for OAuth and get developer authorization from Glitch, Levi, or Gawdl3y .
 1. Add a new OAuth App at `Housekeeping` -> `Developers` -> `OAuth Applications` -> `Create New` with `http://localhost` as the callback URI, and the `registration:read` and `volunteer:read` application permissions.
 1. Update `CONCAT_CLIENT_SECRET` and `CONCAT_CLIENT_ID` in `.env`
 
-#### Telegram Bot
+##### Telegram Bot
 
  1. Create a bot via [@BotFather](https://t.me/botfather) (`/newbot`)
  1. Update `TELEGRAM_BOT_TOKEN` in `.env`
 
-#### [Sail](https://laravel.com/docs/10.x/sail) Setup (Containerized build environment)
+##### [Sail](https://laravel.com/docs/10.x/sail) Setup (Containerized build environment)
 
  1. Install the PHP CLI for your environment (ex: `sudo apt install php-cli`)
  1. Install [Composer](https://getcomposer.org/download/)
  1. `composer install`
  1. _(Optional)_ Add `sail` alias `alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'`, possibly to your shell startup (ex: `~/.bashrc`)
 
-#### Running the Developer Environment
+##### Running the Developer Environment
 
  1. `sail up` _(Ctrl+C to stop)_
  1. _If this is the first time the env has been run:_
@@ -48,7 +112,7 @@ cp .env.example .env
  1. Open the project on [http://localhost](http://localhost) (it may be slow)
     * If you see an apache splash screen, apache2 instance is already bound to 80.
 
-## Glossary
+### Glossary
 
 * [Laravel](https://laravel.com/) - PHP web server framework
 * [Sail](https://laravel.com/docs/10.x/sail) - Laravel system that manages a developer container, proxying commands into the container
@@ -57,6 +121,7 @@ cp .env.example .env
 * [Blade](https://laravel.com/docs/10.x/blade) - Laravel template engine.
 
 
+# Laravel
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
@@ -87,39 +152,3 @@ Laravel has the most extensive and thorough [documentation](https://laravel.com/
 You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
 
 If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
