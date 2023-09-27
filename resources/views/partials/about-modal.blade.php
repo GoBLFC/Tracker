@@ -18,11 +18,12 @@
 							</p>
 						</div>
 						<div class="col-md-4 text-center">
-							<img src="{!! Vite::asset('resources/img/authors/glitch.jpg') !!}" class="img-fluid rounded mb-3 w-50 w-md-75" alt="Glitch's avatar" />
+							<img src="{!! Vite::asset('resources/img/authors/glitch.webp') !!}" class="img-fluid rounded mb-3 w-50 w-md-75" alt="Glitch's avatar" />
 							<h4 class="mb-1">Glitch</h4>
 							<p class="mb-0">Developer / Maintainer</p>
 							<p class="fs-2">
 								<a target="_blank" href="https://twitter.com/glitchfur" title="Glitch's Twitter"><i class="fa-brands fa-twitter"></i></a>
+								<a target="_blank" href="https://meow.social/@glitch" title="Glitch's Mastodon"><i class="fa-brands fa-mastodon"></i></a>
 								<a target="_blank" href="https://www.glitchfur.net" title="Glitch's Website"><i class="fa-solid fa-globe"></i></a>
 							</p>
 						</div>
