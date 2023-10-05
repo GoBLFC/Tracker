@@ -3,8 +3,7 @@ Tracker is an at-con time clock system for volunteers at [BLFC](https://goblfc.o
 Volunteers can clock in and clock out for their shifts to log their hours, ensuring they get the rewards they deserve.
 Staff can manage volunteers and run reports on volunteer hours.
 
-## Installation
-### Docker
+## Docker Setup
 Docker is recommended to run Tracker, as a Docker Compose file and corresponding Dockerfiles are already built to make the process as easy as possible.
 Certbot-based Let's Encrypt automatic SSL renewal support is provided out-of-the-box with the default production Compose file.
 
@@ -12,26 +11,39 @@ Certbot-based Let's Encrypt automatic SSL renewal support is provided out-of-the
 1. Copy all of the `*.env.example` files in `.docker/env` to just `*.env` (in the same directory).
 	`.docker/env` should have `app.env`, `certbot.env`, `nginx.env`, `postgres.env`, and `redis.env`.
 1. Modify the `.env` files in `.docker/env` for your configuration.
-	Specifically, you should ensure the following keys are updated at least:
-	- `app.env`: `APP_KEY`, `APP_URL`, `DB_PASSWORD`, `REDIS_PASSWORD`, `CONCAT_CLIENT_ID`, `CONCAT_CLIENT_SECRET`, `TELEGRAM_BOT_TOKEN` (see details in the manual section for the ConCat and Telegram config keys, as well as for generating a key for `APP_KEY`)
-	- `certbot.env`: `LETSENCRYPT_DOMAIN`, `LETSENCRYPT_EMAIL`, `LETSENCRYPT_DRY_RUN` (clear the value for this once confirmed working)
-	- `nginx.env`: `NGINX_HOST`
-	- `postgres.env`: `POSTGRES_PASSWORD` (should match `DB_PASSWORD` in `app.env`)
-	- `redis.env`: `REDIS_PASSWORD` (should match `REDIS_PASSWORD` in `app.env`)
+	Specifically, you should ensure the following keys are updated at the very least:
+	- **app.env:** `APP_KEY`, `APP_URL`, `DB_PASSWORD`, `REDIS_PASSWORD`, `CONCAT_CLIENT_ID`, `CONCAT_CLIENT_SECRET`, `TELEGRAM_BOT_TOKEN` (see details in the development section for the ConCat and Telegram config keys, as well as for generating a key for `APP_KEY` the first time)
+	- **certbot.env:** `LETSENCRYPT_DOMAIN`, `LETSENCRYPT_EMAIL`, `LETSENCRYPT_DRY_RUN` (clear the value for this once confirmed working)
+	- **nginx.env:** `NGINX_HOST`
+	- **postgres.env:** `POSTGRES_PASSWORD` (should match `DB_PASSWORD` in `app.env`)
+	- **redis.env:** `REDIS_PASSWORD` (should match `REDIS_PASSWORD` in `app.env`)
 1. Run `docker compose -f docker-compose.prod.yml build` to build the necessary (app and nginx) images
 1. Run `REDIS_PASSWORD=<redis password here> docker compose -f docker-compose.prod.yml up -d` to run the images in the Docker daemon
 	- Defining `REDIS_PASSWORD` is sadly currently required to start the Redis container properly due to the way the variable is obtained
 1. Once everything has started up, the application will not yet be functional if it's the first time running.
 	Follow these steps once the containers are up:
-	1. Run `docker compose -f docker-compose.prod.yml exec app php artisan migrate` to run migrations on the database. This will need to be done whenever updating Tracker (if there are new migrations in the update).
+	1. Run `docker compose -f docker-compose.prod.yml exec app php artisan migrate` to run migrations on the database
 	1. Wait for output from certbot in `docker compose -f docker-compose.prod.yml logs certbot` to confirm that the dry-run succeeded
-	1. Clear the value for `CERTBOT_DRY_RUN` in `certbot.env`
+	1. Clear the value for `CERTBOT_DRY_RUN` in certbot.env
 	1. Run `docker compose -f docker-compose.prod.yml restart certbot`
 	1. Log in to Tracker to make sure a user is created for you
 	1. Run `docker compose -f docker-compose.prod.yml exec app php artisan auth:set-role` to set your user's role to admin
 
-### Manual
-#### Requirements
+### Updating
+A convenient update script is provided at [/.docker/update.sh](/.docker/update.sh).
+In this order, that script does the following:
+1. Pulls the latest changes from the repository (`git pull`)
+1. Builds the updated image (`docker compose -f docker-compose.prod.yml build`)
+1. Restarts the containers with the updated image (`docker compose -f docker-compose.prod.yml down && docker compose -f docker-compose.prod.yml up -d`)
+1. Ensures the log volume's file permissions remain consistent (`docker compose -f docker-compose.prod.yml exec app chown -R www-data:www-data /var/www/html/storage`)
+1. Enables Laravel's maintenance mode (`docker compose -f docker-compose.prod.yml exec app php artisan down`)
+1. Runs any new database migrations (`docker compose -f docker-compose.prod.yml exec app php artisan migrate`)
+1. Disables Laravel's maintenace mode (`docker compose -f docker-compose.prod.yml exec app php artisan up`)
+
+These steps can be completed manually if preferred or if any tweaking is desired.
+
+## Manual Setup
+### Requirements
 - A web server, such as Nginx or Apache
 - PHP 8.1+ with the following extensions:
 	* PDO + your database extension of choice
@@ -44,9 +56,9 @@ Certbot-based Let's Encrypt automatic SSL renewal support is provided out-of-the
 	* tokenizer
 	* ZIP
 	* GD
-- [Composer](https://getcomposer.org)
-- [Node.js](https://nodejs.org) & NPM
-- PostgreSQL, MariaDB, or MySQL (8.0+) server
+- [Composer](https://getcomposer.org) to install backend dependencies
+- [Node.js](https://nodejs.org) & NPM to install frontend dependencies
+- PostgreSQL, MariaDB, or MySQL (8.0+) server as a database
 - Your event's instance of [ConCat](https://concat.app) to allow volunteers and staff to authenticate with the system
 	* All users log in to the application using ConCat with OAuth.
 	* You will need Developer access to your event's ConCat instance to create the OAuth app.
@@ -54,7 +66,7 @@ Certbot-based Let's Encrypt automatic SSL renewal support is provided out-of-the
 	  Alternatively, have someone else create an OAuth app in ConCat for you and have them provide you the client ID and secret.
 	* The OAuth app itself will require the `volunteer:read` and `registration:read` application permissions for OAuth Bearer tokens, which are used for generating the Volunteer Applications reports and retrieving badge details inside Tracker.
 
-#### Procedure
+### Installation
 1. Clone this repository in your web server's document root (or download a tarball and extract it to it).
 1. Run `composer install --no-dev --classmap-authoritative` to download all production backend dependencies and optimize the autoloader automatically.
 1. Run `npm install` to download all frontend dependencies.
@@ -63,8 +75,8 @@ Certbot-based Let's Encrypt automatic SSL renewal support is provided out-of-the
 1. Run `php artisan key:generate` to generate an encryption key and automatically fill in the `APP_KEY` value in `.env`.
 	This key should be kept the same between all instances of Tracker connected to the same environment (production, QA, etc.) and should only be regenerated when absolutely necessary (compromise, improved algorithm).
 	Regenerating or using a different key will result in any encrypted (not hashed!) values in the database or cache becoming unreadable.
-1. Run `php artisan migrate` to run migrations on the database. This will need to be done whenever updating Tracker (if there are new migrations in the update).
-1. Log in to Tracker to make sure a user is created for you.
+1. Run `php artisan migrate` to run all migrations on the database.
+1. Log in to the application in your web browser via the OAuth flow to make sure a user gets created for you.
 1. Run `php artisan auth:set-role` to set your user's role to admin.
 1. Run `php artisan telegram:set-commands` to send the list of bot commands to Telegram.
 1. Run `php artisan telegram:set-webhook` to inform Telegram of the bot's webhook URL.
@@ -78,92 +90,179 @@ Certbot-based Let's Encrypt automatic SSL renewal support is provided out-of-the
 	- `php artisan event:cache` to cache the auto-discovered event listeners to a file (not used at the moment)
 	- `php artisan view:cache` to pre-compile and cache all of the Blade templates
 
-## Development
-### Architecture Overview
+### Updating
+1. Run `php artisan down` to put the application in maintenace mode.
+1. Pull or upload the current version of the code from this repository.
+1. Run `composer install --no-dev --classmap-authoritative` to download any new production backend dependencies and optimize the autoloader automatically.
+1. Run `npm install` to download any new frontend dependencies.
+1. Run `npm run build` to bundle and optimize the frontend assets.
+1. Run `php artisan migrate` to run any new migrations on the database.
+1. Run `php artisan telegram:set-commands` to send the list of bot commands to Telegram.
+1. Run `php artisan telegram:set-webhook` to inform Telegram of the bot's webhook URL.
+1. Restart any queue workers you have running (`php artisan queue:work`) in separate processes to ensure they're using the latest code.
+1. To greatly improve boot performance of the application on each hit, run the following:
+	- `php artisan config:cache` to cache the fully-resolved configuration to a file
+	- `php artisan route:cache` to cache the routes to a file
+	- `php artisan event:cache` to cache the auto-discovered event listeners to a file (not used at the moment)
+	- `php artisan view:cache` to pre-compile and cache all of the Blade templates
+1. Run `php artisan up` to pull the application out of maintenace mode.
 
-### Developer Setup
+## Development Setup
+The development environment uses [Laravel Sail](https://laravel.com/docs/10.x/sail), a containerized environment with a script and easy-to-use commands for interacting with it.
 
-For a container based dev environment
+### Pre-requisites
+- **All platforms:** [Docker](https://www.docker.com/)
+- **Windows:** Enable [WSL 2](https://learn.microsoft.com/en-us/windows/wsl/install) with a Linux distro. Run all commands in WSL.
 
-#### Pre-requisites
-
-* **All:** [Docker](https://www.docker.com/)
-* **Windows Only:** Enable [WSL 2](https://learn.microsoft.com/en-us/windows/wsl/install) with a linux distro. Run all commands in WSL.
-
-#### .Env Config
+### .Env Config
+Copy `.env.example` to `.env`:
 
 ```bash
 cp .env.example .env
 ```
 
-##### ConCat
+After doing so, update the values only as needed.
+The important ones that will most likely need to be filled in are the ConCat and Telegram items. 
 
-1. Get a [test concat](https://reg.gobltc.com) account for OAuth and get developer authorization from Glitch, Levi, or Gawdl3y .
-1. Add a new OAuth App at `Housekeeping` -> `Developers` -> `OAuth Applications` -> `Create New` with `http://localhost` as the callback URI, and the `registration:read` and `volunteer:read` application permissions.
+#### ConCat Config
+1. Create a ConCat account on your ConCat instance for OAuth and ensure it has developer authorization.
+	- For BLFC, use our [test ConCat](https://reg.gobltc.com) instance and ask Glitch, Levi, or Gawdl3y for authorization.
+1. Add a new OAuth App at `Housekeeping` -> `Developers` -> `OAuth Applications` -> `Create New`
+	- Use `http://localhost` for the callback URL
+	- Select the `registration:read` and `volunteer:read` application permissions
 1. Update `CONCAT_CLIENT_SECRET` and `CONCAT_CLIENT_ID` in `.env`
 
-##### Telegram Bot
+#### Telegram Bot Config
+1. Create a bot via [@BotFather](https://t.me/botfather) (`/newbot`)
+1. Update `TELEGRAM_BOT_TOKEN` in `.env`
 
- 1. Create a bot via [@BotFather](https://t.me/botfather) (`/newbot`)
- 1. Update `TELEGRAM_BOT_TOKEN` in `.env`
+### Sail Setup
+1. Install the PHP CLI for your environment (ex: `sudo apt install php-cli`)
+1. Install [Composer](https://getcomposer.org/download/)
+1. Run `composer install` in the application directory
+1. _(Optional)_ Add `sail` alias with `alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'`
+	- It would probably be a good idea to add this to your shell startup script (ex: `~/.bashrc`)
 
-##### [Sail](https://laravel.com/docs/10.x/sail) Setup (Containerized build environment)
+### Running the Developer Environment
+Whenever using a Sail command, if you don't have an alias setup, use `sh vendor/bin/sail` instead of `sail`.
+1. To run the container, use `sail up` _(Ctrl+C to stop)_
+1. _If this is the first time the env has been run:_
+	1. Run `sail artisan key:generate` (Updates `APP_KEY` in `.env`)
+	1. Run `sail npm install`
+	1. Initialize the database schema with `sail artisan migrate`
+	1. _(Optional)_ Seed the database with dummy accounts with `sail artisan db:seed`
+1. To run the Vite server, use `sail npm run dev` _(Ctrl+C to stop)_
+1. Open the project on [http://localhost](http://localhost) (it may be slow)
+	- If you see an Apache/nginx/etc. splash screen, ensure you don't already have a web server bound to port 80.
 
- 1. Install the PHP CLI for your environment (ex: `sudo apt install php-cli`)
- 1. Install [Composer](https://getcomposer.org/download/)
- 1. `composer install`
- 1. _(Optional)_ Add `sail` alias `alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'`, possibly to your shell startup (ex: `~/.bashrc`)
+### Development Tips
+- Using `php artisan tinker` or `sail artisan tinker` will present a PHP REPL with the application bootstrapped, allowing you to mess with any part of the application and see the result of code in real-time. See [the Artisan documentation](https://laravel.com/docs/10.x/artisan#tinker) for more information.
+- The helpers `dump(...)` and `dd(...)` can be extremely helpful for debugging the application. The former pretty-prints a representation of any data passed to it with full HTML formatting, and the latter does the same but also immediately halts further execution of the application. Collections and Carbon instances also have `->dump()` and `->dd()` methods.
+- Use `php artisan make:migration` or `sail artisan make:migration` to create a new database migration. See [the migrations documentation](https://laravel.com/docs/10.x/migrations) for more information.
+- The Laravel [documentation](https://laravel.com/docs/10.x) and [API documentation](https://laravel.com/api/10.x/) will be very helpful if you're not already familiar with the framework.
 
-##### Running the Developer Environment
+## Architecture Overview
+Since Laravel is an MVC (Model, View, Controller) framework, that structure is generally adhered to.
+[PSR-4](https://www.php-fig.org/psr/psr-4/) autoloading is in use, so as long as the namespace and class filesystem structure is followed, files don't need to be manually included/required.
 
- 1. `sail up` _(Ctrl+C to stop)_
- 1. _If this is the first time the env has been run:_
-    1. `sail artisan key:generate` (Updates `APP_KEY` in `.env`)
-    1. `sail npm install`
- 1. `sail npm run dev` _(Ctrl+C to stop)_
- 1. _If this is the first time the env has been run:_
-    1. Initialize the database schema `sail artisan migrate`
-    1. _(Optional)_ Seed the database with dummy accounts `sail artisan db:seed`
- 1. Open the project on [http://localhost](http://localhost) (it may be slow)
-    * If you see an apache splash screen, apache2 instance is already bound to 80.
+### Frequently Used Directories
+- Routes: [routes](/routes)
+- Controllers: [app/Http/Controllers](/app/Http/Controllers)
+- Models: [app/Models](/app/Models)
+- Views: [resources/views](/resources/views)
+- Artisan commands: [app/Console/Commands](/app/Console/Commands)
+- Database migrations: [database/migrations](/database/migrations)
+- Configuration: [config](/config)
+- JavaScript assets: [resources/js](/resources/js)
+- Style assets (Sass/SCSS): [resources/sass](/resources/sass)
+- Image assets: [resources/img](/resources/img)
 
-### Glossary
+### Database Models
+All database models are using UUIDv7 for their primary key (`id` column).
+Eloquent is being used heavily for nearly all database interactions.
+Foreign key constraints are used in the database whenever possible to ensure referential integrity at every step of the process.
 
-* [Laravel](https://laravel.com/) - PHP web server framework
-* [Sail](https://laravel.com/docs/10.x/sail) - Laravel system that manages a developer container, proxying commands into the container
-* [Artisan](https://laravel.com/docs/10.x/artisan) - Laravel command line helper application (Used to run Sail)
-* [Vite](https://vitejs.dev/) - Asset bundling and cache-breaking for the js and image assets
-* [Blade](https://laravel.com/docs/10.x/blade) - Laravel template engine.
+All models and their relationships are listed below, alongside a brief description of their purpose.
+
+| Name        | Table         | Description                                                                                                                                      |
+| ----------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Activity    | activities    | Used for tracking events and changes to models for audit logging purposes. Belongs to a User via both subject and causer.                        |
+| Department  | departments   | An organizational unit for staff/volunteers of a convention.                                                                                     |
+| Event       | events        | A single convention/other type of event that time is tracked for.                                                                                |
+| Kiosk       | kiosks        | A device that has been authorized to allow volunteers to enter time on. These devices keep a cookie with the session key to identify themselves. |
+| QuickCode   | quick_codes   | One-time-use sign-in codes for users. Expires 30 seconds after creation. Belongs to a User.                                                      |
+| Reward      | rewards       | Possible reward/goal for volunteers to thank them for their time once they reach a threshold. Belongs to an Event.                               |
+| RewardClaim | reward_claims | Rewards claimed by users. Belongs to a User and a Reward.                                                                                        |
+| Setting     | settings      | Application settings identified by a string and stored as JSON.                                                                                  |
+| TimeBonus   | time_bonuses  | Time periods that grant bonus volunteer time credit while being worked within. Belongs to an Event and many Departments.                         |
+| TimeEntry   | time_entries  | Volunteer time clocked by users. Belongs to a User, a Department, and an Event.                                                                  |
+| User        | users         | Any user of the application. Has a role (Banned, Volunteer, Lead, Manager, Admin) that determines permissions.                                   |
 
 
-# Laravel
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+### Permissions
+Permissions are implemented very simply at the moment.
+Users have a single assigned Role value, which is just an enum (Banned, Volunteer, Lead, Manager, Admin).
+- Volunteer is the default role for users. They have time tracking capabilities, but not much else.
+- Leads can authorize/deauthorize Kiosks.
+- Managers can authorize/deauthorize Kiosks, view and manage volunteers' time entries, and create placeholder users with a badge ID
+- Admins can do anything, but especially are responsible for general entity CRUD operations.
+- Banned users are prevented from interacting with the application entirely beyond signing in
+### Time Tracking Details
+Since the primary purpose of Tracker is to track the time that volunteers spend working shifts, a lot of care has been put in to how that time is kept.
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+#### Time Entries
+In order for a volunteer to enter time, they must visit an authorized kiosk at the beginning and end of their shift.
+When they clock in, they select a department the shift will be for, and a TimeEntry is created in the database with the current time as its `start` field and a null `stop` field.
+Any TimeEntry with a null `stop` field is considered to be an "ongoing" entry.
+An ongoing TimeEntry's duration is the amount of time between its `start` and the current time.
+Upon clocking out, the ongoing TimeEntry is updated to fill in the `stop` field with the current time.
+A volunteer may only ever have a single ongoing TimeEntry.
 
-## About Laravel
+#### Time Bonuses
+An admin can create multiple TimeBonuses for an Event that apply within a time period (between `start` and `stop`) to specific Departments.
+Any TimeEntry that is assigned to a Department + Event with a TimeBonus and has its time range even partially within a TimeBonus period has the TimeBonus' multiplier applied to the amount of time that is within the bonus period.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Example scenario:
+- A TimeBonus exists for departments "Crowd Control", "Operations", and "Art Gallery" for event "BLFC 2023", between the period of 2023-10-31 18:00 and 2023-10-31 20:00, with a multiplier of 2.
+- A TimeEntry is entered for the "Operations" department and "BLFC 2023" event, starting at 2023-10-31 16:00 and ending at 2023-10-31 19:00
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+The TimeEntry's raw duration will be 3hrs, and its "earned time" (duration with bonuses) will be 4hrs.
+This is because the TimeEntry contained 1hr of time within the bonus period, so that single hour is considered to be worth double time.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+#### Auto-Stopping Ongoing Time Entries
+Each day at the configured day boundary hour (see [config/tracker.php], default 04:00), the application has a scheduled task to automatically terminate any ongoing time entries.
+This is to catch the cases where a volunteer forgets to clock out after their shift, thus leaving the time entry running perpetually.
+When a time entry is terminated this way, its stop time is updated to be either 1hr after the start time or the current time, whichever is sooner.
+A notification is sent that they're forced to acknowledge on the web page the next time they log in.
 
-## Learning Laravel
+### Telegram Bot
+#### Account Linking
+Users can link their Telegram account to the application by scanning a QR code on the web page or manually visiting the proper Telegram link generated on it.
+The QR code simply directs them to the same aforementioned link, which should automatically open Telegram and send a `/start <setup key>` command to the bot.
+Every user has a Telegram setup key that is unique to them and randomly generated upon creation.
+When the bot receives the start command with their setup code, it stores the Telegram chat ID on their User and uses this for future communication.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+#### Notifications
+The bot will automatically send notifications to users with linked accounts for the following scenarios:
+- Their earned time has reached a reward's hours threshold
+- They have claimed a reward with a staff member
+- Their time entry has been auto-stopped at the day boundary hour
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+#### Commands
+When a user sends a message of any kind to the Telegram bot, Telegram contacts the configured webhook (`php artisan telegram:set-webhook`) to notify the application of the message.
+The message is checked for a valid command - if there is one, the command is processed.
+All Telegram commands are in [app/Telegram/Commands](/app/Telegram/Commands).
+Telegram needs to be informed of these commands with `php artisan telegram:set-commands` so that it may present a convenient list to users of the bot.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Glossary
+- [Artisan](https://laravel.com/docs/10.x/artisan) - Laravel command line helper application (Used to run Sail)
+- [Blade](https://laravel.com/docs/10.x/blade) - The built-in view templating engine in Laravel
+- [Carbon](https://carbon.nesbot.com/docs/) - Fluent datetime library written in PHP (Laravel uses this by default for all datetimes)
+- [Docker](https://www.docker.com/) - Container engine and other utilities for running containerized applications
+- [Eloquent](https://laravel.com/docs/10.x/eloquent) - Laravel's built-in fluent ORM for interacting with the database
+- [Laravel](https://laravel.com/) - Web application framework written in PHP
+- [Sail](https://laravel.com/docs/10.x/sail) - Laravel system that manages a development container, proxying commands into the container
+- [Sass/SCSS](https://sass-lang.com/) - Preprocessed extension language for CSS
+- [Telegram](https://telegram.org/) - Instant messenger that Tracker provides a bot for interacting with
+- [UUIDv7](https://www.ietf.org/archive/id/draft-peabody-dispatch-new-uuid-format-01.html#name-uuidv7-layout-and-bit-order) - Universally Unique Identifier, version 7
+- [Vite](https://vitejs.dev/) - Asset bundling and cache-busting for the JS and image assets
