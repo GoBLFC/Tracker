@@ -74,7 +74,7 @@
 						<div class="input-group">
 							<label for="badgeId" class="input-group-text">Badge ID</label>
 							<input type="text" inputmode="numeric" pattern="[0-9]+" name="badge_id" id="logBadgeId" class="form-control" required autofocus />
-							<button type="submit" class="btn btn-success">Log</button>
+							<button type="submit" class="btn btn-success" data-success="Logged attendee.">Log</button>
 						</div>
 					</form>
 				</div>
@@ -91,7 +91,7 @@
 							<div class="input-group">
 								<label for="badgeId" class="input-group-text">Badge ID</label>
 								<input type="text" inputmode="numeric" pattern="[0-9]+" name="badge_id" id="gatekeeperBadgeId" class="form-control" required autofocus />
-								<button type="submit" class="btn btn-warning">Empower Gatekeeper</button>
+								<button type="submit" class="btn btn-warning" data-success="Empowered gatekeeper.">Empower Gatekeeper</button>
 							</div>
 						</form>
 					</div>
