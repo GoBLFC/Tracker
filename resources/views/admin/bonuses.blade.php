@@ -120,10 +120,11 @@
 						<form action="{!! route('events.bonuses.store', $event->id) !!}" method="POST" id="bonusCreate" class="seamless">
 							@csrf
 
-							<div class="d-flex flex-column flex-md-row gap-3 gap-md-4 align-items-md-center">
+							<div class="d-flex flex-column flex-lg-row flex-wrap gap-3 align-items-lg-center mb-3">
 								<div class="flex-grow-1">
 									<div class="input-group" id="bonusStart" data-td-target-input="nearest" data-td-target-toggle="nearest">
-										<input id="bonusStartIpt" type="text" name="start" class="form-control" data-td-target="#bonusStart" placeholder="Start" required aria-label="Start" />
+										<label for="bonusStartIpt" class="input-group-text">Start</label>
+										<input id="bonusStartIpt" type="text" name="start" class="form-control" data-td-target="#bonusStart" />
 										<span class="input-group-text" data-td-target="#bonusStart" data-td-toggle="datetimepicker">
 											<i class="fa-solid fa-calendar"></i>
 										</span>
@@ -132,40 +133,49 @@
 
 								<div class="flex-grow-1">
 									<div class="input-group" id="bonusStop" data-td-target-input="nearest" data-td-target-toggle="nearest">
-										<input id="bonusStopIpt" type="text" name="stop" class="form-control" data-td-target="#bonusStop" placeholder="Stop" required aria-label="Stop" />
+										<label for="bonusStopIpt" class="input-group-text">Stop</label>
+										<input id="bonusStopIpt" type="text" name="stop" class="form-control" data-td-target="#bonusStop" required />
 										<span class="input-group-text" data-td-target="#bonusStop" data-td-toggle="datetimepicker">
 											<i class="fa-solid fa-calendar"></i>
 										</span>
 									</div>
 								</div>
 
-								<div>
-									<input type="number"
-										min="1"
-										max="10"
-										step="0.25"
-										required
-										name="modifier"
-										value="2"
-										id="bonusModifier"
-										class="form-control"
-										style="width: 5em;"
-										aria-label="Modifier" />
-								</div>
-
 								<div class="flex-grow-1">
-									<select name="departments[]" id="bonusDepartments" class="form-select" multiple required aria-label="Departments">
-										@foreach($departments as $department)
-											<option value="{!! $department->id !!}">
-												{{ $department->name }} {!! $department->hidden ? '(hidden)' : '' !!}
-											</option>
-										@endforeach
-									</select>
+									<div class="input-group">
+										<label for="bonusModifier" class="input-group-text">Modifier</label>
+										<input type="number"
+											min="1"
+											max="10"
+											step="0.25"
+											required
+											name="modifier"
+											value="2"
+											id="bonusModifier"
+											class="form-control"
+											style="width: 5em;" />
+										<div class="input-group-text">x</div>
+									</div>
 								</div>
+							</div>
 
-								<div>
-									<button type="submit" class="btn btn-success">Create</button>
+							<div class="d-flex flex-column flex-lg-row flex-wrap gap-3 align-items-lg-center mb-3">
+								<div class="flex-grow-1">
+									<div class="input-group">
+										<label for="bonusDepartments" class="input-group-text">Departments</label>
+										<select name="departments[]" id="bonusDepartments" class="form-select" multiple required>
+											@foreach($departments as $department)
+												<option value="{!! $department->id !!}">
+													{{ $department->name }} {!! $department->hidden ? '(hidden)' : '' !!}
+												</option>
+											@endforeach
+										</select>
+									</div>
 								</div>
+							</div>
+
+							<div class="d-flex flex-column flex-lg-row flex-wrap gap-3 align-items-lg-center">
+								<button type="submit" class="btn btn-success">Create</button>
 							</div>
 						</form>
 					</div>

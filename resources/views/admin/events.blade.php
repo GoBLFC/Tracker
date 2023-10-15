@@ -79,7 +79,8 @@
 					<form action="{!! route('events.store') !!}" method="POST" id="evtCreate" class="seamless">
 						@csrf
 						<div class="input-group">
-							<input type="text" name="name" placeholder="Event Name" id="evtName" class="form-control" required aria-label="Event Name" />
+							<label for="evtName" class="input-group-text">Name</label>
+							<input type="text" name="name" id="evtName" class="form-control" required />
 							<button type="submit" class="btn btn-success">Create</button>
 						</div>
 					</form>
