@@ -25,8 +25,8 @@
 								<tr>
 									<th scope="col">ID</th>
 									<th scope="col">Badge Name</th>
+									<th scope="col">Type</th>
 									<th scope="col">Logged</th>
-									<th scope="col"></th>
 									<th scope="col"></th>
 								</tr>
 							</thead>
@@ -35,13 +35,13 @@
 									<tr>
 										<th scope="row">{!! $user->badge_id !!}</th>
 										<td>{{ $user->badge_name }}</td>
-										<td>{!! $user->pivot->created_at->timezone(config('tracker.timezone'))->toDayDateTimeString() !!}</td>
 										<td>
 											@php($isGatekeeper = $user->pivot->type === 'gatekeeper')
 											<span @class(['badge', 'rounded-pill', 'text-bg-warning' => $isGatekeeper, 'text-bg-secondary' => !$isGatekeeper])>
 												{!! Str::title($user->pivot->type) !!}
 											</span>
 										</td>
+										<td>{!! $user->pivot->created_at->timezone(config('tracker.timezone'))->toDayDateTimeString() !!}</td>
 										<td>
 											<form action="{!! route('attendee-logs.users.destroy', [$attendeeLog->id, $user->id]) !!}" method="POST" id="delete-{!! $user->id !!}" class="seamless delete">
 												@method('DELETE')

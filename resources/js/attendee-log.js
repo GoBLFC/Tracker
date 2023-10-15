@@ -55,10 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		nameCell.textContent = badgeName;
 		row.appendChild(nameCell);
 
-		const loggedCell = document.createElement('td');
-		loggedCell.textContent = logged;
-		row.appendChild(loggedCell);
-
 		const typeBadge = document.createElement('span');
 		typeBadge.classList.add('badge', 'rounded-pill', `text-bg-${type === 'gatekeeper' ? 'warning' : 'secondary'}`);
 		typeBadge.textContent = `${type.charAt(0).toUpperCase()}${type.slice(1)}`;
@@ -66,6 +62,10 @@ document.addEventListener('DOMContentLoaded', () => {
 		const typeCell = document.createElement('td');
 		typeCell.appendChild(typeBadge);
 		row.appendChild(typeCell);
+
+		const loggedCell = document.createElement('td');
+		loggedCell.textContent = logged;
+		row.appendChild(loggedCell);
 
 		const deleteForm = document.createElement('form');
 		deleteForm.action = attendeeLogsUsersDestroyUrl
