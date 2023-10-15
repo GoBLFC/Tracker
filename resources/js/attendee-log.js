@@ -1,6 +1,11 @@
 import { setupSeamlessForm } from './seamless-forms';
+import successSoundFile from '../audio/success.ogg';
+import alertSoundFile from '../audio/alert.ogg';
 
 document.addEventListener('DOMContentLoaded', () => {
+	const successSound = new Audio(successSoundFile);
+	const alertSound = new Audio(alertSoundFile);
+
 	const deleteForms = document.querySelectorAll('form.delete');
 	for(const form of deleteForms) {
 		form.addEventListener('seamlessSuccess', () => removeUserFromTable(form));
@@ -13,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	logBtn.disabled = true;
 	logBadgeIdIpt.addEventListener('input', updateLogBtn);
 	logForm.addEventListener('seamlessSuccess', addUserToTable);
+	logForm.addEventListener('seamlessError', alertForError);
 
 	function updateLogBtn() {
 		logBtn.disabled = !logBadgeIdIpt.value?.trim();
@@ -25,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		gatekeeperBtn.disabled = true;
 		gatekeeperBadgeIdIpt.addEventListener('input', updateGatekeeperBtn);
-		gatekeeperForm.addEventListener('seamlessSuccess', addUserToTable);
+		gatekeeperForm.addEventListener('seamlessSuccess', evt => addUserToTable(evt, false));
 
 		function updateGatekeeperBtn() {
 			gatekeeperBtn.disabled = !gatekeeperBadgeIdIpt.value?.trim();
@@ -35,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const usersCardBody = document.getElementById('users-body');
 	const noUsersCardBody = document.getElementById('users-body-empty');
 
-	function addUserToTable(evt) {
+	function addUserToTable(evt, fromAttendee = true) {
 		const { user: { id, badge_id: badgeId, badge_name: badgeName }, type, logged_at: logged } = evt.detail.response;
 
 		const row = document.createElement('tr');
@@ -96,6 +102,12 @@ document.addEventListener('DOMContentLoaded', () => {
 		usersCardBody.querySelector('tbody').appendChild(row);
 		usersCardBody.classList.remove('d-none');
 		noUsersCardBody.classList.add('d-none');
+
+		if(fromAttendee) {
+			logBadgeIdIpt.value = '';
+			logBadgeIdIpt.focus();
+			successSound.play();
+		}
 	}
 
 	function removeUserFromTable(form) {
@@ -105,5 +117,11 @@ document.addEventListener('DOMContentLoaded', () => {
 			usersCardBody.classList.add('d-none');
 			noUsersCardBody.classList.remove('d-none');
 		}
+	}
+
+	function alertForError() {
+		logBadgeIdIpt.value = '';
+		logBadgeIdIpt.focus();
+		alertSound.play();
 	}
 });

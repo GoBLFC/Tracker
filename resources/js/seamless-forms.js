@@ -70,6 +70,9 @@ export function setupSeamlessForm(form) {
 
 			// Fire an event for the success
 			form.dispatchEvent(new CustomEvent('seamlessSuccess', { detail: { input: dataObj, response, state } }));
+		} catch(error) {
+			// Fire an event for the error
+			form.dispatchEvent(new CustomEvent('seamlessError', { detail: { error, state } }));
 		} finally {
 			// Store the state and swap the classes for it if applicable
 			if(hasState) {
