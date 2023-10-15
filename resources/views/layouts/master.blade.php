@@ -67,7 +67,7 @@
 
 			@auth
 				const logoutUrl = '{!! route('auth.logout') !!}';
-				const logoutTime = @devMode 3600 @else 60 @enddevMode;
+				const logoutTime =  @devMode 3600 @else @section('logoutTime') 60 @show @enddevMode;
 			@endauth
 
 			@if(Session::has('success'))

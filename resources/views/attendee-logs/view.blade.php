@@ -103,6 +103,8 @@
 	@include('partials.management-nav', ['cardClass' => 'mb-3 mt-5'])
 @endsection
 
+@section('logoutTime', 1800)
+
 @push('modules')
 	@vite('resources/js/attendee-log.js')
 @endpush
