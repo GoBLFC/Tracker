@@ -12,7 +12,7 @@
 			@endforeach
 
 			<form action="{!! route('notifications.acknowledge') !!}" method="POST">
-				<input type="hidden" name="_token" value="{!! csrf_token() !!}" />
+				@csrf
 				<button type="submit" class="btn btn-success">Acknowledge</button>
 			</form>
 		</div>

@@ -10,7 +10,8 @@ enum Role: int {
 	case Manager = 2;
 	case Lead = 1;
 	case Volunteer = 0;
-	case Banned = -1;
+	case Attendee = -1;
+	case Banned = -2;
 
 	/**
 	 * Get the description for the case
@@ -41,7 +42,8 @@ enum Role: int {
 		2 => 'Managers can view, edit, and create time entries on behalf of other users, as well as claim rewards, create new users with a badge ID, authorize kiosks, and bypass the lockdown.',
 		1 => 'Leads can authorize kiosks.',
 		0 => 'Volunteers can only check in and out for shifts.',
-		-1 => 'Banned users can\'t do anything.',
+		-1 => 'Attendees are only a placeholder for users added to attendee logs.',
+		-2 => 'Banned users can\'t do anything.',
 	];
 
 	/**
@@ -52,7 +54,8 @@ enum Role: int {
 		2 => 'Make Manager',
 		1 => 'Make Lead',
 		0 => 'Make Volunteer',
-		-1 => 'BAN',
+		-1 => 'Make Attendee',
+		-2 => 'BAN',
 	];
 
 	/**
@@ -63,7 +66,8 @@ enum Role: int {
 		2 => 'warning',
 		1 => 'success',
 		0 => 'info',
-		-1 => 'danger',
+		-1 => 'secondary',
+		-2 => 'danger',
 	];
 
 	/**

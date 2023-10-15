@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\QuickCodeLogin;
-use App\Http\Requests\QuickCodeRequest;
-use App\Models\QuickCode;
-use App\Models\Setting;
+use App\Models\Role;
 use App\Models\User;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\RateLimiter;
+use App\Models\Setting;
+use App\Models\QuickCode;
 use Illuminate\View\View;
+use App\Events\QuickCodeLogin;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
+use App\Http\Requests\QuickCodeRequest;
 use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Facades\RateLimiter;
 
 class AuthController extends Controller {
 	/**
@@ -56,10 +57,20 @@ class AuthController extends Controller {
 	 * the intended destination.
 	 */
 	public function getCallback(): RedirectResponse {
+		// Get the user details from OAuth and update the existing user in the DB or create a new one
 		$oauthUser = Socialite::driver('concat')->user();
 		$user = User::updateOrCreateFromOAuthUser($oauthUser);
+
+		// Store the OAuth token in the session and log the user in
 		session()->put('conCatToken', $oauthUser->token);
 		Auth::login($user);
+
+		// Promote the user to Volunteer if they're just an Attendee
+		if ($user->role === Role::Attendee) {
+			$user->role = Role::Volunteer;
+			$user->save();
+		}
+
 		return redirect()->intended();
 	}
 

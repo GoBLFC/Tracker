@@ -2,6 +2,11 @@
 	<h5 class="card-header">Your Functions</h5>
 	<div class="card-body">
 		<div class="row gx-3 gy-2">
+			@gatekeeper
+				<div class="col-md">
+					<a role="button" class="btn btn-secondary d-block" href="{!! route('attendee-logs.index') !!}">Attendee Logs</a>
+				</div>
+			@endgatekeeper
 			@lead
 				<div class="col-md">
 					<a role="button" class="btn btn-secondary d-block" href="{!! route('management.lead') !!}">Lead Panel</a>
@@ -23,6 +28,7 @@
 							<li><a class="dropdown-item" href="{!! route('admin.events') !!}">Events</a></li>
 							<li><a class="dropdown-item" href="{!! route('admin.bonuses') !!}">Bonuses</a></li>
 							<li><a class="dropdown-item" href="{!! route('admin.rewards') !!}">Rewards</a></li>
+							<li><a class="dropdown-item" href="{!! route('admin.attendee-logs') !!}">Attendee Logs</a></li>
 							<li><a class="dropdown-item" href="{!! route('admin.reports') !!}">Reports</a></li>
 						</ul>
 					</div>

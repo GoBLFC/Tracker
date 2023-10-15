@@ -24,6 +24,8 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
  * @property-read int|null $rewards_count
  * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\RewardClaim>|\App\Models\RewardClaim[] $rewardClaims
  * @property-read int|null $reward_claims_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\AttendeeLog>|\App\Models\AttendeeLog[] $attendeeLogs
+ * @property-read int|null $attendee_log_count
  * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Activity>|\App\Models\Activity[] $activities
  * @property-read int|null $activities_count
  *
@@ -99,6 +101,13 @@ class Event extends UuidModel implements HasDisplayName {
 	 */
 	public function rewardClaims(): HasManyThrough {
 		return $this->hasManyThrough(RewardClaim::class, Reward::class);
+	}
+
+	/**
+	 * Get the attendee logs for this event
+	 */
+	public function attendeeLogs(): HasMany {
+		return $this->hasMany(AttendeeLog::class);
 	}
 
 	/**

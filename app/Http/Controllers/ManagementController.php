@@ -21,7 +21,6 @@ use App\Reports\AutoClosedTimeEntriesReport;
 use App\Reports\EventReport;
 use App\Reports\Report;
 use App\Reports\VolunteerApplicationsReport;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ManagementController extends Controller {
@@ -90,7 +89,7 @@ class ManagementController extends Controller {
 	 */
 	public function getAdminUserRoles(): View {
 		return view('admin.users', [
-			'users' => User::where('role', '!=', Role::Volunteer)->get(),
+			'users' => User::whereNotIn('role', [Role::Volunteer, Role::Attendee])->get(),
 			'roles' => Role::cases(),
 		]);
 	}
@@ -141,6 +140,23 @@ class ManagementController extends Controller {
 			'events' => Event::all(),
 			'departments' => Department::all()->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE),
 			'bonuses' => $event?->timeBonuses()?->with('departments')?->get(),
+		]);
+	}
+
+	/**
+	 * Render the attendee logs admin page
+	 */
+	public function getAdminAttendeeLogs(?Event $event = null): View|RedirectResponse {
+		// Get the event and redirect to the page for the active event, if applicable
+		if (!$event) {
+			$event = Setting::activeEvent();
+			if ($event) return redirect()->route('admin.event.attendee-logs', $event);
+		}
+
+		return view('admin.attendee-logs', [
+			'event' => $event,
+			'events' => Event::all(),
+			'attendeeLogs' => $event?->attendeeLogs()?->with('gatekeepers')?->get(),
 		]);
 	}
 

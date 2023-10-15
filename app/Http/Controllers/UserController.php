@@ -18,9 +18,9 @@ class UserController extends Controller {
 	public function store(UserStoreRequest $request): JsonResponse {
 		$user = new User;
 		$user->badge_id = $request->integer('badge_id');
-		$user->username = 'Unknown';
-		$user->first_name = 'Unknown';
-		$user->last_name = 'Unknown';
+		$user->username = 'unknown';
+		$user->first_name = 'Unidentified';
+		$user->last_name = 'Volunteer';
 		$user->save();
 
 		return response()->json(['user' => $user]);

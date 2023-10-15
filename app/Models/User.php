@@ -2,28 +2,29 @@
 
 namespace App\Models;
 
-use App\Models\Contracts\HasAuditName;
-use App\Models\Contracts\HasDisplayName;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\Cache;
+use App\Models\Contracts\HasAuditName;
 use App\Notifications\RewardAvailable;
+use App\Models\Contracts\HasDisplayName;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
 use Telegram\Bot\Laravel\Facades\Telegram;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Traits\CausesActivity;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use SocialiteProviders\Manager\OAuth2\User as OAuthUser;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
-use Spatie\Activitylog\Traits\CausesActivity;
 
 /**
  * @property int $badge_id
@@ -47,6 +48,8 @@ use Spatie\Activitylog\Traits\CausesActivity;
  * @property-read int|null $quick_codes_count
  * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Department>|\App\Models\Department[] $departments
  * @property-read int|null $departments_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\AttendeeLog>|\App\Models\AttendeeLog[] $attendeeLogs
+ * @property-read int|null $attendee_logs_count
  * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Activity>|\App\Models\Activity[] $activities
  * @property-read int|null $activities_count
  *
@@ -154,6 +157,16 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 	}
 
 	/**
+	 * Get all attendee logs this user was entered into
+	 */
+	public function attendeeLogs(): BelongsToMany {
+		return $this->belongsToMany(AttendeeLog::class)
+			->withPivot('type')
+			->withTimestamps()
+			->withTrashed();
+	}
+
+	/**
 	 * Scope a query to only include users of a given role
 	 */
 	public function scopeOfRole(Builder $query, Role $role): void {
@@ -199,6 +212,13 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 	 */
 	public function isBanned(): bool {
 		return $this->isRole(Role::Banned, true);
+	}
+
+	/**
+	 * Check whether the user is a gatekeeper for any attendee logs that belong to the active event
+	 */
+	public function isGatekeeper(): bool {
+		return $this->isManager() || $this->attendeeLogs()->forEvent()->wherePivot('type', 'gatekeeper')->exists();
 	}
 
 	/**
@@ -361,6 +381,19 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 			'first_name' => $user->user['firstName'],
 			'last_name' => $user->user['lastName'],
 			'badge_name' => $user->user['badgeName'],
+		]);
+	}
+
+	/**
+	 * Creates a user from a ConCat registration object.
+	 */
+	public static function createFromConCatRegistration(object $registration): static {
+		return static::create([
+			'username' => $registration->user->username,
+			'first_name' => 'Unidentified',
+			'last_name' => 'Attendee',
+			'badge_id' => $registration->user->id,
+			'badge_name' => $registration->badgeName,
 		]);
 	}
 }

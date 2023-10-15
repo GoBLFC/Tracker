@@ -6,7 +6,7 @@
 		<div class="card-body">
 			<div class="row g-3 mb-5 mb-lg-4">
 				@foreach($roles as $role)
-					@if($role->value === \App\Models\Role::Volunteer->value) @continue @endif
+					@if(in_array($role->value, [\App\Models\Role::Volunteer->value, \App\Models\Role::Attendee->value])) @continue @endif
 					@php($roleUsers = $users->filter(fn($user) => $user->isRole($role, true))->sortBy('badge_id'))
 
 					<div class="col-sm-12 col-lg-6">
@@ -58,7 +58,7 @@
 					<div class="input-group">
 						<input type="text" inputmode="numeric" pattern="[0-9]+" id="badgeNumber" class="form-control" placeholder="Badge Number" aria-label="Badge Number" />
 						@foreach($roles as $role)
-							@if($role->value === \App\Models\Role::Volunteer->value) @continue @endif
+						@if(in_array($role->value, [\App\Models\Role::Volunteer->value, \App\Models\Role::Attendee->value])) @continue @endif
 							<button type="button" class="btn btn-{!! $role->colorClass() !!} d-none d-md-block" data-role="{!! $role->value !!}" disabled>
 								{{ $role->actionLabel() }}
 							</button>
@@ -67,7 +67,7 @@
 
 					<div class="btn-group d-md-none">
 						@foreach($roles as $role)
-							@if($role->value === \App\Models\Role::Volunteer->value) @continue @endif
+							@if(in_array($role->value, [\App\Models\Role::Volunteer->value, \App\Models\Role::Attendee->value])) @continue @endif
 							<button type="button" class="btn btn-{!! $role->colorClass() !!}" data-role="{!! $role->value !!}" disabled>
 								{{ $role->actionLabel() }}
 							</button>

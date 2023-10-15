@@ -87,14 +87,24 @@ class ConCatApiClient {
 	/**
 	 * Retrieves volunteers matching search criteria
 	 */
-	public function searchVolunteers(array $body = []) {
+	public function searchVolunteers(array $body = []): array {
 		return $this->requestAllPaginated('POST', '/api/v0/volunteers/search', $body);
+	}
+
+	/**
+	 * Retrieves a single registration by user ID
+	 */
+	public function getRegistration(int $userId): \stdClass {
+		$response = $this->get("/api/v0/users/{$userId}/registration", [
+			'headers' => ['Accept' => 'application/json'],
+		]);
+		return json_decode($response->getBody());
 	}
 
 	/**
 	 * Retrieves registrations matching search criteria
 	 */
-	public function searchRegistrations(array $body = []) {
+	public function searchRegistrations(array $body = []): array {
 		return $this->requestAllPaginated('POST', '/api/v0/registration/search', $body);
 	}
 

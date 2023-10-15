@@ -28,6 +28,7 @@ class AppServiceProvider extends ServiceProvider {
 		Blade::if('admin', fn () => Auth::user()?->isAdmin() ?? false);
 		Blade::if('manager', fn () => Auth::user()?->isManager() ?? false);
 		Blade::if('lead', fn () => Auth::user()?->isLead() ?? false);
+		Blade::if('gatekeeper', fn () => Auth::user()?->isGatekeeper() ?? false);
 		Blade::if('banned', fn () => Auth::user()?->isBanned() ?? false);
 	}
 }
