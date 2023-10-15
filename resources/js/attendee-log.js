@@ -106,6 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		if(fromAttendee) {
 			logBadgeIdIpt.value = '';
 			logBadgeIdIpt.focus();
+			logBtn.disabled = true;
 			successSound.play();
 		}
 	}
@@ -122,6 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	function alertForError() {
 		logBadgeIdIpt.value = '';
 		logBadgeIdIpt.focus();
+		logBtn.disabled = true;
 		alertSound.play();
 	}
 });
