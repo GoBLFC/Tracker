@@ -66,6 +66,8 @@
 					<p class="card-body mb-0">There are no attendee logs.</p>
 				@endif
 			</div>
+
+			<a class="btn btn-primary float-end mt-3" href="{!! route('tracker.index') !!}" role="button">Back</a>
 		</div>
 	</div>
 
