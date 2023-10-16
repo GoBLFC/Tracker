@@ -68,9 +68,9 @@ class AttendeeLogPolicy {
 	 * Determine whether the user can manage attendees on the log.
 	 */
 	public function manageAttendees(User $user, AttendeeLog $attendeeLog): bool {
-		$validEvent = $attendeeLog->isForActiveEvent();
+		$isActive = $attendeeLog->isForActiveEvent();
 		return $user->isAdmin()
-			|| ($user->isManager() && $validEvent)
-			|| ($attendeeLog->gatekeepers()->whereUserId($user->id)->exists() && $validEvent);
+			|| ($user->isManager() && $isActive)
+			|| ($attendeeLog->gatekeepers()->whereUserId($user->id)->exists() && $isActive);
 	}
 }

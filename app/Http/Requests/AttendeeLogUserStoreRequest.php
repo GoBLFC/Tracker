@@ -10,7 +10,8 @@ class AttendeeLogUserStoreRequest extends FormRequest {
 	 * Determine if the user is authorized to make this request.
 	 */
 	public function authorize(): bool {
-		return $this->user()->can('update', $this->route('attendeeLog'));
+		// Authorization is dependent on user input and is done in the controller
+		return true;
 	}
 
 	/**

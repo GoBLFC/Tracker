@@ -81,7 +81,7 @@ class AttendeeLogController extends Controller {
 	public function storeUser(AttendeeLogUserStoreRequest $request, AttendeeLog $attendeeLog): JsonResponse {
 		// Authorize the change
 		$type = $request->validated('type') ?? 'attendee';
-		$policyType = Str::pluralStudly($type, 2);
+		$policyType = Str::plural(Str::title($type), 2);
 		$this->authorize("manage{$policyType}", $attendeeLog);
 
 		// Find an existing user for the badge ID in the DB
@@ -127,7 +127,7 @@ class AttendeeLogController extends Controller {
 		if (!$logUser) return response()->json(null, 404);
 
 		// Authorize this change
-		$policyType = Str::pluralStudly($logUser->pivot->type, 2);
+		$policyType = Str::plural(Str::title($logUser->pivot->type), 2);
 		$this->authorize("manage{$policyType}", $attendeeLog);
 
 		$attendeeLog->users()->detach($user);
