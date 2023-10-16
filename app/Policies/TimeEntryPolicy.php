@@ -19,7 +19,7 @@ class TimeEntryPolicy {
 	 * Determine whether the user can view the model.
 	 */
 	public function view(User $user, TimeEntry $timeEntry): bool {
-		return $user->id === $timeEntry->user_id;
+		return $user->id === $timeEntry->user_id || $user->isManager();
 	}
 
 	/**
