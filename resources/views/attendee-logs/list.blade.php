@@ -5,11 +5,13 @@
 		<h4 class="card-header text-bg-info">Attendee Logs</h4>
 
 		<div class="card-body">
-			@include('partials.event-selector', [
-				'actionWord' => 'Manage',
-				'cardClass' => 'mb-3',
-				'route' => route('events.attendee-logs.index', 'event-id'),
-			])
+			@manager
+				@include('partials.event-selector', [
+					'actionWord' => 'Manage',
+					'cardClass' => 'mb-3',
+					'route' => route('events.attendee-logs.index', 'event-id'),
+				])
+			@endmanager
 
 			@if($event)
 				@unless($event->isActive())
