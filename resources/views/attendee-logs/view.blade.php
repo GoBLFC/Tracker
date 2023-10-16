@@ -98,7 +98,7 @@
 				</div>
 			@endmanager
 
-			<a class="btn btn-primary float-end mt-3" href="{!! route('tracker.index') !!}" role="button">Back</a>
+			<a class="btn btn-primary float-end mt-3" href="{!! route('events.attendee-logs.index', $attendeeLog->event->id) !!}" role="button">Back</a>
 		</div>
 	</div>
 
