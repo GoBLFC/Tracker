@@ -84,11 +84,6 @@ class AttendeeLogController extends Controller {
 		$policyType = Str::pluralStudly($type, 2);
 		$this->authorize("manage{$policyType}", $attendeeLog);
 
-		// Only allow the change if the log belongs to the active event or the user is an admin
-		if (!$attendeeLog->event->isActive() && !$request->user()->isAdmin()) {
-			return response()->json(['error' => 'The event the log is for isn\'t active.'], 422);
-		}
-
 		// Find an existing user for the badge ID in the DB
 		$badgeId = $request->validated('badge_id');
 		$user = User::whereBadgeId($badgeId)->first();
@@ -134,11 +129,6 @@ class AttendeeLogController extends Controller {
 		// Authorize this change
 		$policyType = Str::pluralStudly($logUser->pivot->type, 2);
 		$this->authorize("manage{$policyType}", $attendeeLog);
-
-		// Only allow the change if the log belongs to the active event or the user is an admin
-		if (!$attendeeLog->event->isActive() && !$request->user()->isAdmin()) {
-			return response()->json(['error' => 'The event the log is for isn\'t active.'], 422);
-		}
 
 		$attendeeLog->users()->detach($user);
 		return response()->json(null, 205);

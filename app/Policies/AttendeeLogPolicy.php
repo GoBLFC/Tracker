@@ -17,7 +17,8 @@ class AttendeeLogPolicy {
 	 * Determine whether the user can view the model.
 	 */
 	public function view(User $user, AttendeeLog $attendeeLog): bool {
-		return $user->isManager() || $attendeeLog->gatekeepers()->whereUserId($user->id)->exists();
+		return $user->isManager()
+			|| ($attendeeLog->gatekeepers()->whereUserId($user->id)->exists() && $attendeeLog->event->isActive());
 	}
 
 	/**
@@ -59,13 +60,17 @@ class AttendeeLogPolicy {
 	 * Determine whether the user can manage gatekeepers on the log.
 	 */
 	public function manageGatekeepers(User $user, AttendeeLog $attendeeLog): bool {
-		return $user->isManager();
+		return ($user->isManager() && $attendeeLog->isForActiveEvent())
+			|| $user->isAdmin();
 	}
 
 	/**
 	 * Determine whether the user can manage attendees on the log.
 	 */
 	public function manageAttendees(User $user, AttendeeLog $attendeeLog): bool {
-		return $user->isManager() || $attendeeLog->gatekeepers()->whereUserId($user->id)->exists();
+		$validEvent = $attendeeLog->isForActiveEvent();
+		return $user->isAdmin()
+			|| ($user->isManager() && $validEvent)
+			|| ($attendeeLog->gatekeepers()->whereUserId($user->id)->exists() && $validEvent);
 	}
 }
