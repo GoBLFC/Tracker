@@ -96,6 +96,8 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 		'tg_chat_id',
 	];
 
+	private ?bool $isGatekeeperCache = null;
+
 	protected static function boot() {
 		parent::boot();
 
@@ -218,7 +220,17 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 	 * Check whether the user is a gatekeeper for any attendee logs that belong to the active event
 	 */
 	public function isGatekeeper(): bool {
-		return $this->isManager() || $this->attendeeLogs()->forEvent()->wherePivot('type', 'gatekeeper')->exists();
+		if ($this->isGatekeeperCache !== null) return $this->isGatekeeperCache;
+		$this->isGatekeeperCache =  $this->isManager()
+			|| $this->attendeeLogs()->forEvent()->wherePivot('type', 'gatekeeper')->exists();
+		return $this->isGatekeeperCache;
+	}
+
+	/**
+	 * Check whether the user should see the functions panel (access to any possible backend functionality)
+	 */
+	public function hasAnyBackendAccess(): bool {
+		return $this->isLead() || $this->isGatekeeper();
 	}
 
 	/**

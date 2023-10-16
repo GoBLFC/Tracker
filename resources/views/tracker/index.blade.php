@@ -53,9 +53,9 @@
 		</div>
 	</div>
 
-	@lead
+	@hasBackend
 		@include('partials.management-nav')
-	@endlead
+	@endhasBackend
 
 	@activeEvent
 		<div class="card mb-3">
