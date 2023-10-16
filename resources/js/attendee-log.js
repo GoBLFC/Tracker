@@ -1,9 +1,11 @@
 import { setupSeamlessForm } from './seamless-forms';
 import successSoundFile from '../audio/success.ogg';
+import success2SoundFile from '../audio/success2.ogg';
 import alertSoundFile from '../audio/alert.ogg';
 
 document.addEventListener('DOMContentLoaded', () => {
 	const successSound = new Audio(successSoundFile);
+	const success2Sound = new Audio(success2SoundFile);
 	const alertSound = new Audio(alertSoundFile);
 
 	const deleteForms = document.querySelectorAll('form.delete');
@@ -120,10 +122,12 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 
-	function alertForError() {
+	function alertForError(evt) {
 		logBadgeIdIpt.value = '';
 		logBadgeIdIpt.focus();
-		alertSound.play();
 		setTimeout(updateLogBtn, 0);
+
+		if(evt.detail?.error?.message?.includes('already present')) success2Sound.play();
+		else alertSound.play();
 	}
 });
