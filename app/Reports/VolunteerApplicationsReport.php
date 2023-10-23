@@ -2,8 +2,6 @@
 
 namespace App\Reports;
 
-use stdClass;
-use App\Models\User;
 use App\Facades\ConCat;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
