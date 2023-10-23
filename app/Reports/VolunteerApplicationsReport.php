@@ -36,7 +36,7 @@ class VolunteerApplicationsReport extends EventReport implements FromCollection,
 		if ($this->volunteers->isEmpty()) return;
 
 		// Retrieve registrations for the volunteers
-		$userIds = $this->volunteers->keys()->map(fn ($key) => (string) $key);
+		$userIds = $this->volunteers->keys()->map(fn ($key) => (string) $key)->toArray();
 		$registrations = new Collection(ConCat::searchRegistrationsByUserIds($userIds));
 
 		// Add the badge name from the registration to each volunteer
