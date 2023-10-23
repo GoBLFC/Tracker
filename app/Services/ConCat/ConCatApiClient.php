@@ -109,6 +109,23 @@ class ConCatApiClient {
 	}
 
 	/**
+	 * Retrieves all registrations for a set of user IDs
+	 */
+	public function searchRegistrationsByUserIds(array $userIds): array {
+		// ConCat only allows specifying up to 100 user IDs at a time, so we chunk the input into sets of
+		// 100 maximum and perform a request per chunk.
+		$allRegistrations = [];
+		$userIdsChunked = array_chunk($userIds, 100);
+
+		foreach ($userIdsChunked as $userIdsChunk) {
+			$registrations = $this->searchRegistrations(['filter' => ['userIds' => $userIdsChunk]]);
+			array_push($allRegistrations, ...$registrations);
+		}
+
+		return $allRegistrations;
+	}
+
+	/**
 	 * Builds a new HTTP client
 	 */
 	private function buildHttpClient(bool $authorized = true): Client {
