@@ -102,7 +102,7 @@ class AttendeeLogController extends Controller {
 				return response()->json(['error' => 'Unable to find user with given badge ID.'], 404);
 			}
 
-			$user = User::createFromConCatRegistration($registration);
+			$user = User::createFromConCatRegistration($registration, 'Attendee');
 		}
 
 		// Make sure the user isn't already present in the log

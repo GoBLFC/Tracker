@@ -399,13 +399,26 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 	/**
 	 * Creates a user from a ConCat registration object.
 	 */
-	public static function createFromConCatRegistration(object $registration): static {
+	public static function createFromConCatRegistration(object $registration, string $userType): static {
 		return static::create([
 			'username' => $registration->user->username,
 			'first_name' => 'Unidentified',
-			'last_name' => 'Attendee',
+			'last_name' => Str::title($userType),
 			'badge_id' => $registration->user->id,
 			'badge_name' => $registration->badgeName,
 		]);
+	}
+
+	/**
+	 * Creates a user with placeholder information that will get replaced upon logging in.
+	 */
+	public static function createPlaceholder(int $badgeId, string $userType): static {
+		$user = new User;
+		$user->badge_id = $badgeId;
+		$user->username = 'unknown';
+		$user->first_name = 'Unidentified';
+		$user->last_name = Str::title($userType);
+		$user->save();
+		return $user;
 	}
 }
