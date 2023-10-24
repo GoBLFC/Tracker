@@ -7,10 +7,12 @@ use App\Models\User;
 use App\Models\Event;
 use App\Models\Reward;
 use App\Models\Setting;
+use App\Reports\Report;
 use App\Models\Activity;
 use App\Models\TimeEntry;
 use Illuminate\View\View;
 use App\Models\Department;
+use App\Reports\EventReport;
 use App\Reports\AuditLogReport;
 use App\Reports\VolunteerTimeReport;
 use Illuminate\Http\RedirectResponse;
@@ -18,10 +20,9 @@ use App\Reports\Concerns\WithExtraParam;
 use App\Reports\DepartmentSummaryReport;
 use Illuminate\Database\Eloquent\Builder;
 use App\Reports\AutoClosedTimeEntriesReport;
-use App\Reports\EventReport;
-use App\Reports\Report;
 use App\Reports\VolunteerApplicationsReport;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use App\Reports\VolunteerApplicationDepartmentSummaryReport;
 
 class ManagementController extends Controller {
 	public const REPORTS = [
@@ -29,6 +30,7 @@ class ManagementController extends Controller {
 		'departments' => DepartmentSummaryReport::class,
 		'unclocked' => AutoClosedTimeEntriesReport::class,
 		'applications' => VolunteerApplicationsReport::class,
+		'application-departments' => VolunteerApplicationDepartmentSummaryReport::class,
 		'audit' => AuditLogReport::class,
 	];
 

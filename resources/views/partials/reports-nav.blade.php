@@ -27,7 +27,7 @@
 						</ul>
 					</div>
 				@else
-					<a @class($classes)
+					<a @class(array_merge($classes, ['d-flex', 'align-items-center', 'justify-content-center']))
 						href="{!! $event ? route('admin.event.reports.view', [$event->id, $slug]) : route('admin.reports.view', $slug) !!}"
 						@if($selected) aria-current="true" @endif>
 
