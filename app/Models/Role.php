@@ -39,7 +39,7 @@ enum Role: int {
 	 */
 	public const descriptions = [
 		3 => 'Administrators can do anything.',
-		2 => 'Managers can view, edit, and create time entries on behalf of other users, as well as claim rewards, create new users with a badge ID, authorize kiosks, and bypass the lockdown.',
+		2 => 'Managers can view, edit, and create time entries on behalf of other users, as well as claim rewards, create new users with a badge ID, manage attendees and gatekeepers in attendee logs, authorize kiosks, and bypass the lockdown.',
 		1 => 'Leads can authorize kiosks.',
 		0 => 'Volunteers can only check in and out for shifts.',
 		-1 => 'Attendees are only a placeholder for users added to attendee logs.',
