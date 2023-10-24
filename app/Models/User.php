@@ -416,21 +416,9 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 	 * If all information fails to be retrieved, then a placeholder user with just the badge ID is created.
 	 */
 	public static function retrieveAvailableDetailsAndCreate(int $badgeId, string $userType): static {
-		$volunteer = null;
-		$registration = null;
-
-		// Try looking up a volunteer and registration and from the badge ID in ConCat so we have the username, badge name,
-		// and legal name to fill in ahead of time.
-		try {
-			ConCat::authorize();
-			$volunteer = ConCat::getVolunteer($badgeId);
-			$registration = ConCat::getRegistration($badgeId);
-		} catch (\Throwable $err) {
-			Log::warning('Failed to look up ConCat volunteer or registration for manual user creation', [
-				'badge_id' => $badgeId,
-				'error' => $err,
-			]);
-		}
+		$info = static::retrieveAllAvailableDetails($badgeId);
+		$volunteer = $info['volunteer'];
+		$registration = $info['registration'];
 
 		// Create the user with all available info
 		return static::create([
@@ -452,5 +440,50 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 			'last_name' => Str::title($userType),
 			'badge_id' => $badgeId,
 		]);
+	}
+
+	/**
+	 * Retrieves both the volunteer and registration information for a given user from ConCat and logs any failed requests
+	 */
+	private static function retrieveAllAvailableDetails(int $badgeId): array {
+		$volunteer = null;
+		$registration = null;
+
+		try {
+			// First, authorize with ConCat - if this fails, then we needn't try anything else
+			ConCat::authorize();
+
+			// Try looking up a volunteer from the badge ID in ConCat so we get the volunteer user's
+			// username and legal name
+			try {
+				$volunteer = ConCat::getVolunteer($badgeId);
+			} catch (\Throwable $err) {
+				Log::warning('Failed to look up ConCat volunteer for manual user creation', [
+					'badge_id' => $badgeId,
+					'error' => $err,
+				]);
+			}
+
+			// Try looking up a registration from the badge ID in ConCat so we get the registration's badge name, plus
+			// the registered user's username and legal name in case the volunteer lookup failed
+			try {
+				$registration = ConCat::getRegistration($badgeId);
+			} catch (\Throwable $err) {
+				Log::warning('Failed to look up ConCat registration for manual user creation', [
+					'badge_id' => $badgeId,
+					'error' => $err,
+				]);
+			}
+		} catch (\Throwable $err) {
+			Log::warning('Failed to authorize with ConCat for manual user creation', [
+				'badge_id' => $badgeId,
+				'error' => $err,
+			]);
+		}
+
+		return [
+			'volunteer' => $volunteer,
+			'registration' => $registration,
+		];
 	}
 }
