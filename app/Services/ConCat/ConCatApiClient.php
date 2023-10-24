@@ -85,6 +85,26 @@ class ConCatApiClient {
 	}
 
 	/**
+	 * Retrieves a single user's account details by user ID
+	 */
+	public function getUser(int $userId): \stdClass {
+		$response = $this->get("/api/v0/users/{$userId}", [
+			'headers' => ['Accept' => 'application/json'],
+		]);
+		return json_decode($response->getBody());
+	}
+
+	/**
+	 * Retrieves a single volunteer by user ID
+	 */
+	public function getVolunteer(int $userId): \stdClass {
+		$response = $this->get("/api/v0/users/{$userId}/volunteer", [
+			'headers' => ['Accept' => 'application/json'],
+		]);
+		return json_decode($response->getBody());
+	}
+
+	/**
 	 * Retrieves volunteers matching search criteria
 	 */
 	public function searchVolunteers(array $body = []): array {

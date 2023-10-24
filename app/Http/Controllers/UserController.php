@@ -18,26 +18,7 @@ class UserController extends Controller {
 	 * Create a user with just a badge ID
 	 */
 	public function store(UserStoreRequest $request): JsonResponse {
-		$badgeId = $request->integer('badge_id');
-
-		// Try looking up a registration for the badge ID in ConCat so we have the username, badge name,
-		// and legal name to fill in ahead of time.
-		try {
-			ConCat::authorize();
-			$registration = ConCat::getRegistration($badgeId);
-		} catch (\Throwable $err) {
-			Log::warning('Failed to look up ConCat registration for manual user registration', [
-				'badge_id' => $badgeId,
-				'error' => $err,
-			]);
-		}
-
-		// If a registration was found, then create the user based off of that - otherwise, create a barebones
-		// user with placeholder information that will get replaced if they log in.
-		$user = $registration
-			? User::createFromConCatRegistration($registration, 'Volunteer')
-			: User::createPlaceholder($badgeId, 'Volunteer');
-
+		$user = User::retrieveAvailableDetailsAndCreate($request->integer('badge_id'), 'Volunteer');
 		return response()->json(['user' => $user]);
 	}
 

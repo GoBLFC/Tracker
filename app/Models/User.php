@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Facades\ConCat;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Spatie\Activitylog\LogOptions;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\Cache;
 use App\Models\Contracts\HasAuditName;
@@ -410,15 +412,45 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 	}
 
 	/**
+	 * Retrieve volunteer and registration details for a badge ID and create a user with the information available from them.
+	 * If all information fails to be retrieved, then a placeholder user with just the badge ID is created.
+	 */
+	public static function retrieveAvailableDetailsAndCreate(int $badgeId, string $userType): static {
+		$volunteer = null;
+		$registration = null;
+
+		// Try looking up a volunteer and registration and from the badge ID in ConCat so we have the username, badge name,
+		// and legal name to fill in ahead of time.
+		try {
+			ConCat::authorize();
+			$volunteer = ConCat::getVolunteer($badgeId);
+			$registration = ConCat::getRegistration($badgeId);
+		} catch (\Throwable $err) {
+			Log::warning('Failed to look up ConCat volunteer or registration for manual user creation', [
+				'badge_id' => $badgeId,
+				'error' => $err,
+			]);
+		}
+
+		// Create the user with all available info
+		return static::create([
+			'username' => $volunteer?->user?->username ?? $registration?->user?->username ?? 'unknown',
+			'first_name' => $volunteer?->user?->firstName ?? $registration?->user?->firstName ?? 'Unidentified',
+			'last_name' => $volunteer?->user?->lastName ?? $registration?->user?->lastName ?? Str::title($userType),
+			'badge_id' => $volunteer?->user?->id ?? $registration?->user?->id ?? $badgeId,
+			'badge_name' => $registration?->badgeName,
+		]);
+	}
+
+	/**
 	 * Creates a user with placeholder information that will get replaced upon logging in.
 	 */
 	public static function createPlaceholder(int $badgeId, string $userType): static {
-		$user = new User;
-		$user->badge_id = $badgeId;
-		$user->username = 'unknown';
-		$user->first_name = 'Unidentified';
-		$user->last_name = Str::title($userType);
-		$user->save();
-		return $user;
+		return static::create([
+			'username' => 'unknown',
+			'first_name' => 'Unidentified',
+			'last_name' => Str::title($userType),
+			'badge_id' => $badgeId,
+		]);
 	}
 }
