@@ -6,7 +6,7 @@
 		<div class="card-body">
 			<p>
 				Events are the overarching entity that contain all relevant information for a single convention.
-				They have rewards, time bonuses, and time entries associated with them.<br />
+				They have rewards, time bonuses, time entries, and attendee logs associated with them.<br />
 				All time entries entered by volunteers and managers are automatically associated with the <a href="{!! route('admin.site') !!}">active event</a>.
 			</p>
 			<p>
