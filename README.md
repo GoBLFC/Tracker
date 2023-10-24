@@ -184,19 +184,20 @@ Foreign key constraints are used in the database whenever possible to ensure ref
 
 All models and their relationships are listed below, alongside a brief description of their purpose.
 
-| Name        | Table         | Description                                                                                                                                      |
-| ----------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Activity    | activities    | Used for tracking events and changes to models for audit logging purposes. Belongs to a User via both subject and causer.                        |
-| Department  | departments   | An organizational unit for staff/volunteers of a convention.                                                                                     |
-| Event       | events        | A single convention/other type of event that time is tracked for.                                                                                |
-| Kiosk       | kiosks        | A device that has been authorized to allow volunteers to enter time on. These devices keep a cookie with the session key to identify themselves. |
-| QuickCode   | quick_codes   | One-time-use sign-in codes for users. Expires 30 seconds after creation. Belongs to a User.                                                      |
-| Reward      | rewards       | Possible reward/goal for volunteers to thank them for their time once they reach a threshold. Belongs to an Event.                               |
-| RewardClaim | reward_claims | Rewards claimed by users. Belongs to a User and a Reward.                                                                                        |
-| Setting     | settings      | Application settings identified by a string and stored as JSON.                                                                                  |
-| TimeBonus   | time_bonuses  | Time periods that grant bonus volunteer time credit while being worked within. Belongs to an Event and many Departments.                         |
-| TimeEntry   | time_entries  | Volunteer time clocked by users. Belongs to a User, a Department, and an Event.                                                                  |
-| User        | users         | Any user of the application. Has a role (Banned, Volunteer, Lead, Manager, Admin) that determines permissions.                                   |
+| Name        | Table         | Description                                                                                                                                                                                  |
+| ----------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Activity    | activities    | Used for tracking events and changes to models for audit logging purposes. Belongs to a User via both subject and causer.                                                                    |
+| AttendeeLog | attendee_logs | A log to enter users into. Used for tracking attendance to a panel or other type of event. Has many Users, with `type` (`attendee` or `gatekeeper`) on the pivot table. Belongs to an Event. |
+| Department  | departments   | An organizational unit for staff/volunteers of a convention.                                                                                                                                 |
+| Event       | events        | A single convention/other type of event that time is tracked for.                                                                                                                            |
+| Kiosk       | kiosks        | A device that has been authorized to allow volunteers to enter time on. These devices keep a cookie with the session key to identify themselves.                                             |
+| QuickCode   | quick_codes   | One-time-use sign-in codes for users. Expires 30 seconds after creation. Belongs to a User.                                                                                                  |
+| Reward      | rewards       | Possible reward/goal for volunteers to thank them for their time once they reach a threshold. Belongs to an Event.                                                                           |
+| RewardClaim | reward_claims | Rewards claimed by users. Belongs to a User and a Reward.                                                                                                                                    |
+| Setting     | settings      | Application settings identified by a string and stored as JSON.                                                                                                                              |
+| TimeBonus   | time_bonuses  | Time periods that grant bonus volunteer time credit while being worked within. Belongs to an Event and many Departments.                                                                     |
+| TimeEntry   | time_entries  | Volunteer time clocked by users. Belongs to a User, a Department, and an Event.                                                                                                              |
+| User        | users         | Any user of the application. Has a role (Banned, Volunteer, Lead, Manager, Admin) that determines permissions.                                                                               |
 
 
 ### Permissions
@@ -204,9 +205,11 @@ Permissions are implemented very simply at the moment.
 Users have a single assigned Role value, which is just an enum (Banned, Volunteer, Lead, Manager, Admin).
 - Volunteer is the default role for users. They have time tracking capabilities, but not much else.
 - Leads can authorize/deauthorize Kiosks.
-- Managers can authorize/deauthorize Kiosks, view and manage volunteers' time entries, and create placeholder users with a badge ID
+- Managers can authorize/deauthorize Kiosks, view and manage volunteers' time entries, manage attendee log attendees and gatekeepers, and create users with a badge ID.
 - Admins can do anything, but especially are responsible for general entity CRUD operations.
-- Banned users are prevented from interacting with the application entirely beyond signing in
+- Attendees are just users created for the purpose of being an entry in an attendee log. They are automatically "promoted" to Volunteer if they ever log in.
+- Banned users are prevented from interacting with the application entirely beyond signing in.
+
 ### Time Tracking Details
 Since the primary purpose of Tracker is to track the time that volunteers spend working shifts, a lot of care has been put in to how that time is kept.
 
@@ -234,6 +237,11 @@ Each day at the configured day boundary hour (see [config/tracker.php], default 
 This is to catch the cases where a volunteer forgets to clock out after their shift, thus leaving the time entry running perpetually.
 When a time entry is terminated this way, its stop time is updated to be either 1hr after the start time or the current time, whichever is sooner.
 A notification is sent that they're forced to acknowledge on the web page the next time they log in.
+
+### Attendee Logs
+Attendee logs are an entity used to track attendees for a scheduled event such as a panel or meetup.
+They can have any number of users entered into them by badge ID, and they don't even require the users entered to be valid volunteers or staff.
+Any number of Gatekeepers can also be added to them, who will all be able to view and manage the attendees that are logged, regardless of their own role.
 
 ### Telegram Bot
 #### Account Linking
