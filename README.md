@@ -177,6 +177,20 @@ Since Laravel is an MVC (Model, View, Controller) framework, that structure is g
 - Style assets (Sass/SCSS): [resources/sass](/resources/sass)
 - Image assets: [resources/img](/resources/img)
 
+### Custom Artisan Commands
+Use `php artisan help` or `sail artisan help` to view a list of all available commands, not just custom ones.  
+Use `php artisan help <command name>` or `sail artisan help <command name>` to view detailed information for a specific command.
+
+| Name                   | Description                                                                                                                                                                     |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| auth:set-role          | Sets the role for a user. If user isn't specified on the CLI, then you will be prompted to search for and select the appropriate user, as well as to select the role to assign. |
+| auth:fetch-unknown     | Retrieves and populates information for any users with the `unknown` username (previously-created Users that information couldn't be retrieved from ConCat for at the time).    |
+| tracker:notify-rewards | Sends notifications to users for rewards they are newly eligible to claim. Automatically called by the task scheduler every 5 minutes.                                          |
+| tracker:stop-ongoing   | Stops all ongoing time entries for the active event. Automatically called by the task scheduler every day at the configured day boundary hour.                                  |
+| telegram:set-commands  | Sends the list of commands to Telegram to display to users interacting with the bot.                                                                                            |
+| telegram:set-webhook   | Sends the webhook URL to Telegram. Requires the application to be accessed via HTTPS.                                                                                           |
+| telegram:poll          | Polls Telegram for updates (primarily for development use).                                                                                                                     |
+
 ### Database Models
 All database models are using UUIDv7 for their primary key (`id` column).
 Eloquent is being used heavily for nearly all database interactions.
@@ -198,7 +212,6 @@ All models and their relationships are listed below, alongside a brief descripti
 | TimeBonus   | time_bonuses  | Time periods that grant bonus volunteer time credit while being worked within. Belongs to an Event and many Departments.                                                                     |
 | TimeEntry   | time_entries  | Volunteer time clocked by users. Belongs to a User, a Department, and an Event.                                                                                                              |
 | User        | users         | Any user of the application. Has a role (Banned, Volunteer, Lead, Manager, Admin) that determines permissions.                                                                               |
-
 
 ### Permissions
 Permissions are implemented very simply at the moment.
@@ -261,6 +274,9 @@ When a user sends a message of any kind to the Telegram bot, Telegram contacts t
 The message is checked for a valid command - if there is one, the command is processed.
 All Telegram commands are in [app/Telegram/Commands](/app/Telegram/Commands).
 Telegram needs to be informed of these commands with `php artisan telegram:set-commands` so that it may present a convenient list to users of the bot.
+
+During development, `php artisan telegram:poll` can be used instead of the webhook, which will start a long-term polling process to pull updates from Telegram rather than it pushing to the application.
+This allows the Telegram bot to be tested without needing the application to be externally accessible to the internet.
 
 ## Glossary
 - [Artisan](https://laravel.com/docs/10.x/artisan) - Laravel command line helper application (Used to run Sail)
