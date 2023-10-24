@@ -5,10 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	if(!createBtn) return;
 	const badgeIdIpt = createBtn.parentElement.querySelector('input[type="text"]');
 
-	createBtn.disabled = true;
-	badgeIdIpt.addEventListener('input', () => {
-		createBtn.disabled = !badgeIdIpt.value?.trim();
-	});
+	updateCreateBtn();
+	badgeIdIpt.addEventListener('input', updateCreateBtn);
 
 	createBtn.addEventListener('click', async () => {
 		const badgeId = badgeIdIpt.value?.trim();
@@ -19,10 +17,15 @@ document.addEventListener('DOMContentLoaded', () => {
 			await createUser(badgeId);
 		} finally {
 			applyLoading(createBtn);
+			setTimeout(updateCreateBtn, 0);
 		}
 
 		badgeIdIpt.value = '';
 	});
+
+	function updateCreateBtn() {
+		createBtn.disabled = !badgeIdIpt.value?.trim();
+	}
 });
 
 export async function createUser(badge_id) {
