@@ -1,4 +1,4 @@
-import { sendPostRequest, Toast } from './shared';
+import { applyLoading, sendPostRequest, Toast } from './shared';
 
 document.addEventListener('DOMContentLoaded', () => {
 	const createBtn = document.getElementById('createUser');
@@ -13,7 +13,14 @@ document.addEventListener('DOMContentLoaded', () => {
 	createBtn.addEventListener('click', async () => {
 		const badgeId = badgeIdIpt.value?.trim();
 		if(!badgeId) return;
-		await createUser(badgeId);
+
+		applyLoading(createBtn, 'Creating user...');
+		try {
+			await createUser(badgeId);
+		} finally {
+			applyLoading(createBtn);
+		}
+
 		badgeIdIpt.value = '';
 	});
 });
@@ -21,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
 export async function createUser(badge_id) {
 	const data = await sendPostRequest(userStoreUrl, { badge_id });
 	Toast.fire({
-		text: `User (${data.user.badge_id}) created.`,
-		icon: "success"
+		text: `User (#${data.user.badge_id}) created.`,
+		icon: 'success',
 	});
 }
