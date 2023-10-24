@@ -91,6 +91,11 @@
 					<div class="card mt-3">
 						<h5 class="card-header">Add Gatekeeper</h5>
 						<div class="card-body">
+							<p>
+								Gatekeepers can view, add, and delete attendees in the log, but cannot manage gatekeepers themselves.
+								Any volunteer, not just staff, can be added as a gatekeeper.
+							</p>
+
 							<form action="{!! route('attendee-logs.users.store', $attendeeLog->id) !!}" method="POST" id="gatekeeperAdd" class="seamless">
 								@method('PUT')
 								@csrf
