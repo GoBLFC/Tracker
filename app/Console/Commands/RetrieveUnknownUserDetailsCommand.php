@@ -48,7 +48,7 @@ class RetrieveUnknownUserDetailsCommand extends Command implements Isolatable {
 		// Handle each user individually
 		$updatedUsers = 0;
 		foreach ($unknownUsers as $user) {
-			$updated = $this->updateUser($user, $registrations[(string) $user->badge_id]);
+			$updated = $this->updateUser($user, $registrations[(string) $user->badge_id] ?? null);
 			if ($updated) $updatedUsers++;
 		}
 
