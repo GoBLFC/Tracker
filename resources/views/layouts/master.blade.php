@@ -19,9 +19,9 @@
 
 	@prepend('modules')
 		@vite('resources/js/app.js')
-		@auth
+		@kiosk(true)
 			@vite('resources/js/auto-logout.js')
-		@endauth
+		@endkiosk
 	@endprepend
 	@stack('modules')
 </head>
