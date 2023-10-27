@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use App\Models\User;
+use App\Models\Kiosk;
 use App\Models\Setting;
 use App\Models\QuickCode;
 use Illuminate\View\View;
@@ -32,7 +33,7 @@ class AuthController extends Controller {
 
 		// Redirect the user to log out of ConCat if applicable
 		$token = session('conCatToken');
-		if ($token && !Setting::isDevMode()) {
+		if ($token && Kiosk::isSessionAuthorized() && !Setting::isDevMode()) {
 			session()->remove('conCatToken');
 			$concatUri = config('services.concat.instance_uri');
 			$concatId = config('services.concat.client_id');
