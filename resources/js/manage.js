@@ -110,6 +110,7 @@ async function loadVolunteer(id) {
 	$('#rewards button[data-reward-id]')
 		.addClass('btn-success')
 		.removeClass('btn-danger')
+		.data('claim-id', null)
 		.text('Claim');
 
 	$.each(claimData.reward_claims, function(key, val) {
