@@ -23,7 +23,7 @@ class TimeEntryStoreRequest extends FormRequest {
 		return [
 			'event_id' => 'sometimes|nullable|uuid|exists:App\Models\Event,id',
 			'department_id' => 'required|uuid|exists:App\Models\Department,id',
-			'start' => 'sometimes|nullable|required_with:stop|date|before_or_equal:now',
+			'start' => 'sometimes|nullable|required_with:stop|date',
 			'stop' => "sometimes|nullable|date|after:{$start}",
 			'notes' => 'sometimes|nullable|string|max:255',
 		];

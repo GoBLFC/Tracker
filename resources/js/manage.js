@@ -38,7 +38,6 @@ $(() => {
 
 	// Set up time pickers
 	timeStart = new TempusDominus(document.getElementById("timeStart"), {
-		restrictions: { maxDate: maxStartDate() },
 		localization: { format: 'yyyy-MM-dd hh:mm:ss T' },
 	});
 	timeStop = new TempusDominus(document.getElementById("timeStop"), { localization: { format: 'yyyy-MM-dd hh:mm:ss T' } });
@@ -47,11 +46,6 @@ $(() => {
 	timeStart.subscribe(TDNamespace.events.change, evt => {
 		timeStop.updateOptions({ restrictions: { minDate: evt.date } });
 	});
-
-	// Update the maximum datetime of the start time every 5 seconds
-	setInterval(() => {
-		timeStart.updateOptions({ restrictions: { maxDate: maxStartDate() } });
-	}, 5000);
 });
 
 function maxStartDate() {
