@@ -14,7 +14,7 @@ services:
       - redis
 
   postgres:
-    image: postgres:15
+    image: postgres:16
     restart: always
     env_file:
       - .docker/env/postgres.env
@@ -38,8 +38,8 @@ services:
     env_file:
       - .docker/env/nginx.env
     ports:
-      - '80:80'
-      - '443:443'
+      - '8001:80'
+      - '8002:443'
     volumes:
       - .docker/nginx/snippets:/etc/nginx/snippets
       - .docker/nginx/templates:/etc/nginx/templates

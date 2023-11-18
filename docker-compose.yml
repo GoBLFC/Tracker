@@ -19,7 +19,7 @@ services:
             XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
             IGNITION_LOCAL_SITES_PATH: '${PWD}'
         volumes:
-            - '.:/var/www/html'
+            - '.:/var/www/html:z'
         networks:
             - sail
         depends_on:
@@ -28,7 +28,7 @@ services:
             - mailpit
             - selenium
     pgsql:
-        image: 'postgres:15'
+        image: 'postgres:16'
         ports:
             - '${FORWARD_DB_PORT:-5432}:5432'
         environment:

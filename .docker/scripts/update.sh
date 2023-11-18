@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd "$(dirname "$0")/.."
+cd "$(dirname "$0")/../.."
 git pull
 docker compose -f docker-compose.prod.yml build
 docker compose -f docker-compose.prod.yml down
