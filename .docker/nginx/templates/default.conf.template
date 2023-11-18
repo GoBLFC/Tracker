@@ -12,7 +12,7 @@ server {
 
 	# Root path
 	location / {
-		return 301 https://${NGINX_HOST}$request_uri;
+		return 301 https://${NGINX_HOST}:${NGINX_EXTERNAL_HTTPS_PORT}$request_uri;
 	}
 
 	# Certbot ACME challenge path
@@ -39,7 +39,7 @@ server {
 
 	# Root path
 	location / {
-		return 301 https://${NGINX_HOST}$request_uri;
+		return 301 https://${NGINX_HOST}:${NGINX_EXTERNAL_HTTPS_PORT}$request_uri;
 	}
 
 	# Certbot ACME challenge path
@@ -58,7 +58,7 @@ server {
 	ssl_certificate_key /etc/letsencrypt/live/${NGINX_HOST}/privkey.pem;
 	include snippets/ssl.conf;
 
-	return 301 https://${NGINX_HOST}$request_uri;
+	return 301 https://${NGINX_HOST}:${NGINX_EXTERNAL_HTTPS_PORT}$request_uri;
 }
 
 server {
