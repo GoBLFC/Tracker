@@ -143,7 +143,6 @@ The important ones that will most likely need to be filled in are the ConCat and
 
 #### ConCat Config
 1. Create a ConCat account on your ConCat instance for OAuth and ensure it has developer authorization.
-	- For BLFC, use our [test ConCat](https://reg.gobltc.com) instance and ask Glitch, Levi, or Gawdl3y for authorization.
 1. Add a new OAuth App at `Housekeeping` -> `Developers` -> `OAuth Applications` -> `Create New`
 	- Use `http://localhost` for the callback URL
 	- Select the `registration:read` and `volunteer:read` application permissions
