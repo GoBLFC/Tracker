@@ -138,10 +138,9 @@ class TimeEntry extends UuidModel {
 	/**
 	 * Calculate the duration (in seconds) of the time entry.
 	 * If it's ongoing, it will be calculated up to the current time.
-	 * @return integer
 	 */
-	public function getDuration(): int {
-		return ($this->stop ?? now())->diffInSeconds($this->start);
+	public function getDuration(): float {
+		return $this->start->diffInSeconds($this->stop ?? now());
 	}
 
 	/**
@@ -153,8 +152,6 @@ class TimeEntry extends UuidModel {
 
 	/**
 	 * Get a clock-like representation of the time entry's duration (formatted like "5:06:32")
-	 *
-	 * @return string
 	 */
 	public function getClockDuration(): string {
 		return static::clockDuration($this->getDuration());
@@ -201,17 +198,16 @@ class TimeEntry extends UuidModel {
 	 * Get the amount of time the entry has run (in seconds) since the day boundary.
 	 * If it doesn't cross the day boundary at all, then this will return 0.
 	 */
-	public function getSecondsPastDayBoundary(int $dayBoundaryHour = null): int {
+	public function getSecondsPastDayBoundary(int $dayBoundaryHour = null): float {
 		if (!$dayBoundaryHour) $dayBoundaryHour = config('tracker.day_boundary_hour');
 		if (!$this->isCrossingDayBoundary($dayBoundaryHour)) return 0;
 
 		$tz = config('tracker.timezone');
 		$stop = $this->stop?->avoidMutation()?->timezone($tz) ?? now($tz);
-		return $stop->diffInSeconds(
-			$stop->avoidMutation()
-				->startOfDay()
-				->addHours($dayBoundaryHour)
-		);
+		return $stop->avoidMutation()
+			->startOfDay()
+			->addHours($dayBoundaryHour)
+			->diffInSeconds($stop);
 	}
 
 	/**
@@ -276,10 +272,6 @@ class TimeEntry extends UuidModel {
 	 * Get a human-friendly representation of a duration of time (formatted like "6h 40m")
 	 */
 	public static function humanDuration(int $seconds): string {
-		// Round down to the nearest minute
-		$seconds -= $seconds % 60;
-		// Intervals don't seem to support 0 values, instead becoming 1s
-		if ($seconds === 0) return '0m';
 		return CarbonInterval::seconds($seconds)->cascade()->forHumans([
 			'short' => true,
 			'skip' => ['day'],

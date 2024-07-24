@@ -11,6 +11,7 @@
 		"laravel/socialite": "^5.15",
 		"laravel/tinker": "^2.9",
 		"maatwebsite/excel": "^3.1",
+		"nesbot/carbon": "^3.7",
 		"ramsey/uuid": "*",
 		"socialiteproviders/manager": "^4.6",
 		"spatie/laravel-activitylog": "^4.7"
