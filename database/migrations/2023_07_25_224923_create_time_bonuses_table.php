@@ -13,7 +13,7 @@ return new class extends Migration {
 			$table->uuid('id')->primary();
 			$table->timestamp('start');
 			$table->timestamp('stop');
-			$table->float('modifier', 4, 2);
+			$table->float('modifier');
 			$table->foreignUuid('event_id')->constrained()->cascadeOnDelete();
 			$table->timestamps();
 		});
