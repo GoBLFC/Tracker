@@ -31,14 +31,5 @@ class DatabaseSeeder extends Seeder {
 				->recycle($events)
 				->recycle($departments)
 		)->create();
-
-		// Create an admin user for Gawdl3y with some fake info that will be overwritten upon auth
-		\App\Models\User::factory()->telegramUnlinked()->create([
-			'badge_id' => 19,
-			'username' => 'gawdl3y',
-			'first_name' => 'Bob',
-			'last_name' => 'Malooga',
-			'role' => \App\Models\Role::Admin,
-		]);
 	}
 }
