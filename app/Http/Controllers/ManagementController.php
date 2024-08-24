@@ -182,7 +182,7 @@ class ManagementController extends Controller {
 	/**
 	 * Render a report
 	 */
-	public function getAdminReport(?Event $event = null, string $reportType) {
+	public function getAdminReport(?Event $event, string $reportType) {
 		// Get the event and redirect to the page for the active event, if applicable
 		if (!$event || !$event->id) {
 			$event = Setting::activeEvent();
@@ -207,7 +207,7 @@ class ManagementController extends Controller {
 	/**
 	 * Provide an exported report file to download
 	 */
-	public function getAdminReportExport(?Event $event = null, string $reportType, string $fileType): BinaryFileResponse {
+	public function getAdminReportExport(?Event $event, string $reportType, string $fileType): BinaryFileResponse {
 		// Get the event and redirect to the page for the active event, if applicable
 		if (!$event || !$event->id) {
 			$event = Setting::activeEvent();
