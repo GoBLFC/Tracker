@@ -25,7 +25,6 @@ services:
             - pgsql
             - redis
             - mailpit
-            - selenium
     pgsql:
         image: 'postgres:16'
         ports:
@@ -71,14 +70,6 @@ services:
         ports:
             - '${FORWARD_MAILPIT_PORT:-1025}:1025'
             - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
-        networks:
-            - sail
-    selenium:
-        image: selenium/standalone-chrome
-        extra_hosts:
-            - 'host.docker.internal:host-gateway'
-        volumes:
-            - '/dev/shm:/dev/shm'
         networks:
             - sail
 networks:
