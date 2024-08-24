@@ -62,7 +62,7 @@ Follow this procedure to properly upgrade the database (starting with the server
 ## Manual Setup
 ### Requirements
 - A web server, such as Nginx or Apache
-- PHP 8.1+ with the following extensions:
+- PHP 8.2+ with the following extensions:
 	* PDO + your database extension of choice
 	* openssl
 	* ctype
@@ -125,7 +125,7 @@ Follow this procedure to properly upgrade the database (starting with the server
 1. Run `php artisan up` to pull the application out of maintenace mode.
 
 ## Development Setup
-The development environment uses [Laravel Sail](https://laravel.com/docs/10.x/sail), a containerized environment with a script and easy-to-use commands for interacting with it.
+The development environment uses [Laravel Sail](https://laravel.com/docs/11.x/sail), a containerized environment with a script and easy-to-use commands for interacting with it.
 
 ### Pre-requisites
 - **All platforms:** [Docker](https://www.docker.com/)
@@ -172,10 +172,10 @@ Whenever using a Sail command, if you don't have an alias setup, use `sh vendor/
 	- If you see an Apache/nginx/etc. splash screen, ensure you don't already have a web server bound to port 80.
 
 ### Development Tips
-- Using `php artisan tinker` or `sail artisan tinker` will present a PHP REPL with the application bootstrapped, allowing you to mess with any part of the application and see the result of code in real-time. See [the Artisan documentation](https://laravel.com/docs/10.x/artisan#tinker) for more information.
+- Using `php artisan tinker` or `sail artisan tinker` will present a PHP REPL with the application bootstrapped, allowing you to mess with any part of the application and see the result of code in real-time. See [the Artisan documentation](https://laravel.com/docs/11.x/artisan#tinker) for more information.
 - The helpers `dump(...)` and `dd(...)` can be extremely helpful for debugging the application. The former pretty-prints a representation of any data passed to it with full HTML formatting, and the latter does the same but also immediately halts further execution of the application. Collections and Carbon instances also have `->dump()` and `->dd()` methods.
-- Use `php artisan make:migration` or `sail artisan make:migration` to create a new database migration. See [the migrations documentation](https://laravel.com/docs/10.x/migrations) for more information.
-- The Laravel [documentation](https://laravel.com/docs/10.x) and [API documentation](https://laravel.com/api/10.x/) will be very helpful if you're not already familiar with the framework.
+- Use `php artisan make:migration` or `sail artisan make:migration` to create a new database migration. See [the migrations documentation](https://laravel.com/docs/11.x/migrations) for more information.
+- The Laravel [documentation](https://laravel.com/docs/11.x) and [API documentation](https://laravel.com/api/11.x/) will be very helpful if you're not already familiar with the framework.
 
 ## Architecture Overview
 Since Laravel is an MVC (Model, View, Controller) framework, that structure is generally adhered to.
@@ -295,13 +295,13 @@ During development, `php artisan telegram:poll` can be used instead of the webho
 This allows the Telegram bot to be tested without needing the application to be externally accessible to the internet.
 
 ## Glossary
-- [Artisan](https://laravel.com/docs/10.x/artisan) - Laravel command line helper application (Used to run Sail)
-- [Blade](https://laravel.com/docs/10.x/blade) - The built-in view templating engine in Laravel
+- [Artisan](https://laravel.com/docs/11.x/artisan) - Laravel command line helper application (Used to run Sail)
+- [Blade](https://laravel.com/docs/11.x/blade) - The built-in view templating engine in Laravel
 - [Carbon](https://carbon.nesbot.com/docs/) - Fluent datetime library written in PHP (Laravel uses this by default for all datetimes)
 - [Docker](https://www.docker.com/) - Container engine and other utilities for running containerized applications
-- [Eloquent](https://laravel.com/docs/10.x/eloquent) - Laravel's built-in fluent ORM for interacting with the database
+- [Eloquent](https://laravel.com/docs/11.x/eloquent) - Laravel's built-in fluent ORM for interacting with the database
 - [Laravel](https://laravel.com/) - Web application framework written in PHP
-- [Sail](https://laravel.com/docs/10.x/sail) - Laravel system that manages a development container, proxying commands into the container
+- [Sail](https://laravel.com/docs/11.x/sail) - Laravel system that manages a development container, proxying commands into the container
 - [Sass/SCSS](https://sass-lang.com/) - Preprocessed extension language for CSS
 - [Telegram](https://telegram.org/) - Instant messenger that Tracker provides a bot for interacting with
 - [UUIDv7](https://www.ietf.org/archive/id/draft-peabody-dispatch-new-uuid-format-01.html#name-uuidv7-layout-and-bit-order) - Universally Unique Identifier, version 7
