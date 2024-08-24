@@ -4,26 +4,26 @@
 	"license": "AGPL-3.0-only",
 	"require": {
 		"php": "^8.2",
-		"dompdf/dompdf": "^2.0",
-		"guzzlehttp/guzzle": "^7.2",
-		"irazasyed/telegram-bot-sdk": "^3.13",
-		"laravel/framework": "^11.17",
+		"dompdf/dompdf": "^3.0",
+		"guzzlehttp/guzzle": "^7.9",
+		"irazasyed/telegram-bot-sdk": "^3.14",
+		"laravel/framework": "^11.21",
 		"laravel/socialite": "^5.15",
 		"laravel/tinker": "^2.9",
 		"maatwebsite/excel": "^3.1",
-		"nesbot/carbon": "^3.7",
+		"nesbot/carbon": "^3.8",
 		"ramsey/uuid": "*",
 		"socialiteproviders/manager": "^4.6",
-		"spatie/laravel-activitylog": "^4.7"
+		"spatie/laravel-activitylog": "^4.8"
 	},
 	"require-dev": {
 		"barryvdh/laravel-debugbar": "^3.13",
-		"fakerphp/faker": "^1.9.1",
+		"fakerphp/faker": "^1.23",
 		"laravel/pint": "^1.17",
 		"laravel/sail": "^1.31",
-		"mockery/mockery": "^1.4.4",
-		"nunomaduro/collision": "^8.1",
-		"phpunit/phpunit": "^10.1",
+		"mockery/mockery": "^1.6",
+		"nunomaduro/collision": "^8.4",
+		"phpunit/phpunit": "^11.3",
 		"spatie/laravel-ignition": "^2.8"
 	},
 	"autoload": {
