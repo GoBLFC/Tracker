@@ -13,7 +13,7 @@ ENV NODE_ENV=production
 RUN npm run build
 
 # Set up the application
-FROM php:8.2-fpm AS app
+FROM php:8.3-fpm AS app
 WORKDIR /var/www/html
 
 # Install necessary packages and PHP extensions
@@ -32,7 +32,7 @@ RUN apt update \
 RUN docker-php-ext-configure pgsql --with-pgsql=/usr/local/pgsql && docker-php-ext-install -j$(nproc) pdo_pgsql
 RUN docker-php-ext-configure zip && docker-php-ext-install -j$(nproc) zip
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg && docker-php-ext-install -j$(nproc) gd
-RUN pecl install redis-5.3.7 && docker-php-ext-enable redis
+RUN pecl install redis-6.0.2 && docker-php-ext-enable redis
 
 # Override some PHP configuration
 COPY .docker/fpm-overrides.conf /usr/local/etc/php-fpm.d/zzz-overrides.conf
