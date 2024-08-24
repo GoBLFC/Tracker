@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Event;
 use App\Facades\ConCat;
 use App\Models\Setting;
+use App\Reports\Report;
 use Illuminate\View\View;
 use App\Models\AttendeeLog;
 use Illuminate\Support\Str;
@@ -45,7 +46,7 @@ class AttendeeLogController extends Controller {
 		$this->authorize('view', $attendeeLog);
 		return request()->expectsJson()
 			? response()->json(['attendee_log' => $attendeeLog])
-			: view('attendee-logs.view', ['attendeeLog' => $attendeeLog]);
+			: view('attendee-logs.view', ['attendeeLog' => $attendeeLog, 'exportTypes' => Report::EXPORT_FILE_TYPES]);
 	}
 
 	/**

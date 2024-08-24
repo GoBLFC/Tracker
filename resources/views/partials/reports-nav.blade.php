@@ -1,6 +1,8 @@
 <nav>
 	<ul class="list-unstyled row g-2 g-md-4 mb-4">
 		@foreach($reports as $slug => $class)
+			@if($class::hide()) @continue @endif
+
 			<li class="col">
 				@php($selected = isset($reportType) && $reportType === $slug)
 				@php($classes = ['btn', 'w-100', 'h-100', 'btn-outline-info' => !$selected, 'btn-info' => $selected])

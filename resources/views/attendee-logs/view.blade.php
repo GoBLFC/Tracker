@@ -59,7 +59,29 @@
 			@endif
 
 			<div class="card">
-				<h5 class="card-header">{{ $attendeeLog->display_name }}</h5>
+				<div class="card-header d-flex justify-content-between align-items-center">
+					<h5 class="mb-0">{{ $attendeeLog->display_name }}</h5>
+
+					<div class="btn-group" role="group">
+						<button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+							Export
+						</button>
+						<ul class="dropdown-menu">
+							@foreach($exportTypes as $extension => $label)
+								@php($route = route('admin.event.reports.export', [$attendeeLog->event_id, 'attendee-log', $extension]))
+								<li><a class="dropdown-item" href="{!!
+									route('admin.event.reports.export', [
+										$attendeeLog->event_id,
+										'attendee-log',
+										$extension,
+										'id' => $attendeeLog->id,
+									])
+								!!}">{{ $label }}</a></li>
+							@endforeach
+						</ul>
+					</div>
+				</div>
+
 				<div id="users-body" class="card-body p-0 {!! $attendeeLog->users->isEmpty() ? 'd-none' : '' !!}">
 					<div class="table-responsive">
 						<table class="table table-dark table-striped w-100 mb-0">

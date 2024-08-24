@@ -10,6 +10,19 @@ abstract class Report implements WithProperties {
 	use Exportable, ToCollection;
 
 	/**
+	 * File types that reports can be exported as (file extension => pretty name)
+	 *
+	 * @property array<string, string>
+	 */
+	public const EXPORT_FILE_TYPES = [
+		'xlsx' => 'Excel',
+		'ods' => 'LibreOffice',
+		'csv' => 'CSV',
+		'pdf' => 'PDF',
+		'html' => 'HTML',
+	];
+
+	/**
 	 * Get the name of the report
 	 */
 	public static abstract function name(): string;
@@ -18,6 +31,13 @@ abstract class Report implements WithProperties {
 	 * Get a URL-friendly slug to represent the report
 	 */
 	public static abstract function slug(): string;
+
+	/**
+	 * Determine whether the report should be hidden from the list of possible reports
+	 */
+	public static function hide(): bool {
+		return false;
+	}
 
 	/**
 	 * Get the default column index to sort by

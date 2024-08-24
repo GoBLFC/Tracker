@@ -14,6 +14,7 @@ use Illuminate\View\View;
 use App\Models\Department;
 use App\Reports\EventReport;
 use App\Reports\AuditLogReport;
+use App\Reports\AttendeeLogReport;
 use App\Reports\VolunteerTimeReport;
 use Illuminate\Http\RedirectResponse;
 use App\Reports\Concerns\WithExtraParam;
@@ -32,14 +33,7 @@ class ManagementController extends Controller {
 		'applications' => VolunteerApplicationsReport::class,
 		'application-departments' => VolunteerApplicationDepartmentSummaryReport::class,
 		'audit' => AuditLogReport::class,
-	];
-
-	public const REPORT_FILE_TYPES = [
-		'xlsx' => 'Excel',
-		'ods' => 'LibreOffice',
-		'csv' => 'CSV',
-		'pdf' => 'PDF',
-		'html' => 'HTML',
+		'attendee-log' => AttendeeLogReport::class,
 	];
 
 	/**
@@ -200,7 +194,7 @@ class ManagementController extends Controller {
 			'event' => $event,
 			'events' => Event::all(),
 			'reports' => static::REPORTS,
-			'exportTypes' => static::REPORT_FILE_TYPES,
+			'exportTypes' => Report::EXPORT_FILE_TYPES,
 		]);
 	}
 
@@ -219,7 +213,7 @@ class ManagementController extends Controller {
 		if (!$reportClass) abort(404);
 
 		// Validate the file type
-		if (!isset(static::REPORT_FILE_TYPES[$fileType])) abort(404);
+		if (!isset(Report::EXPORT_FILE_TYPES[$fileType])) abort(404);
 
 		$report = $this->createReport($event, $reportClass);
 		return $report->download($report->filename($fileType));
