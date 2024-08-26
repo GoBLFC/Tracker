@@ -3,7 +3,7 @@ import QRCode from 'qrcode';
 
 document.addEventListener('DOMContentLoaded', () => {
 	const modal = document.getElementById('telegramModal');
-	const canvas = document.getElementById('tgQrCanvas');
+	const canvas = document.getElementById('telegramQrCanvas');
 
 	modal.addEventListener('show.bs.modal', async () => {
 		try {

@@ -7,7 +7,7 @@
 			</div>
 
 			<div class="modal-body">
-				<canvas id="tgQrCanvas" class="img-fluid img-thumbnail d-block mx-auto mb-4"></canvas>
+				<canvas id="telegramQrCanvas" class="img-fluid img-thumbnail d-block mx-auto mb-4"></canvas>
 
 				<p>
 					Scanning the above QR code will give you a URL to add the Telegram bot and link your Telegram profile to your volunteer account automatically.
