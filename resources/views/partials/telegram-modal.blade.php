@@ -7,14 +7,7 @@
 			</div>
 
 			<div class="modal-body">
-				<img
-					src="https://chart.googleapis.com/chart?chs=400x400&cht=qr&chld=L|1&chl={!! urlencode(Auth::user()->getTelegramSetupUrl()) !!}"
-					width="400"
-					height="400"
-					class="img-fluid img-thumbnail d-block mx-auto mb-4"
-					title="Opens Telegram to add bot"
-					alt="QR Code"
-					loading="lazy" />
+				<canvas id="tgQrCanvas" class="img-fluid img-thumbnail d-block mx-auto mb-4"></canvas>
 
 				<p>
 					Scanning the above QR code will give you a URL to add the Telegram bot and link your Telegram profile to your volunteer account automatically.
@@ -41,3 +34,13 @@
 		</div>
 	</div>
 </div>
+
+@push('modules')
+	@vite('resources/js/telegram-modal.js')
+@endpush
+
+@push('scripts')
+	<script type="text/javascript">
+		const tgSetupUrl = '{!! Auth::user()->getTelegramSetupUrl() !!}';
+	</script>
+@endpush
