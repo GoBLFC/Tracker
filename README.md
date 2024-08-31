@@ -104,7 +104,7 @@ Follow this procedure to properly upgrade the database (starting with the server
 1. To greatly improve boot performance of the application on each hit, run the following:
 	- `php artisan config:cache` to cache the fully-resolved configuration to a file
 	- `php artisan route:cache` to cache the routes to a file
-	- `php artisan event:cache` to cache the auto-discovered event listeners to a file (not used at the moment)
+	- `php artisan event:cache` to cache the auto-discovered event listeners to a file
 	- `php artisan view:cache` to pre-compile and cache all of the Blade templates
 
 ### Updating
@@ -120,7 +120,7 @@ Follow this procedure to properly upgrade the database (starting with the server
 1. To greatly improve boot performance of the application on each hit, run the following:
 	- `php artisan config:cache` to cache the fully-resolved configuration to a file
 	- `php artisan route:cache` to cache the routes to a file
-	- `php artisan event:cache` to cache the auto-discovered event listeners to a file (not used at the moment)
+	- `php artisan event:cache` to cache the auto-discovered event listeners to a file
 	- `php artisan view:cache` to pre-compile and cache all of the Blade templates
 1. Run `php artisan up` to pull the application out of maintenace mode.
 
