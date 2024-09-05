@@ -2,7 +2,7 @@ import { applyLoading, sendPostRequest, Toast } from './shared';
 
 document.addEventListener('DOMContentLoaded', () => {
 	const createBtn = document.getElementById('createUser');
-	if(!createBtn) return;
+	if (!createBtn) return;
 	const badgeIdIpt = createBtn.parentElement.querySelector('input[type="text"]');
 
 	updateCreateBtn();
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	createBtn.addEventListener('click', async () => {
 		const badgeId = badgeIdIpt.value?.trim();
-		if(!badgeId) return;
+		if (!badgeId) return;
 
 		applyLoading(createBtn, 'Creating user...');
 		try {

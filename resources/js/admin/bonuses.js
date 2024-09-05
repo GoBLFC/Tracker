@@ -2,12 +2,14 @@ import { TempusDominus, Namespace as TDNamespace } from '@eonasdan/tempus-dominu
 
 document.addEventListener('DOMContentLoaded', () => {
 	const deleteForms = document.querySelectorAll('form.delete');
-	for(const form of deleteForms) {
-		form.addEventListener('seamlessSuccess', () => { form.closest('tr').remove(); });
+	for (const form of deleteForms) {
+		form.addEventListener('seamlessSuccess', () => {
+			form.closest('tr').remove();
+		});
 	}
 
 	const updateForms = document.querySelectorAll('form.update');
-	for(const form of updateForms) {
+	for (const form of updateForms) {
 		const updateBtn = form.querySelector('button[type="submit"]');
 		const row = form.closest('tr');
 		const start = row.querySelector('.bonusStart');
@@ -17,17 +19,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		const timeStart = new TempusDominus(start, { localization: { format: 'yyyy-MM-dd hh:mm:ss T' } });
 		const timeStop = new TempusDominus(stop, { localization: { format: 'yyyy-MM-dd hh:mm:ss T' } });
-		timeStart.subscribe(TDNamespace.events.change, evt => {
+		timeStart.subscribe(TDNamespace.events.change, (evt) => {
 			timeStop.updateOptions({ restrictions: { minDate: evt.date } });
 		});
 
 		updateBtn.disabled = true;
-		timeStart.subscribe(TDNamespace.events.change, () => { updateBtn.disabled = false; });
-		timeStop.subscribe(TDNamespace.events.change, () => { updateBtn.disabled = false; });
-		modifier.addEventListener('input', () => { updateBtn.disabled = false; });
-		departments.addEventListener('input', () => { updateBtn.disabled = false; });
+		timeStart.subscribe(TDNamespace.events.change, () => {
+			updateBtn.disabled = false;
+		});
+		timeStop.subscribe(TDNamespace.events.change, () => {
+			updateBtn.disabled = false;
+		});
+		modifier.addEventListener('input', () => {
+			updateBtn.disabled = false;
+		});
+		departments.addEventListener('input', () => {
+			updateBtn.disabled = false;
+		});
 		form.addEventListener('seamlessSuccess', () => {
-			setTimeout(() => { updateBtn.disabled = true; }, 0);
+			setTimeout(() => {
+				updateBtn.disabled = true;
+			}, 0);
 		});
 	}
 
@@ -40,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	const timeStart = new TempusDominus(start, { localization: { format: 'yyyy-MM-dd hh:mm:ss T' } });
 	const timeStop = new TempusDominus(stop, { localization: { format: 'yyyy-MM-dd hh:mm:ss T' } });
-	timeStart.subscribe(TDNamespace.events.change, evt => {
+	timeStart.subscribe(TDNamespace.events.change, (evt) => {
 		timeStop.updateOptions({ restrictions: { minDate: evt.date } });
 	});
 
@@ -49,9 +61,15 @@ document.addEventListener('DOMContentLoaded', () => {
 	timeStop.subscribe(TDNamespace.events.change, updateCreateBtn);
 	modifier.addEventListener('input', updateCreateBtn);
 	departments.addEventListener('input', updateCreateBtn);
-	createForm.addEventListener('seamlessSuccess', () => { window.location.reload(); });
+	createForm.addEventListener('seamlessSuccess', () => {
+		window.location.reload();
+	});
 
 	function updateCreateBtn() {
-		createBtn.disabled = !timeStart.dates.picked[0] || !timeStop.dates.picked[0] || !modifier.checkValidity() || departments.selectedOptions.length < 1;
+		createBtn.disabled =
+			!timeStart.dates.picked[0] ||
+			!timeStop.dates.picked[0] ||
+			!modifier.checkValidity() ||
+			departments.selectedOptions.length < 1;
 	}
 });

@@ -15,7 +15,7 @@ toggleKioskBtn.addEventListener('click', async () => {
 			text: isKiosk ? 'Kiosk authorized.' : 'Kiosk deauthorized.',
 			icon: 'success',
 		});
-	} catch(err) {
+	} catch (err) {
 		console.error(err);
 	} finally {
 		toggleKioskBtn.classList.toggle('btn-danger', isKiosk);
@@ -23,7 +23,7 @@ toggleKioskBtn.addEventListener('click', async () => {
 		toggleKioskBtn.textContent = `${isKiosk ? 'Deauthorize' : 'Authorize'} Kiosk`;
 		toggleKioskBtn.disabled = false;
 
-		if(devKioskStatus) {
+		if (devKioskStatus) {
 			devKioskStatus.textContent = `Kiosk: ${isKiosk ? 'Authorized' : 'Unauthorized'}`;
 			devKioskStatus.classList.toggle('text-bg-danger', !isKiosk);
 			devKioskStatus.classList.toggle('text-bg-success', isKiosk);

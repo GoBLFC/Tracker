@@ -5,12 +5,15 @@ document.addEventListener('DOMContentLoaded', () => {
 	const roleButtons = document.querySelectorAll('button[data-role]');
 
 	// Make buttons go
-	for(const btn of roleButtons) btn.addEventListener('click', () => { handleSetRole(btn) });
+	for (const btn of roleButtons)
+		btn.addEventListener('click', () => {
+			handleSetRole(btn);
+		});
 
 	// Enable/disable the buttons depending on whether a badge number has been provided
 	badgeNumberInput.addEventListener('input', () => {
 		const value = badgeNumberInput.value.trim();
-		for(const btn of roleButtons) btn.disabled = !value;
+		for (const btn of roleButtons) btn.disabled = !value;
 	});
 });
 
@@ -20,13 +23,14 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 async function handleSetRole(btn) {
 	const role = Number(btn.getAttribute('data-role'));
-	const badgeId = role === 0
-		? btn.closest('tr').getAttribute('data-user-id')
-		: Number(document.getElementById('badgeNumber').value.trim());
+	const badgeId =
+		role === 0
+			? btn.closest('tr').getAttribute('data-user-id')
+			: Number(document.getElementById('badgeNumber').value.trim());
 
 	// Disable all the buttons
 	const roleButtons = document.querySelectorAll('button[data-role]');
-	for(const btn of roleButtons) btn.disabled = true;
+	for (const btn of roleButtons) btn.disabled = true;
 
 	// Store the original label and show the loading indicator
 	btn.setAttribute('data-original-text', btn.textContent);
@@ -39,11 +43,10 @@ async function handleSetRole(btn) {
 		addUserToTable(user);
 	} finally {
 		// Reset the buttons
-		for(const btn of roleButtons) btn.disabled = false;
+		for (const btn of roleButtons) btn.disabled = false;
 		btn.textContent = btn.getAttribute('data-original-text');
 	}
 }
-
 
 /**
  * Sends a request to update the role of a user by their UUID or badge ID
@@ -86,7 +89,9 @@ function addUserToTable(user) {
 	deleteBtn.textContent = 'Remove';
 	deleteBtn.classList.add('btn', 'btn-sm', 'btn-danger', 'float-end');
 	deleteBtn.setAttribute('data-role', 0);
-	deleteBtn.addEventListener('click', () => { handleSetRole(deleteBtn); })
+	deleteBtn.addEventListener('click', () => {
+		handleSetRole(deleteBtn);
+	});
 	actionsCell.append(deleteBtn);
 
 	row.append(idCell, usernameCell, realNameCell, actionsCell);
@@ -95,7 +100,7 @@ function addUserToTable(user) {
 	tbody.append(row);
 
 	// If this is the first row, show the table and hide the no items placeholder
-	if(tbody.childElementCount === 1) {
+	if (tbody.childElementCount === 1) {
 		const tableCardBody = tbody.closest('.card-body');
 		const placeholderCardBody = tableCardBody.parentElement.querySelector('.card-body.placeholder');
 		tableCardBody.classList.remove('d-none');
@@ -109,18 +114,17 @@ function addUserToTable(user) {
  */
 function removeUserFromTables(user) {
 	const rows = document.querySelectorAll(`tr[data-user-id="${user.id}"]`);
-	for(const row of rows) {
+	for (const row of rows) {
 		// Get the parent tbody then remove the row
 		const tbody = row.closest('tbody');
 		row.remove();
 
 		// If there aren't any more rows, hide the table and show the no items placeholder
-		if(tbody.childElementCount === 0) {
+		if (tbody.childElementCount === 0) {
 			const tableCardBody = tbody.closest('.card-body');
 			const placeholderCardBody = tableCardBody.parentElement.querySelector('.card-body.placeholder');
 			tableCardBody.classList.add('d-none');
 			placeholderCardBody.classList.remove('d-none');
 		}
 	}
-
 }
