@@ -2,12 +2,12 @@
 
 namespace App\Reports\Concerns;
 
-use RangeException;
 use Illuminate\Support\Collection;
-use Maatwebsite\Excel\Concerns\FromQuery;
-use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromQuery;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
+use RangeException;
 
 trait ToCollection {
 	/**
@@ -65,7 +65,7 @@ trait ToCollection {
 		$data['body'] = $collection;
 		if ($this instanceof WithHeadings) $data['head'] = new Collection($this->headings());
 		if ($this instanceof WithTotals) {
-			$data['totals'] = new Collection();
+			$data['totals'] = new Collection;
 			$data['totals'][] = $this->totalsLabel();
 
 			$functions = $this->totalsFunctions();

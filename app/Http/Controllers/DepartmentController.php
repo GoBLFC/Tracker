@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Department;
-use Illuminate\Http\JsonResponse;
 use App\Http\Requests\DepartmentStoreRequest;
 use App\Http\Requests\DepartmentUpdateRequest;
+use App\Models\Department;
+use Illuminate\Http\JsonResponse;
 
 class DepartmentController extends Controller {
 	public function __construct() {

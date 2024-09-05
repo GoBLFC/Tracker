@@ -2,12 +2,12 @@
 
 namespace App\Console\Commands;
 
-use App\Models\User;
-use App\Models\Setting;
-use Illuminate\Support\Str;
-use Illuminate\Console\Command;
 use App\Console\LogFriendlyOutput;
+use App\Models\Setting;
+use App\Models\User;
 use App\Notifications\RewardAvailable;
+use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 
 class NotifyEligibleRewardsCommand extends Command {
 	use LogFriendlyOutput;

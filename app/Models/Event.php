@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use Spatie\Activitylog\LogOptions;
 use App\Models\Contracts\HasDisplayName;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
  * @property string $name
@@ -49,7 +49,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
  * @method static null|static find($id, $columns = ['*'])
  */
 class Event extends UuidModel implements HasDisplayName {
-	use HasFactory, SoftDeletes, LogsActivity;
+	use HasFactory, LogsActivity, SoftDeletes;
 
 	protected $fillable = [
 		'name',

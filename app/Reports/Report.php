@@ -25,12 +25,12 @@ abstract class Report implements WithProperties {
 	/**
 	 * Get the name of the report
 	 */
-	public static abstract function name(): string;
+	abstract public static function name(): string;
 
 	/**
 	 * Get a URL-friendly slug to represent the report
 	 */
-	public static abstract function slug(): string;
+	abstract public static function slug(): string;
 
 	/**
 	 * Determine whether the report should be hidden from the list of possible reports

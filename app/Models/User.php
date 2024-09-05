@@ -3,30 +3,30 @@
 namespace App\Models;
 
 use App\Facades\ConCat;
-use Illuminate\Support\Str;
-use Illuminate\Support\Carbon;
-use Spatie\Activitylog\LogOptions;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Auth\Authenticatable;
-use Illuminate\Support\Facades\Cache;
 use App\Models\Contracts\HasAuditName;
-use App\Notifications\RewardAvailable;
 use App\Models\Contracts\HasDisplayName;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Builder;
-use Telegram\Bot\Laravel\Facades\Telegram;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\Activitylog\Traits\CausesActivity;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Foundation\Auth\Access\Authorizable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use SocialiteProviders\Manager\OAuth2\User as OAuthUser;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use App\Notifications\RewardAvailable;
+use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\Access\Authorizable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use SocialiteProviders\Manager\OAuth2\User as OAuthUser;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\CausesActivity;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Telegram\Bot\Laravel\Facades\Telegram;
 
 /**
  * @property int $badge_id
@@ -75,15 +75,13 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
  * @method static static findOrNew($id, $columns = ['*'])
  * @method static null|static find($id, $columns = ['*'])
  */
-class User extends UuidModel implements AuthenticatableContract, AuthorizableContract, HasDisplayName, HasAuditName {
-	use HasFactory, SoftDeletes, Authenticatable, Authorizable, Notifiable, LogsActivity, CausesActivity;
+class User extends UuidModel implements AuthenticatableContract, AuthorizableContract, HasAuditName, HasDisplayName {
+	use Authenticatable, Authorizable, CausesActivity, HasFactory, LogsActivity, Notifiable, SoftDeletes;
 
 	public $incrementing = false;
-
 	protected $casts = [
 		'role' => Role::class,
 	];
-
 	protected $fillable = [
 		'badge_id',
 		'username',
@@ -92,12 +90,10 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 		'badge_name',
 		'role',
 	];
-
 	protected $hidden = [
 		'tg_setup_key',
 		'tg_chat_id',
 	];
-
 	private ?bool $isGatekeeperCache = null;
 
 	protected static function boot() {
@@ -179,7 +175,7 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 
 	/**
 	 * Check whether the user should have access to a role's features
-	 * @param Role $role
+	 *
 	 * @param bool [$strict=false] Whether to check specifically for the given role
 	 */
 	public function isRole(Role $role, bool $strict = false): bool {
@@ -189,6 +185,7 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 
 	/**
 	 * Check whether the user should have access to admin features
+	 *
 	 * @param bool [$strict=false] Whether to check specifically for the admin role
 	 */
 	public function isAdmin($strict = false): bool {
@@ -197,6 +194,7 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 
 	/**
 	 * Check whether the user should have access to manager features
+	 *
 	 * @param bool [$strict=false] Whether to check specifically for the manager role
 	 */
 	public function isManager($strict = false): bool {
@@ -205,6 +203,7 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 
 	/**
 	 * Check whether the user should have access to lead features
+	 *
 	 * @param bool [$strict=false] Whether to check specifically for the lead role
 	 */
 	public function isLead($strict = false): bool {
@@ -223,7 +222,7 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 	 */
 	public function isGatekeeper(): bool {
 		if ($this->isGatekeeperCache !== null) return $this->isGatekeeperCache;
-		$this->isGatekeeperCache =  $this->isManager()
+		$this->isGatekeeperCache = $this->isManager()
 			|| $this->attendeeLogs()->forEvent()->wherePivot('type', 'gatekeeper')->exists();
 		return $this->isGatekeeperCache;
 	}
@@ -237,10 +236,11 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 
 	/**
 	 * Get the total earned time (in seconds) for an event
+	 *
 	 * @param ?Event $event Event to get the earned time for - if null, then the active event will be used
 	 * @param ?Collection $timeEntries Time entries to look through (to avoid extra queries if already retrieved)
 	 */
-	public function getEarnedTime(Event $event = null, Collection $timeEntries = null): int {
+	public function getEarnedTime(?Event $event = null, ?Collection $timeEntries = null): int {
 		if (!$event) $event = Setting::activeEvent();
 
 		// If there's no event at all, then skip all of the below work and just return empty results
@@ -251,7 +251,7 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 			$timeEntries = $this->timeEntries()->with([
 				'department.timeBonuses' => function ($query) use ($event) {
 					$query->forEvent($event);
-				}
+				},
 			])->forEvent($event)->get();
 		}
 		$bonuses = $timeEntries->pluck('department.timeBonuses')->flatten()->unique('id');
@@ -265,11 +265,12 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 
 	/**
 	 * Get statistics about the time spent
+	 *
 	 * @param ?Event $event Event to get the statistics for - if null, then the active event will be used
 	 * @param ?Carbon $date Day for the day-specific statistics - if null, then today will be used
 	 * @return array{total: int, day: int, entries: Collection<TimeEntry>, bonuses: Collection<TimeBonus>}
 	 */
-	public function getTimeStats(Event $event = null, Carbon $date = null): array {
+	public function getTimeStats(?Event $event = null, ?Carbon $date = null): array {
 		if (!$event) $event = Setting::activeEvent();
 		if (!$date) $date = now(config('tracker.timezone'));
 
@@ -288,7 +289,7 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 			->with([
 				'department.timeBonuses' => function ($query) use ($event) {
 					$query->forEvent($event);
-				}
+				},
 			])
 			->forEvent($event)
 			->orderBy('start')
@@ -308,8 +309,7 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 		// Narrow down the time entries to ones that interact with the given date, then get the sum of them all
 		// while taking into account only the time that crosses the day boundary if applicable
 		$dayTime = $timeEntries->filter(
-			fn (TimeEntry $entry) =>
-			$entry->getBoundaryOffsetStart(-1, $boundaryHour)->isSameDay($offsetDate) ||
+			fn (TimeEntry $entry) => $entry->getBoundaryOffsetStart(-1, $boundaryHour)->isSameDay($offsetDate) ||
 				$entry->getBoundaryOffsetStop(-1, $boundaryHour)->isSameDay($offsetDate)
 		)->reduce(
 			fn (?int $carry, TimeEntry $entry) => $carry +
@@ -330,11 +330,12 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 
 	/**
 	 * Get applicable rewards, claims, eligible/claimed rewards, and earned hours for an event
+	 *
 	 * @param ?Event $event Event to get the reward info for - if null, then the active event will be used
 	 * @param ?Collection $timeEntries Time entries to look through (to avoid extra queries if already retrieved)
 	 * @return array{rewards: Collection<Reward>, eligible: Collection<Reward>, claimed: Collection<Reward>, claims: Collection<RewardClaim>, earnedHours: float}
 	 */
-	public function getRewardInfo(?Event $event = null, Collection $timeEntries = null): array {
+	public function getRewardInfo(?Event $event = null, ?Collection $timeEntries = null): array {
 		if (!$event) $event = Setting::activeEvent();
 
 		// If there's no event at all, then skip all of the below work and just return empty results
@@ -361,10 +362,10 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 
 	/**
 	 * Check whether the user has been notified of a reward being available
-	 * @param Reward $reward
+	 *
 	 * @param ?Collection $notifications Notifications to look through (to avoid extra queries if already retrieved)
 	 */
-	public function hasBeenNotifiedForEligibleReward(Reward $reward, Collection $notifications = null): bool {
+	public function hasBeenNotifiedForEligibleReward(Reward $reward, ?Collection $notifications = null): bool {
 		if (!$notifications) $notifications = $this->notifications()->whereType(RewardAvailable::class)->get();
 		return $notifications->contains('data.reward_id', $reward->id);
 	}

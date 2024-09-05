@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Listeners;
 
 use SocialiteProviders\Manager\SocialiteWasCalled;

@@ -2,11 +2,9 @@
 
 namespace App\Policies;
 
-use App\Models\User;
-use App\Models\Event;
 use App\Models\Reward;
-use App\Models\Setting;
 use App\Models\RewardClaim;
+use App\Models\User;
 
 class RewardClaimPolicy {
 	/**
@@ -26,7 +24,7 @@ class RewardClaimPolicy {
 	/**
 	 * Determine whether the user can create models.
 	 */
-	public function create(User $user, Reward $reward = null): bool {
+	public function create(User $user, ?Reward $reward = null): bool {
 		return ($user->isManager() && (!$reward || $reward->isForActiveEvent())) || $user->isAdmin();
 	}
 

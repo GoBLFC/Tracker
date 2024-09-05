@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-use Spatie\Activitylog\LogOptions;
 use App\Models\Contracts\HasDisplayName;
 use App\Models\Traits\ChecksActiveEvent;
 use Illuminate\Database\Eloquent\Builder;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
  * @property string $name
@@ -46,7 +46,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @method static null|static find($id, $columns = ['*'])
  */
 class Reward extends UuidModel implements HasDisplayName {
-	use HasFactory, SoftDeletes, LogsActivity, ChecksActiveEvent;
+	use ChecksActiveEvent, HasFactory, LogsActivity, SoftDeletes;
 
 	protected $fillable = [
 		'name',
@@ -76,7 +76,7 @@ class Reward extends UuidModel implements HasDisplayName {
 	 * Scope a query to only include rewards for an event.
 	 * If the event is not specified, then the active event will be used.
 	 */
-	public function scopeForEvent(Builder $query, Event|string $event = null): void {
+	public function scopeForEvent(Builder $query, Event|string|null $event = null): void {
 		$query->where('event_id', $event->id ?? $event ?? Setting::activeEvent()?->id);
 	}
 }

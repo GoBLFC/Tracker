@@ -3,22 +3,22 @@
 namespace App\Reports;
 
 use App\Facades\ConCat;
-use Illuminate\Support\Collection;
-use App\Reports\Concerns\WithTotals;
 use App\Reports\Concerns\FormatsAsTable;
-use Maatwebsite\Excel\Events\AfterSheet;
-use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\WithHeadings;
+use App\Reports\Concerns\WithTotals;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
-use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
+use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class VolunteerApplicationDepartmentSummaryReport extends Report implements FromCollection, WithMapping, WithHeadings, WithColumnFormatting, WithTotals, WithStrictNullComparison, WithEvents, ShouldAutoSize {
-	use RegistersEventListeners, FormatsAsTable;
+class VolunteerApplicationDepartmentSummaryReport extends Report implements FromCollection, ShouldAutoSize, WithColumnFormatting, WithEvents, WithHeadings, WithMapping, WithStrictNullComparison, WithTotals {
+	use FormatsAsTable, RegistersEventListeners;
 
 	private Collection $departments;
 	private Collection $volunteers;

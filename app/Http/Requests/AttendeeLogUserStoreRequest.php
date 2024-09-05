@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Models\AttendeeLog;
 use Illuminate\Foundation\Http\FormRequest;
 
 class AttendeeLogUserStoreRequest extends FormRequest {

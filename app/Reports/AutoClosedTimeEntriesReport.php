@@ -4,21 +4,21 @@ namespace App\Reports;
 
 use App\Models\TimeEntry;
 use App\Reports\Concerns\FormatsAsTable;
-use Maatwebsite\Excel\Events\AfterSheet;
-use Maatwebsite\Excel\Concerns\FromQuery;
-use PhpOffice\PhpSpreadsheet\Shared\Date;
-use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use Illuminate\Contracts\Database\Eloquent\Builder;
-use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
+use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class AutoClosedTimeEntriesReport extends EventReport implements FromQuery, WithMapping, WithHeadings, WithColumnFormatting, WithStrictNullComparison, WithEvents, ShouldAutoSize {
-	use RegistersEventListeners, FormatsAsTable;
+class AutoClosedTimeEntriesReport extends EventReport implements FromQuery, ShouldAutoSize, WithColumnFormatting, WithEvents, WithHeadings, WithMapping, WithStrictNullComparison {
+	use FormatsAsTable, RegistersEventListeners;
 
 	public function query(): Builder {
 		return TimeEntry::with('user', 'department')
@@ -27,7 +27,7 @@ class AutoClosedTimeEntriesReport extends EventReport implements FromQuery, With
 			->orderBy('updated_at', 'desc');
 	}
 
-	/** @var TimeEntry $entry */
+	/** @param TimeEntry $entry */
 	public function map($entry, $excelDates = true): array {
 		$start = $entry->start->timezone(config('tracker.timezone'));
 		$stop = $entry->stop->timezone(config('tracker.timezone'));

@@ -4,28 +4,28 @@ namespace App\Providers;
 
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\RequestOptions;
-use SocialiteProviders\Manager\OAuth2\User;
 use SocialiteProviders\Manager\OAuth2\AbstractProvider as SocialiteProvider;
+use SocialiteProviders\Manager\OAuth2\User;
 
 class ConCatSocialiteProvider extends SocialiteProvider {
 	public const IDENTIFIER = 'CONCAT';
 
 	/**
-	 * @inheritdoc
+	 * {@inheritdoc}
 	 */
 	protected function getAuthUrl($state): string {
 		return $this->buildAuthUrlFromBase($this->getInstanceUri() . '/oauth/authorize', $state);
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritdoc}
 	 */
 	protected function getTokenUrl(): string {
 		return $this->getInstanceUri() . '/api/oauth/token';
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritdoc}
 	 */
 	protected function getUserByToken($token): array {
 		$options = [
@@ -51,7 +51,7 @@ class ConCatSocialiteProvider extends SocialiteProvider {
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritdoc}
 	 */
 	protected function mapUserToObject(array $user): User {
 		return (new User)->setRaw($user)->map([
@@ -70,7 +70,7 @@ class ConCatSocialiteProvider extends SocialiteProvider {
 	}
 
 	/**
-	 * @inheritdoc
+	 * {@inheritdoc}
 	 */
 	public static function additionalConfigKeys(): array {
 		return ['instance_uri'];

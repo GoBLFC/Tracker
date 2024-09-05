@@ -18,7 +18,7 @@ return [
 		'client_id' => env('CONCAT_CLIENT_ID'),
 		'client_secret' => env('CONCAT_CLIENT_SECRET'),
 		'redirect' => '/auth/callback',
-		'instance_uri'  => env('CONCAT_BASE_URI'),
+		'instance_uri' => env('CONCAT_BASE_URI'),
 	],
 
 	'postmark' => [

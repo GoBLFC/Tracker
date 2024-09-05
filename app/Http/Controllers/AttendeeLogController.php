@@ -2,21 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use Throwable;
-use App\Models\User;
-use App\Models\Event;
 use App\Facades\ConCat;
-use App\Models\Setting;
-use App\Reports\Report;
-use Illuminate\View\View;
-use App\Models\AttendeeLog;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Log;
 use App\Http\Requests\AttendeeLogStoreRequest;
 use App\Http\Requests\AttendeeLogUpdateRequest;
 use App\Http\Requests\AttendeeLogUserStoreRequest;
+use App\Models\AttendeeLog;
+use App\Models\Event;
+use App\Models\Setting;
+use App\Models\User;
+use App\Reports\Report;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use Illuminate\View\View;
+use Throwable;
 
 class AttendeeLogController extends Controller {
 	/**

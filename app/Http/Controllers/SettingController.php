@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SettingUpdateRequest;
 use App\Models\Setting;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use App\Http\Requests\SettingUpdateRequest;
+use Illuminate\Http\Request;
 
 class SettingController extends Controller {
 	/**

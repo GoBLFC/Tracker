@@ -3,24 +3,24 @@
 namespace App\Reports;
 
 use App\Facades\ConCat;
-use Illuminate\Support\Str;
+use App\Reports\Concerns\FormatsAsTable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use App\Reports\Concerns\FormatsAsTable;
+use Illuminate\Support\Str;
+use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\RegistersEventListeners;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
-use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
-use Maatwebsite\Excel\Concerns\WithColumnFormatting;
-use Maatwebsite\Excel\Concerns\RegistersEventListeners;
-use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 
-class VolunteerApplicationsReport extends EventReport implements FromCollection, WithMapping, WithHeadings, WithColumnFormatting, WithStrictNullComparison, WithEvents, ShouldAutoSize {
-	use RegistersEventListeners, FormatsAsTable;
+class VolunteerApplicationsReport extends EventReport implements FromCollection, ShouldAutoSize, WithColumnFormatting, WithEvents, WithHeadings, WithMapping, WithStrictNullComparison {
+	use FormatsAsTable, RegistersEventListeners;
 
 	private Collection $departments;
 	private Collection $volunteers;
@@ -227,10 +227,10 @@ class VolunteerApplicationsReport extends EventReport implements FromCollection,
 		if (!$states) return null;
 
 		$string = '';
-		if (in_array('avoid', $states)) $string .=  '❌';
-		if (in_array('assignment', $states)) $string .=  '✔️';
-		if (in_array('experience', $states)) $string .=  '❗';
-		if (in_array('interest', $states)) $string .=  '❤️';
+		if (in_array('avoid', $states)) $string .= '❌';
+		if (in_array('assignment', $states)) $string .= '✔️';
+		if (in_array('experience', $states)) $string .= '❗';
+		if (in_array('interest', $states)) $string .= '❤️';
 
 		return $string;
 	}

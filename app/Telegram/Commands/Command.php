@@ -2,12 +2,12 @@
 
 namespace App\Telegram\Commands;
 
-use App\Models\User;
 use App\Models\Event;
 use App\Models\Setting;
-use Telegram\Bot\Keyboard\Keyboard;
+use App\Models\User;
 use Spatie\Activitylog\Facades\CauserResolver;
 use Telegram\Bot\Commands\Command as BaseCommand;
+use Telegram\Bot\Keyboard\Keyboard;
 
 abstract class Command extends BaseCommand {
 	/**
@@ -77,7 +77,7 @@ abstract class Command extends BaseCommand {
 	 * Builds reply markup for a keyboard that contains a list of standard actions while authenticated
 	 */
 	protected function buildStandardActionsKeyboard(): Keyboard {
-		$keyboard = new Keyboard();
+		$keyboard = new Keyboard;
 		$keyboard->setResizeKeyboard(true)
 			->setIsPersistent(true)
 			->row([

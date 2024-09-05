@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\MassPrunable;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Str;
 use Spatie\Activitylog\LogOptions;
-use Illuminate\Support\Facades\Cookie;
-use Illuminate\Database\Eloquent\Builder;
 use Spatie\Activitylog\Traits\LogsActivity;
-use Illuminate\Database\Eloquent\MassPrunable;
 
 /**
  * @property string $session_key
@@ -37,7 +37,7 @@ use Illuminate\Database\Eloquent\MassPrunable;
  * @method static null|static find($id, $columns = ['*'])
  */
 class Kiosk extends UuidModel {
-	use MassPrunable, LogsActivity;
+	use LogsActivity, MassPrunable;
 
 	/**
 	 * Cached authorization status
@@ -89,6 +89,7 @@ class Kiosk extends UuidModel {
 
 	/**
 	 * Deletes the Kiosk from the database and deletes the kiosk cookie for the current session if it matches
+	 *
 	 * @return ?bool Whether the Kiosk was deleted from the database
 	 */
 	public function deauthorize(): ?bool {
@@ -111,6 +112,7 @@ class Kiosk extends UuidModel {
 
 	/**
 	 * Check whether the current session is authorized as a kiosk
+	 *
 	 * @param bool $strict If false, dev mode will always allow authorization (default false)
 	 */
 	public static function isSessionAuthorized(bool $strict = false): bool {
@@ -135,6 +137,7 @@ class Kiosk extends UuidModel {
 
 	/**
 	 * Remove the Kiosk that is in the session, if there is one
+	 *
 	 * @return ?bool Whether a Kiosk was deleted from the database
 	 */
 	public static function deauthorizeSession(): ?bool {

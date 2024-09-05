@@ -4,9 +4,9 @@ namespace App\Models;
 
 use App\Casts\JsonValue;
 use App\Models\Contracts\HasDisplayName;
-use Spatie\Activitylog\LogOptions;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
+use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -82,7 +82,7 @@ class Setting extends UuidModel implements HasDisplayName {
 
 		// Update the value
 		$count = static::whereName($name)->update([
-			'value' => json_encode($value instanceof Model ? $value->getKey() : $value)
+			'value' => json_encode($value instanceof Model ? $value->getKey() : $value),
 		]);
 
 		// Make sure the update went through - if it didn't, it's for an unknown setting
@@ -113,7 +113,6 @@ class Setting extends UuidModel implements HasDisplayName {
 	/**
 	 * Retrieve the value of a setting from the in-memory cache, cache provider, or database, and cache it appropriately
 	 *
-	 * @param string $name
 	 * @param ?callable $transformer Function to mutate the setting value
 	 */
 	private static function getAndCacheValue(string $name, ?callable $transformer = null): mixed {

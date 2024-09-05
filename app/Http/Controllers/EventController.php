@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Event;
-use Illuminate\Http\JsonResponse;
 use App\Http\Requests\EventStoreRequest;
 use App\Http\Requests\EventUpdateRequest;
+use App\Models\Event;
+use Illuminate\Http\JsonResponse;
 
 class EventController extends Controller {
 	public function __construct() {

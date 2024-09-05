@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-use Spatie\Activitylog\LogOptions;
 use App\Models\Contracts\HasDisplayName;
 use App\Models\Traits\ChecksActiveEvent;
 use Illuminate\Database\Eloquent\Builder;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
  * @property string $name
@@ -47,7 +47,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @method static null|static find($id, $columns = ['*'])
  */
 class AttendeeLog extends UuidModel implements HasDisplayName {
-	use SoftDeletes, LogsActivity, ChecksActiveEvent;
+	use ChecksActiveEvent, LogsActivity, SoftDeletes;
 
 	protected $fillable = [
 		'name',
@@ -99,7 +99,7 @@ class AttendeeLog extends UuidModel implements HasDisplayName {
 	 * Scope a query to only include attendee logs for an event.
 	 * If the event is not specified, then the active event will be used.
 	 */
-	public function scopeForEvent(Builder $query, Event|string $event = null): void {
+	public function scopeForEvent(Builder $query, Event|string|null $event = null): void {
 		$query->where('event_id', $event->id ?? $event ?? Setting::activeEvent()?->id);
 	}
 }
