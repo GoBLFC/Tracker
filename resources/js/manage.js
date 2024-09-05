@@ -25,7 +25,7 @@ let time = null;
 $(() => {
 	$('#searchinput').on(
 		'input',
-		debounce(function () {
+		debounce(() => {
 			userSearch($('#searchinput').val());
 		}, 250),
 	);
@@ -34,16 +34,16 @@ $(() => {
 		toggleClaim($(this));
 	});
 
-	$('#timeStartInput, #timeStopInput, #dept').on('change', function () {
+	$('#timeStartInput, #timeStopInput, #dept').on('change', () => {
 		$('#addtime').prop('disabled', !isAddTimeReady());
 		$('#checkin').prop('disabled', !isCheckinReady());
 	});
 
-	$('#checkin').on('click', function () {
+	$('#checkin').on('click', () => {
 		checkIn();
 	});
 
-	$('#addtime').on('click', function () {
+	$('#addtime').on('click', () => {
 		addTime();
 	});
 
@@ -84,7 +84,7 @@ async function userSearch(input) {
 	if (data.users.length > 0) {
 		$('#uempty').addClass('d-none');
 		$('#utable').removeClass('d-none');
-		$.each(data['users'], function (index, user) {
+		$.each(data['users'], (index, user) => {
 			addUserRow(
 				user.id,
 				user.badge_id,
@@ -125,7 +125,7 @@ async function loadVolunteer(id) {
 		.data('claim-id', null)
 		.text('Claim');
 
-	$.each(claimData.reward_claims, function (key, val) {
+	$.each(claimData.reward_claims, (key, val) => {
 		$(`#rewards button[data-reward-id='${val.reward_id}']`)
 			.removeClass('btn-success')
 			.addClass('btn-danger')
@@ -134,7 +134,7 @@ async function loadVolunteer(id) {
 	});
 
 	// Add time entries
-	$.each(timeData.stats.entries, function (index, value) {
+	$.each(timeData.stats.entries, (index, value) => {
 		const checkIn = DateTime.fromISO(value.start).setZone(timezone);
 		const checkOut = value.stop ? DateTime.fromISO(value.stop).setZone(timezone) : null;
 		const worked = (checkOut ?? DateTime.now()).diff(checkIn);

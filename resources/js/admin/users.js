@@ -56,7 +56,7 @@ async function handleSetRole(btn) {
  */
 export async function setUserRole(badgeId, role) {
 	// Search for the user, then update their role and notify upon success
-	let uuid = typeof badgeId === 'string' ? badgeId : (await findUserByBadgeId(badgeId)).id;
+	const uuid = typeof badgeId === 'string' ? badgeId : (await findUserByBadgeId(badgeId)).id;
 	const { user } = await sendPatchRequest(userUpdateUrl.replace(/id/, uuid), { role });
 	Toast.fire({
 		text: `Set ${user.badge_name ?? user.username}'s role to ${roles[user.role]}.`,
