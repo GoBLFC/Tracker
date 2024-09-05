@@ -4,7 +4,12 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
-		"build": "vite build"
+		"build": "vite build",
+		"format": "biome format --write",
+		"format:check": "biome format",
+		"lint": "biome lint",
+		"lint:fix": "biome lint --write",
+		"lint:fix-unsafe": "biome lint --write --unsafe"
 	},
 	"dependencies": {
 		"@eonasdan/tempus-dominus": "^6.9.10",
@@ -20,6 +25,7 @@
 		"sweetalert2": "^11.12.4"
 	},
 	"devDependencies": {
+		"@biomejs/biome": "1.8.3",
 		"laravel-vite-plugin": "^1.0.5",
 		"vite": "^5.4.2"
 	}
