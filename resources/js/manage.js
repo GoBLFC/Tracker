@@ -84,7 +84,7 @@ async function userSearch(input) {
 	if (data.users.length > 0) {
 		$('#uempty').addClass('d-none');
 		$('#utable').removeClass('d-none');
-		$.each(data['users'], (index, user) => {
+		$.each(data.users, (index, user) => {
 			addUserRow(
 				user.id,
 				user.badge_id,
@@ -323,11 +323,7 @@ function isCheckinReady() {
 
 function addUserRow(uuid, id, username, badgeName, name, dept, banned) {
 	let status =
-		'<span class="badge rounded-pill text-bg-' +
-		(!dept ? 'warning' : 'success') +
-		'">' +
-		(!dept ? 'Checked Out' : `Checked In: ${dept}`) +
-		'</span>';
+		`<span class="badge rounded-pill text-bg-${!dept ? 'warning' : 'success'}">${!dept ? 'Checked Out' : `Checked In: ${dept}`}</span>`;
 	if (banned) status = status.concat(' <span class="badge rounded-pill text-bg-danger">Banned</span>');
 	const data = [
 		id,
@@ -335,7 +331,7 @@ function addUserRow(uuid, id, username, badgeName, name, dept, banned) {
 		badgeName ?? '',
 		name,
 		status,
-		'<button type="button" class="btn btn-sm btn-info" data-user-id="' + uuid + '">Load</button>',
+		`<button type="button" class="btn btn-sm btn-info" data-user-id="${uuid}">Load</button>`,
 	];
 	addRow(true, $('#uRow'), data);
 }

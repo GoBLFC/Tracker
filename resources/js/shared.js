@@ -15,15 +15,15 @@ export const Toast = Swal.mixin({
 });
 
 export function debounce(func, wait, immediate) {
-	var timeout;
+	let timeout;
 	return function () {
-		var 
+		const 
 			args = arguments;
-		var later = () => {
+		const later = () => {
 			timeout = null;
 			if (!immediate) func.apply(this, args);
 		};
-		var callNow = immediate && !timeout;
+		const callNow = immediate && !timeout;
 		clearTimeout(timeout);
 		timeout = setTimeout(later, wait);
 		if (callNow) func.apply(this, args);
@@ -34,7 +34,7 @@ export function applyLoading(elem, text) {
 	if (text) {
 		$(elem)
 			.data('original-text', $(elem).html())
-			.html('<i class="fa fa-circle-notch fa-spin"></i> ' + text)
+			.html(`<i class="fa fa-circle-notch fa-spin"></i> ${text}`)
 			.prop('disabled', true);
 	} else {
 		$(elem).html($(elem).data('original-text')).prop('disabled', false);
@@ -45,9 +45,9 @@ export function addRow(key, elem, data) {
 	let innerTable = '';
 	for (let i = 0; i < data.length; i++) {
 		const t = key && i === 0 ? 'th scope="row"' : 'td';
-		innerTable += '<' + t + '>' + data[i] + '</' + t + '>';
+		innerTable += `<${t}>${data[i]}</${t}>`;
 	}
-	$(elem).append('<tr>' + innerTable + '</tr>');
+	$(elem).append(`<tr>${innerTable}</tr>`);
 }
 
 export function getButtonInput(object) {

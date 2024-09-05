@@ -6,7 +6,7 @@ $(() => {
 	$('#checkinout').on('click', function () {
 		const $this = $(this);
 
-		applyLoading($this, 'Checking ' + $this.data('value') + '...');
+		applyLoading($this, `Checking ${$this.data('value')}...`);
 
 		if ($this.data('value') === 'in') {
 			checkIn();
@@ -43,7 +43,7 @@ function toggleStatus(status, success = true) {
 	}
 
 	$button
-		.html('Check-' + status)
+		.html(`Check-${status}`)
 		.data('value', status.toLowerCase())
 		.prop('disabled', false);
 
@@ -62,7 +62,7 @@ function toggleStatus(status, success = true) {
 	}
 
 	Swal.fire({
-		text: 'Checked ' + opposite,
+		text: `Checked ${opposite}`,
 		icon: 'success',
 		showConfirmButton: false,
 		allowOutsideClick: false,
