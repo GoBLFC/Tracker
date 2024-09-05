@@ -16,9 +16,7 @@ export const Toast = Swal.mixin({
 
 export function debounce(func, wait, immediate) {
 	let timeout;
-	return function () {
-		const 
-			args = arguments;
+	return function (...args) {
 		const later = () => {
 			timeout = null;
 			if (!immediate) func.apply(this, args);
@@ -256,8 +254,8 @@ export function isElementInView(elem, partial = false) {
  */
 export function spinner(extraClasses = []) {
 	const spinner = document.createElement('i');
-	if (typeof extraClasses === 'string') extraClasses = extraClasses.split(' ');
-	spinner.classList.add('fa', 'fa-circle-notch', 'fa-spin', ...extraClasses);
+	const classes = typeof extraClasses === 'string' ? extraClasses.split(' ') : extraClasses;
+	spinner.classList.add('fa', 'fa-circle-notch', 'fa-spin', ...classes);
 	return spinner;
 }
 

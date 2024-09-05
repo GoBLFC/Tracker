@@ -72,13 +72,13 @@ function maxStartDate() {
 async function userSearch(input) {
 	$('#uRow').empty();
 
-	input = input.trim();
-	if (input === '') {
+	const query = input.trim();
+	if (query === '') {
 		$('#usearchCard').addClass('d-none');
 		return;
 	}
 
-	const data = await sendGetRequest(userSearchUrl, { q: input });
+	const data = await sendGetRequest(userSearchUrl, { q: query });
 	$('#usearchCard').removeClass('d-none');
 
 	if (data.users.length > 0) {
@@ -322,8 +322,7 @@ function isCheckinReady() {
 }
 
 function addUserRow(uuid, id, username, badgeName, name, dept, banned) {
-	let status =
-		`<span class="badge rounded-pill text-bg-${!dept ? 'warning' : 'success'}">${!dept ? 'Checked Out' : `Checked In: ${dept}`}</span>`;
+	let status = `<span class="badge rounded-pill text-bg-${!dept ? 'warning' : 'success'}">${!dept ? 'Checked Out' : `Checked In: ${dept}`}</span>`;
 	if (banned) status = status.concat(' <span class="badge rounded-pill text-bg-danger">Banned</span>');
 	const data = [
 		id,

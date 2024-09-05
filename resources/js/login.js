@@ -27,9 +27,7 @@ async function submitCode() {
 		await sendPostRequest(quickcodePostUrl, { code });
 		window.location.reload();
 	} catch (err) {
-		inputs.forEach((input) => {
-			input.value = '';
-		});
+		for (const input of inputs) input.value = '';
 		inputs[0].focus();
 	}
 }
@@ -39,9 +37,7 @@ function handleInput(e) {
 	const nextInput = input.nextElementSibling;
 	if (nextInput && input.value) {
 		nextInput.focus();
-		if (nextInput.value) {
-			nextInput.select();
-		}
+		if (nextInput.value) nextInput.select();
 	}
 }
 
@@ -90,7 +86,7 @@ function handleEnter(e) {
 form.addEventListener('input', handleInput);
 inputs[0].addEventListener('paste', handlePaste);
 
-inputs.forEach((input) => {
+for (const input of inputs) {
 	input.addEventListener('focus', (e) => {
 		if (cancelSelect) {
 			cancelSelect = false;
@@ -118,4 +114,4 @@ inputs.forEach((input) => {
 				break;
 		}
 	});
-});
+}
