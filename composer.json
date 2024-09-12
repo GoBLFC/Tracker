@@ -19,7 +19,7 @@
 	"require-dev": {
 		"barryvdh/laravel-debugbar": "^3.13",
 		"fakerphp/faker": "^1.23",
-		"laravel/pint": "^1.17",
+		"friendsofphp/php-cs-fixer": "^3.64",
 		"laravel/sail": "^1.31",
 		"mockery/mockery": "^1.6",
 		"nunomaduro/collision": "^8.4",
@@ -40,16 +40,14 @@
 		}
 	},
 	"scripts": {
+		"format": ["php-cs-fixer fix"],
+		"format:check": ["php-cs-fixer check"],
 		"post-autoload-dump": [
 			"Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
 			"@php artisan package:discover --ansi"
 		],
-		"post-update-cmd": [
-			"@php artisan vendor:publish --tag=laravel-assets --ansi --force"
-		],
-		"post-root-package-install": [
-			"@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
-		],
+		"post-update-cmd": ["@php artisan vendor:publish --tag=laravel-assets --ansi --force"],
+		"post-root-package-install": ["@php -r \"file_exists('.env') || copy('.env.example', '.env');\""],
 		"post-create-project-cmd": [
 			"@php artisan key:generate --ansi",
 			"@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",

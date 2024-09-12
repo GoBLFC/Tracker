@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Role;
-use App\Models\User;
-use App\Models\Kiosk;
-use App\Models\Setting;
-use App\Models\QuickCode;
-use Illuminate\View\View;
 use App\Events\QuickCodeLogin;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\QuickCodeRequest;
-use Laravel\Socialite\Facades\Socialite;
+use App\Models\Kiosk;
+use App\Models\QuickCode;
+use App\Models\Role;
+use App\Models\Setting;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\View\View;
+use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller {
 	/**
@@ -38,7 +38,7 @@ class AuthController extends Controller {
 			$concatUri = config('services.concat.instance_uri');
 			$concatId = config('services.concat.client_id');
 			$return = urlencode(route('auth.login'));
-			return redirect()->to("{$concatUri}/oauth/logout?client_id={$concatId}&access_token={$token}&next=$return");
+			return redirect()->to("{$concatUri}/oauth/logout?client_id={$concatId}&access_token={$token}&next={$return}");
 		}
 
 		return redirect()->route('auth.login');

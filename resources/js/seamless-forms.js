@@ -1,9 +1,9 @@
 import Swal from 'sweetalert2/dist/sweetalert2.js';
-import { Toast, sendRequest, spinner } from "./shared";
+import { Toast, sendRequest, spinner } from './shared';
 
 document.addEventListener('DOMContentLoaded', () => {
 	const forms = document.querySelectorAll('form.seamless');
-	for(const form of forms) setupSeamlessForm(form);
+	for (const form of forms) setupSeamlessForm(form);
 });
 
 /**
@@ -12,12 +12,12 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 export function setupSeamlessForm(form) {
 	const submitBtn = form.querySelector('button[type="submit"]');
-	form.addEventListener('submit', async event => {
+	form.addEventListener('submit', async (event) => {
 		event.preventDefault();
 
 		// Prompt for confirmation
 		const confirmTitle = submitBtn.getAttribute('data-confirm-title');
-		if(confirmTitle) {
+		if (confirmTitle) {
 			const result = await Swal.fire({
 				title: confirmTitle,
 				text: submitBtn.getAttribute('data-confirm-text'),
@@ -26,17 +26,17 @@ export function setupSeamlessForm(form) {
 				focusCancel: true,
 				confirmButtonText: submitBtn.getAttribute('data-confirm-button') ?? submitBtn.textContent,
 			});
-			if(!result.isConfirmed) return;
+			if (!result.isConfirmed) return;
 		}
 
 		// Get the current state, if any
 		let state = submitBtn.getAttribute('data-state');
-		if(typeof state === 'string') state = JSON.parse(state);
+		if (typeof state === 'string') state = JSON.parse(state);
 		const hasState = state !== null;
 
 		// Set the loading label for the button and store the original text if it isn't using state
 		submitBtn.disabled = true;
-		if(hasState) {
+		if (hasState) {
 			submitBtn.textContent = submitBtn.getAttribute(`data-label-loading-${!state}`);
 			submitBtn.prepend(spinner('me-1'));
 		} else {
@@ -47,7 +47,7 @@ export function setupSeamlessForm(form) {
 		try {
 			// Get the form's data and add the correct state input if applicable
 			const data = new FormData(form);
-			if(hasState) data.set(submitBtn.getAttribute('data-state-input'), Number(!state));
+			if (hasState) data.set(submitBtn.getAttribute('data-state-input'), Number(!state));
 			const dataObj = formDataToObject(data);
 
 			// Make the request
@@ -57,11 +57,11 @@ export function setupSeamlessForm(form) {
 			});
 
 			// Invert the state if applicable
-			if(hasState) state = !state;
+			if (hasState) state = !state;
 
 			// Display a success toast
 			const success = submitBtn.getAttribute(hasState ? `data-success-${state}` : 'data-success');
-			if(success) {
+			if (success) {
 				Toast.fire({
 					text: success,
 					icon: 'success',
@@ -70,12 +70,12 @@ export function setupSeamlessForm(form) {
 
 			// Fire an event for the success
 			form.dispatchEvent(new CustomEvent('seamlessSuccess', { detail: { input: dataObj, response, state } }));
-		} catch(error) {
+		} catch (error) {
 			// Fire an event for the error
 			form.dispatchEvent(new CustomEvent('seamlessError', { detail: { error, state } }));
 		} finally {
 			// Store the state and swap the classes for it if applicable
-			if(hasState) {
+			if (hasState) {
 				submitBtn.classList.replace(
 					submitBtn.getAttribute(`data-class-${!state}`),
 					submitBtn.getAttribute(`data-class-${state}`),
@@ -97,10 +97,10 @@ export function setupSeamlessForm(form) {
  */
 export function formDataToObject(data) {
 	const dataObj = {};
-	for(const [key, val] of data) {
-		if(key.endsWith('[]')) {
+	for (const [key, val] of data) {
+		if (key.endsWith('[]')) {
 			const plainKey = key.slice(0, -2);
-			if(!dataObj[plainKey]) dataObj[plainKey] = [];
+			if (!dataObj[plainKey]) dataObj[plainKey] = [];
 			dataObj[plainKey].push(val);
 			continue;
 		}

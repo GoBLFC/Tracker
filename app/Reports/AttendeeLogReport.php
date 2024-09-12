@@ -2,27 +2,27 @@
 
 namespace App\Reports;
 
-use App\Models\User;
-use App\Models\Event;
 use App\Models\AttendeeLog;
-use Illuminate\Support\Str;
+use App\Models\Event;
+use App\Models\User;
 use App\Reports\Concerns\FormatsAsTable;
 use App\Reports\Concerns\WithExtraParam;
-use Maatwebsite\Excel\Events\AfterSheet;
-use Maatwebsite\Excel\Concerns\FromQuery;
-use PhpOffice\PhpSpreadsheet\Shared\Date;
-use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use Illuminate\Contracts\Database\Eloquent\Builder;
-use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+use Illuminate\Support\Str;
+use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
+use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class AttendeeLogReport extends EventReport implements FromQuery, WithMapping, WithHeadings, WithColumnFormatting, WithExtraParam, WithStrictNullComparison, WithEvents, ShouldAutoSize {
-	use RegistersEventListeners, FormatsAsTable;
+class AttendeeLogReport extends EventReport implements FromQuery, ShouldAutoSize, WithColumnFormatting, WithEvents, WithExtraParam, WithHeadings, WithMapping, WithStrictNullComparison {
+	use FormatsAsTable, RegistersEventListeners;
 
 	public AttendeeLog $attendeeLog;
 
@@ -35,7 +35,7 @@ class AttendeeLogReport extends EventReport implements FromQuery, WithMapping, W
 		return $this->attendeeLog->attendees()->withPivot('created_at');
 	}
 
-	/** @var User $user */
+	/** @param User $user */
 	public function map($user, $excelDates = true): array {
 		$arrival = $user->pivot->created_at->timezone(config('tracker.timezone'));
 

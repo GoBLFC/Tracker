@@ -2,8 +2,8 @@
 
 namespace App\Notifications;
 
-use Illuminate\Support\Facades\Log;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Laravel\Facades\Telegram;
 
 class TelegramChannel {

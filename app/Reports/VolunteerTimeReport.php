@@ -2,25 +2,25 @@
 
 namespace App\Reports;
 
-use App\Models\User;
 use App\Models\Event;
-use Illuminate\Support\Collection;
-use App\Reports\Concerns\WithTotals;
+use App\Models\User;
 use App\Reports\Concerns\FormatsAsTable;
 use App\Reports\Concerns\WithExtraParam;
-use Maatwebsite\Excel\Events\AfterSheet;
-use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\WithHeadings;
+use App\Reports\Concerns\WithTotals;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
-use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
+use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class VolunteerTimeReport extends EventReport implements FromCollection, WithMapping, WithHeadings, WithColumnFormatting, WithExtraParam, WithTotals, WithStrictNullComparison, WithEvents, ShouldAutoSize {
-	use RegistersEventListeners, FormatsAsTable;
+class VolunteerTimeReport extends EventReport implements FromCollection, ShouldAutoSize, WithColumnFormatting, WithEvents, WithExtraParam, WithHeadings, WithMapping, WithStrictNullComparison, WithTotals {
+	use FormatsAsTable, RegistersEventListeners;
 
 	public function __construct(Event $event, public int $hours) {
 		parent::__construct($event);
@@ -44,7 +44,7 @@ class VolunteerTimeReport extends EventReport implements FromCollection, WithMap
 			->filter(fn ($user) => $user->getEarnedTime($this->event, $user->timeEntries) / 60 / 60 > $this->hours);
 	}
 
-	/** @var User $user */
+	/** @param User $user */
 	public function map($user, $excelDates = true): array {
 		return [
 			$user->badge_id,

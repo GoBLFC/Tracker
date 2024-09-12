@@ -43,7 +43,6 @@ use Spatie\Activitylog\Contracts\Activity as ActivityContract;
  */
 class Activity extends UuidModel implements ActivityContract {
 	public $guarded = [];
-
 	protected $casts = [
 		'properties' => 'collection',
 	];
@@ -78,7 +77,7 @@ class Activity extends UuidModel implements ActivityContract {
 
 	public function changes(): Collection {
 		if (!$this->properties instanceof Collection) {
-			return new Collection();
+			return new Collection;
 		}
 
 		return $this->properties->only(['attributes', 'old']);

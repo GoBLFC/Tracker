@@ -4,11 +4,18 @@ document.addEventListener('DOMContentLoaded', () => {
 	const logoutBtn = document.getElementById('logout');
 
 	// Start the logout timer
-	if(logoutTime < Infinity) {
+	if (logoutTime < Number.POSITIVE_INFINITY) {
 		const logout = new Date(Date.now() + logoutTime * 1000 + 500);
 		renderLogout(logout);
-		setTimeout(() => { window.location.href = logoutUrl; }, logoutTime * 1000 + 500);
-		setInterval(() => { renderLogout(logout); }, 1000);
+		setTimeout(
+			() => {
+				window.location.href = logoutUrl;
+			},
+			logoutTime * 1000 + 500,
+		);
+		setInterval(() => {
+			renderLogout(logout);
+		}, 1000);
 	}
 
 	function renderLogout(logout) {

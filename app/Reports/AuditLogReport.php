@@ -2,32 +2,32 @@
 
 namespace App\Reports;
 
-use App\Models\Reward;
 use App\Models\Activity;
+use App\Models\Reward;
+use App\Models\RewardClaim;
 use App\Models\TimeBonus;
 use App\Models\TimeEntry;
-use App\Models\RewardClaim;
-use Illuminate\Support\Str;
-use Illuminate\Support\Collection;
 use App\Reports\Concerns\FormatsAsTable;
 use App\Reports\Concerns\WithExtraParam;
-use Maatwebsite\Excel\Events\AfterSheet;
 use Illuminate\Database\Eloquent\Builder;
-use Maatwebsite\Excel\Concerns\FromQuery;
-use PhpOffice\PhpSpreadsheet\Shared\Date;
-use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
+use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
+use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class AuditLogReport extends Report implements FromQuery, WithMapping, WithHeadings, WithColumnFormatting, WithExtraParam, WithStrictNullComparison, WithEvents, ShouldAutoSize {
-	use RegistersEventListeners, FormatsAsTable;
+class AuditLogReport extends Report implements FromQuery, ShouldAutoSize, WithColumnFormatting, WithEvents, WithExtraParam, WithHeadings, WithMapping, WithStrictNullComparison {
+	use FormatsAsTable, RegistersEventListeners;
 
 	public function __construct(public int $days) {
 		// nothing to do
@@ -54,7 +54,7 @@ class AuditLogReport extends Report implements FromQuery, WithMapping, WithHeadi
 		return $query;
 	}
 
-	/** @var Activity $activity */
+	/** @param Activity $activity */
 	public function map($activity, $excelDates = true): array {
 		// Skip activities for time entries done by the owner themself
 		if ($activity->subject_type === TimeEntry::class && $activity->subject?->user_id === $activity->causer_id) return [];

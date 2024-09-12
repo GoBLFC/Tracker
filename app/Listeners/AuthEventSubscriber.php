@@ -2,14 +2,13 @@
 
 namespace App\Listeners;
 
-
-use Illuminate\Log\Logger;
-use Illuminate\Http\Request;
-use App\Events\QuickCodeLogin;
 use App\Events\QuickCodeGenerated;
+use App\Events\QuickCodeLogin;
 use Illuminate\Auth\Events\Login;
-use Illuminate\Events\Dispatcher;
 use Illuminate\Auth\Events\Logout;
+use Illuminate\Events\Dispatcher;
+use Illuminate\Http\Request;
+use Illuminate\Log\Logger;
 
 class AuthEventSubscriber {
 	public function __construct(

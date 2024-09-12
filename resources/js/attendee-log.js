@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const alertSound = new Audio(alertSoundFile);
 
 	const deleteForms = document.querySelectorAll('form.delete');
-	for(const form of deleteForms) {
+	for (const form of deleteForms) {
 		form.addEventListener('seamlessSuccess', () => removeUserFromTable(form));
 	}
 
@@ -27,13 +27,13 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	const gatekeeperForm = document.getElementById('gatekeeperAdd');
-	if(gatekeeperForm) {
+	if (gatekeeperForm) {
 		const gatekeeperBtn = gatekeeperForm.querySelector('button[type="submit"]');
 		const gatekeeperBadgeIdIpt = document.getElementById('gatekeeperBadgeId');
 
 		gatekeeperBtn.disabled = true;
 		gatekeeperBadgeIdIpt.addEventListener('input', updateGatekeeperBtn);
-		gatekeeperForm.addEventListener('seamlessSuccess', evt => addUserToTable(evt, false));
+		gatekeeperForm.addEventListener('seamlessSuccess', (evt) => addUserToTable(evt, false));
 
 		function updateGatekeeperBtn() {
 			gatekeeperBtn.disabled = !gatekeeperBadgeIdIpt.value?.trim();
@@ -44,7 +44,11 @@ document.addEventListener('DOMContentLoaded', () => {
 	const noUsersCardBody = document.getElementById('users-body-empty');
 
 	function addUserToTable(evt, fromAttendee = true) {
-		const { user: { id, badge_id: badgeId, badge_name: badgeName }, type, logged_at: logged } = evt.detail.response;
+		const {
+			user: { id, badge_id: badgeId, badge_name: badgeName },
+			type,
+			logged_at: logged,
+		} = evt.detail.response;
 
 		const row = document.createElement('tr');
 
@@ -105,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		usersCardBody.classList.remove('d-none');
 		noUsersCardBody.classList.add('d-none');
 
-		if(fromAttendee) {
+		if (fromAttendee) {
 			logBadgeIdIpt.value = '';
 			logBadgeIdIpt.focus();
 			successSound.play();
@@ -116,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	function removeUserFromTable(form) {
 		form.closest('tr').remove();
 
-		if(usersCardBody.querySelector('tbody').childElementCount === 0) {
+		if (usersCardBody.querySelector('tbody').childElementCount === 0) {
 			usersCardBody.classList.add('d-none');
 			noUsersCardBody.classList.remove('d-none');
 		}
@@ -127,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		logBadgeIdIpt.focus();
 		setTimeout(updateLogBtn, 0);
 
-		if(evt.detail?.error?.message?.includes('already present')) success2Sound.play();
+		if (evt.detail?.error?.message?.includes('already present')) success2Sound.play();
 		else alertSound.play();
 	}
 });

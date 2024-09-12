@@ -2,18 +2,17 @@
 
 namespace App\Models;
 
-use DateTimeInterface;
-use App\Models\UuidModel;
+use App\Models\Traits\ChecksActiveEvent;
 use Carbon\CarbonInterval;
-use Illuminate\Support\Str;
+use DateTimeInterface;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Spatie\Activitylog\LogOptions;
-use App\Models\Traits\ChecksActiveEvent;
-use Illuminate\Database\Eloquent\Builder;
 use Spatie\Activitylog\Traits\LogsActivity;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @property string $user_id
@@ -59,14 +58,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @method static null|static find($id, $columns = ['*'])
  */
 class TimeEntry extends UuidModel {
-	use HasFactory, LogsActivity, ChecksActiveEvent;
+	use ChecksActiveEvent, HasFactory, LogsActivity;
 
 	protected $casts = [
 		'start' => 'datetime',
 		'stop' => 'datetime',
 		'auto' => 'boolean',
 	];
-
 	protected $fillable = [
 		'user_id',
 		'start',
@@ -124,7 +122,7 @@ class TimeEntry extends UuidModel {
 	 * Scope a query to only include entries for an event.
 	 * If the event is not specified, then the active event will be used.
 	 */
-	public function scopeForEvent(Builder $query, Event|string $event = null): void {
+	public function scopeForEvent(Builder $query, Event|string|null $event = null): void {
 		$query->where('event_id', $event->id ?? $event ?? Setting::activeEvent()?->id);
 	}
 
@@ -161,10 +159,10 @@ class TimeEntry extends UuidModel {
 	 * Get the start time of the time entry in the tracker's timezone, offset by the day boundary hour.
 	 * Useful mainly for day comparisons.
 	 *
-	 * @param integer $direction Direction of the offset (1 or -1)
-	 * @param ?integer [$dayBoundaryHour] Hour of the day to use as the day boundary (defaults to the configured hour)
+	 * @param int $direction Direction of the offset (1 or -1)
+	 * @param ?int [$dayBoundaryHour] Hour of the day to use as the day boundary (defaults to the configured hour)
 	 */
-	public function getBoundaryOffsetStart(int $direction, int $dayBoundaryHour = null): Carbon {
+	public function getBoundaryOffsetStart(int $direction, ?int $dayBoundaryHour = null): Carbon {
 		if (!$dayBoundaryHour) $dayBoundaryHour = config('tracker.day_boundary_hour');
 		return $this->start->avoidMutation()
 			->timezone(config('tracker.timezone'))
@@ -176,10 +174,10 @@ class TimeEntry extends UuidModel {
 	 * If the time entry is still ongoing, the stop time will be considered to be the current time.
 	 * Useful mainly for day comparisons.
 	 *
-	 * @param integer $direction Direction of the offset (1 or -1)
-	 * @param ?integer [$dayBoundaryHour] Hour of the day to use as the day boundary (defaults to the configured hour)
+	 * @param int $direction Direction of the offset (1 or -1)
+	 * @param ?int [$dayBoundaryHour] Hour of the day to use as the day boundary (defaults to the configured hour)
 	 */
-	public function getBoundaryOffsetStop(int $direction, int $dayBoundaryHour = null): Carbon {
+	public function getBoundaryOffsetStop(int $direction, ?int $dayBoundaryHour = null): Carbon {
 		if (!$dayBoundaryHour) $dayBoundaryHour = config('tracker.day_boundary_hour');
 		$tz = config('tracker.timezone');
 		return ($this->stop?->avoidMutation()?->timezone($tz) ?? now($tz))
@@ -189,7 +187,7 @@ class TimeEntry extends UuidModel {
 	/**
 	 * Check whether the time entry crosses the day boundary
 	 */
-	public function isCrossingDayBoundary(int $dayBoundaryHour = null): bool {
+	public function isCrossingDayBoundary(?int $dayBoundaryHour = null): bool {
 		return !$this->getBoundaryOffsetStart(-1, $dayBoundaryHour)
 			->isSameDay($this->getBoundaryOffsetStop(-1, $dayBoundaryHour));
 	}
@@ -198,7 +196,7 @@ class TimeEntry extends UuidModel {
 	 * Get the amount of time the entry has run (in seconds) since the day boundary.
 	 * If it doesn't cross the day boundary at all, then this will return 0.
 	 */
-	public function getSecondsPastDayBoundary(int $dayBoundaryHour = null): float {
+	public function getSecondsPastDayBoundary(?int $dayBoundaryHour = null): float {
 		if (!$dayBoundaryHour) $dayBoundaryHour = config('tracker.day_boundary_hour');
 		if (!$this->isCrossingDayBoundary($dayBoundaryHour)) return 0;
 
@@ -217,7 +215,7 @@ class TimeEntry extends UuidModel {
 	 * @param ?Event $event Event to get the earned time for - if null, then the active event will be used
 	 * @param ?Collection $bonuses Bonuses to look through (to avoid extra queries if already retrieved)
 	 */
-	public function calculateBonusTime(Event $event = null, Collection $bonuses = null): int {
+	public function calculateBonusTime(?Event $event = null, ?Collection $bonuses = null): int {
 		// Retrieve a list of potentially applicable bonuses if they haven't been supplied
 		if (!$bonuses) {
 			$bonuses = TimeBonus::forEvent($event)
@@ -244,7 +242,7 @@ class TimeEntry extends UuidModel {
 	 * @param ?Event $event Event to get the earned time for - if null, then the active event will be used
 	 * @param ?Collection $bonuses Bonuses to look through (to avoid extra queries if already retrieved)
 	 */
-	public function calculateTotalTime(Event $event = null, Collection $bonuses = null): int {
+	public function calculateTotalTime(?Event $event = null, ?Collection $bonuses = null): int {
 		return $this->getDuration() + $this->calculateBonusTime($event, $bonuses);
 	}
 

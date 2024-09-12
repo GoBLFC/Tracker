@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use \App\Services\ConCat\ConCatApiClient;
+use App\Services\ConCat\ConCatApiClient;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;

@@ -17,21 +17,21 @@ enum Role: int {
 	 * Get the description for the case
 	 */
 	public function description(): string {
-		return static::descriptions[$this->value];
+		return self::descriptions[$this->value];
 	}
 
 	/**
 	 * Get the Bootstrap color class (like "danger" or "warning") for the case
 	 */
 	public function colorClass(): string {
-		return static::colorClasses[$this->value];
+		return self::colorClasses[$this->value];
 	}
 
 	/**
 	 * Get the action label (like "Make Admin" or "BAN") for the case
 	 */
 	public function actionLabel(): string {
-		return static::actionLabels[$this->value];
+		return self::actionLabels[$this->value];
 	}
 
 	/**

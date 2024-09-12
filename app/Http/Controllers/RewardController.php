@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RewardStoreRequest;
+use App\Http\Requests\RewardUpdateRequest;
 use App\Models\Event;
 use App\Models\Reward;
 use Illuminate\Http\JsonResponse;
-use App\Http\Requests\RewardStoreRequest;
-use App\Http\Requests\RewardUpdateRequest;
 
 class RewardController extends Controller {
 	public function __construct() {

@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Http\Requests\CheckInRequest;
+use App\Http\Requests\TimeEntryStoreRequest;
+use App\Models\Department;
 use App\Models\Event;
 use App\Models\Setting;
 use App\Models\TimeEntry;
-use Illuminate\View\View;
-use App\Models\Department;
-use Illuminate\Http\Request;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\CheckInRequest;
-use App\Http\Requests\TimeEntryStoreRequest;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class TrackerController extends Controller {
 	/**
@@ -77,7 +77,7 @@ class TrackerController extends Controller {
 	/**
 	 * Check out for the ongoing time entry
 	 */
-	public function postCheckOut(Request $request, TimeEntry $timeEntry = null): JsonResponse|RedirectResponse {
+	public function postCheckOut(Request $request, ?TimeEntry $timeEntry = null): JsonResponse|RedirectResponse {
 		/** @var User */
 		$user = Auth::user();
 

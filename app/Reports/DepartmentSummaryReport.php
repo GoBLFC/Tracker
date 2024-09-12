@@ -2,25 +2,25 @@
 
 namespace App\Reports;
 
-use App\Models\TimeEntry;
 use App\Models\Department;
+use App\Models\TimeEntry;
 use App\Models\User;
 use App\Reports\Concerns\FormatsAsTable;
 use App\Reports\Concerns\WithTotals;
-use Maatwebsite\Excel\Events\AfterSheet;
-use Maatwebsite\Excel\Concerns\FromQuery;
-use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use Illuminate\Contracts\Database\Eloquent\Builder;
-use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
+use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class DepartmentSummaryReport extends EventReport implements FromQuery, WithMapping, WithHeadings, WithColumnFormatting, WithTotals, WithStrictNullComparison, WithEvents, ShouldAutoSize {
-	use RegistersEventListeners, FormatsAsTable;
+class DepartmentSummaryReport extends EventReport implements FromQuery, ShouldAutoSize, WithColumnFormatting, WithEvents, WithHeadings, WithMapping, WithStrictNullComparison, WithTotals {
+	use FormatsAsTable, RegistersEventListeners;
 
 	public function query(): Builder {
 		return Department::with([
@@ -30,7 +30,7 @@ class DepartmentSummaryReport extends EventReport implements FromQuery, WithMapp
 		])->orderBy('name');
 	}
 
-	/** @var Department $department */
+	/** @param Department $department */
 	public function map($department): array {
 		return [
 			$department->display_name,

@@ -2,11 +2,11 @@
 
 namespace App\Console\Commands;
 
-use App\Models\TimeEntry;
-use Illuminate\Support\Str;
-use Illuminate\Console\Command;
 use App\Console\LogFriendlyOutput;
+use App\Models\TimeEntry;
 use App\Notifications\TimeEntryAutoStopped;
+use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 
 class StopOngoingTimeEntriesCommand extends Command {
 	use LogFriendlyOutput;

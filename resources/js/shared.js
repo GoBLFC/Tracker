@@ -4,61 +4,60 @@ import { Tooltip } from 'bootstrap';
 import { DateTime, Duration } from 'luxon';
 
 export const Toast = Swal.mixin({
-    toast: true,
-    position: "top-end",
-    showConfirmButton: false,
-    timer: 4000,
-    timerProgressBar: true,
-    showClass: {
-        popup: "animate__animated animate__slideInDown animate__faster"
-    }
+	toast: true,
+	position: 'top-end',
+	showConfirmButton: false,
+	timer: 4000,
+	timerProgressBar: true,
+	showClass: {
+		popup: 'animate__animated animate__slideInDown animate__faster',
+	},
 });
 
 export function debounce(func, wait, immediate) {
-    var timeout;
-    return function () {
-        var context = this, args = arguments;
-        var later = function () {
-            timeout = null;
-            if (!immediate) func.apply(context, args);
-        };
-        var callNow = immediate && !timeout;
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-        if (callNow) func.apply(context, args);
-    };
-};
+	let timeout;
+	return function (...args) {
+		const later = () => {
+			timeout = null;
+			if (!immediate) func.apply(this, args);
+		};
+		const callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if (callNow) func.apply(this, args);
+	};
+}
 
 export function applyLoading(elem, text) {
-    if (text) {
-        $(elem).data('original-text', $(elem).html())
-        	.html('<i class="fa fa-circle-notch fa-spin"></i> ' + text)
+	if (text) {
+		$(elem)
+			.data('original-text', $(elem).html())
+			.html(`<i class="fa fa-circle-notch fa-spin"></i> ${text}`)
 			.prop('disabled', true);
-    } else {
-		$(elem).html($(elem).data('original-text'))
-			.prop('disabled', false);
+	} else {
+		$(elem).html($(elem).data('original-text')).prop('disabled', false);
 	}
 }
 
 export function addRow(key, elem, data) {
-    let innerTable = '';
-    for (let i = 0; i < data.length; i++) {
-        const t = (key && i === 0) ? 'th scope="row"' : 'td';
-        innerTable += '<' + t + '>' + data[i] + '</' + t + '>';
-    }
-    $(elem).append('<tr>' + innerTable + '</tr>');
+	let innerTable = '';
+	for (let i = 0; i < data.length; i++) {
+		const t = key && i === 0 ? 'th scope="row"' : 'td';
+		innerTable += `<${t}>${data[i]}</${t}>`;
+	}
+	$(elem).append(`<tr>${innerTable}</tr>`);
 }
 
 export function getButtonInput(object) {
-    return $(object).parent().parent().find('.form-control').val();
+	return $(object).parent().parent().find('.form-control').val();
 }
 
 export function getButtonSelect(object) {
-    return $(object).parent().parent().find('.form-select').val();
+	return $(object).parent().parent().find('.form-select').val();
 }
 
 export function getTableKey(object) {
-    return $('th:first', $(object).parents('tr')).text();
+	return $('th:first', $(object).parents('tr')).text();
 }
 
 /**
@@ -78,7 +77,7 @@ export async function sendRequest(url, options) {
 			},
 			...options,
 		});
-	} catch(err) {
+	} catch (err) {
 		// Display a generic error message in the case of a network error
 		Toast.fire({
 			text: 'Internal error, please contact a staff member for assistance.',
@@ -88,8 +87,8 @@ export async function sendRequest(url, options) {
 	}
 
 	// Handle happy responses; assume any content is JSON
-	if(response.status === 205) return null;
-	if(response.ok) return response.json();
+	if (response.status === 205) return null;
+	if (response.ok) return response.json();
 
 	// The response isn't 2xx at this point, so display the error
 	let data;
@@ -100,7 +99,7 @@ export async function sendRequest(url, options) {
 			text: data.error ?? data.message,
 			icon: 'warning',
 		});
-	} catch(err) {
+	} catch (err) {
 		// Nevermind, guess it isn't expected, just parse it as text
 		data = await response.text();
 	}
@@ -118,7 +117,7 @@ export async function sendRequest(url, options) {
 export async function sendGetRequest(url, params = {}) {
 	// Build the URL with the query string for the request
 	const urlQS = new URL(url);
-	for(const [key, val] of Object.entries(params)) urlQS.searchParams.set(key, val);
+	for (const [key, val] of Object.entries(params)) urlQS.searchParams.set(key, val);
 
 	return sendRequest(urlQS, { method: 'GET' });
 }
@@ -199,8 +198,8 @@ export class ServerError extends Error {
 export function humanDuration(timeMs) {
 	const duration = Duration.fromMillis(timeMs).shiftTo('hours', 'minutes');
 
-	if(duration.hours > 0) {
-		if(duration.minutes < 1) return duration.toFormat("h'h'");
+	if (duration.hours > 0) {
+		if (duration.minutes < 1) return duration.toFormat("h'h'");
 		return duration.toFormat("h'h' m'm'");
 	}
 
@@ -214,7 +213,7 @@ export function humanDuration(timeMs) {
  */
 export function clockDuration(timeMs) {
 	const duration = Duration.fromMillis(timeMs).shiftTo('hours', 'minutes', 'seconds');
-	if(duration.hours > 0) return duration.toFormat('h:mm:ss');
+	if (duration.hours > 0) return duration.toFormat('h:mm:ss');
 	return duration.toFormat('m:ss');
 }
 
@@ -224,7 +223,7 @@ export function clockDuration(timeMs) {
  */
 export function initTooltips(elem = document) {
 	const tooltipTriggerList = elem.querySelectorAll('[data-bs-toggle="tooltip"]');
-	for(const tooltipEl of tooltipTriggerList) new Tooltip(tooltipEl);
+	for (const tooltipEl of tooltipTriggerList) new Tooltip(tooltipEl);
 }
 
 /**
@@ -233,9 +232,7 @@ export function initTooltips(elem = document) {
  * @param {string} timezone
  */
 export function prepareDateForInput(date, timezone) {
-	return DateTime.fromJSDate(date)
-		.setZone(timezone, { keepLocalTime: true })
-		.toISO();
+	return DateTime.fromJSDate(date).setZone(timezone, { keepLocalTime: true }).toISO();
 }
 
 /**
@@ -246,7 +243,7 @@ export function prepareDateForInput(date, timezone) {
  */
 export function isElementInView(elem, partial = false) {
 	const rect = elem.getBoundingClientRect();
-	if(partial) return rect.top < window.innerHeight && rect.bottom > 0;
+	if (partial) return rect.top < window.innerHeight && rect.bottom > 0;
 	return rect.top >= 0 && rect.bottom <= window.innerHeight;
 }
 
@@ -257,8 +254,8 @@ export function isElementInView(elem, partial = false) {
  */
 export function spinner(extraClasses = []) {
 	const spinner = document.createElement('i');
-	if(typeof extraClasses === 'string') extraClasses = extraClasses.split(' ');
-	spinner.classList.add('fa', 'fa-circle-notch', 'fa-spin', ...extraClasses);
+	const classes = typeof extraClasses === 'string' ? extraClasses.split(' ') : extraClasses;
+	spinner.classList.add('fa', 'fa-circle-notch', 'fa-spin', ...classes);
 	return spinner;
 }
 
@@ -269,10 +266,10 @@ export function spinner(extraClasses = []) {
  */
 export async function findUserByBadgeId(badgeId) {
 	let { users } = await sendGetRequest(userSearchUrl, { q: badgeId });
-	users = users.filter(user => user.badge_id === badgeId);
+	users = users.filter((user) => user.badge_id === badgeId);
 
 	// Bail if we don't have a single exact match
-	if(users.length !== 1) {
+	if (users.length !== 1) {
 		Toast.fire({
 			text: "Couldn't find user.",
 			icon: 'warning',

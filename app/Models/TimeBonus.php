@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Builder;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
  * @property \Illuminate\Support\Carbon $start
@@ -51,7 +51,6 @@ class TimeBonus extends UuidModel {
 		'stop' => 'datetime',
 		'modifier' => 'float',
 	];
-
 	protected $fillable = [
 		'start',
 		'stop',
@@ -83,7 +82,7 @@ class TimeBonus extends UuidModel {
 	 * Scope a query to only include bonuses for an event.
 	 * If the event is not specified, then the active event will be used.
 	 */
-	public function scopeForEvent(Builder $query, Event|string $event = null): void {
+	public function scopeForEvent(Builder $query, Event|string|null $event = null): void {
 		$query->where('event_id', $event->id ?? $event ?? Setting::activeEvent()?->id);
 	}
 }

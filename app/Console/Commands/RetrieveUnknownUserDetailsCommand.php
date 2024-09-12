@@ -2,11 +2,11 @@
 
 namespace App\Console\Commands;
 
-use App\Models\User;
 use App\Facades\ConCat;
-use Illuminate\Support\Str;
+use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Isolatable;
+use Illuminate\Support\Str;
 
 class RetrieveUnknownUserDetailsCommand extends Command implements Isolatable {
 	/**
@@ -39,7 +39,7 @@ class RetrieveUnknownUserDetailsCommand extends Command implements Isolatable {
 		ConCat::authorize();
 
 		// Retrieve all registrations for the users
-		$this->info("Fetching registration information for all of them...");
+		$this->info('Fetching registration information for all of them...');
 		$badgeIds = $unknownUsers->pluck('badge_id')
 			->map(fn ($id) => (string) $id)
 			->toArray();

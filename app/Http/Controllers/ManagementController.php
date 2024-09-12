@@ -2,28 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Role;
-use App\Models\User;
+use App\Models\Activity;
+use App\Models\Department;
 use App\Models\Event;
 use App\Models\Reward;
+use App\Models\Role;
 use App\Models\Setting;
-use App\Reports\Report;
-use App\Models\Activity;
 use App\Models\TimeEntry;
-use Illuminate\View\View;
-use App\Models\Department;
-use App\Reports\EventReport;
-use App\Reports\AuditLogReport;
+use App\Models\User;
 use App\Reports\AttendeeLogReport;
-use App\Reports\VolunteerTimeReport;
-use Illuminate\Http\RedirectResponse;
+use App\Reports\AuditLogReport;
+use App\Reports\AutoClosedTimeEntriesReport;
 use App\Reports\Concerns\WithExtraParam;
 use App\Reports\DepartmentSummaryReport;
-use Illuminate\Database\Eloquent\Builder;
-use App\Reports\AutoClosedTimeEntriesReport;
-use App\Reports\VolunteerApplicationsReport;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use App\Reports\EventReport;
+use App\Reports\Report;
 use App\Reports\VolunteerApplicationDepartmentSummaryReport;
+use App\Reports\VolunteerApplicationsReport;
+use App\Reports\VolunteerTimeReport;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ManagementController extends Controller {
 	public const REPORTS = [
@@ -66,7 +66,7 @@ class ManagementController extends Controller {
 				})
 				->orderByDesc('created_at')
 				->limit(10)
-				->get()
+				->get(),
 		]);
 	}
 

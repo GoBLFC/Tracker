@@ -4,9 +4,9 @@ namespace App\Telegram\Commands;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
-use Telegram\Bot\Keyboard\Keyboard;
 use Spatie\Activitylog\Facades\CauserResolver;
 use Telegram\Bot\Exceptions\TelegramSDKException;
+use Telegram\Bot\Keyboard\Keyboard;
 
 class LinkCommand extends Command {
 	protected string $name = 'link';

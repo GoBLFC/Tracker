@@ -2,10 +2,10 @@
 
 namespace App\Policies;
 
-use App\Models\User;
 use App\Models\Event;
 use App\Models\Kiosk;
 use App\Models\TimeEntry;
+use App\Models\User;
 
 class TimeEntryPolicy {
 	/**
@@ -25,7 +25,7 @@ class TimeEntryPolicy {
 	/**
 	 * Determine whether the user can create models.
 	 */
-	public function create(User $creator, User $target, Event $event = null): bool {
+	public function create(User $creator, User $target, ?Event $event = null): bool {
 		$validEvent = !$event || $event->isActive();
 		return ($creator->id === $target->id && $validEvent && Kiosk::isSessionAuthorized())
 			|| ($creator->isManager() && $validEvent)

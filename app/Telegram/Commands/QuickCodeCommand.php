@@ -19,7 +19,7 @@ class QuickCodeCommand extends Command {
 		// Don't allow any fancy users to generate quick codes
 		if ($user->isLead()) {
 			$this->replyWithMessage([
-				'text' => "In the interest of security, staff may not use quick sign-in codes. Sorry!",
+				'text' => 'In the interest of security, staff may not use quick sign-in codes. Sorry!',
 				'reply_markup' => $this->buildStandardActionsKeyboard(),
 			]);
 			return;

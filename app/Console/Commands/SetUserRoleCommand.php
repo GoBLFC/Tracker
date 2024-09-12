@@ -4,11 +4,12 @@ namespace App\Console\Commands;
 
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Support\Str;
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Console\PromptsForMissingInput;
+use Illuminate\Support\Str;
+
 use function Laravel\Prompts\search;
 use function Laravel\Prompts\select;
-use Illuminate\Contracts\Console\PromptsForMissingInput;
 
 class SetUserRoleCommand extends Command implements PromptsForMissingInput {
 	/**

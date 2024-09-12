@@ -27,9 +27,9 @@ class SetTelegramCommandsCommand extends Command {
 			'commands' => $commands->filter(fn (TelegramCommand $cmd) => !$cmd->hidden)
 				->map(fn (TelegramCommand $cmd) => [
 					'command' => $cmd->getName(),
-					'description' => $cmd->getDescription()
+					'description' => $cmd->getDescription(),
 				])
-				->values()
+				->values(),
 		]);
 		$this->info('Command list sent to Telegram.');
 	}

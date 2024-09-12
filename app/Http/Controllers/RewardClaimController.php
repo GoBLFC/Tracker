@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Http\Requests\RewardClaimStoreRequest;
 use App\Models\Event;
 use App\Models\Reward;
 use App\Models\RewardClaim;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use App\Http\Requests\RewardClaimStoreRequest;
 
 class RewardClaimController extends Controller {
 	/**

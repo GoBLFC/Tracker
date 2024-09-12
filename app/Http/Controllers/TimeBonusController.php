@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TimeBonusStoreRequest;
+use App\Http\Requests\TimeBonusUpdateRequest;
 use App\Models\Event;
 use App\Models\TimeBonus;
 use Illuminate\Http\JsonResponse;
-use App\Http\Requests\TimeBonusStoreRequest;
-use App\Http\Requests\TimeBonusUpdateRequest;
 
 class TimeBonusController extends Controller {
 	public function __construct() {

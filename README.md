@@ -176,6 +176,10 @@ Whenever using a Sail command, if you don't have an alias setup, use `sh vendor/
 - The helpers `dump(...)` and `dd(...)` can be extremely helpful for debugging the application. The former pretty-prints a representation of any data passed to it with full HTML formatting, and the latter does the same but also immediately halts further execution of the application. Collections and Carbon instances also have `->dump()` and `->dd()` methods.
 - Use `php artisan make:migration` or `sail artisan make:migration` to create a new database migration. See [the migrations documentation](https://laravel.com/docs/11.x/migrations) for more information.
 - The Laravel [documentation](https://laravel.com/docs/11.x) and [API documentation](https://laravel.com/api/11.x/) will be very helpful if you're not already familiar with the framework.
+- Running `composer run format` and `npm run format` will format all PHP and JavaScript code, respectively.
+- Running `npm run lint` will lint all JavaScript code, checking for common errors and making recommendations.
+	* `npm run lint:fix` will automatically apply fixes for many of these.
+	* `npm run lint:fix-unsafe` will correct even more, but these changes should be manually verified.
 
 ## Architecture Overview
 Since Laravel is an MVC (Model, View, Controller) framework, that structure is generally adhered to.
