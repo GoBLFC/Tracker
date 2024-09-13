@@ -2,7 +2,7 @@
 
 $finder = (new PhpCsFixer\Finder)
 	->in(__DIR__)
-	->exclude('bootstrap/cache');
+	->exclude(['bootstrap/cache', 'storage']);
 
 return (new PhpCsFixer\Config)
 	->setFinder($finder)
