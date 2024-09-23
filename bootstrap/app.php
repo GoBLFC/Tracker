@@ -1,6 +1,6 @@
 <?php
 
-// Current Laravel skeleton version: v11.1.4
+// Current Laravel skeleton version: v11.2.0
 
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
