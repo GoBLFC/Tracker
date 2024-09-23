@@ -25,7 +25,7 @@
 		"sweetalert2": "^11.12.4"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "1.8.3",
+		"@biomejs/biome": "1.9.2",
 		"laravel-vite-plugin": "^1.0.5",
 		"vite": "^5.4.2"
 	}
