@@ -15,6 +15,7 @@ return [
 	 */
 
 	'enabled' => env('DEBUGBAR_ENABLED', null),
+	'hide_empty_tabs' => false, // Hide tabs until they have content
 	'except' => [
 		'telescope*',
 		'horizon*',
@@ -183,6 +184,7 @@ return [
 		'models' => true,  // Display models
 		'livewire' => true,  // Display Livewire (when available)
 		'jobs' => true, // Display dispatched jobs
+		'pennant' => false, // Display Pennant feature flags
 	],
 
 	/*
@@ -212,16 +214,18 @@ return [
 		],
 		'db' => [
 			'with_params' => true,   // Render SQL with the parameters substituted
+			'exclude_paths' => [       // Paths to exclude entirely from the collector
+				// 'vendor/laravel/framework/src/Illuminate/Session', // Exclude sessions queries
+			],
 			'backtrace' => true,   // Use a backtrace to find the origin of the query in your files.
 			'backtrace_exclude_paths' => [],   // Paths to exclude from backtrace. (in addition to defaults)
 			'timeline' => true,  // Add the queries to the timeline
 			'duration_background' => true,   // Show shaded background on each query relative to how long it took to execute.
 			'explain' => [                 // Show EXPLAIN output on queries
 				'enabled' => true,
-				'types' => ['SELECT'],     // Deprecated setting, is always only SELECT
 			],
-			'hints' => false,    // Show hints for common mistakes
-			'show_copy' => false,    // Show copy button next to the query,
+			'hints' => false,   // Show hints for common mistakes
+			'show_copy' => true,    // Show copy button next to the query,
 			'slow_threshold' => false,   // Only track queries that last longer than this time in ms
 			'memory_usage' => false,   // Show queries memory usage
 			'soft_limit' => 100,      // After the soft limit, no parameters/backtrace are captured

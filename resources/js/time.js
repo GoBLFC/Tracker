@@ -42,10 +42,7 @@ function toggleStatus(status, success = true) {
 		return;
 	}
 
-	$button
-		.html(`Check-${status}`)
-		.data('value', status.toLowerCase())
-		.prop('disabled', false);
+	$button.html(`Check-${status}`).data('value', status.toLowerCase()).prop('disabled', false);
 
 	let opposite = 'Out';
 	if (status === 'Out') {
