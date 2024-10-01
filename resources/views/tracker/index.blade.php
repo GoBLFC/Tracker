@@ -110,7 +110,7 @@
 @endpush
 
 @push('modules')
-	@vite('resources/js/time.js')
+	@vite('resources/js/legacy/time.js')
 @endpush
 
 @push('scripts')

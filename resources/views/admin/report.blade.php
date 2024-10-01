@@ -111,7 +111,7 @@
 @endsection
 
 @push('modules')
-	@vite('resources/js/admin/report.js')
+	@vite('resources/js/legacy/admin/report.js')
 @endpush
 
 @push('scripts')

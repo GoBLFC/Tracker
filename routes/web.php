@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 Route::controller(\App\Http\Controllers\AuthController::class)->group(function () {
 	Route::get('/login', 'getLogin')->name('auth.login')->middleware('guest');
 	Route::get('/logout', 'getLogout')->name('auth.logout');
+	Route::post('/logout', 'postLogout')->name('auth.logout.post');
 	Route::get('/auth/redirect', 'getRedirect')->name('auth.redirect');
 	Route::get('/auth/callback', 'getCallback')->name('auth.callback');
 	Route::post('/auth/quickcode', 'postQuickcode')->name('auth.quickcode.post');

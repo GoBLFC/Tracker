@@ -143,7 +143,7 @@
 @section('logoutTime', 1800)
 
 @push('modules')
-	@vite('resources/js/attendee-log.js')
+	@vite('resources/js/legacy/attendee-log.js')
 @endpush
 
 @push('scripts')

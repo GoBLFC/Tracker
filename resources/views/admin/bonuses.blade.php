@@ -188,6 +188,6 @@
 @endsection
 
 @push('modules')
-	@vite('resources/js/seamless-forms.js')
-	@vite('resources/js/admin/bonuses.js')
+	@vite('resources/js/legacy/seamless-forms.js')
+	@vite('resources/js/legacy/admin/bonuses.js')
 @endpush

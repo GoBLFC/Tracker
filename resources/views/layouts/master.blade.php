@@ -18,9 +18,9 @@
 	@stack('styles')
 
 	@prepend('modules')
-		@vite('resources/js/app.js')
+		@vite('resources/js/legacy/app.js')
 		@kiosk(true)
-			@vite('resources/js/auto-logout.js')
+			@vite('resources/js/legacy/auto-logout.js')
 		@endkiosk
 	@endprepend
 	@stack('modules')

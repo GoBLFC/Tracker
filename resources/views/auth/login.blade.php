@@ -35,7 +35,7 @@
 @section('footer-nav-class', 'col-sm-10 col-md-8 col-lg-6 col-xl-5 col-xxl-4')
 
 @push('modules')
-	@vite('resources/js/login.js')
+	@vite('resources/js/legacy/login.js')
 @endpush
 
 @push('scripts')

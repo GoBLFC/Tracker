@@ -322,7 +322,7 @@
 @section('logoutTime', 300)
 
 @push('modules')
-	@vite('resources/js/manage.js')
+	@vite('resources/js/legacy/manage.js')
 @endpush
 
 @push('scripts')

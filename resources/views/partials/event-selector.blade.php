@@ -26,5 +26,5 @@
 </div>
 
 @push('modules')
-	@vite('resources/js/event-selector.js')
+	@vite('resources/js/legacy/event-selector.js')
 @endpush

@@ -5,7 +5,7 @@
 @endkiosk
 
 @push('modules')
-	@vite('resources/js/toggle-kiosk.js')
+	@vite('resources/js/legacy/toggle-kiosk.js')
 @endpush
 
 @push('scripts')
