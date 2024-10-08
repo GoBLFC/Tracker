@@ -35,10 +35,12 @@ class HandleInertiaRequests extends Middleware {
 	 */
 	public function share(Request $request): array {
 		return array_merge(parent::share($request), [
-			'auth.user' => fn () => $request?->user()?->only('id', 'badge_id', 'badge_name', 'username', 'role'),
-			'activeEvent' => Setting::activeEvent()?->only('id', 'name'),
-			'isDevMode' => Setting::isDevMode(),
-			'isKiosk' => Kiosk::isSessionAuthorized(true),
+			'auth.user' => fn () => $request->user()?->only('id', 'badge_id', 'badge_name', 'username', 'role'),
+			'activeEvent' => fn () => Setting::activeEvent()?->only('id', 'name'),
+			'timezone' => config('tracker.timezone'),
+			'isGatekeeper' => fn () => $request->user()?->isGatekeeper() ?? false,
+			'isDevMode' => fn () => Setting::isDevMode(),
+			'isKiosk' => fn () => Kiosk::isSessionAuthorized(true),
 			'isDebug' => config('app.debug'),
 			'hasDebugbar' => config('debugbar.enabled') ?? config('app.debug'),
 			'flash' => [
