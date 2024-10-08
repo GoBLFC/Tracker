@@ -8,7 +8,7 @@
 		"guzzlehttp/guzzle": "^7.9",
 		"inertiajs/inertia-laravel": "^1.3",
 		"irazasyed/telegram-bot-sdk": "^3.14",
-		"laravel/framework": "^11.23",
+		"laravel/framework": "^11.24",
 		"laravel/socialite": "^5.16",
 		"laravel/tinker": "^2.9",
 		"maatwebsite/excel": "^3.1",
