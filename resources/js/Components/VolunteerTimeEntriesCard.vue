@@ -80,9 +80,9 @@
 </template>
 
 <script setup>
-import { useTime } from "../lib/time";
-import Duration from "./Duration.vue";
-import TimeEntryActionButtons from "./TimeEntryActionButtons.vue";
+import { useTime } from '../lib/time';
+import Duration from './Duration.vue';
+import TimeEntryActionButtons from './TimeEntryActionButtons.vue';
 
 defineProps({
 	now: { type: Number, required: false },
@@ -96,9 +96,7 @@ const { isoToDateTimeString } = useTime();
  * @param {Object} newEntry
  */
 function updateEntry(newEntry) {
-	const entry = volunteer.value.stats.entries.find(
-		(entry) => entry.id === newEntry.id
-	);
+	const entry = volunteer.value.stats.entries.find((entry) => entry.id === newEntry.id);
 	Object.assign(entry, newEntry);
 }
 
@@ -107,9 +105,7 @@ function updateEntry(newEntry) {
  * @param {string} id
  */
 function deleteEntry(id) {
-	const entryIdx = volunteer.value.stats.entries.findIndex(
-		(entry) => entry.id === id
-	);
+	const entryIdx = volunteer.value.stats.entries.findIndex((entry) => entry.id === id);
 	volunteer.value.stats.entries.splice(entryIdx, 1);
 }
 </script>

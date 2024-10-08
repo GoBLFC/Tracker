@@ -5,10 +5,10 @@
 </template>
 
 <script setup>
-import { computed, inject } from "vue";
-import { Link } from "@inertiajs/vue3";
+import { computed, inject } from 'vue';
+import { Link } from '@inertiajs/vue3';
 
-const route = inject("route");
+const route = inject('route');
 
 const { to, url } = defineProps({
 	to: String,

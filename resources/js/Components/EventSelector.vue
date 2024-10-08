@@ -38,16 +38,16 @@
 </template>
 
 <script setup>
-import { ref, useId } from "vue";
-import { router } from "@inertiajs/vue3";
-import { useUser } from "../lib/user";
-import LegacyLink from "./LegacyLink.vue";
+import { ref, useId } from 'vue';
+import { router } from '@inertiajs/vue3';
+import { useUser } from '../lib/user';
+import LegacyLink from './LegacyLink.vue';
 
 const { event = null, resolver } = defineProps({
 	event: { type: [Object, null], required: true },
 	events: { type: Array, required: true },
 	resolver: { type: Function, required: true },
-	actionWord: { type: String, default: "Edit" },
+	actionWord: { type: String, default: 'Edit' },
 });
 const emit = defineEmits({
 	changing: [String],
@@ -69,7 +69,7 @@ function navigateToEvent(evt) {
 	const newEventId = evt.target.value;
 	const { url, data = {}, only, ...options } = resolver(newEventId);
 
-	if (only && !only.includes("event")) only.push("event");
+	if (only && !only.includes('event')) only.push('event');
 
 	router.get(url, data, {
 		preserveState: true,
@@ -79,14 +79,14 @@ function navigateToEvent(evt) {
 
 		onStart() {
 			loading.value = true;
-			emit("changing", newEventId);
+			emit('changing', newEventId);
 		},
 		onSuccess() {
-			emit("change", newEventId);
+			emit('change', newEventId);
 		},
 		onError(errors) {
 			evt.target.value = oldEventId;
-			emit("error", errors);
+			emit('error', errors);
 		},
 		onFinish() {
 			loading.value = false;

@@ -42,7 +42,7 @@
 </template>
 
 <script setup>
-import VolunteerClaimToggleButton from "./VolunteerClaimToggleButton.vue";
+import VolunteerClaimToggleButton from './VolunteerClaimToggleButton.vue';
 
 defineProps({
 	rewards: { type: Array, required: true },
