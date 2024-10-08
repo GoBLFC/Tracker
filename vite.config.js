@@ -12,7 +12,6 @@ export default defineConfig({
 				'resources/js/legacy/app.js',
 				'resources/js/legacy/login.js',
 				'resources/js/legacy/time.js',
-				'resources/js/legacy/manage.js',
 				'resources/js/legacy/auto-logout.js',
 				'resources/js/legacy/toggle-kiosk.js',
 				'resources/js/legacy/create-user.js',
