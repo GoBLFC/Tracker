@@ -29,7 +29,10 @@ class VolunteerApplicationDepartmentSummaryReport extends Report implements From
 		$this->volunteers = new Collection(ConCat::searchVolunteers());
 		$this->volunteers = $this->volunteers->keyBy('user.id');
 
-		if ($this->volunteers->isEmpty()) return;
+		if ($this->volunteers->isEmpty()) {
+			$this->departments = new Collection;
+			return;
+		}
 
 		// Replace the options array with a keyed collection on each volunteer
 		foreach ($this->volunteers as $volunteer) {
