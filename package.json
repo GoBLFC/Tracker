@@ -35,7 +35,7 @@
 		"vue-debounce": "^5.0.1"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "1.9.2",
+		"@biomejs/biome": "1.9.3",
 		"@vitejs/plugin-vue": "^5.1.4",
 		"laravel-vite-plugin": "^1.0.5",
 		"vite": "^5.4.2"

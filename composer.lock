@@ -1571,16 +1571,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v11.27.0",
+            "version": "v11.27.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "fa6ce79f02d35c045605534bc9b105763c4eff1b"
+                "reference": "2634ad4a6a71da3288943f058a8abbfec6a65ebb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/fa6ce79f02d35c045605534bc9b105763c4eff1b",
-                "reference": "fa6ce79f02d35c045605534bc9b105763c4eff1b",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/2634ad4a6a71da3288943f058a8abbfec6a65ebb",
+                "reference": "2634ad4a6a71da3288943f058a8abbfec6a65ebb",
                 "shasum": ""
             },
             "require": {
@@ -1776,7 +1776,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2024-10-08T16:02:30+00:00"
+            "time": "2024-10-08T20:25:59+00:00"
         },
         {
             "name": "laravel/prompts",
@@ -3240,16 +3240,16 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v5.3.0",
+            "version": "v5.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "3abf7425cd284141dc5d8d14a9ee444de3345d1a"
+                "reference": "8eea230464783aa9671db8eea6f8c6ac5285794b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/3abf7425cd284141dc5d8d14a9ee444de3345d1a",
-                "reference": "3abf7425cd284141dc5d8d14a9ee444de3345d1a",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/8eea230464783aa9671db8eea6f8c6ac5285794b",
+                "reference": "8eea230464783aa9671db8eea6f8c6ac5285794b",
                 "shasum": ""
             },
             "require": {
@@ -3292,9 +3292,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
-                "source": "https://github.com/nikic/PHP-Parser/tree/v5.3.0"
+                "source": "https://github.com/nikic/PHP-Parser/tree/v5.3.1"
             },
-            "time": "2024-09-29T13:56:26+00:00"
+            "time": "2024-10-08T18:51:32+00:00"
         },
         {
             "name": "nunomaduro/termwind",
