@@ -5,5 +5,5 @@
 <script setup>
 import { useToast } from '../lib/toast';
 
-useToast();
+useToast({ flashes: true });
 </script>
