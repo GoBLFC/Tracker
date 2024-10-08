@@ -2,7 +2,7 @@ import { toRef } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 
 /**
- * Gets information about the authenticated user from the Inertia page properties
+ * Provides information about the authenticated user from the Inertia page properties
  */
 export function useUser() {
 	const page = usePage();
@@ -15,7 +15,13 @@ export function useUser() {
 		displayName: toRef(() => page.props.auth.user?.badge_name ?? page.props.auth.user?.username),
 		role: toRef(() => page.props.auth.user?.role),
 		roleName: toRef(() => (page.props.auth.user?.role ? roleNames[page.props.auth.user?.role] : null)),
+
 		isLoggedIn: toRef(() => Boolean(page.props.auth.user)),
+		isGatekeeper: toRef(() => page.props.isGatekeeper),
+		isBanned: toRef(() => page.props.auth.user?.role === -2),
+		isLead: toRef(() => page.props.auth.user?.role >= 1),
+		isManager: toRef(() => page.props.auth.user?.role >= 2),
+		isAdmin: toRef(() => page.props.auth.user?.role === 3),
 	};
 }
 
