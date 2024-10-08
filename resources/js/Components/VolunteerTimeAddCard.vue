@@ -53,7 +53,7 @@
 								!department ||
 								request.processing.value
 							"
-							@click="checkin"
+							@click="store"
 						>
 							<FontAwesomeIcon
 								:icon="
@@ -100,39 +100,23 @@ const department = ref(null);
 const notes = ref('');
 
 /**
- * Sends a request to start an ongoing time entry and updates the volunteer appropriately
+ * Sends a request to store a new time entry and updates the volunteer appropriately
  */
-async function checkin() {
+async function store() {
 	const dept = department.value;
+	const isOngoing = !stop.value;
+
 	const data = await request.put(['tracker.time.store', volunteer.value.user.id], {
 		event_id: event.id,
 		department_id: dept.id,
 		start: dateToTrackerTime(start.value).toISO(),
+		stop: !isOngoing ? dateToTrackerTime(stop.value).toISO() : undefined,
 		notes: notes.value,
 	});
 
 	data.time_entry.department = dept;
 	volunteer.value.stats.entries.push(data.time_entry);
 
-	toast.success('User checked in.');
-}
-
-/**
- * Sends a request to add a complete time entry and updates the volunteer appropriately
- */
-async function addTime() {
-	const dept = department.value;
-	const data = await request.put(['tracker.time.store', volunteer.value.user.id], {
-		event_id: event.id,
-		department_id: dept.id,
-		start: dateToTrackerTime(start.value).toISO(),
-		stop: dateToTrackerTime(stop.value).toISO(),
-		notes: notes.value,
-	});
-
-	data.time_entry.department = dept;
-	volunteer.value.stats.entries.push(data.time_entry);
-
-	toast.success('Added time entry.');
+	toast.success(isOngoing ? 'User checked in.' : 'Added time entry.');
 }
 </script>
