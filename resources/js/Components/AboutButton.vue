@@ -3,23 +3,23 @@
 		<button
 			class="btn btn-sm btn-light"
 			data-bs-toggle="modal"
-			data-bs-target="#aboutModal"
+			:data-bs-target="`#${modalId}`"
 		>
 			About
 		</button>
 
 		<Teleport to="body">
 			<div
+				:id="modalId"
 				class="modal fade"
-				id="aboutModal"
 				tabindex="-1"
-				aria-labelledby="aboutModalLabel"
+				:aria-labelledby="labelId"
 				aria-hidden="true"
 			>
 				<div class="modal-dialog modal-dialog-centered modal-lg">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h1 class="modal-title fs-5" id="aboutModalLabel">
+							<h1 class="modal-title fs-5" :id="labelId">
 								About Tracker
 							</h1>
 							<button
@@ -154,3 +154,10 @@
 		</Teleport>
 	</div>
 </template>
+
+<script setup>
+import { useId } from 'vue';
+
+const modalId = useId();
+const labelId = useId();
+</script>
