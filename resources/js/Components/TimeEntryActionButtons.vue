@@ -37,7 +37,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import {
 	faCircleNotch,
@@ -58,6 +58,13 @@ const toast = useToast();
 const request = useRequest();
 
 const deleted = ref(false);
+
+watch(
+	() => entry,
+	() => {
+		deleted.value = false;
+	}
+);
 
 /**
  * Sends a request to end the time entry and emits the checkout event with the updated data if successful
