@@ -17,6 +17,14 @@
 	@inertiaHead
 </head>
 <body>
+	<noscript>
+		<div class="d-flex flex-column justify-content-center align-items-center mt-5 mb-0">
+			<div class="alert alert-warning">
+				Tracker requires JavaScript to work properly.
+			</div>
+		</div>
+	</noscript>
+
 	@inertia
 </body>
 </html>
