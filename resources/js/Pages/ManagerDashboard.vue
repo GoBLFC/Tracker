@@ -39,9 +39,11 @@
 					v-if="volunteer"
 					v-model="volunteer"
 					class="mb-5"
+					:event
 					:rewards
 					:departments
 					:now
+					ref="volunteer-card"
 				/>
 
 				<div class="card mb-4">
@@ -120,22 +122,21 @@
 </template>
 
 <script setup>
-import { inject, ref, computed, watch } from "vue";
-import humanizeDuration from "humanize-duration";
-import { useUser } from "../lib/user";
-import { useSettings } from "../lib/settings";
-import { useNow } from "../lib/time";
-import { useRequest } from "../lib/request";
-import { useToast } from "../lib/toast";
-import LegacyLink from "../Components/LegacyLink.vue";
-import EventSelector from "../Components/EventSelector.vue";
-import UserSearchCard from "../Components/UserSearchCard.vue";
-import VolunteerManageCard from "../Components/VolunteerManageCard.vue";
-import TimeActivitiesTable from "../Components/TimeActivitiesTable.vue";
-import TimeEntriesTable from "../Components/TimeEntriesTable.vue";
-import UserCreateCard from "../Components/UserCreateCard.vue";
-import KioskToggleButton from "../Components/KioskToggleButton.vue";
-import ManagementNav from "../Components/ManagementNav.vue";
+import { inject, ref, computed, watch, useTemplateRef, nextTick } from 'vue';
+import humanizeDuration from 'humanize-duration';
+import { useUser } from '../lib/user';
+import { useSettings } from '../lib/settings';
+import { useNow } from '../lib/time';
+import { useRequest } from '../lib/request';
+import LegacyLink from '../Components/LegacyLink.vue';
+import EventSelector from '../Components/EventSelector.vue';
+import UserSearchCard from '../Components/UserSearchCard.vue';
+import VolunteerManageCard from '../Components/VolunteerManageCard.vue';
+import TimeActivitiesTable from '../Components/TimeActivitiesTable.vue';
+import TimeEntriesTable from '../Components/TimeEntriesTable.vue';
+import UserCreateCard from '../Components/UserCreateCard.vue';
+import KioskToggleButton from '../Components/KioskToggleButton.vue';
+import ManagementNav from '../Components/ManagementNav.vue';
 
 // TODO: auto-refresh activities and entries
 const { event, kioskLifetime } = defineProps({
@@ -148,15 +149,12 @@ const { event, kioskLifetime } = defineProps({
 	longestOngoingEntries: { type: Array, required: true },
 });
 
-const route = inject("route");
-const toast = useToast();
+const route = inject('route');
 const { activeEvent } = useSettings();
 const { isAdmin } = useUser();
 const { now } = useNow();
 
-const kioskLifetimeText = computed(() =>
-	humanizeDuration(kioskLifetime * 1000 * 60)
-);
+const kioskLifetimeText = computed(() => humanizeDuration(kioskLifetime * 1000 * 60));
 
 /**
  * Resolves an event ID to a navigable URL and additional properties to pass to the router
@@ -165,8 +163,8 @@ const kioskLifetimeText = computed(() =>
  */
 function eventRequestResolver(eventId) {
 	return {
-		url: route("management.manage", eventId),
-		only: ["longestOngoingEntries", "recentTimeActivities"],
+		url: route('management.manage', eventId),
+		only: ['longestOngoingEntries', 'recentTimeActivities'],
 	};
 }
 
@@ -175,6 +173,7 @@ function eventRequestResolver(eventId) {
 //
 const statsRequest = useRequest();
 const claimsRequest = useRequest();
+const volunteerCard = useTemplateRef('volunteer-card');
 
 // TODO: auto-refresh volunteer data while displayed
 const volunteer = ref(null);
@@ -186,25 +185,20 @@ watch(() => event, resetVolunteer);
  * @param userId
  */
 async function loadVolunteer(userId) {
-	try {
-		const [timeData, claimData] = await Promise.all([
-			statsRequest.get(["tracker.user.stats.event", [userId, event.id]]),
-			claimsRequest.get(["users.claims.event", [userId, event.id]]),
-		]);
+	const [timeData, claimData] = await Promise.all([
+		statsRequest.get(['tracker.user.stats.event', [userId, event.id]]),
+		claimsRequest.get(['users.claims.event', [userId, event.id]]),
+	]);
 
-		volunteer.value = {
-			user: timeData.user,
-			stats: timeData.stats,
-			claims: claimData.reward_claims,
-		};
+	volunteer.value = {
+		user: timeData.user,
+		stats: timeData.stats,
+		claims: claimData.reward_claims,
+	};
 
-		// TODO: scroll to user card
-	} catch (err) {
-		toast.error(
-			"Unable to load volunteer data",
-			"See the browser console for more information."
-		);
-	}
+	nextTick(() => {
+		volunteerCard.value.attention();
+	});
 }
 
 /**

@@ -10,6 +10,15 @@ export function useTime() {
 	const { timezone } = useSettings();
 
 	/**
+	 * Converts a local JS date to Tracker's configured timezone, modifying the timestamp
+	 * @param {Date} date
+	 * @returns {DateTime}
+	 */
+	function dateToTrackerTime(date) {
+		return DateTime.fromJSDate(date).setZone(timezone.value, { keepLocalTime: true });
+	}
+
+	/**
 	 * Parses an ISO 8601 datetime string and converts it to Tracker's configured timezone
 	 * @param {string} iso
 	 * @returns {DateTime}
@@ -28,10 +37,20 @@ export function useTime() {
 		return isoToTrackerTime(iso).toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY);
 	}
 
+	/**
+	 * Gets the current time in Tracker's configured timezone
+	 * @returns {DateTime}
+	 */
+	function now() {
+		return DateTime.now().setZone(timezone.value);
+	}
+
 	return {
 		timezone,
+		dateToTrackerTime,
 		isoToTrackerTime,
 		isoToDateTimeString,
+		now,
 	};
 }
 
