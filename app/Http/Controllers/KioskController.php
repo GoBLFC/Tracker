@@ -16,14 +16,14 @@ class KioskController extends Controller {
 
 		// Make sure the session isn't already authorized
 		if (Kiosk::isSessionAuthorized(true)) {
-			return $request->expectsJson()
+			return $request->expectsJson() && !$request->inertia()
 				? response()->json(['error' => 'Session is already authorized as a kiosk.'])
 				: redirect()->back()->withError('Session is already authorized as a kiosk.');
 		}
 
 		$kiosk = Kiosk::authorizeSession();
 
-		return $request->expectsJson()
+		return $request->expectsJson() && !$request->inertia()
 			? response()->json(['kiosk' => $kiosk])
 			: redirect()->back()->withSuccess('Authorized this session as a kiosk.');
 	}
@@ -35,7 +35,7 @@ class KioskController extends Controller {
 		$kiosk = Kiosk::findFromSession();
 		$this->authorize('delete', $kiosk);
 		$kiosk->deauthorize();
-		return $request->expectsJson()
+		return $request->expectsJson() && !$request->inertia()
 			? response()->json(null, 205)
 			: redirect()->back()->withSuccess('Deauthorized this session as a kiosk.');
 	}
