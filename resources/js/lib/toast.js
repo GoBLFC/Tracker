@@ -1,5 +1,6 @@
 import { onMounted, watch } from 'vue';
 import { usePage } from '@inertiajs/vue3';
+import Swal from 'sweetalert2';
 import { Toast } from '../legacy/shared';
 
 /**
@@ -7,7 +8,7 @@ import { Toast } from '../legacy/shared';
  * @param {Object} [options]
  * @param {boolean} [options.flashes] Whether to automatically handle any session flash messages
  */
-export function useToast({ flashes = true } = {}) {
+export function useToast({ flashes = false } = {}) {
 	if (flashes) {
 		const page = usePage();
 
@@ -20,22 +21,50 @@ export function useToast({ flashes = true } = {}) {
 
 	/**
 	 * Temporarily displays a success message
+	 * @param {string} titleOrText
+	 * @param {string} [text]
 	 */
-	function success(text) {
+	function success(titleOrText, text) {
 		Toast.fire({
-			text,
+			title: text ? titleOrText : undefined,
+			text: text ?? titleOrText,
 			icon: 'success',
 		});
 	}
 
 	/**
 	 * Temporarily displays an error message
+	 * @param {string} titleOrText
+	 * @param {string} [text]
 	 */
-	function error(text) {
+	function error(titleOrText, text) {
 		Toast.fire({
-			text,
+			title: text ? titleOrText : undefined,
+			text: text ?? titleOrText,
 			icon: 'error',
 		});
+	}
+
+	/**
+	 * Displays an action confirmation dialog
+	 * @param {string} titleOrText
+	 * @param {string} [text]
+	 * @param {Object} [options]
+	 * @param {string} [options.icon]
+	 * @param {boolean} [options.cancel]
+	 * @param {string} [options.confirmText]
+	 * @returns {boolean} Whether the user confirmed the action
+	 */
+	async function confirm(titleOrText, text, { icon, showCancel, confirmText } = {}) {
+		const result = await Swal.fire({
+			title: text ? titleOrText : undefined,
+			text: text ?? titleOrText,
+			icon,
+			showCancelButton: showCancel,
+			focusCancel: showCancel,
+			confirmButtonText: confirmText,
+		});
+		return result.isConfirmed;
 	}
 
 	/**
@@ -49,5 +78,6 @@ export function useToast({ flashes = true } = {}) {
 	return {
 		success,
 		error,
+		confirm,
 	};
 }
