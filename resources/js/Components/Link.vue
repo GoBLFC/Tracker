@@ -5,15 +5,15 @@
 </template>
 
 <script setup>
-import { computed, inject } from 'vue';
-import { Link } from '@inertiajs/vue3';
+import { computed, inject } from "vue";
+import { Link } from "@inertiajs/vue3";
 
-const route = inject('route');
+const route = inject("route");
 
-const props = defineProps({
+const { to, url } = defineProps({
 	to: String,
 	url: String,
 });
 
-const href = computed(() => (props.to ? route(props.to) : props.url));
+const href = computed(() => (to ? route(to) : url));
 </script>
