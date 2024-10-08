@@ -41,21 +41,21 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
-import { Head } from "@inertiajs/vue3";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faHouse, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import LegacyLink from "../Components/LegacyLink.vue";
+import { computed } from 'vue';
+import { Head } from '@inertiajs/vue3';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faHouse, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import LegacyLink from '../Components/LegacyLink.vue';
 
 defineOptions({ layout: [] });
 const props = defineProps({ status: { type: Number, required: true } });
 
 const title = computed(() => {
 	return {
-		503: "Service Unavailable",
-		500: "Internal Server Error",
-		404: "Not Found",
-		403: "Forbidden",
+		503: 'Service Unavailable',
+		500: 'Internal Server Error',
+		404: 'Not Found',
+		403: 'Forbidden',
 	}[props.status];
 });
 
