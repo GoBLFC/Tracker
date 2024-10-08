@@ -1,10 +1,13 @@
 import { ref, inject } from 'vue';
 import axios from 'axios';
+import { useToast } from './toast';
 
 /**
  * Composable wrapper for making a single HTTP request at a time
  */
 export function useRequest() {
+	const toast = useToast();
+
 	const resolveRoute = inject('route');
 	const processing = ref(false);
 	const error = ref(null);
@@ -35,6 +38,18 @@ export function useRequest() {
 		} catch (err) {
 			console.error(`Error sending ${method} request to ${route} (${url}):`, err, data);
 			error.value = err;
+
+			if (err.response.data?.errors) {
+				const errors = Object.values(err.response.data.errors);
+				const joined = errors.join('\n');
+				if (errors.length > 1) toast.error('Validation errors', joined);
+				else toast.error(joined);
+			} else if (err.response.data?.message || err.response.data?.error) {
+				toast.error(err.response.data.message ?? err.response.data.error);
+			} else {
+				toast.error('Error sending request', 'See the browser console for more information.');
+			}
+
 			throw err;
 		} finally {
 			processing.value = false;

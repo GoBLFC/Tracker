@@ -117,12 +117,8 @@ async function searchUsers() {
 		return;
 	}
 
-	try {
-		const data = await request.get('users.search', { q: query.value });
-		if (data.users) users.value = data.users;
-	} catch {
-		toast.error('Unable to search for users', 'See the browser console for more information.');
-	}
+	const data = await request.get('users.search', { q: query.value });
+	if (data.users) users.value = data.users;
 }
 
 /**

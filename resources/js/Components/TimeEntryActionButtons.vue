@@ -74,18 +74,8 @@ async function checkout() {
 	);
 	if (!confirmed) return;
 
-	try {
-		const data = await request.post([
-			"tracker.time.checkout.post",
-			entry.id,
-		]);
-		emit("checkout", data.time_entry);
-	} catch {
-		toast.error(
-			"Unable to end time entry",
-			"See the browser console for more information."
-		);
-	}
+	const data = await request.post(["tracker.time.checkout.post", entry.id]);
+	emit("checkout", data.time_entry);
 }
 
 /**
@@ -103,15 +93,8 @@ async function del() {
 	);
 	if (!confirmed) return;
 
-	try {
-		await request.del(["tracker.time.destroy", entry.id]);
-		deleted.value = true;
-		emit("delete");
-	} catch {
-		toast.error(
-			"Unable to delete time entry",
-			"See the browser console for more information."
-		);
-	}
+	await request.del(["tracker.time.destroy", entry.id]);
+	deleted.value = true;
+	emit("delete");
 }
 </script>

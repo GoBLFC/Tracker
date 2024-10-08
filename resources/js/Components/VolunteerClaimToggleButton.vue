@@ -51,20 +51,13 @@ async function toggleClaim() {
  * Sends a request to claim the reward for the user and modifies the model appropriately
  */
 async function claimReward() {
-	try {
-		const data = await request.put(
-			["users.claims.store", volunteer.value.user.id],
-			{
-				reward_id: reward.id,
-			}
-		);
-		volunteer.value.claims.push(data.reward_claim);
-	} catch {
-		toast.error(
-			"Unable to claim reward",
-			"See the browser console for more information."
-		);
-	}
+	const data = await request.put(
+		["users.claims.store", volunteer.value.user.id],
+		{
+			reward_id: reward.id,
+		}
+	);
+	volunteer.value.claims.push(data.reward_claim);
 }
 
 /**
@@ -82,17 +75,10 @@ async function unclaimReward() {
 	);
 	if (!confirmed) return;
 
-	try {
-		await request.del(["claims.destroy", claim.value.id]);
-		const claimIdx = volunteer.value.claims.findIndex(
-			(clm) => clm.id === claim.value.id
-		);
-		volunteer.value.claims.splice(claimIdx, 1);
-	} catch {
-		toast.error(
-			"Unable to unclaim reward",
-			"See the browser console for more information."
-		);
-	}
+	await request.del(["claims.destroy", claim.value.id]);
+	const claimIdx = volunteer.value.claims.findIndex(
+		(clm) => clm.id === claim.value.id
+	);
+	volunteer.value.claims.splice(claimIdx, 1);
 }
 </script>
