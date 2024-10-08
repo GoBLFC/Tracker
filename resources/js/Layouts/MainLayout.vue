@@ -25,8 +25,6 @@
 				<AboutButton
 					class="float-end"
 					:class="{ 'me-2': isLoggedIn }"
-					data-bs-toggle="modal"
-					data-bs-target="#aboutModal"
 				/>
 			</div>
 		</footer>
