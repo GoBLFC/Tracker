@@ -44,6 +44,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @method static null|static find($id, $columns = ['*'])
  */
 class TimeBonus extends UuidModel {
+	/** @use HasFactory<\Database\Factories\TimeBonusFactory> */
 	use HasFactory, LogsActivity;
 
 	protected $casts = [

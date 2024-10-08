@@ -58,6 +58,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @method static null|static find($id, $columns = ['*'])
  */
 class TimeEntry extends UuidModel {
+	/** @use HasFactory<\Database\Factories\TimeEntryFactory> */
 	use ChecksActiveEvent, HasFactory, LogsActivity;
 
 	protected $casts = [

@@ -76,6 +76,7 @@ use Telegram\Bot\Laravel\Facades\Telegram;
  * @method static null|static find($id, $columns = ['*'])
  */
 class User extends UuidModel implements AuthenticatableContract, AuthorizableContract, HasAuditName, HasDisplayName {
+	/** @use HasFactory<\Database\Factories\UserFactory> */
 	use Authenticatable, Authorizable, CausesActivity, HasFactory, LogsActivity, Notifiable, SoftDeletes;
 
 	public $incrementing = false;
