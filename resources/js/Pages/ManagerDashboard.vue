@@ -1,5 +1,7 @@
 <template>
 	<div>
+		<Head title="Management" />
+
 		<div class="card mb-3">
 			<h4 class="card-header text-bg-warning">Management Controls</h4>
 
@@ -122,22 +124,31 @@
 </template>
 
 <script setup>
-import { inject, ref, computed, watch, useTemplateRef, nextTick, onMounted, onUnmounted } from 'vue';
-import { router } from '@inertiajs/vue3';
-import humanizeDuration from 'humanize-duration';
-import { useUser } from '../lib/user';
-import { useSettings } from '../lib/settings';
-import { useNow } from '../lib/time';
-import { useRequest } from '../lib/request';
-import LegacyLink from '../Components/LegacyLink.vue';
-import EventSelector from '../Components/EventSelector.vue';
-import UserSearchCard from '../Components/UserSearchCard.vue';
-import VolunteerManageCard from '../Components/VolunteerManageCard.vue';
-import TimeActivitiesTable from '../Components/TimeActivitiesTable.vue';
-import TimeEntriesTable from '../Components/TimeEntriesTable.vue';
-import UserCreateCard from '../Components/UserCreateCard.vue';
-import KioskToggleButton from '../Components/KioskToggleButton.vue';
-import ManagementNav from '../Components/ManagementNav.vue';
+import {
+	inject,
+	ref,
+	computed,
+	watch,
+	useTemplateRef,
+	nextTick,
+	onMounted,
+	onUnmounted,
+} from "vue";
+import { router, Head } from "@inertiajs/vue3";
+import humanizeDuration from "humanize-duration";
+import { useUser } from "../lib/user";
+import { useSettings } from "../lib/settings";
+import { useNow } from "../lib/time";
+import { useRequest } from "../lib/request";
+import LegacyLink from "../Components/LegacyLink.vue";
+import EventSelector from "../Components/EventSelector.vue";
+import UserSearchCard from "../Components/UserSearchCard.vue";
+import VolunteerManageCard from "../Components/VolunteerManageCard.vue";
+import TimeActivitiesTable from "../Components/TimeActivitiesTable.vue";
+import TimeEntriesTable from "../Components/TimeEntriesTable.vue";
+import UserCreateCard from "../Components/UserCreateCard.vue";
+import KioskToggleButton from "../Components/KioskToggleButton.vue";
+import ManagementNav from "../Components/ManagementNav.vue";
 
 const { event, kioskLifetime } = defineProps({
 	event: { type: [Object, null], required: true },
@@ -149,12 +160,14 @@ const { event, kioskLifetime } = defineProps({
 	longestOngoingEntries: { type: Array, required: true },
 });
 
-const route = inject('route');
+const route = inject("route");
 const { activeEvent } = useSettings();
 const { isAdmin } = useUser();
 const { now } = useNow();
 
-const kioskLifetimeText = computed(() => humanizeDuration(kioskLifetime * 1000 * 60));
+const kioskLifetimeText = computed(() =>
+	humanizeDuration(kioskLifetime * 1000 * 60)
+);
 
 /**
  * Resolves an event ID to a navigable URL and additional properties to pass to the router
@@ -163,8 +176,8 @@ const kioskLifetimeText = computed(() => humanizeDuration(kioskLifetime * 1000 *
  */
 function eventRequestResolver(eventId) {
 	return {
-		url: route('management.manage', eventId),
-		only: ['longestOngoingEntries', 'recentTimeActivities'],
+		url: route("management.manage", eventId),
+		only: ["longestOngoingEntries", "recentTimeActivities"],
 	};
 }
 
@@ -173,7 +186,7 @@ function eventRequestResolver(eventId) {
 //
 const statsRequest = useRequest();
 const claimsRequest = useRequest();
-const volunteerCard = useTemplateRef('volunteer-card');
+const volunteerCard = useTemplateRef("volunteer-card");
 
 const volunteer = ref(null);
 
@@ -185,8 +198,8 @@ watch(() => event, resetVolunteer);
  */
 async function loadVolunteer(userId, attention = true) {
 	const [timeData, claimData] = await Promise.all([
-		statsRequest.get(['tracker.user.stats.event', [userId, event.id]]),
-		claimsRequest.get(['users.claims.event', [userId, event.id]]),
+		statsRequest.get(["tracker.user.stats.event", [userId, event.id]]),
+		claimsRequest.get(["users.claims.event", [userId, event.id]]),
 	]);
 
 	volunteer.value = {
@@ -217,12 +230,15 @@ let refreshInterval = null;
 onMounted(() => {
 	refreshInterval = setInterval(() => {
 		router.reload({
-			only: ['recentTimeActivities', 'longestOngoingEntries'],
+			only: ["recentTimeActivities", "longestOngoingEntries"],
 		});
 
 		const shouldRefreshVolunteer =
-			volunteer.value && !statsRequest.processing.value && !claimsRequest.processing.value;
-		if (shouldRefreshVolunteer) loadVolunteer(volunteer.value.user.id, false);
+			volunteer.value &&
+			!statsRequest.processing.value &&
+			!claimsRequest.processing.value;
+		if (shouldRefreshVolunteer)
+			loadVolunteer(volunteer.value.user.id, false);
 	}, 15000);
 });
 
