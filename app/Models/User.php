@@ -374,7 +374,7 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 	 * Get a URL to start interacting with the Telegram bot
 	 */
 	public function getTelegramSetupUrl(): string {
-		$bot = Cache::remember('telegram-bot', 60 * 15, fn () => Telegram::getMe());
+		$bot = Cache::flexible('telegram-bot', [60 * 10, 60 * 60], fn () => Telegram::getMe());
 		return "https://t.me/{$bot->username}?start={$this->tg_setup_key}";
 	}
 
