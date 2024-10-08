@@ -122,7 +122,8 @@
 </template>
 
 <script setup>
-import { inject, ref, computed, watch, useTemplateRef, nextTick } from 'vue';
+import { inject, ref, computed, watch, useTemplateRef, nextTick, onMounted, onUnmounted } from 'vue';
+import { router } from '@inertiajs/vue3';
 import humanizeDuration from 'humanize-duration';
 import { useUser } from '../lib/user';
 import { useSettings } from '../lib/settings';
@@ -138,7 +139,6 @@ import UserCreateCard from '../Components/UserCreateCard.vue';
 import KioskToggleButton from '../Components/KioskToggleButton.vue';
 import ManagementNav from '../Components/ManagementNav.vue';
 
-// TODO: auto-refresh activities and entries
 const { event, kioskLifetime } = defineProps({
 	event: { type: [Object, null], required: true },
 	events: { type: Array, required: true },
@@ -175,7 +175,6 @@ const statsRequest = useRequest();
 const claimsRequest = useRequest();
 const volunteerCard = useTemplateRef('volunteer-card');
 
-// TODO: auto-refresh volunteer data while displayed
 const volunteer = ref(null);
 
 watch(() => event, resetVolunteer);
@@ -184,7 +183,7 @@ watch(() => event, resetVolunteer);
  * Loads all data for a volunteer user to provide to the user management card
  * @param userId
  */
-async function loadVolunteer(userId) {
+async function loadVolunteer(userId, attention = true) {
 	const [timeData, claimData] = await Promise.all([
 		statsRequest.get(['tracker.user.stats.event', [userId, event.id]]),
 		claimsRequest.get(['users.claims.event', [userId, event.id]]),
@@ -196,9 +195,11 @@ async function loadVolunteer(userId) {
 		claims: claimData.reward_claims,
 	};
 
-	nextTick(() => {
-		volunteerCard.value.attention();
-	});
+	if (attention) {
+		nextTick(() => {
+			volunteerCard.value.attention();
+		});
+	}
 }
 
 /**
@@ -207,4 +208,26 @@ async function loadVolunteer(userId) {
 function resetVolunteer() {
 	volunteer.value = null;
 }
+
+//
+// Auto-refreshing
+//
+let refreshInterval = null;
+
+onMounted(() => {
+	refreshInterval = setInterval(() => {
+		router.reload({
+			only: ['recentTimeActivities', 'longestOngoingEntries'],
+		});
+
+		const shouldRefreshVolunteer =
+			volunteer.value && !statsRequest.processing.value && !claimsRequest.processing.value;
+		if (shouldRefreshVolunteer) loadVolunteer(volunteer.value.user.id, false);
+	}, 15000);
+});
+
+onUnmounted(() => {
+	clearInterval(refreshInterval);
+	refreshInterval = null;
+});
 </script>
