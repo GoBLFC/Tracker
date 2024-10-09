@@ -1,5 +1,5 @@
 import 'bootstrap/js/dist/modal';
-import.meta.glob(['../img/**']);
+import.meta.glob(['../../img/**']);
 
 import { Toast } from './shared.js';
 

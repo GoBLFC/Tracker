@@ -1,7 +1,7 @@
 import { setupSeamlessForm } from './seamless-forms';
-import successSoundFile from '../audio/success.ogg';
-import success2SoundFile from '../audio/success2.ogg';
-import alertSoundFile from '../audio/alert.ogg';
+import successSoundFile from '../../audio/success.ogg';
+import success2SoundFile from '../../audio/success2.ogg';
+import alertSoundFile from '../../audio/alert.ogg';
 
 document.addEventListener('DOMContentLoaded', () => {
 	const successSound = new Audio(successSoundFile);
