@@ -212,6 +212,15 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 	}
 
 	/**
+	 * Check whether the user should have access to staff features
+	 *
+	 * @param bool [$strict=false] Whether to check specifically for the staff role
+	 */
+	public function isStaff($strict = false): bool {
+		return $this->isRole(Role::Staff, $strict);
+	}
+
+	/**
 	 * Check whether the user has been banned
 	 */
 	public function isBanned(): bool {

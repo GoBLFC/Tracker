@@ -19,9 +19,10 @@ export function useUser() {
 		isLoggedIn: toRef(() => Boolean(page.props.auth.user)),
 		isGatekeeper: toRef(() => page.props.isGatekeeper),
 		isBanned: toRef(() => page.props.auth.user?.role === -2),
-		isLead: toRef(() => page.props.auth.user?.role >= 1),
-		isManager: toRef(() => page.props.auth.user?.role >= 2),
-		isAdmin: toRef(() => page.props.auth.user?.role === 3),
+		isStaff: toRef(() => page.props.auth.user?.role >= 1),
+		isLead: toRef(() => page.props.auth.user?.role >= 2),
+		isManager: toRef(() => page.props.auth.user?.role >= 3),
+		isAdmin: toRef(() => page.props.auth.user?.role === 4),
 	};
 }
 
@@ -29,9 +30,10 @@ export function useUser() {
  * Role names mapped by their numeric ID
  */
 export const roleNames = {
-	3: 'Admin',
-	2: 'Manager',
-	1: 'Lead',
+	4: 'Admin',
+	3: 'Manager',
+	2: 'Lead',
+	1: 'Staff',
 	0: 'Volunteer',
 	'-1': 'Attendee',
 	'-2': 'Banned',

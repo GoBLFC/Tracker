@@ -231,11 +231,11 @@ All models and their relationships are listed below, alongside a brief descripti
 | Setting     | settings      | Application settings identified by a string and stored as JSON.                                                                                                                              |
 | TimeBonus   | time_bonuses  | Time periods that grant bonus volunteer time credit while being worked within. Belongs to an Event and many Departments.                                                                     |
 | TimeEntry   | time_entries  | Volunteer time clocked by users. Belongs to a User, a Department, and an Event.                                                                                                              |
-| User        | users         | Any user of the application. Has a role (Banned, Volunteer, Lead, Manager, Admin) that determines permissions.                                                                               |
+| User        | users         | Any user of the application. Has a role (Banned, Attendee, Volunteer, Staff, Lead, Manager, Admin) that determines permissions.                                                              |
 
 ### Permissions
 Permissions are implemented very simply at the moment.
-Users have a single assigned Role value, which is just an enum (Banned, Volunteer, Lead, Manager, Admin).
+Users have a single assigned Role value, which is just an enum (Banned, Attendee, Volunteer, Staff, Lead, Manager, Admin).
 - Volunteer is the default role for users. They have time tracking capabilities, but not much else.
 - Leads can authorize/deauthorize Kiosks.
 - Managers can authorize/deauthorize Kiosks, view and manage volunteers' time entries, manage attendee log attendees and gatekeepers, and create users with a badge ID.

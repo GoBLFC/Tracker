@@ -27,7 +27,7 @@ class TimeEntryPolicy {
 	 */
 	public function create(User $creator, User $target, ?Event $event = null): bool {
 		$validEvent = !$event || $event->isActive();
-		return ($creator->id === $target->id && $validEvent && Kiosk::isSessionAuthorized())
+		return ($creator->id === $target->id && $validEvent && (Kiosk::isSessionAuthorized() || $creator->isStaff()))
 			|| ($creator->isManager() && $validEvent)
 			|| $creator->isAdmin();
 	}
@@ -37,7 +37,7 @@ class TimeEntryPolicy {
 	 */
 	public function update(User $user, TimeEntry $timeEntry): bool {
 		$validEvent = $timeEntry->isForActiveEvent();
-		return ($user->id === $timeEntry->user_id && $validEvent && Kiosk::isSessionAuthorized())
+		return ($user->id === $timeEntry->user_id && $validEvent && (Kiosk::isSessionAuthorized() || $user->isStaff()))
 			|| ($user->isManager() && $validEvent)
 			|| $user->isAdmin();
 	}
