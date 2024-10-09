@@ -1,16 +1,28 @@
-import 'bootstrap/js/dist/modal';
+import '../sass/app.scss';
 import.meta.glob(['../img/**']);
 
-import { Toast } from './shared.js';
+import { createApp, h } from 'vue';
+import { createInertiaApp } from '@inertiajs/vue3';
+import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 
-if (typeof flashSuccess !== 'undefined') {
-	Toast.fire({
-		text: flashSuccess,
-		icon: 'success',
-	});
-} else if (typeof flashError !== 'undefined') {
-	Toast.fire({
-		text: flashError,
-		icon: 'error',
-	});
-}
+import BaseLayout from './Layouts/BaseLayout.vue';
+import MainLayout from './Layouts/MainLayout.vue';
+
+const appName = window.document.getElementsByTagName('title')[0]?.innerText;
+
+createInertiaApp({
+	title: (title) => (title ? `${title} | ${appName}` : appName),
+
+	async resolve(name) {
+		const pages = import.meta.glob('./Pages/**/*.vue', { eager: true });
+		const page = await resolvePageComponent(`./Pages/${name}.vue`, pages);
+		page.default.layout ??= [BaseLayout, MainLayout];
+		return page;
+	},
+
+	setup({ el, App, props, plugin }) {
+		const app = createApp({ render: () => h(App, props) }).use(plugin);
+		app.config.globalProperties.$appName = appName;
+		app.provide('route', route).mount(el);
+	},
+});

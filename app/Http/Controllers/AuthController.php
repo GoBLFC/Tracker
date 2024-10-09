@@ -14,7 +14,9 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\View\View;
+use Inertia\Inertia;
 use Laravel\Socialite\Facades\Socialite;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller {
 	/**
@@ -25,23 +27,31 @@ class AuthController extends Controller {
 	}
 
 	/**
-	 * Logs the user out and redirects to the login page
+	 * Logs the user out and redirects to the login page.
+	 * Only for use from legacy (non-Inertia) pages.
 	 */
 	public function getLogout(): RedirectResponse {
 		if (!Auth::check()) return redirect()->route('auth.login');
 		Auth::logout();
 
-		// Redirect the user to log out of ConCat if applicable
-		$token = session('conCatToken');
-		if ($token && Kiosk::isSessionAuthorized() && !Setting::isDevMode()) {
-			session()->remove('conCatToken');
-			$concatUri = config('services.concat.instance_uri');
-			$concatId = config('services.concat.client_id');
-			$return = urlencode(route('auth.login'));
-			return redirect()->to("{$concatUri}/oauth/logout?client_id={$concatId}&access_token={$token}&next={$return}");
-		}
+		$conCatLogout = $this->buildConCatLogoutUrl();
+		if ($conCatLogout) return redirect()->to($conCatLogout);
 
 		return redirect()->route('auth.login');
+	}
+
+	/**
+	 * Logs the user out and redirects to the login page.
+	 * Only for use from Inertia pages.
+	 */
+	public function postLogout(): Response {
+		if (!Auth::check()) return Inertia::location(redirect()->route('auth.login'));
+		Auth::logout();
+
+		$conCatLogout = $this->buildConCatLogoutUrl();
+		if ($conCatLogout) return Inertia::location($conCatLogout);
+
+		return Inertia::location(redirect()->route('auth.login'));
 	}
 
 	/**
@@ -119,5 +129,25 @@ class AuthController extends Controller {
 	public function getBanned(): View|RedirectResponse {
 		if (!Auth::user()?->isBanned()) return redirect()->route('tracker.index');
 		return view('auth.banned');
+	}
+
+	/**
+	 * Builds a URL to redirect the user to for logging out of ConCat, if applicable.
+	 * For this to be relevant:
+	 * - The session must have a `conCatToken` (logged in via the ConCat OAuth flow)
+	 * - The session must be for an authorized kiosk
+	 * - The application must not be in dev mode
+	 * The session's `conCatToken` is discarded as part of this process.
+	 */
+	protected function buildConCatLogoutUrl(): ?string {
+		$token = session()->remove('conCatToken');
+		if (!$token) return null;
+		if (!Kiosk::isSessionAuthorized(true)) return null;
+		if (Setting::isDevMode()) return null;
+
+		$concatUri = config('services.concat.instance_uri');
+		$concatId = config('services.concat.client_id');
+		$return = urlencode(route('auth.login'));
+		return "{$concatUri}/oauth/logout?client_id={$concatId}&access_token={$token}&next={$return}";
 	}
 }

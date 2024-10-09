@@ -36,7 +36,7 @@
 </div>
 
 @push('modules')
-	@vite('resources/js/telegram-modal.js')
+	@vite('resources/js/legacy/telegram-modal.js')
 @endpush
 
 @push('scripts')

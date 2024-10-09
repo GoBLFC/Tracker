@@ -20,10 +20,11 @@ class TimeEntryStoreRequest extends FormRequest {
 	 */
 	public function rules(): array {
 		$start = $this->input('start');
+		$startRestriction = !$this->has('stop') ? '|before:now' : '';
 		return [
 			'event_id' => 'sometimes|nullable|uuid|exists:App\Models\Event,id',
 			'department_id' => 'required|uuid|exists:App\Models\Department,id',
-			'start' => 'sometimes|nullable|required_with:stop|date',
+			'start' => "sometimes|nullable|required_with:stop|date{$startRestriction}",
 			'stop' => "sometimes|nullable|date|after:{$start}",
 			'notes' => 'sometimes|nullable|string|max:255',
 		];

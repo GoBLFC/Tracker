@@ -13,19 +13,30 @@
 	},
 	"dependencies": {
 		"@eonasdan/tempus-dominus": "^6.9.10",
+		"@fortawesome/fontawesome-svg-core": "^6.6.0",
+		"@fortawesome/free-brands-svg-icons": "^6.6.0",
+		"@fortawesome/free-regular-svg-icons": "^6.6.0",
+		"@fortawesome/free-solid-svg-icons": "^6.6.0",
+		"@fortawesome/vue-fontawesome": "^3.0.8",
+		"@inertiajs/vue3": "^1.2.0",
 		"@sweetalert2/theme-dark": "^5.0.18",
 		"animate.css": "^4.1.1",
+		"axios": "^1.7.7",
 		"bootstrap": "^5.3.3",
 		"bootstrap-select": "^1.14.0-beta3",
+		"humanize-duration": "^3.32.1",
 		"jquery": "^3.7.1",
 		"luxon": "^3.5.0",
 		"qrcode": "^1.5.4",
 		"sass": "^1.77.8",
 		"simple-datatables": "^9.1.0",
-		"sweetalert2": "^11.12.4"
+		"sweetalert2": "^11.12.4",
+		"vue": "^3.5.10",
+		"vue-debounce": "^5.0.1"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "1.9.2",
+		"@biomejs/biome": "1.9.3",
+		"@vitejs/plugin-vue": "^5.1.4",
 		"laravel-vite-plugin": "^1.0.5",
 		"vite": "^5.4.2"
 	}

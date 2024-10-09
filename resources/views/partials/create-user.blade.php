@@ -11,7 +11,7 @@
 </div>
 
 @push('modules')
-	@vite('resources/js/create-user.js')
+	@vite('resources/js/legacy/create-user.js')
 @endpush
 
 @push('scripts')

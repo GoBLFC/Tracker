@@ -46,6 +46,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @method static null|static find($id, $columns = ['*'])
  */
 class Reward extends UuidModel implements HasDisplayName {
+	/** @use HasFactory<\Database\Factories\RewardFactory> */
 	use ChecksActiveEvent, HasFactory, LogsActivity, SoftDeletes;
 
 	protected $fillable = [

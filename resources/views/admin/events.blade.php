@@ -91,6 +91,6 @@
 @endsection
 
 @push('modules')
-	@vite('resources/js/seamless-forms.js')
-	@vite('resources/js/admin/events.js')
+	@vite('resources/js/legacy/seamless-forms.js')
+	@vite('resources/js/legacy/admin/events.js')
 @endpush

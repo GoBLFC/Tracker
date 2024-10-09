@@ -44,6 +44,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @method static null|static find($id, $columns = ['*'])
  */
 class Department extends UuidModel implements HasDisplayName {
+	/** @use HasFactory<\Database\Factories\DepartmentFactory> */
 	use HasFactory, LogsActivity, SoftDeletes;
 
 	protected $casts = [

@@ -23,6 +23,8 @@ use App\Reports\VolunteerTimeReport;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ManagementController extends Controller {
@@ -46,14 +48,15 @@ class ManagementController extends Controller {
 	/**
 	 * Render the management panel
 	 */
-	public function getManageIndex(?Event $event = null): View {
+	public function getManageIndex(?Event $event = null): Response {
 		if (!$event) $event = Setting::activeEvent();
 
-		return view('management.manage', [
+		return Inertia::render('ManagerDashboard', [
 			'event' => $event,
-			'events' => Event::orderBy('name')->get(),
-			'rewards' => Reward::forEvent($event)->orderBy('hours')->get(),
-			'departments' => Department::orderBy('hidden')->orderBy('name')->get(),
+			'events' => fn () => Event::orderBy('name')->get(),
+			'rewards' => fn () => Reward::forEvent($event)->orderBy('hours')->get(),
+			'departments' => fn () => Department::orderBy('hidden')->orderBy('name')->get(),
+			'kioskLifetime' => fn () => config('tracker.kiosk_lifetime'),
 			'longestOngoingEntries' => TimeEntry::with(['user', 'department'])
 				->forEvent($event)
 				->ongoing()

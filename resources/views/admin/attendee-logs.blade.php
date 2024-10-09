@@ -100,6 +100,6 @@
 @endsection
 
 @push('modules')
-	@vite('resources/js/seamless-forms.js')
-	@vite('resources/js/admin/attendee-logs.js')
+	@vite('resources/js/legacy/seamless-forms.js')
+	@vite('resources/js/legacy/admin/attendee-logs.js')
 @endpush

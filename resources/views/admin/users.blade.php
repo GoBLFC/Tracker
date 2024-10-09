@@ -82,7 +82,7 @@
 @endsection
 
 @push('modules')
-	@vite('resources/js/admin/users.js')
+	@vite('resources/js/legacy/admin/users.js')
 @endpush
 
 @push('scripts')

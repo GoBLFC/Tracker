@@ -8,6 +8,10 @@
 	cursor: help;
 }
 
+.checkin-badge {
+	width: 9.5em;
+}
+
 .transition-border {
 	transition: border-color ease-out 400ms;
 }
@@ -43,6 +47,11 @@
 			}
 		}
 	}
+}
+
+.tempus-dominus-widget svg {
+	width: 1em;
+	height: 1em;
 }
 
 #telegramQrCanvas {

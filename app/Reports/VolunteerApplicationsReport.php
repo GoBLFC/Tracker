@@ -31,7 +31,10 @@ class VolunteerApplicationsReport extends EventReport implements FromCollection,
 		$this->volunteers = new Collection(ConCat::searchVolunteers());
 		$this->volunteers = $this->volunteers->keyBy('user.id');
 
-		if ($this->volunteers->isEmpty()) return;
+		if ($this->volunteers->isEmpty()) {
+			$this->departments = new Collection;
+			return;
+		}
 
 		// Retrieve registrations for the volunteers
 		$userIds = $this->volunteers->keys()->map(fn ($key) => (string) $key)->toArray();
@@ -63,6 +66,7 @@ class VolunteerApplicationsReport extends EventReport implements FromCollection,
 		}
 
 		// Build a list of departments used
+		dd($this->volunteers);
 		$this->departments = $this->volunteers->pluck('departments')
 			->flatten()
 			->unique('id')
