@@ -1,4 +1,5 @@
 import '../sass/app.scss';
+import 'bootstrap/js/dist/modal';
 import.meta.glob(['../img/**']);
 
 import { createApp, h } from 'vue';

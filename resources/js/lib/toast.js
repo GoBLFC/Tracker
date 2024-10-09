@@ -1,7 +1,17 @@
 import { onMounted, watch } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import Swal from 'sweetalert2';
-import { Toast } from '../legacy/shared';
+
+export const Toast = Swal.mixin({
+	toast: true,
+	position: 'top-end',
+	showConfirmButton: false,
+	timer: 4000,
+	timerProgressBar: true,
+	showClass: {
+		popup: 'animate__animated animate__slideInDown animate__faster',
+	},
+});
 
 /**
  * Displays toast messages

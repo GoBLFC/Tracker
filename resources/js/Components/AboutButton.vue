@@ -165,7 +165,7 @@
 </template>
 
 <script setup>
-import { useId } from "vue";
+import { useId } from 'vue';
 
 const modalId = useId();
 const labelId = useId();

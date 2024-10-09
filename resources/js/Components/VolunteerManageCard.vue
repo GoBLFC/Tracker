@@ -19,7 +19,7 @@
 
 <script setup>
 import { computed, useTemplateRef } from 'vue';
-import { isElementInView } from '../legacy/shared';
+import { isElementInView } from '../lib/util';
 import VolunteerTimeStats from './VolunteerTimeStats.vue';
 import VolunteerClaimsCard from './VolunteerClaimsCard.vue';
 import VolunteerTimeEntriesCard from './VolunteerTimeEntriesCard.vue';

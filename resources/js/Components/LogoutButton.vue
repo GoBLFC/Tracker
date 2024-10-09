@@ -15,7 +15,7 @@
 import { onMounted, onUnmounted, ref, inject, computed, watch } from 'vue';
 import { router } from '@inertiajs/vue3';
 import { useSettings } from '../lib/settings';
-import { clockDuration } from '../legacy/shared';
+import { clockDuration } from '../lib/time';
 import Link from './Link.vue';
 
 defineExpose({ logout });
