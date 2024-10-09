@@ -25,6 +25,7 @@ export default defineConfig({
 				'resources/js/legacy/admin/rewards.js',
 				'resources/js/legacy/admin/report.js',
 				'resources/js/legacy/admin/attendee-logs.js',
+				'resources/js/legacy/admin/telegram-modal.js',
 			],
 			refresh: true,
 		}),
