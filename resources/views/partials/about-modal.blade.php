@@ -46,6 +46,10 @@
 								Tracker is an online system for tracking the amount of time volunteers have contributed towards conventions.
 								It was originally designed for <a href="https://goblfc.org" target="_blank">BLFC</a> by Ghost Cabbit, with Glitch and Gawdl3y making more recent developments.
 							</p>
+							<p>
+								Also, it's open source!
+								Check it out on <a href="https://github.com/GoBLFC/Tracker" target="_blank">GitHub</a>.
+							</p>
 							<p>If you find bugs, please let your volunteer managers know so we can fix them!</p>
 						</div>
 					</div>

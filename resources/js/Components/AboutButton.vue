@@ -140,6 +140,15 @@
 											developments.
 										</p>
 										<p>
+											Also, it's open source! Check it out
+											on
+											<a
+												href="https://github.com/GoBLFC/Tracker"
+												target="_blank"
+												>GitHub</a
+											>.
+										</p>
+										<p>
 											If you find bugs, please let your
 											volunteer managers know so we can
 											fix them!
@@ -156,7 +165,7 @@
 </template>
 
 <script setup>
-import { useId } from 'vue';
+import { useId } from "vue";
 
 const modalId = useId();
 const labelId = useId();
