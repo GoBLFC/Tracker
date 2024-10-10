@@ -63,7 +63,7 @@ class AttendeeLogController extends Controller {
 	 * Update an attendee log
 	 */
 	public function update(AttendeeLogUpdateRequest $request, AttendeeLog $attendeeLog): JsonResponse {
-		$attendeeLog->update($request->safe());
+		$attendeeLog->update($request->validated());
 		return response()->json(['attendee_log' => $attendeeLog]);
 	}
 
