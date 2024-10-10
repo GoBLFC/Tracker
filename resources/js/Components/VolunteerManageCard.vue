@@ -1,9 +1,26 @@
 <template>
 	<div class="card border-info-subtle" ref="card">
-		<h5 class="card-header text-center" ref="title">
-			{{ volunteer.user.badge_name ?? volunteer.user.username }}
-			(#{{ volunteer.user.badge_id }})
-		</h5>
+		<div
+			class="card-header d-flex align-items-center justify-content-between"
+			ref="header"
+		>
+			<div></div>
+
+			<h5 class="m-0">
+				{{ volunteer.user.badge_name ?? volunteer.user.username }}
+				(#{{ volunteer.user.badge_id }})
+			</h5>
+
+			<button
+				type="button"
+				class="btn btn-link btn-lg text-info p-0"
+				title="Close"
+				aria-label="Close"
+				@click="emit('close')"
+			>
+				<FontAwesomeIcon :icon="faXmark" />
+			</button>
+		</div>
 
 		<div class="card-body">
 			<VolunteerTimeStats :stats="volunteer.stats" :ongoing :now />
@@ -19,6 +36,8 @@
 
 <script setup>
 import { computed, useTemplateRef } from 'vue';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { isElementInView } from '../lib/util';
 import VolunteerTimeStats from './VolunteerTimeStats.vue';
 import VolunteerClaimsCard from './VolunteerClaimsCard.vue';
@@ -32,10 +51,11 @@ defineProps({
 	departments: { type: Array, required: true },
 	now: { type: Number, required: false },
 });
+const emit = defineEmits({ close: [] });
 const volunteer = defineModel();
 
 const card = useTemplateRef('card');
-const title = useTemplateRef('title');
+const header = useTemplateRef('header');
 
 const ongoing = computed(() => volunteer.value.stats.entries.find((entry) => !entry.stop));
 
@@ -54,8 +74,8 @@ function attention() {
 		}, 500);
 	}, 0);
 
-	// Scroll to the card if the title isn't in view
-	if (!isElementInView(title.value)) {
+	// Scroll to the card if the header isn't in view
+	if (!isElementInView(header.value)) {
 		card.value.scrollIntoView({
 			block: card.value.clientHeight < window.innerHeight ? 'center' : 'start',
 		});

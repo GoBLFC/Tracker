@@ -39,13 +39,14 @@
 
 				<VolunteerManageCard
 					v-if="volunteer"
-					v-model="volunteer"
+					ref="volunteer-card"
 					class="mb-5"
 					:event
 					:rewards
 					:departments
 					:now
-					ref="volunteer-card"
+					v-model="volunteer"
+					@close="volunteer = null"
 				/>
 
 				<div class="card mb-4">
