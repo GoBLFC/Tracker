@@ -1,6 +1,6 @@
 import { onMounted, watch } from 'vue';
 import { usePage } from '@inertiajs/vue3';
-import Swal from 'sweetalert2';
+import Swal from 'sweetalert2/dist/sweetalert2.js';
 
 export const Toast = Swal.mixin({
 	toast: true,
