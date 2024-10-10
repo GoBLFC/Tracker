@@ -9,14 +9,11 @@ use App\Models\Reward;
 use Illuminate\Http\JsonResponse;
 
 class RewardController extends Controller {
-	public function __construct() {
-		$this->authorizeResource(Reward::class, 'reward');
-	}
-
 	/**
 	 * Display a listing of the resource.
 	 */
 	public function index(Event $event): JsonResponse {
+		$this->authorize('viewAny', Reward::class);
 		return response()->json(['rewards' => $event->rewards]);
 	}
 
@@ -35,6 +32,7 @@ class RewardController extends Controller {
 	 * Display the specified resource.
 	 */
 	public function show(Reward $reward): JsonResponse {
+		$this->authorize('view', $reward);
 		return response()->json(['reward' => $reward]);
 	}
 
@@ -50,6 +48,7 @@ class RewardController extends Controller {
 	 * Remove the specified resource from storage.
 	 */
 	public function destroy(Reward $reward): JsonResponse {
+		$this->authorize('delete', $reward);
 		$reward->delete();
 		return response()->json(null, 205);
 	}

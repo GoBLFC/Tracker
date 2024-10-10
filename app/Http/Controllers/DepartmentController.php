@@ -8,14 +8,11 @@ use App\Models\Department;
 use Illuminate\Http\JsonResponse;
 
 class DepartmentController extends Controller {
-	public function __construct() {
-		$this->authorizeResource(Department::class, 'department');
-	}
-
 	/**
 	 * Display a listing of the resource.
 	 */
 	public function index(): JsonResponse {
+		$this->authorize('viewAny', Department::class);
 		return response()->json(['departments' => Department::all()]);
 	}
 
@@ -33,6 +30,7 @@ class DepartmentController extends Controller {
 	 * Display the specified resource.
 	 */
 	public function show(Department $department): JsonResponse {
+		$this->authorize('view', $department);
 		return response()->json(['department' => $department]);
 	}
 
@@ -48,6 +46,8 @@ class DepartmentController extends Controller {
 	 * Remove the specified resource from storage.
 	 */
 	public function destroy(Department $department): JsonResponse {
+		$this->authorize('delete', $department);
+
 		// TODO: Once determination is made on what to do with soft-deletables, we may want to ensure relations get
 		// deleted or soft-deleted along with the parent. At the moment, we just try to gracefully handle the parent,
 		// Department in this case, being soft-deleted.

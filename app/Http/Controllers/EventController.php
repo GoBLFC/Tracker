@@ -8,14 +8,11 @@ use App\Models\Event;
 use Illuminate\Http\JsonResponse;
 
 class EventController extends Controller {
-	public function __construct() {
-		$this->authorizeResource(Event::class, 'event');
-	}
-
 	/**
 	 * Display a listing of the resource.
 	 */
 	public function index(): JsonResponse {
+		$this->authorize('viewAny', Event::class);
 		return response()->json(['events' => Event::all()]);
 	}
 
@@ -33,6 +30,7 @@ class EventController extends Controller {
 	 * Display the specified resource.
 	 */
 	public function show(Event $event): JsonResponse {
+		$this->authorize('view', $event);
 		return response()->json(['event' => $event]);
 	}
 
@@ -48,6 +46,8 @@ class EventController extends Controller {
 	 * Remove the specified resource from storage.
 	 */
 	public function destroy(Event $event): JsonResponse {
+		$this->authorize('delete', $event);
+
 		// TODO: Once determination is made on what to do with soft-deletables, we may want to ensure relations get
 		// deleted or soft-deleted along with the parent. At the moment, we just try to gracefully handle the parent,
 		// Event in this case, being soft-deleted.

@@ -9,14 +9,11 @@ use App\Models\TimeBonus;
 use Illuminate\Http\JsonResponse;
 
 class TimeBonusController extends Controller {
-	public function __construct() {
-		$this->authorizeResource(TimeBonus::class, 'bonus');
-	}
-
 	/**
 	 * Display a listing of the resource.
 	 */
 	public function index(Event $event): JsonResponse {
+		$this->authorize('viewAny', TimeBonus::class);
 		return response()->json(['bonuses' => $event->timeBonuses()->with('departments')->get()]);
 	}
 
@@ -36,6 +33,7 @@ class TimeBonusController extends Controller {
 	 * Display the specified resource.
 	 */
 	public function show(TimeBonus $bonus): JsonResponse {
+		$this->authorize('view', $bonus);
 		return response()->json(['bonus' => $bonus]);
 	}
 
@@ -52,6 +50,7 @@ class TimeBonusController extends Controller {
 	 * Remove the specified resource from storage.
 	 */
 	public function destroy(TimeBonus $bonus): JsonResponse {
+		$this->authorize('delete', $bonus);
 		$bonus->delete();
 		return response()->json(null, 205);
 	}
