@@ -58,7 +58,7 @@ watch(
 
 // Reset the countdown when changing pages
 onUnmounted(
-	router.on('finish', () => {
+	router.on('navigate', () => {
 		if (!resetOnNavigate) return;
 		tearDownAutoLogout();
 		setupAutoLogout();
@@ -95,7 +95,6 @@ function tearDownAutoLogout() {
 	if (countdownInterval) clearInterval(countdownInterval);
 	logoutAt.value = null;
 	now.value = null;
-	console.debug('Tore down auto-logout');
 }
 
 /**
