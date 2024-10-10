@@ -37,8 +37,8 @@ services:
     env_file:
       - .docker/env/nginx.env
     ports:
-      - '8001:80'
-      - '8002:443'
+      - '80:80'
+      - '443:443'
     volumes:
       - .docker/nginx/snippets:/etc/nginx/snippets
       - .docker/nginx/templates:/etc/nginx/templates
