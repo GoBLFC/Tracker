@@ -42,23 +42,21 @@
 								/>
 							</td>
 							<td>
-								<span
+								<Tooltip
 									v-if="entry.notes"
-									class="badge rounded-pill text-bg-info info-badge"
 									:title="entry.notes"
-									data-bs-toggle="tooltip"
+									class="badge rounded-pill text-bg-info info-badge"
 								>
 									Notes
-								</span>
+								</Tooltip>
 
-								<span
+								<Tooltip
 									v-if="entry.auto"
-									class="badge rounded-pill text-bg-warning info-badge"
 									title="This entry was automatically closed at the end of the day."
-									data-bs-toggle="tooltip"
+									class="badge rounded-pill text-bg-warning info-badge"
 								>
 									Auto
-								</span>
+								</Tooltip>
 							</td>
 							<td>
 								<TimeEntryActionButtons
@@ -82,6 +80,7 @@
 <script setup>
 import { useTime } from '../lib/time';
 import Duration from './Duration.vue';
+import Tooltip from './Tooltip.vue';
 import TimeEntryActionButtons from './TimeEntryActionButtons.vue';
 
 defineProps({
