@@ -66,7 +66,6 @@ class VolunteerApplicationsReport extends EventReport implements FromCollection,
 		}
 
 		// Build a list of departments used
-		dd($this->volunteers);
 		$this->departments = $this->volunteers->pluck('departments')
 			->flatten()
 			->unique('id')
