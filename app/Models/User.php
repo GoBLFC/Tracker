@@ -442,18 +442,6 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 	}
 
 	/**
-	 * Creates a user with placeholder information that will get replaced upon logging in.
-	 */
-	public static function createPlaceholder(int $badgeId, string $userType): static {
-		return static::create([
-			'username' => 'unknown',
-			'first_name' => 'Unidentified',
-			'last_name' => Str::title($userType),
-			'badge_id' => $badgeId,
-		]);
-	}
-
-	/**
 	 * Retrieves both the volunteer and registration information for a given user from ConCat and logs any failed requests
 	 */
 	private static function fetchAvailableDetails(int $badgeId): array {
