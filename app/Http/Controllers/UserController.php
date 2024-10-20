@@ -17,7 +17,7 @@ class UserController extends Controller {
 	 * Create a user with just a badge ID
 	 */
 	public function store(UserStoreRequest $request): JsonResponse|RedirectResponse {
-		$user = User::retrieveAvailableDetailsAndCreate($request->integer('badge_id'), 'Volunteer');
+		$user = User::fetchAvailableDetailsAndCreate($request->integer('badge_id'), 'Volunteer');
 		return $request->expectsJson() && !$request->inertia()
 			? response()->json(['user' => $user])
 			: redirect()->back()->withSuccess("User (#{$user->badge_id}) created.");

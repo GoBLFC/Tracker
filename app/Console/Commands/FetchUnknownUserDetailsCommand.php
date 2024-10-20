@@ -8,7 +8,7 @@ use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Isolatable;
 use Illuminate\Support\Str;
 
-class RetrieveUnknownUserDetailsCommand extends Command implements Isolatable {
+class FetchUnknownUserDetailsCommand extends Command implements Isolatable {
 	/**
 	 * The name and signature of the console command.
 	 */

@@ -426,8 +426,8 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 	 * Retrieve volunteer and registration details for a badge ID and create a user with the information available from them.
 	 * If all information fails to be retrieved, then a placeholder user with just the badge ID is created.
 	 */
-	public static function retrieveAvailableDetailsAndCreate(int $badgeId, string $userType): static {
-		$info = static::retrieveAllAvailableDetails($badgeId);
+	public static function fetchAvailableDetailsAndCreate(int $badgeId, string $userType): static {
+		$info = static::fetchAvailableDetails($badgeId);
 		$volunteer = $info['volunteer'];
 		$registration = $info['registration'];
 
@@ -456,7 +456,7 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 	/**
 	 * Retrieves both the volunteer and registration information for a given user from ConCat and logs any failed requests
 	 */
-	private static function retrieveAllAvailableDetails(int $badgeId): array {
+	private static function fetchAvailableDetails(int $badgeId): array {
 		$volunteer = null;
 		$registration = null;
 
