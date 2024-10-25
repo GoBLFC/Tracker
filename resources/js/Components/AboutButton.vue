@@ -41,15 +41,16 @@
 										/>
 										<h4 class="mb-1">Ghost Cabbit</h4>
 										<p class="mb-0">Original Developer</p>
-										<p class="fs-2">
+										<p
+											class="fs-2 d-flex gap-2 justify-content-center"
+										>
 											<a
 												target="_blank"
 												href="https://twitter.com/GhostCabbit"
 												title="Ghost's Twitter"
-												><i
-													class="fa-brands fa-twitter"
-												></i
-											></a>
+												><FontAwesomeIcon
+													:icon="faTwitter"
+											/></a>
 										</p>
 									</div>
 									<div class="col-md-4 text-center">
@@ -62,31 +63,30 @@
 										<p class="mb-0">
 											Developer / Maintainer
 										</p>
-										<p class="fs-2">
+										<p
+											class="fs-2 d-flex gap-2 justify-content-center"
+										>
 											<a
 												target="_blank"
 												href="https://twitter.com/glitchfur"
 												title="Glitch's Twitter"
-												><i
-													class="fa-brands fa-twitter"
-												></i
-											></a>
+												><FontAwesomeIcon
+													:icon="faTwitter"
+											/></a>
 											<a
 												target="_blank"
 												href="https://meow.social/@glitch"
 												title="Glitch's Mastodon"
-												><i
-													class="fa-brands fa-mastodon"
-												></i
-											></a>
+												><FontAwesomeIcon
+													:icon="faMastodon"
+											/></a>
 											<a
 												target="_blank"
 												href="https://www.glitchfur.net"
 												title="Glitch's Website"
-												><i
-													class="fa-solid fa-globe"
-												></i
-											></a>
+												><FontAwesomeIcon
+													:icon="faGlobe"
+											/></a>
 										</p>
 									</div>
 									<div class="col-md-4 text-center">
@@ -99,23 +99,23 @@
 										<p class="mb-0">
 											Developer / Maintainer
 										</p>
-										<p class="fs-2">
+										<p
+											class="fs-2 d-flex gap-2 justify-content-center"
+										>
 											<a
 												target="_blank"
 												href="https://furry.engineer/Gawdl3y"
 												title="Gawdl3y's Mastodon"
-												><i
-													class="fa-brands fa-mastodon"
-												></i
-											></a>
+												><FontAwesomeIcon
+													:icon="faMastodon"
+											/></a>
 											<a
 												target="_blank"
 												href="https://gawdl3y.dev"
 												title="Gawdl3y's Website"
-												><i
-													class="fa-solid fa-globe"
-												></i
-											></a>
+												><FontAwesomeIcon
+													:icon="faGlobe"
+											/></a>
 										</p>
 									</div>
 								</div>
@@ -166,6 +166,9 @@
 
 <script setup lang="ts">
 import { useId } from 'vue';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faGlobe } from '@fortawesome/free-solid-svg-icons';
+import { faMastodon, faTwitter } from '@fortawesome/free-brands-svg-icons';
 
 const modalId = useId();
 const labelId = useId();
