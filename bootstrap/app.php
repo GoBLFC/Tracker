@@ -1,6 +1,6 @@
 <?php
 
-// Current Laravel skeleton version: v11.2.1
+// Current Laravel skeleton version: v11.3.2
 
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
