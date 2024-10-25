@@ -140,18 +140,16 @@
 											developments.
 										</p>
 										<p>
-											Also, it's open source! Check it out
-											on
+											If you find bugs, please let your
+											volunteer managers know so we can
+											fix them! If you're feeling
+											adventurous, check out the source
+											code on
 											<a
 												href="https://github.com/GoBLFC/Tracker"
 												target="_blank"
 												>GitHub</a
 											>.
-										</p>
-										<p>
-											If you find bugs, please let your
-											volunteer managers know so we can
-											fix them!
 										</p>
 									</div>
 								</div>
