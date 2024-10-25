@@ -92,21 +92,21 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 import vueDebounce from 'vue-debounce';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faAddressCard, faArrowRightToBracket, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { useRequest } from '../lib/request';
-import { useToast } from '../lib/toast';
+import type User from '../data/User';
+import type { UserId } from '../data/User';
 
-const emit = defineEmits({ select: [String] });
+const emit = defineEmits<(e: 'select', userId: UserId) => void>();
 
 const vDebounce = vueDebounce({ lock: true });
 const request = useRequest();
-const toast = useToast();
 const query = ref('');
-const users = ref(null);
+const users = ref<User[] | null>(null);
 
 /**
  * Sends a request to search for users that match the input query
@@ -117,16 +117,16 @@ async function searchUsers() {
 		return;
 	}
 
-	const data = await request.get('users.search', { q: query.value });
-	if (data.users) users.value = data.users;
+	const { users: resultUsers } = await request.get<{ users: User[] }>('users.search', {
+		q: query.value,
+	});
+	if (resultUsers) users.value = resultUsers;
 }
 
 /**
  * Gets the department name for a user's current time entry, if there is one
- * @param {Object} user
- * @returns {?string}
  */
-function getDepartment(user) {
+function getDepartment(user: User): string | null | undefined {
 	return user.time_entries?.[0]?.department?.name;
 }
 </script>

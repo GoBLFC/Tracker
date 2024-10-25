@@ -75,47 +75,53 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faCircleNotch, faArrowRightToBracket, faCalendarPlus } from '@fortawesome/free-solid-svg-icons';
 import { useTime } from '../lib/time';
 import { useToast } from '../lib/toast';
 import { useRequest } from '../lib/request';
+import type Volunteer from '../data/Volunteer';
+import type Event from '../data/Event';
+import type Department from '../data/Department';
+import type TimeEntry from '../data/TimeEntry';
 import DateTimePicker from './DateTimePicker.vue';
 
-const { event, departments } = defineProps({
-	event: { type: Object, required: true },
-	departments: { type: Object, required: true },
-});
-const volunteer = defineModel();
+const { event, departments } = defineProps<{
+	event: Event;
+	departments: Department[];
+}>();
+const volunteer = defineModel<Volunteer>();
 
 const { dateToTrackerTime } = useTime();
 const toast = useToast();
 const request = useRequest();
 
-const start = ref(null);
-const stop = ref(null);
-const department = ref(null);
+const start = ref<Date | null>(null);
+const stop = ref<Date | null>(null);
+const department = ref<Department | null>(null);
 const notes = ref('');
 
 /**
  * Sends a request to store a new time entry and updates the volunteer appropriately
  */
 async function store() {
-	const dept = department.value;
+	const dept = department.value!;
 	const isOngoing = !stop.value;
 
-	const data = await request.put(['tracker.time.store', volunteer.value.user.id], {
+	const { time_entry: newEntry } = await request.put<{
+		time_entry: TimeEntry;
+	}>(['tracker.time.store', volunteer.value!.user.id], {
 		event_id: event.id,
 		department_id: dept.id,
-		start: dateToTrackerTime(start.value).toISO(),
-		stop: !isOngoing ? dateToTrackerTime(stop.value).toISO() : undefined,
+		start: dateToTrackerTime(start.value!).toISO(),
+		stop: !isOngoing ? dateToTrackerTime(stop.value!).toISO() : undefined,
 		notes: notes.value,
 	});
 
-	data.time_entry.department = dept;
-	volunteer.value.stats.entries.push(data.time_entry);
+	newEntry.department = dept;
+	volunteer.value!.stats.entries.push(newEntry);
 
 	toast.success(isOngoing ? 'User checked in.' : 'Added time entry.');
 }

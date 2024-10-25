@@ -4,7 +4,7 @@
 
 		<div class="card-body">
 			<div v-if="events.length > 0" class="input-group">
-				<label :for="selectId" class="input-group-text"> Event </label>
+				<label :for="selectId" class="input-group-text">Event</label>
 
 				<select
 					:id="selectId"
@@ -37,23 +37,35 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, useId } from 'vue';
 import { router } from '@inertiajs/vue3';
+import type { RequestPayload, Errors } from '@inertiajs/core';
 import { useUser } from '../lib/user';
+import type TrackerEvent from '../data/Event';
+import type { EventId } from '../data/Event';
 import LegacyLink from './LegacyLink.vue';
 
-const { event = null, resolver } = defineProps({
-	event: { type: [Object, null], required: true },
-	events: { type: Array, required: true },
-	resolver: { type: Function, required: true },
-	actionWord: { type: String, default: 'Edit' },
-});
-const emit = defineEmits({
-	changing: [String],
-	change: [String],
-	error: [Array],
-});
+const {
+	event,
+	resolver,
+	actionWord = 'Edit',
+} = defineProps<{
+	event: TrackerEvent | null;
+	events: TrackerEvent[];
+	resolver: (eventId: EventId) => {
+		url: string;
+		data?: RequestPayload;
+		only?: string[];
+		[key: string]: unknown;
+	};
+	actionWord?: string;
+}>();
+const emit = defineEmits<{
+	(e: 'changing', eventId: EventId): void;
+	(e: 'change', eventId: EventId): void;
+	(e: 'error', errors: Errors): void;
+}>();
 
 const selectId = useId();
 const { isAdmin } = useUser();
@@ -62,11 +74,10 @@ const loading = ref(false);
 
 /**
  * Calls the provided resolver with the event ID from the JS event target's value and navigates to the resulting URL
- * @param {SubmitEvent} evt
  */
-function navigateToEvent(evt) {
+function navigateToEvent(evt: Event) {
 	const oldEventId = event?.id;
-	const newEventId = evt.target.value;
+	const newEventId = (evt.target! as HTMLSelectElement).value as EventId;
 	const { url, data = {}, only, ...options } = resolver(newEventId);
 
 	if (only && !only.includes('event')) only.push('event');
@@ -85,7 +96,7 @@ function navigateToEvent(evt) {
 			emit('change', newEventId);
 		},
 		onError(errors) {
-			evt.target.value = oldEventId;
+			(evt.target! as HTMLSelectElement).value = oldEventId ?? '';
 			emit('error', errors);
 		},
 		onFinish() {

@@ -1,5 +1,8 @@
 import { onMounted, watch } from 'vue';
 import { usePage } from '@inertiajs/vue3';
+import type SharedProps from './SharedProps';
+
+// @ts-ignore: Missing typings for the dist file
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 
 export const Toast = Swal.mixin({
@@ -16,11 +19,11 @@ export const Toast = Swal.mixin({
 /**
  * Displays toast messages
  * @param {Object} [options]
- * @param {boolean} [options.flashes] Whether to automatically handle any session flash messages
+ * @param {boolean} [options.flashes=false] Whether to automatically handle any session flash messages
  */
 export function useToast({ flashes = false } = {}) {
 	if (flashes) {
-		const page = usePage();
+		const page = usePage<SharedProps>();
 
 		onMounted(() => {
 			showFlashes(page.props.flash);
@@ -31,10 +34,10 @@ export function useToast({ flashes = false } = {}) {
 
 	/**
 	 * Temporarily displays a success message
-	 * @param {string} titleOrText
-	 * @param {string} [text]
 	 */
-	function success(titleOrText, text) {
+	function success(text: string): void;
+	function success(title: string, text: string): void;
+	function success(titleOrText: string, text?: string): void {
 		Toast.fire({
 			title: text ? titleOrText : undefined,
 			text: text ?? titleOrText,
@@ -44,10 +47,10 @@ export function useToast({ flashes = false } = {}) {
 
 	/**
 	 * Temporarily displays an error message
-	 * @param {string} titleOrText
-	 * @param {string} [text]
 	 */
-	function error(titleOrText, text) {
+	function error(text: string): void;
+	function error(title: string, text: string): void;
+	function error(titleOrText: string, text?: string): void {
 		Toast.fire({
 			title: text ? titleOrText : undefined,
 			text: text ?? titleOrText,
@@ -57,15 +60,20 @@ export function useToast({ flashes = false } = {}) {
 
 	/**
 	 * Displays an action confirmation dialog
-	 * @param {string} titleOrText
-	 * @param {string} [text]
-	 * @param {Object} [options]
-	 * @param {string} [options.icon]
-	 * @param {boolean} [options.cancel]
-	 * @param {string} [options.confirmText]
-	 * @returns {boolean} Whether the user confirmed the action
+	 * @returns Whether the user confirmed the action
 	 */
-	async function confirm(titleOrText, text, { icon, showCancel, confirmText } = {}) {
+	async function confirm(text: string): Promise<boolean>;
+	async function confirm(title: string, text: string): Promise<boolean>;
+	async function confirm(
+		title: string,
+		text: string,
+		{ icon, showCancel, confirmText }: { icon?: string; showCancel?: boolean; confirmText?: string },
+	): Promise<boolean>;
+	async function confirm(
+		titleOrText: string,
+		text?: string,
+		{ icon, showCancel, confirmText }: { icon?: string; showCancel?: boolean; confirmText?: string } = {},
+	): Promise<boolean> {
 		const result = await Swal.fire({
 			title: text ? titleOrText : undefined,
 			text: text ?? titleOrText,
@@ -80,7 +88,7 @@ export function useToast({ flashes = false } = {}) {
 	/**
 	 * Displays success and error messages as needed from a session flash object
 	 */
-	function showFlashes(flash) {
+	function showFlashes(flash: Flashes): void {
 		if (flash.success) success(flash.success);
 		if (flash.error) error(flash.error);
 	}
@@ -90,4 +98,9 @@ export function useToast({ flashes = false } = {}) {
 		error,
 		confirm,
 	};
+}
+
+export interface Flashes {
+	success: string | null;
+	error: string | null;
 }

@@ -7,54 +7,49 @@
 		class="btn btn-danger btn-sm"
 	>
 		Logout
-		<span v-if="logoutAt">({{ countdown }})</span>
+		<template v-if="logoutAt">({{ countdown }})</template>
 	</Link>
 </template>
 
-<script setup>
-import { onMounted, onUnmounted, ref, inject, computed, watch } from 'vue';
+<script setup lang="ts">
+import { onMounted, onUnmounted, computed, watch, toRef } from 'vue';
 import { router } from '@inertiajs/vue3';
+import { useRoute } from '../lib/route';
 import { useSettings } from '../lib/settings';
-import { clockDuration } from '../lib/time';
+import { clockDuration, useNow } from '../lib/time';
 import Link from './Link.vue';
 
 defineExpose({ logout });
-const { auto, resetOnNavigate } = defineProps({
-	auto: {
-		type: Number,
-		required: false,
-	},
-	resetOnNavigate: {
-		type: Boolean,
-		default: true,
-	},
-});
+const { auto, resetOnNavigate = true } = defineProps<{
+	auto?: number;
+	resetOnNavigate?: boolean;
+}>();
 
-const route = inject('route');
+const route = useRoute();
 const { isKiosk, isDevMode } = useSettings();
+const { now, startTicking, stopTicking } = useNow();
 
 //
 // Auto-logout
 //
-let logoutTimeout = null;
-let countdownInterval = null;
-const logoutAt = ref(null);
-const now = ref(null);
+let logoutTimeout: ReturnType<typeof setTimeout> | null = null;
+const logoutTime = toRef(() => auto ?? (isKiosk.value ? (isDevMode.value ? 3600 : 60) : 0));
+const logoutAt = computed(() => {
+	if (logoutTime.value <= 0 || logoutTime.value >= Number.POSITIVE_INFINITY) return null;
+	return new Date(Date.now() + logoutTime.value * 1000 + 500);
+});
 const countdown = computed(() => {
-	const timeDiff = logoutAt.value.getTime() - now.value;
+	const timeDiff = logoutAt.value!.getTime() - now.value!;
 	return timeDiff > 1000 ? clockDuration(timeDiff) : 'Goodbye!';
 });
 
 // Set up and tear down the auto logout timer/countdown as needed
 onMounted(setupAutoLogout);
 onUnmounted(tearDownAutoLogout);
-watch(
-	() => auto,
-	() => {
-		tearDownAutoLogout();
-		setupAutoLogout();
-	},
-);
+watch(logoutAt, () => {
+	tearDownAutoLogout();
+	setupAutoLogout();
+});
 
 // Reset the countdown when changing pages
 onUnmounted(
@@ -76,31 +71,19 @@ function logout() {
  * Sets up the auto-logout timer and countdown
  */
 function setupAutoLogout() {
-	const logoutTime = auto ?? (isKiosk.value ? (isDevMode.value ? 3600 : 60) : 0);
-	if (logoutTime <= 0 || logoutTime >= Number.POSITIVE_INFINITY) return;
+	if (!logoutAt.value) return;
 
-	logoutAt.value = new Date(Date.now() + logoutTime * 1000 + 500);
-	now.value = Date.now();
-	countdownInterval = setInterval(updateCountdown, 1000);
-	logoutTimeout = setTimeout(logout, logoutTime * 1000 + 500);
+	logoutTimeout = setTimeout(logout, logoutTime.value * 1000 + 500);
+	startTicking();
 
-	console.debug(`Set up auto-logout for ${logoutTime}s (${logoutAt.value})`);
+	console.debug(`Set up auto-logout for ${logoutTime.value}s (${logoutAt.value})`);
 }
 
 /**
  * Tears down the auto-logout timer and countdown
  */
 function tearDownAutoLogout() {
+	stopTicking();
 	if (logoutTimeout) clearTimeout(logoutTimeout);
-	if (countdownInterval) clearInterval(countdownInterval);
-	logoutAt.value = null;
-	now.value = null;
-}
-
-/**
- * Updates the displayed countdown
- */
-function updateCountdown() {
-	now.value = Date.now();
 }
 </script>

@@ -1,40 +1,41 @@
 <template>
-	<template
+	<component
 		:is="as"
 		ref="root"
 		:data-bs-title="title"
 		data-bs-toggle="tooltip"
 	>
 		<slot />
-	</template>
+	</component>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useTemplateRef, watch, onMounted, onUnmounted } from 'vue';
 import { Tooltip } from 'bootstrap';
 
-const { title } = defineProps({
-	title: { type: String, required: true },
-	as: { type: [String, Object], default: 'span' },
-});
+const { title, as = 'span' } = defineProps<{
+	title: string;
+	as?: string | object;
+}>();
 
 const root = useTemplateRef('root');
-let tooltip = null;
+
+let tooltip: Tooltip | null = null;
 
 onMounted(() => {
-	tooltip = new Tooltip(root.value);
+	tooltip = new Tooltip(root.value as Element);
 });
 
 onUnmounted(() => {
-	tooltip.dispose();
+	tooltip!.dispose();
 	tooltip = null;
 });
 
 watch(
 	() => title,
 	() => {
-		tooltip.dispose();
-		tooltip = new Tooltip(root.value);
+		tooltip?.dispose();
+		tooltip = new Tooltip(root.value as Element);
 	},
 );
 </script>

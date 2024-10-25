@@ -1,11 +1,12 @@
 import { toRef } from 'vue';
 import { usePage } from '@inertiajs/vue3';
+import type SharedProps from './SharedProps';
 
 /**
  * Provides information about the authenticated user from the Inertia page properties
  */
 export function useUser() {
-	const page = usePage();
+	const page = usePage<SharedProps>();
 
 	return {
 		id: toRef(() => page.props.auth.user?.id),
@@ -19,9 +20,9 @@ export function useUser() {
 		isLoggedIn: toRef(() => Boolean(page.props.auth.user)),
 		isGatekeeper: toRef(() => page.props.isGatekeeper),
 		isBanned: toRef(() => page.props.auth.user?.role === -2),
-		isStaff: toRef(() => page.props.auth.user?.role >= 1),
-		isLead: toRef(() => page.props.auth.user?.role >= 2),
-		isManager: toRef(() => page.props.auth.user?.role >= 3),
+		isStaff: toRef(() => page.props.auth.user?.role ?? 0 >= 1),
+		isLead: toRef(() => page.props.auth.user?.role ?? 0 >= 2),
+		isManager: toRef(() => page.props.auth.user?.role ?? 0 >= 3),
 		isAdmin: toRef(() => page.props.auth.user?.role === 4),
 	};
 }

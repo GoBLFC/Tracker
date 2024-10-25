@@ -6,29 +6,30 @@
 		@click="toggle"
 		:disabled="loading"
 	>
-		<span v-if="!loading">
+		<template v-if="!loading">
 			<FontAwesomeIcon
 				class="me-1"
 				:icon="isKiosk ? faLock : faLockOpen"
 			/>
 			{{ isKiosk ? "Deauthorize" : "Authorize" }} Kiosk
-		</span>
-		<span v-else>
+		</template>
+		<template v-else>
 			<FontAwesomeIcon class="me-1" :icon="faCircleNotch" spin />
 			{{ isKiosk ? "Deauthorizing" : "Authorizing" }} Kiosk&hellip;
-		</span>
+		</template>
 	</button>
 </template>
 
-<script setup>
-import { inject, ref } from 'vue';
+<script setup lang="ts">
+import { ref } from 'vue';
 import { router } from '@inertiajs/vue3';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faCircleNotch, faLock, faLockOpen } from '@fortawesome/free-solid-svg-icons';
 import { useSettings } from '../lib/settings';
 import { useToast } from '../lib/toast';
+import { useRoute } from '../lib/route';
 
-const route = inject('route');
+const route = useRoute();
 const { isKiosk } = useSettings();
 const toast = useToast();
 

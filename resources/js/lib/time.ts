@@ -11,37 +11,30 @@ export function useTime() {
 
 	/**
 	 * Converts a local JS date to Tracker's configured timezone, modifying the timestamp
-	 * @param {Date} date
-	 * @returns {DateTime}
 	 */
-	function dateToTrackerTime(date) {
+	function dateToTrackerTime(date: Date): DateTime {
 		return DateTime.fromJSDate(date).setZone(timezone.value, { keepLocalTime: true });
 	}
 
 	/**
 	 * Parses an ISO 8601 datetime string and converts it to Tracker's configured timezone
-	 * @param {string} iso
-	 * @returns {DateTime}
 	 */
-	function isoToTrackerTime(iso) {
+	function isoToTrackerTime(iso: string): DateTime {
 		return DateTime.fromISO(iso).setZone(timezone.value);
 	}
 
 	/**
 	 * Parses an ISO 8601 datetime string, converts it to Tracker's configured timezone, and builds a human-friendly
 	 * datetime string (including abbreviated weekday) using the browser's default locale.
-	 * @param {string} iso
-	 * @returns {string}
 	 */
-	function isoToDateTimeString(iso) {
+	function isoToDateTimeString(iso: string): string {
 		return isoToTrackerTime(iso).toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY);
 	}
 
 	/**
 	 * Gets the current time in Tracker's configured timezone
-	 * @returns {DateTime}
 	 */
-	function now() {
+	function now(): DateTime {
 		return DateTime.now().setZone(timezone.value);
 	}
 
@@ -63,7 +56,7 @@ export function useTime() {
 export function useNow({ autoStart = true, autoStop = true } = {}) {
 	const now = ref(Date.now());
 	const isTicking = ref(false);
-	let tickInterval = null;
+	let tickInterval: ReturnType<typeof setInterval> | null = null;
 
 	if (autoStart) onMounted(startTicking);
 	if (autoStop) onUnmounted(stopTicking);
@@ -81,6 +74,7 @@ export function useNow({ autoStart = true, autoStop = true } = {}) {
 	function startTicking() {
 		if (tickInterval) return;
 
+		tick();
 		tickInterval = setInterval(tick, 1000);
 		isTicking.value = true;
 	}
@@ -127,11 +121,9 @@ export const humanizeDuration = humanizer({
  * Builds a humanized duration string in the form of "3h 25m".
  * Hours are the max unit and seconds are the minimum.
  * A maximum of two units will be used, with the smaller of the two being rounded.
- * @param {number} durationMs
  * @param {boolean} [round=true] Whether to round the final unit
- * @returns {string}
  */
-export function shortDuration(durationMs, round = true) {
+export function shortDuration(durationMs: number, round = true): string {
 	return humanizeDuration(durationMs, {
 		language: 'shortEn',
 		units: ['h', 'm', 's'],
@@ -146,10 +138,8 @@ export function shortDuration(durationMs, round = true) {
 /**
  * Builds a humanized duration string in the form of a clock time like "5:03:25".
  * If there are 0 hours, they will be omitted entirely from the resulting string.
- * @param {number} durationMs
- * @returns {string}
  */
-export function clockDuration(durationMs) {
+export function clockDuration(durationMs: number): string {
 	const duration = Duration.fromMillis(durationMs).shiftTo('hours', 'minutes', 'seconds');
 	if (duration.hours > 0) return duration.toFormat('h:mm:ss');
 	return duration.toFormat('m:ss');
@@ -158,11 +148,8 @@ export function clockDuration(durationMs) {
 /**
  * Calculates the duration of a time period in milliseconds using two ISO timestamps,
  * or one ISO timestamp and the current time
- * @param {string} start
- * @param {string} [stop]
- * @returns {number}
  */
-export function getDuration(start, stop) {
+export function getDuration(start: string, stop?: string): number {
 	const startDate = new Date(start);
 	const stopDate = stop ? new Date(stop) : new Date();
 	return stopDate.getTime() - startDate.getTime();

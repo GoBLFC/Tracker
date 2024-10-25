@@ -6,33 +6,34 @@
 		:disabled="request.processing.value"
 		@click="toggleClaim"
 	>
-		<span v-if="!request.processing.value">
+		<template v-if="!request.processing.value">
 			<FontAwesomeIcon class="me-1" :icon="claim ? faXmark : faCheck" />
 			{{ claim ? "Unclaim" : "Claim" }}
-		</span>
-		<span v-else>
+		</template>
+		<template v-else>
 			<FontAwesomeIcon class="me-1" :icon="faCircleNotch" spin />
 			{{ claim ? "Unclaiming" : "Claiming" }}&hellip;
-		</span>
+		</template>
 	</button>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faCircleNotch, faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { useRequest } from '../lib/request';
 import { useToast } from '../lib/toast';
+import type Volunteer from '../data/Volunteer';
+import type Reward from '../data/Reward';
+import type RewardClaim from '../data/RewardClaim';
 
-const { reward } = defineProps({
-	reward: { type: Object, required: true },
-});
-const volunteer = defineModel();
+const { reward } = defineProps<{ reward: Reward }>();
+const volunteer = defineModel<Volunteer>();
 
 const request = useRequest();
 const toast = useToast();
 
-const claim = computed(() => volunteer.value.claims.find((claim) => claim.reward_id === reward.id));
+const claim = computed(() => volunteer.value!.claims.find((claim) => claim.reward_id === reward.id));
 
 /**
  * Sends a request to claim or unclaim the reward for the user and modifies the model appropriately
@@ -45,10 +46,12 @@ async function toggleClaim() {
  * Sends a request to claim the reward for the user and modifies the model appropriately
  */
 async function claimReward() {
-	const data = await request.put(['users.claims.store', volunteer.value.user.id], {
+	const { reward_claim: newClaim } = await request.put<{
+		reward_claim: RewardClaim;
+	}>(['users.claims.store', volunteer.value!.user.id], {
 		reward_id: reward.id,
 	});
-	volunteer.value.claims.push(data.reward_claim);
+	volunteer.value!.claims.push(newClaim);
 }
 
 /**
@@ -62,8 +65,8 @@ async function unclaimReward() {
 	});
 	if (!confirmed) return;
 
-	await request.del(['claims.destroy', claim.value.id]);
-	const claimIdx = volunteer.value.claims.findIndex((clm) => clm.id === claim.value.id);
-	volunteer.value.claims.splice(claimIdx, 1);
+	await request.del(['claims.destroy', claim.value!.id]);
+	const claimIdx = volunteer.value!.claims.findIndex((clm) => clm.id === claim.value!.id);
+	volunteer.value!.claims.splice(claimIdx, 1);
 }
 </script>

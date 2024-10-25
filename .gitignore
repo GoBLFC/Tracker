@@ -4,6 +4,8 @@
 /public/hot
 /public/storage
 /storage/*.key
+/resources/js/ziggy.js
+/resources/js/ziggy.d.ts
 /vendor
 .env
 *.env

@@ -41,11 +41,11 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import type Volunteer from '../data/Volunteer';
+import type Reward from '../data/Reward';
 import VolunteerClaimToggleButton from './VolunteerClaimToggleButton.vue';
 
-defineProps({
-	rewards: { type: Array, required: true },
-});
-const volunteer = defineModel();
+defineProps<{ rewards: Reward[] }>();
+const volunteer = defineModel<Volunteer>();
 </script>

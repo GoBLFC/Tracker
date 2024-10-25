@@ -7,8 +7,8 @@
 			<div></div>
 
 			<h5 class="m-0">
-				{{ volunteer.user.badge_name ?? volunteer.user.username }}
-				(#{{ volunteer.user.badge_id }})
+				{{ volunteer!.user.badge_name ?? volunteer!.user.username }}
+				(#{{ volunteer!.user.badge_id }})
 			</h5>
 
 			<button
@@ -23,7 +23,7 @@
 		</div>
 
 		<div class="card-body">
-			<VolunteerTimeStats :stats="volunteer.stats" :ongoing :now />
+			<VolunteerTimeStats :stats="volunteer!.stats" :ongoing :now />
 
 			<VolunteerClaimsCard v-model="volunteer" class="mb-3" :rewards />
 
@@ -34,50 +34,54 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, useTemplateRef } from 'vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { isElementInView } from '../lib/util';
+import type Volunteer from '../data/Volunteer';
+import type Event from '../data/Event';
+import type Reward from '../data/Reward';
+import type Department from '../data/Department';
 import VolunteerTimeStats from './VolunteerTimeStats.vue';
 import VolunteerClaimsCard from './VolunteerClaimsCard.vue';
 import VolunteerTimeEntriesCard from './VolunteerTimeEntriesCard.vue';
 import VolunteerTimeAddCard from './VolunteerTimeAddCard.vue';
 
 defineExpose({ attention });
-defineProps({
-	event: { type: Object, required: true },
-	rewards: { type: Array, required: true },
-	departments: { type: Array, required: true },
-	now: { type: Number, required: false },
-});
-const emit = defineEmits({ close: [] });
-const volunteer = defineModel();
+defineProps<{
+	event: Event;
+	rewards: Reward[];
+	departments: Department[];
+	now?: number;
+}>();
+const emit = defineEmits<(e: 'close') => void>();
+const volunteer = defineModel<Volunteer>();
 
 const card = useTemplateRef('card');
 const header = useTemplateRef('header');
 
-const ongoing = computed(() => volunteer.value.stats.entries.find((entry) => !entry.stop));
+const ongoing = computed(() => volunteer.value!.stats.entries.find((entry) => !entry.stop));
 
 /**
  * Pulses the card's border and scrolls the viewport to it
  */
 function attention() {
 	// Pulse the card border
-	card.value.classList.remove('transition-border');
-	card.value.classList.replace('border-info', 'border-info-subtle');
+	card.value!.classList.remove('transition-border');
+	card.value!.classList.replace('border-info', 'border-info-subtle');
 	setTimeout(() => {
-		card.value.classList.add('transition-border');
-		card.value.classList.replace('border-info-subtle', 'border-info');
+		card.value!.classList.add('transition-border');
+		card.value!.classList.replace('border-info-subtle', 'border-info');
 		setTimeout(() => {
-			card.value.classList.replace('border-info', 'border-info-subtle');
+			card.value!.classList.replace('border-info', 'border-info-subtle');
 		}, 500);
 	}, 0);
 
 	// Scroll to the card if the header isn't in view
-	if (!isElementInView(header.value)) {
-		card.value.scrollIntoView({
-			block: card.value.clientHeight < window.innerHeight ? 'center' : 'start',
+	if (!isElementInView(header.value!)) {
+		card.value!.scrollIntoView({
+			block: card.value!.clientHeight < window.innerHeight ? 'center' : 'start',
 		});
 	}
 }

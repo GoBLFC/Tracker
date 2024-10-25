@@ -40,7 +40,7 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -48,7 +48,7 @@ import { faHouse, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import LegacyLink from '../Components/LegacyLink.vue';
 
 defineOptions({ layout: [] });
-const props = defineProps({ status: { type: Number, required: true } });
+const props = defineProps<{ status: number }>();
 
 const title = computed(() => {
 	return {

@@ -1,3 +1,4 @@
+import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
@@ -8,7 +9,7 @@ export default defineConfig({
 		laravel({
 			input: [
 				'resources/sass/app.scss',
-				'resources/js/app.js',
+				'resources/js/app.ts',
 				'resources/js/legacy/app.js',
 				'resources/js/legacy/login.js',
 				'resources/js/legacy/time.js',
@@ -30,6 +31,12 @@ export default defineConfig({
 			refresh: true,
 		}),
 	],
+
+	resolve: {
+		alias: {
+			'@': fileURLToPath(new URL('./resources', import.meta.url)),
+		},
+	},
 
 	server: {
 		hmr: {

@@ -43,17 +43,19 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { useTime } from '../lib/time';
+import type TimeEntry from '../data/TimeEntry';
+import type { UserId } from '../data/User';
 import Duration from './Duration.vue';
 
-defineProps({
-	entries: { type: Array, required: true },
-	now: { type: Number, required: false },
-});
-const emit = defineEmits({ select: [String] });
+defineProps<{
+	entries: TimeEntry[];
+	now?: number;
+}>();
+const emit = defineEmits<(e: 'select', userId: UserId) => void>();
 
 const { isoToDateTimeString } = useTime();
 </script>

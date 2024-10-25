@@ -31,7 +31,7 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useUser } from '../lib/user';
 import { useSettings } from '../lib/settings';
 import LegacyLink from '../Components/LegacyLink.vue';

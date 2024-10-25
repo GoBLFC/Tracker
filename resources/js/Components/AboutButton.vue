@@ -164,7 +164,7 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useId } from 'vue';
 
 const modalId = useId();

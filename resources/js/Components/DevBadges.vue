@@ -5,18 +5,20 @@
 			Dev Mode Enabled
 		</div>
 
-		<div v-if="user.isLoggedIn" class="badge rounded-pill text-bg-info">
-			<FontAwesomeIcon :icon="faUser" class="me-1" />
-			Your Badge ID: {{ user.badgeId }}
-		</div>
-		<div v-if="user.isLoggedIn" class="badge rounded-pill text-bg-info">
-			<FontAwesomeIcon :icon="faUser" class="me-1" />
-			Your UUID: {{ user.id }}
-		</div>
-		<div v-if="user.isLoggedIn" class="badge rounded-pill text-bg-primary">
-			<FontAwesomeIcon :icon="faIdCard" class="me-1" />
-			Role: {{ user.roleName }}
-		</div>
+		<template v-if="user.isLoggedIn">
+			<div class="badge rounded-pill text-bg-info">
+				<FontAwesomeIcon :icon="faUser" class="me-1" />
+				Your Badge ID: {{ user.badgeId }}
+			</div>
+			<div class="badge rounded-pill text-bg-info">
+				<FontAwesomeIcon :icon="faUser" class="me-1" />
+				Your UUID: {{ user.id }}
+			</div>
+			<div class="badge rounded-pill text-bg-primary">
+				<FontAwesomeIcon :icon="faIdCard" class="me-1" />
+				Role: {{ user.roleName }}
+			</div>
+		</template>
 
 		<div
 			class="badge rounded-pill"
@@ -45,7 +47,7 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faCode, faUser, faIdCard, faLock, faLockOpen, faCalendarDay } from '@fortawesome/free-solid-svg-icons';
 import { useUser } from '../lib/user';

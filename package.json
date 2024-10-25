@@ -7,7 +7,7 @@
 		"build": "vite build",
 		"format": "biome format --write",
 		"format:check": "biome format",
-		"lint": "biome lint",
+		"lint": "tsc --noEmit && biome lint",
 		"lint:fix": "biome lint --write",
 		"lint:fix-unsafe": "biome lint --write --unsafe"
 	},
@@ -36,8 +36,16 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.3",
+		"@tsconfig/node20": "^20.1.4",
+		"@types/bootstrap": "^5.2.10",
+		"@types/humanize-duration": "^3.27.4",
+		"@types/luxon": "^3.4.2",
+		"@types/node": "^22.7.8",
 		"@vitejs/plugin-vue": "^5.1.4",
+		"@vue/tsconfig": "^0.5.1",
 		"laravel-vite-plugin": "^1.0.5",
-		"vite": "^5.4.2"
+		"typescript": "^5.6.3",
+		"vite": "^5.4.2",
+		"vue-tsc": "^2.1.6"
 	}
 }

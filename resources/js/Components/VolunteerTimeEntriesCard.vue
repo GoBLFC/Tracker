@@ -2,7 +2,7 @@
 	<div class="card">
 		<div class="card-header">Time Log</div>
 
-		<div v-if="volunteer.stats.entries.length > 0" class="card-body p-0">
+		<div v-if="volunteer!.stats.entries.length > 0" class="card-body p-0">
 			<div class="table-responsive">
 				<table class="table table-dark table-striped mb-0">
 					<thead>
@@ -17,7 +17,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr v-for="entry of volunteer.stats.entries">
+						<tr v-for="entry of volunteer!.stats.entries">
 							<td>{{ isoToDateTimeString(entry.start) }}</td>
 							<td>
 								{{
@@ -77,34 +77,33 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useTime } from '../lib/time';
+import type Volunteer from '../data/Volunteer';
+import type TimeEntry from '../data/TimeEntry';
+import type { TimeEntryId } from '../data/TimeEntry';
 import Duration from './Duration.vue';
 import Tooltip from './Tooltip.vue';
 import TimeEntryActionButtons from './TimeEntryActionButtons.vue';
 
-defineProps({
-	now: { type: Number, required: false },
-});
-const volunteer = defineModel();
+defineProps<{ now?: number }>();
+const volunteer = defineModel<Volunteer>();
 
 const { isoToDateTimeString } = useTime();
 
 /**
  * Updates a time entry in the entries array with changes from a new version of it
- * @param {Object} newEntry
  */
-function updateEntry(newEntry) {
-	const entry = volunteer.value.stats.entries.find((entry) => entry.id === newEntry.id);
-	Object.assign(entry, newEntry);
+function updateEntry(newEntry: TimeEntry) {
+	const entry = volunteer.value!.stats.entries.find((entry) => entry.id === newEntry.id);
+	Object.assign(entry!, newEntry);
 }
 
 /**
  * Removes a time entry from the entries array
- * @param {string} id
  */
-function deleteEntry(id) {
-	const entryIdx = volunteer.value.stats.entries.findIndex((entry) => entry.id === id);
-	volunteer.value.stats.entries.splice(entryIdx, 1);
+function deleteEntry(id: TimeEntryId) {
+	const entryIdx = volunteer.value!.stats.entries.findIndex((entry) => entry.id === id);
+	volunteer.value!.stats.entries.splice(entryIdx, 1);
 }
 </script>

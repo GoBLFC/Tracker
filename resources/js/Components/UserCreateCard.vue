@@ -44,17 +44,16 @@
 	</div>
 </template>
 
-<script setup>
-import { inject, useId } from 'vue';
+<script setup lang="ts">
+import { useId } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faCircleNotch, faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { useRoute } from '../lib/route';
 
-defineProps({
-	headerTag: { type: String, default: 'h5' },
-});
+const { headerTag = 'h5' } = defineProps<{ headerTag?: string }>();
 
-const route = inject('route');
+const route = useRoute();
 const form = useForm({ badge_id: '' });
 const inputId = useId();
 

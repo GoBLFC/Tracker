@@ -36,18 +36,20 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch } from 'vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faCircleNotch, faTrash, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { useTime } from '../lib/time';
 import { useToast } from '../lib/toast';
 import { useRequest } from '../lib/request';
+import type TimeEntry from '../data/TimeEntry';
 
-const { entry } = defineProps({
-	entry: { type: Object, required: true },
-});
-const emit = defineEmits({ checkout: [Object], delete: [] });
+const { entry } = defineProps<{ entry: TimeEntry }>();
+const emit = defineEmits<{
+	(e: 'checkout', entry: TimeEntry): void;
+	(e: 'delete'): void;
+}>();
 
 const { isoToDateTimeString } = useTime();
 const toast = useToast();
@@ -73,8 +75,10 @@ async function checkout() {
 	});
 	if (!confirmed) return;
 
-	const data = await request.post(['tracker.time.checkout.post', entry.id]);
-	emit('checkout', data.time_entry);
+	const { time_entry: newEntry } = await request.post<{
+		time_entry: TimeEntry;
+	}>(['tracker.time.checkout.post', entry.id]);
+	emit('checkout', newEntry);
 }
 
 /**

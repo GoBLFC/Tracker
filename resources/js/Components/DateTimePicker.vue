@@ -36,7 +36,7 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useId, useTemplateRef, onMounted, onUnmounted } from 'vue';
 import { TempusDominus, Namespace as TD } from '@eonasdan/tempus-dominus';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -53,18 +53,16 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 defineOptions({ inheritAttrs: false });
-const { format } = defineProps({
-	format: { type: String, default: 'yyyy-MM-dd hh:mm:ss T' },
-});
-const datetime = defineModel();
+const { format = 'yyyy-MM-dd hh:mm:ss T' } = defineProps<{ format?: string }>();
+const datetime = defineModel<Date | null>();
 
 const id = useId();
 const root = useTemplateRef('root');
 
-let picker = null;
+let picker: TempusDominus | null = null;
 
 onMounted(() => {
-	picker = new TempusDominus(root.value, {
+	picker = new TempusDominus(root.value!, {
 		localization: { format },
 		display: {
 			theme: 'dark',
@@ -89,7 +87,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-	picker.dispose();
+	picker!.dispose();
 	picker = null;
 });
 </script>

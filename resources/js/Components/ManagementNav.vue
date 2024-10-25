@@ -12,6 +12,7 @@
 						Attendee Logs
 					</LegacyLink>
 				</div>
+
 				<div v-if="isLead" class="col-md">
 					<LegacyLink
 						to="management.lead"
@@ -20,6 +21,7 @@
 						Lead Panel
 					</LegacyLink>
 				</div>
+
 				<div v-if="isManager" class="col-md">
 					<Link
 						to="management.manage"
@@ -28,6 +30,7 @@
 						Management Panel
 					</Link>
 				</div>
+
 				<div v-if="isAdmin" class="col-md">
 					<div class="dropdown">
 						<button
@@ -38,6 +41,7 @@
 						>
 							Admin Panel
 						</button>
+
 						<ul class="dropdown-menu dropdown-menu-end">
 							<li>
 								<LegacyLink
@@ -111,7 +115,7 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useUser } from '../lib/user';
 import Link from './Link.vue';
 import LegacyLink from './LegacyLink.vue';

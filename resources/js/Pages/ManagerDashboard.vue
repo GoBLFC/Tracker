@@ -24,9 +24,9 @@
 						class="mb-0"
 					>
 						You are managing data for an inactive event.
-						<span v-if="!isAdmin"
-							>Everything will be read-only.</span
-						>
+						<template v-if="!isAdmin">
+							Everything will be read-only.
+						</template>
 					</p>
 					<p v-else-if="!event" class="mb-0">
 						There isn't currently any event running, and you haven't
@@ -124,14 +124,24 @@
 	</div>
 </template>
 
-<script setup>
-import { inject, ref, computed, watch, useTemplateRef, nextTick, onMounted, onUnmounted } from 'vue';
+<script setup lang="ts">
+import { ref, computed, watch, useTemplateRef, nextTick, onMounted, onUnmounted } from 'vue';
 import { router, Head } from '@inertiajs/vue3';
 import humanizeDuration from 'humanize-duration';
 import { useUser } from '../lib/user';
 import { useSettings } from '../lib/settings';
 import { useNow } from '../lib/time';
 import { useRequest } from '../lib/request';
+import { useRoute } from '../lib/route';
+import type Volunteer from '../data/Volunteer';
+import type Event from '../data/Event';
+import type { EventId } from '../data/Event';
+import type Department from '../data/Department';
+import type Reward from '../data/Reward';
+import type TimeEntryActivity from '../data/TimeEntryActivity';
+import type TimeEntry from '../data/TimeEntry';
+import type RewardClaim from '../data/RewardClaim';
+import type { UserId } from '../data/User';
 import LegacyLink from '../Components/LegacyLink.vue';
 import EventSelector from '../Components/EventSelector.vue';
 import UserSearchCard from '../Components/UserSearchCard.vue';
@@ -142,17 +152,17 @@ import UserCreateCard from '../Components/UserCreateCard.vue';
 import KioskToggleButton from '../Components/KioskToggleButton.vue';
 import ManagementNav from '../Components/ManagementNav.vue';
 
-const { event, kioskLifetime } = defineProps({
-	event: { type: [Object, null], required: true },
-	events: { type: Array, required: true },
-	departments: { type: Array, required: true },
-	rewards: { type: Array, required: true },
-	kioskLifetime: { type: Number, required: true },
-	recentTimeActivities: { type: Array, required: true },
-	longestOngoingEntries: { type: Array, required: true },
-});
+const { event, kioskLifetime } = defineProps<{
+	event: Event;
+	events: Event[];
+	departments: Department[];
+	rewards: Reward[];
+	kioskLifetime: number;
+	recentTimeActivities: TimeEntryActivity[];
+	longestOngoingEntries: TimeEntry[];
+}>();
 
-const route = inject('route');
+const route = useRoute();
 const { activeEvent } = useSettings();
 const { isAdmin } = useUser();
 const { now } = useNow();
@@ -161,10 +171,8 @@ const kioskLifetimeText = computed(() => humanizeDuration(kioskLifetime * 1000 *
 
 /**
  * Resolves an event ID to a navigable URL and additional properties to pass to the router
- * @param {string} eventId
- * @returns {Object}
  */
-function eventRequestResolver(eventId) {
+function eventRequestResolver(eventId: EventId) {
 	return {
 		url: route('management.manage', eventId),
 		only: ['longestOngoingEntries', 'recentTimeActivities'],
@@ -178,29 +186,28 @@ const statsRequest = useRequest();
 const claimsRequest = useRequest();
 const volunteerCard = useTemplateRef('volunteer-card');
 
-const volunteer = ref(null);
+const volunteer = ref<Volunteer | null>(null);
 
 watch(() => event, resetVolunteer);
 
 /**
  * Loads all data for a volunteer user to provide to the user management card
- * @param userId
  */
-async function loadVolunteer(userId, attention = true) {
-	const [timeData, claimData] = await Promise.all([
-		statsRequest.get(['tracker.user.stats.event', [userId, event.id]]),
-		claimsRequest.get(['users.claims.event', [userId, event.id]]),
+async function loadVolunteer(userId: UserId, attention = true) {
+	const [newVolunteer, { reward_claims: claims }] = await Promise.all([
+		statsRequest.get<Volunteer>(['tracker.user.stats.event', [userId, event.id]]),
+		claimsRequest.get<{ reward_claims: RewardClaim[] }>(['users.claims.event', [userId, event.id]]),
 	]);
 
 	volunteer.value = {
-		user: timeData.user,
-		stats: timeData.stats,
-		claims: claimData.reward_claims,
+		user: newVolunteer.user,
+		stats: newVolunteer.stats,
+		claims: claims,
 	};
 
 	if (attention) {
 		nextTick(() => {
-			volunteerCard.value.attention();
+			volunteerCard.value!.attention();
 		});
 	}
 }
@@ -215,7 +222,7 @@ function resetVolunteer() {
 //
 // Auto-refreshing
 //
-let refreshInterval = null;
+let refreshInterval: ReturnType<typeof setInterval> | null = null;
 
 onMounted(() => {
 	refreshInterval = setInterval(() => {
@@ -225,12 +232,12 @@ onMounted(() => {
 
 		const shouldRefreshVolunteer =
 			volunteer.value && !statsRequest.processing.value && !claimsRequest.processing.value;
-		if (shouldRefreshVolunteer) loadVolunteer(volunteer.value.user.id, false);
+		if (shouldRefreshVolunteer) loadVolunteer(volunteer.value!.user.id, false);
 	}, 15000);
 });
 
 onUnmounted(() => {
-	clearInterval(refreshInterval);
+	clearInterval(refreshInterval!);
 	refreshInterval = null;
 });
 </script>

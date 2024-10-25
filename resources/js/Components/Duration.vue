@@ -2,21 +2,27 @@
 	{{ text }}
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, toRef } from 'vue';
 import { shortDuration, clockDuration } from '../lib/time';
 
-const { start, stop, ms, format, now } = defineProps({
-	start: { type: [Number, String, null], required: false },
-	stop: { type: [Number, String, null], required: false },
-	ms: { type: Number, required: false },
-	format: { type: String, default: 'short' },
-	now: { type: Number, required: false },
-});
+const {
+	start,
+	stop,
+	ms,
+	format = 'short',
+	now,
+} = defineProps<{
+	start?: number | string | null;
+	stop?: number | string | null;
+	ms?: number;
+	format?: string;
+	now?: number;
+}>();
 
 const startMs = computed(() => (start ? parseTime(start) : null));
 const stopMs = computed(() => (stop ? parseTime(stop) : now));
-const durationMs = toRef(() => ms ?? stopMs.value - startMs.value);
+const durationMs = toRef(() => ms ?? (stopMs.value ?? 0) - (startMs.value ?? 0));
 const text = computed(() => {
 	switch (format) {
 		case 'short':
@@ -29,13 +35,11 @@ const text = computed(() => {
 });
 
 /**
- * Parses an input value into a millisecond timestamp.
- * @param {number|string} time
- * @returns {number}
+ * Parses an input value into a millisecond timestamp
  */
-function parseTime(time) {
+function parseTime(time: number | string): number {
 	const type = typeof time;
-	if (type === 'number') return time;
+	if (type === 'number') return time as number;
 	if (type === 'string') return new Date(time).getTime();
 
 	throw new TypeError(`Time must be a number of milliseconds or an ISO 8601 datetime string, received ${time}.`);
