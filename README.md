@@ -228,6 +228,9 @@ Whenever using a Sail command, if you don't have an alias setup, use `sh vendor/
 Since Laravel is an MVC (Model, View, Controller) framework, that structure is generally adhered to.
 [PSR-4](https://www.php-fig.org/psr/psr-4/) autoloading is in use, so as long as the namespace and class filesystem structure is followed, files don't need to be manually included/required.
 
+A significant rework of the frontend is underway to modernize it by rebuilding it with Vue & TypeScript, using Inertia to connect it to the backend.
+At the moment, the only page that has been fully rebuilt is the Manager Controls page.
+
 ### Frequently Used Directories
 - Routes: [routes](/routes)
 - Controllers: [app/Http/Controllers](/app/Http/Controllers)
@@ -236,7 +239,7 @@ Since Laravel is an MVC (Model, View, Controller) framework, that structure is g
 - Artisan commands: [app/Console/Commands](/app/Console/Commands)
 - Database migrations: [database/migrations](/database/migrations)
 - Configuration: [config](/config)
-- JavaScript assets: [resources/js](/resources/js)
+- JavaScript/TypeScript assets: [resources/js](/resources/js)
 - Style assets (Sass/SCSS): [resources/sass](/resources/sass)
 - Image assets: [resources/img](/resources/img)
 
@@ -347,9 +350,12 @@ This allows the Telegram bot to be tested without needing the application to be 
 - [Carbon](https://carbon.nesbot.com/docs/) - Fluent datetime library written in PHP (Laravel uses this by default for all datetimes)
 - [Docker](https://www.docker.com/) - Container engine and other utilities for running containerized applications
 - [Eloquent](https://laravel.com/docs/11.x/eloquent) - Laravel's built-in fluent ORM for interacting with the database
+- [Inertia](https://inertiajs.com/) - Glue library between Laravel's backend and the single-page application frontend
 - [Laravel](https://laravel.com/) - Web application framework written in PHP
 - [Sail](https://laravel.com/docs/11.x/sail) - Laravel system that manages a development container, proxying commands into the container
 - [Sass/SCSS](https://sass-lang.com/) - Preprocessed extension language for CSS
 - [Telegram](https://telegram.org/) - Instant messenger that Tracker provides a bot for interacting with
+- [TypeScript](https://www.typescriptlang.org/) - Superset of JavaScript that adds a strong type system and compiles to plain JS
 - [UUIDv7](https://www.ietf.org/archive/id/draft-peabody-dispatch-new-uuid-format-01.html#name-uuidv7-layout-and-bit-order) - Universally Unique Identifier, version 7
 - [Vite](https://vitejs.dev/) - Asset bundling and cache-busting for the JS and image assets
+- [Vue](https://vuejs.org/) - Frontend component/single-page application framework
