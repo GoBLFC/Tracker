@@ -19,6 +19,7 @@
 		"@fortawesome/free-solid-svg-icons": "^6.6.0",
 		"@fortawesome/vue-fontawesome": "^3.0.8",
 		"@inertiajs/vue3": "^1.2.0",
+		"@primevue/themes": "^4.2.1",
 		"@sweetalert2/theme-dark": "^5.0.18",
 		"animate.css": "^4.1.1",
 		"axios": "^1.7.7",
@@ -27,6 +28,7 @@
 		"humanize-duration": "^3.32.1",
 		"jquery": "^3.7.1",
 		"luxon": "^3.5.0",
+		"primevue": "^4.2.1",
 		"qrcode": "^1.5.4",
 		"sass": "^1.77.8",
 		"simple-datatables": "^9.1.0",
@@ -36,6 +38,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
+		"@primevue/auto-import-resolver": "^4.2.1",
 		"@tsconfig/node20": "^20.1.4",
 		"@types/bootstrap": "^5.2.10",
 		"@types/humanize-duration": "^3.27.4",
@@ -46,6 +49,7 @@
 		"concurrently": "^9.0.1",
 		"laravel-vite-plugin": "^1.0.5",
 		"typescript": "^5.6.3",
+		"unplugin-vue-components": "^0.27.4",
 		"vite": "^5.4.2",
 		"vue-tsc": "^2.1.6"
 	}

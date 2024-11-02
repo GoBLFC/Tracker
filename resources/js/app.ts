@@ -6,12 +6,14 @@ import { createApp, type DefineComponent, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import type { route as routeFn } from '../../vendor/tightenco/ziggy/src/js';
+import PrimeVue from 'primevue/config';
+import Aura from '@primevue/themes/aura';
 import { injectKey as routeInjectKey } from './lib/route';
 
 import BaseLayout from './Layouts/BaseLayout.vue';
 import MainLayout from './Layouts/MainLayout.vue';
 
-const appName = window.document.getElementsByTagName('title')[0]?.innerText;
+const appName = document.getElementsByTagName('title')[0]?.innerText;
 
 createInertiaApp({
 	title: (title) => (title ? `${title} | ${appName}` : appName),
@@ -24,9 +26,17 @@ createInertiaApp({
 	},
 
 	setup({ el, App, props, plugin }) {
-		const app = createApp({ render: () => h(App, props) }).use(plugin);
+		const app = createApp({ render: () => h(App, props) })
+			.provide(routeInjectKey, route)
+			.use(plugin)
+			.use(PrimeVue, {
+				theme: {
+					preset: Aura,
+				},
+			});
+
 		app.config.globalProperties.$appName = appName;
-		app.provide(routeInjectKey, route).mount(el);
+		app.mount(el);
 	},
 });
 
