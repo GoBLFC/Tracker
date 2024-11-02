@@ -1,20 +1,11 @@
 import { onMounted, watch } from 'vue';
 import { usePage } from '@inertiajs/vue3';
+import { useToast as usePrimeVueToast } from 'primevue/usetoast';
 import type SharedProps from './SharedProps';
+import type { ToastMessageOptions } from 'primevue/toast';
 
 // @ts-ignore: Missing typings for the dist file
 import Swal from 'sweetalert2/dist/sweetalert2.js';
-
-export const Toast = Swal.mixin({
-	toast: true,
-	position: 'top-end',
-	showConfirmButton: false,
-	timer: 4000,
-	timerProgressBar: true,
-	showClass: {
-		popup: 'animate__animated animate__slideInDown animate__faster',
-	},
-});
 
 /**
  * Displays toast messages
@@ -22,6 +13,8 @@ export const Toast = Swal.mixin({
  * @param {boolean} [options.flashes=false] Whether to automatically handle any session flash messages
  */
 export function useToast({ flashes = false } = {}) {
+	const toast = usePrimeVueToast();
+
 	if (flashes) {
 		const page = usePage<SharedProps>();
 
@@ -33,16 +26,24 @@ export function useToast({ flashes = false } = {}) {
 	}
 
 	/**
+	 * Shows a single toast message
+	 */
+	function show(title: string, text: string, type: ToastMessageOptions['severity']): void {
+		toast.add({
+			summary: title,
+			detail: text,
+			severity: type,
+			life: 4000,
+		});
+	}
+
+	/**
 	 * Temporarily displays a success message
 	 */
 	function success(text: string): void;
 	function success(title: string, text: string): void;
 	function success(titleOrText: string, text?: string): void {
-		Toast.fire({
-			title: text ? titleOrText : undefined,
-			text: text ?? titleOrText,
-			icon: 'success',
-		});
+		show(text ? titleOrText : 'Success', text ?? titleOrText, 'success');
 	}
 
 	/**
@@ -51,11 +52,7 @@ export function useToast({ flashes = false } = {}) {
 	function error(text: string): void;
 	function error(title: string, text: string): void;
 	function error(titleOrText: string, text?: string): void {
-		Toast.fire({
-			title: text ? titleOrText : undefined,
-			text: text ?? titleOrText,
-			icon: 'error',
-		});
+		show(text ? titleOrText : 'Error', text ?? titleOrText, 'error');
 	}
 
 	/**
