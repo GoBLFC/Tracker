@@ -40,7 +40,7 @@ return Application::configure(basePath: dirname(__DIR__))
 			$isLocal = app()->environment(['local', 'testing']);
 			$isHandledStatus = in_array($response->getStatusCode(), [500, 503, 404, 403]);
 
-			if ($isLocal && $isHandledStatus) {
+			if (!$isLocal && $isHandledStatus) {
 				return Inertia::render('Error', ['status' => $response->getStatusCode()])
 					->toResponse($request)
 					->setStatusCode($response->getStatusCode());
