@@ -14,6 +14,8 @@
 			<FontAwesomeIcon class="me-1" :icon="faCircleNotch" spin />
 			{{ claim ? "Unclaiming" : "Claiming" }}&hellip;
 		</template>
+
+		<ConfirmPopup />
 	</button>
 </template>
 
@@ -22,7 +24,7 @@ import { computed } from 'vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faCircleNotch, faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { useRequest } from '../lib/request';
-import { useToast } from '../lib/toast';
+import { useConfirm } from '../lib/confirm';
 import type Volunteer from '../data/Volunteer';
 import type Reward from '../data/Reward';
 import type RewardClaim from '../data/RewardClaim';
@@ -31,7 +33,7 @@ const { reward } = defineProps<{ reward: Reward }>();
 const volunteer = defineModel<Volunteer>();
 
 const request = useRequest();
-const toast = useToast();
+const { confirm } = useConfirm();
 
 const claim = computed(() => volunteer.value!.claims.find((claim) => claim.reward_id === reward.id));
 
@@ -58,10 +60,8 @@ async function claimReward() {
  * Sends a request to unclaim the reward for the user and modifies the model appropriately
  */
 async function unclaimReward() {
-	const confirmed = await toast.confirm('Unclaim reward?', `${reward.hours}hr reward: ${reward.name}`, {
-		icon: 'warning',
-		showCancel: true,
-		confirmText: 'Unclaim',
+	const confirmed = await confirm('Unclaim reward?', {
+		accept: { label: 'Unclaim', severity: 'danger' },
 	});
 	if (!confirmed) return;
 

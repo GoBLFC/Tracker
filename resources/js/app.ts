@@ -7,6 +7,7 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import PrimeVue from 'primevue/config';
 import ToastService from 'primevue/toastservice';
+import ConfirmationService from 'primevue/confirmationservice';
 import Aura from '@primevue/themes/aura';
 import type { route as routeFn } from '../../vendor/tightenco/ziggy/src/js';
 import { injectKey as routeInjectKey } from './lib/route';
@@ -35,6 +36,7 @@ createInertiaApp({
 				},
 			})
 			.use(ToastService)
+			.use(ConfirmationService)
 			.provide(routeInjectKey, route);
 
 		app.config.globalProperties.$appName = appName;

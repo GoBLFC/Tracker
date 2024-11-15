@@ -33,6 +33,8 @@
 				:spin="request.processing.value"
 			/>
 		</button>
+
+		<ConfirmPopup />
 	</div>
 </template>
 
@@ -40,8 +42,7 @@
 import { ref, watch } from 'vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faCircleNotch, faTrash, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
-import { useTime } from '../lib/time';
-import { useToast } from '../lib/toast';
+import { useConfirm } from '../lib/confirm';
 import { useRequest } from '../lib/request';
 import type TimeEntry from '../data/TimeEntry';
 
@@ -51,8 +52,7 @@ const emit = defineEmits<{
 	(e: 'delete'): void;
 }>();
 
-const { isoToDateTimeString } = useTime();
-const toast = useToast();
+const { confirm } = useConfirm();
 const request = useRequest();
 
 const deleted = ref(false);
@@ -68,10 +68,8 @@ watch(
  * Sends a request to end the time entry and emits the checkout event with the updated data if successful
  */
 async function checkout() {
-	const confirmed = await toast.confirm('End time entry?', `Started at ${isoToDateTimeString(entry.start)}`, {
-		icon: 'warning',
-		showCancel: true,
-		confirmText: 'Check Out',
+	const confirmed = await confirm('Check out volunteer?', {
+		accept: { label: 'Check Out', severity: 'warn' },
 	});
 	if (!confirmed) return;
 
@@ -85,10 +83,8 @@ async function checkout() {
  * Sends a request to delete the time entry and emits the delete event if successful
  */
 async function del() {
-	const confirmed = await toast.confirm('Delete time entry?', `Started at ${isoToDateTimeString(entry.start)}`, {
-		icon: 'warning',
-		showCancel: true,
-		confirmText: 'Delete',
+	const confirmed = await confirm('Delete time entry?', {
+		accept: { label: 'Delete', severity: 'danger' },
 	});
 	if (!confirmed) return;
 

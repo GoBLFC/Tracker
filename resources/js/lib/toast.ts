@@ -1,11 +1,8 @@
 import { onMounted, watch } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import { useToast as usePrimeVueToast } from 'primevue/usetoast';
-import type SharedProps from './SharedProps';
 import type { ToastMessageOptions } from 'primevue/toast';
-
-// @ts-ignore: Missing typings for the dist file
-import Swal from 'sweetalert2/dist/sweetalert2.js';
+import type SharedProps from './SharedProps';
 
 /**
  * Displays toast messages
@@ -53,33 +50,6 @@ export function useToast({ flashes = false } = {}) {
 	function error(title: string, text: string): void;
 	function error(titleOrText: string, text?: string): void {
 		show(text ? titleOrText : 'Error', text ?? titleOrText, 'error');
-	}
-
-	/**
-	 * Displays an action confirmation dialog
-	 * @returns Whether the user confirmed the action
-	 */
-	async function confirm(text: string): Promise<boolean>;
-	async function confirm(title: string, text: string): Promise<boolean>;
-	async function confirm(
-		title: string,
-		text: string,
-		{ icon, showCancel, confirmText }: { icon?: string; showCancel?: boolean; confirmText?: string },
-	): Promise<boolean>;
-	async function confirm(
-		titleOrText: string,
-		text?: string,
-		{ icon, showCancel, confirmText }: { icon?: string; showCancel?: boolean; confirmText?: string } = {},
-	): Promise<boolean> {
-		const result = await Swal.fire({
-			title: text ? titleOrText : undefined,
-			text: text ?? titleOrText,
-			icon,
-			showCancelButton: showCancel,
-			focusCancel: showCancel,
-			confirmButtonText: confirmText,
-		});
-		return result.isConfirmed;
 	}
 
 	/**
