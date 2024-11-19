@@ -33,8 +33,6 @@
 				:spin="request.processing.value"
 			/>
 		</button>
-
-		<ConfirmPopup />
 	</div>
 </template>
 

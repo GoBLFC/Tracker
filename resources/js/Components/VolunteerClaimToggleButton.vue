@@ -14,8 +14,6 @@
 			<FontAwesomeIcon class="me-1" :icon="faCircleNotch" spin />
 			{{ claim ? "Unclaiming" : "Claiming" }}&hellip;
 		</template>
-
-		<ConfirmPopup />
 	</button>
 </template>
 

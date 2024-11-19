@@ -2,6 +2,7 @@
 	<div>
 		<slot />
 		<Toast />
+		<ConfirmPopup />
 	</div>
 </template>
 
