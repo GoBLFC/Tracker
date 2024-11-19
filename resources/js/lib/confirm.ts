@@ -40,7 +40,7 @@ export function useConfirm() {
 					setTimeout(() => resolve(true), 0);
 				},
 				reject() {
-					setTimeout(() => resolve(true), 0);
+					setTimeout(() => resolve(false), 0);
 				},
 				onHide() {
 					resolve(false);
