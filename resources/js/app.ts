@@ -7,6 +7,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import PrimeVue from 'primevue/config';
 import ToastService from 'primevue/toastservice';
 import ConfirmationService from 'primevue/confirmationservice';
+import Tooltip from 'primevue/tooltip';
 import type { route as routeFn } from 'vendor/tightenco/ziggy/src/js';
 import { injectKey as routeInjectKey } from './lib/route';
 import Theme from './theme';
@@ -42,6 +43,7 @@ createInertiaApp({
 			})
 			.use(ToastService)
 			.use(ConfirmationService)
+			.directive('tooltip', Tooltip)
 			.provide(routeInjectKey, route);
 
 		app.config.globalProperties.$appName = appName;

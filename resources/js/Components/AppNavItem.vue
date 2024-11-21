@@ -6,13 +6,13 @@
 		<component
 			:is="legacy ? LegacyLink : Link"
 			:to
-			:title="label"
 			class="block h-full p-2 rounded-lg transition-colors"
 			:class="{
 				[`${color} bg-transparent hover:bg-emphasis`]: !isActive,
 				[`${activeColor} bg-primary hover:bg-primary-emphasis`]:
 					isActive,
 			}"
+			v-tooltip="label"
 			v-bind="$attrs"
 		>
 			<slot>
