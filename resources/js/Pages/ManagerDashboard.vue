@@ -110,17 +110,8 @@
 						</dl>
 					</div>
 				</div>
-
-				<LegacyLink
-					to="tracker.index"
-					class="btn btn-primary float-end"
-				>
-					Back
-				</LegacyLink>
 			</div>
 		</div>
-
-		<ManagementNav class="mt-5" />
 	</div>
 </template>
 
@@ -142,7 +133,6 @@ import type TimeEntryActivity from '../data/TimeEntryActivity';
 import type TimeEntry from '../data/TimeEntry';
 import type RewardClaim from '../data/RewardClaim';
 import type { UserId } from '../data/User';
-import LegacyLink from '../Components/LegacyLink.vue';
 import EventSelector from '../Components/EventSelector.vue';
 import UserSearchCard from '../Components/UserSearchCard.vue';
 import VolunteerManageCard from '../Components/VolunteerManageCard.vue';
@@ -150,7 +140,6 @@ import TimeActivitiesTable from '../Components/TimeActivitiesTable.vue';
 import TimeEntriesTable from '../Components/TimeEntriesTable.vue';
 import UserCreateCard from '../Components/UserCreateCard.vue';
 import KioskToggleButton from '../Components/KioskToggleButton.vue';
-import ManagementNav from '../Components/ManagementNav.vue';
 
 const { event, kioskLifetime } = defineProps<{
 	event: Event;
