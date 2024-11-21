@@ -1,49 +1,52 @@
 <template>
-	<div class="d-flex gap-1 justify-content-center flex-wrap">
-		<div class="badge rounded-pill text-bg-warning">
-			<FontAwesomeIcon :icon="faCode" class="me-1" />
-			Dev Mode Enabled
-		</div>
+	<div class="flex flex-wrap mx-2 gap-2 justify-center text-xs">
+		<Chip label="Dev Mode Enabled" class="bg-amber-400 text-gray-950">
+			<template #icon>
+				<FontAwesomeIcon :icon="faCode" />
+			</template>
+		</Chip>
 
-		<template v-if="user.isLoggedIn">
-			<div class="badge rounded-pill text-bg-info">
-				<FontAwesomeIcon :icon="faUser" class="me-1" />
-				Your Badge ID: {{ user.badgeId }}
-			</div>
-			<div class="badge rounded-pill text-bg-info">
-				<FontAwesomeIcon :icon="faUser" class="me-1" />
-				Your UUID: {{ user.id }}
-			</div>
-			<div class="badge rounded-pill text-bg-primary">
-				<FontAwesomeIcon :icon="faIdCard" class="me-1" />
-				Role: {{ user.roleName }}
-			</div>
+		<template v-if="isLoggedIn">
+			<Chip
+				:label="`User: ${badgeId} &nbsp;/&nbsp; ${uuid}`"
+				class="bg-cyan-700 text-gray-50"
+			>
+				<template #icon>
+					<FontAwesomeIcon :icon="faUser" />
+				</template>
+			</Chip>
+			<Chip :label="`Role: ${roleName}`" class="bg-blue-700 text-gray-50">
+				<template #icon>
+					<FontAwesomeIcon :icon="faIdCard" />
+				</template>
+			</Chip>
 		</template>
 
-		<div
-			class="badge rounded-pill"
+		<Chip
+			:label="`Kiosk: ${isKiosk ? 'Authorized' : 'Unauthorized'}`"
+			class="text-gray-50"
 			:class="{
-				'text-bg-success': isKiosk,
-				'text-bg-danger': !isKiosk,
+				'bg-green-700': isKiosk,
+				'bg-red-700': !isKiosk,
 			}"
 		>
-			<FontAwesomeIcon
-				:icon="isKiosk ? faLockOpen : faLock"
-				class="me-1"
-			/>
-			Kiosk: {{ isKiosk ? "Authorized" : "Unauthorized" }}
-		</div>
+			<template #icon>
+				<FontAwesomeIcon :icon="isKiosk ? faLockOpen : faLock" />
+			</template>
+		</Chip>
 
-		<div
-			class="badge rounded-pill"
+		<Chip
+			:label="`Event: ${activeEvent?.name ?? 'None active'}`"
+			class="text-gray-50"
 			:class="{
-				'text-bg-success': activeEvent,
-				'text-bg-danger': !activeEvent,
+				'bg-green-700': activeEvent,
+				'bg-red-700': !activeEvent,
 			}"
 		>
-			<FontAwesomeIcon :icon="faCalendarDay" class="me-1" />
-			Event: {{ activeEvent?.name ?? "None active" }}
-		</div>
+			<template #icon>
+				<FontAwesomeIcon :icon="faCalendarDay" />
+			</template>
+		</Chip>
 	</div>
 </template>
 
@@ -53,6 +56,6 @@ import { faCode, faUser, faIdCard, faLock, faLockOpen, faCalendarDay } from '@fo
 import { useUser } from '../lib/user';
 import { useSettings } from '../lib/settings';
 
-const user = useUser();
+const { isLoggedIn, badgeId, id: uuid, roleName } = useUser();
 const { activeEvent, isKiosk } = useSettings();
 </script>
