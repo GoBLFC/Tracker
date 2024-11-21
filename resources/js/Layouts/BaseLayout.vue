@@ -1,6 +1,7 @@
 <template>
 	<div>
 		<slot />
+
 		<Toast />
 		<ConfirmPopup />
 	</div>
