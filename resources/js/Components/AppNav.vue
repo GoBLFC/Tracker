@@ -41,6 +41,12 @@
 				:legacy="true"
 			/>
 			<AppNavItem
+				label="Reports"
+				:icon="faFileLines"
+				to="admin.reports"
+				:legacy="true"
+			/>
+			<AppNavItem
 				label="Configuration"
 				:icon="faScrewdriverWrench"
 				to="admin.site"
@@ -68,6 +74,7 @@ import {
 	faBusinessTime,
 	faUsers,
 	faCalendarDay,
+	faFileLines,
 	faScrewdriverWrench,
 	faInfoCircle,
 	faArrowRightFromBracket,
