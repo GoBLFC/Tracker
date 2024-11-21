@@ -1,0 +1,14 @@
+@layer tailwind-base, primevue, tailwind-utilities;
+
+@layer tailwind-base {
+	@tailwind base;
+}
+
+@layer tailwind-utilities {
+	@tailwind components;
+	@tailwind utilities;
+}
+
+:root {
+	@apply bg-surface-50 dark:text-primary-50 dark:bg-surface-950;
+}

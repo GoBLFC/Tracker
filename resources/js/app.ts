@@ -1,5 +1,4 @@
-import '../sass/app.scss';
-import 'bootstrap/js/dist/modal';
+import '../css/app.css';
 import.meta.glob(['../img/**']);
 
 import { createApp, type DefineComponent, h } from 'vue';
@@ -8,9 +7,9 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import PrimeVue from 'primevue/config';
 import ToastService from 'primevue/toastservice';
 import ConfirmationService from 'primevue/confirmationservice';
-import Aura from '@primevue/themes/aura';
-import type { route as routeFn } from '../../vendor/tightenco/ziggy/src/js';
+import type { route as routeFn } from 'vendor/tightenco/ziggy/src/js';
 import { injectKey as routeInjectKey } from './lib/route';
+import Theme from './theme';
 
 import BaseLayout from './Layouts/BaseLayout.vue';
 import MainLayout from './Layouts/MainLayout.vue';
@@ -32,7 +31,13 @@ createInertiaApp({
 			.use(plugin)
 			.use(PrimeVue, {
 				theme: {
-					preset: Aura,
+					preset: Theme,
+					options: {
+						cssLayer: {
+							name: 'primevue',
+							order: 'tailwind-base, primevue, tailwind-utilities',
+						},
+					},
 				},
 			})
 			.use(ToastService)
