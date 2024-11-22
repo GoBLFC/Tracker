@@ -1,5 +1,5 @@
 <template>
-	<div class="flex flex-wrap mx-2 gap-2 justify-center text-xs">
+	<div class="flex flex-wrap gap-2 justify-center text-xs">
 		<Chip label="Dev Mode Enabled" class="bg-amber-400 text-gray-950">
 			<template #icon>
 				<FontAwesomeIcon :icon="faCode" />

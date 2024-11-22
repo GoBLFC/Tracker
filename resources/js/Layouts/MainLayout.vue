@@ -3,9 +3,9 @@
 		<AppNav />
 
 		<div class="w-full lg:overflow-auto">
-			<div class="container mx-auto my-4 md:my-5">
-				<DevBadges v-if="isDevMode" class="my-4" />
+			<DevBadges v-if="isDevMode" class="mx-2 mb-4 lg:mt-4" />
 
+			<div class="container mx-auto">
 				<main>
 					<slot />
 				</main>
