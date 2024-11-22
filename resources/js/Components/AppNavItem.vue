@@ -1,26 +1,40 @@
 <template>
-	<li
-		class="w-12 h-12 text-xl text-center"
-		:aria-current="isActive ? 'page' : undefined"
+	<component
+		:is="wrapper"
+		:class="{
+			'w-12 h-12 text-xl': !showText,
+			'h-10 text-lg': showText,
+		}"
+		:aria-current="isActive && to ? 'page' : undefined"
 	>
 		<component
 			:is="isButton ? 'button' : legacy ? LegacyLink : Link"
-			:to
-			class="block w-full h-full p-2 rounded-lg transition-colors"
+			class="flex w-full h-full p-2 gap-2 rounded-lg transition-colors items-center"
 			:class="{
+				'justify-center': !showText,
 				[`${color} bg-transparent hover:bg-emphasis`]: !isActive,
 				[`${activeColor} bg-primary hover:bg-primary-emphasis`]:
 					isActive,
 			}"
+			:to
+			:method
+			:aria-label="!showText ? label : undefined"
+			v-tooltip:[{position:tooltipPosition}]="
+				tooltip && !showText ? label : undefined
+			"
 			@click="isButton && to && navigate()"
-			v-tooltip:[{position:tooltipPosition}]="label"
-			v-bind="$attrs"
 		>
 			<slot>
-				<FontAwesomeIcon :icon />
+				<slot name="icon">
+					<FontAwesomeIcon :icon :class="{ 'w-10': showText }" />
+				</slot>
+
+				<slot name="text">
+					<span v-if="showText">{{ label }}</span>
+				</slot>
 			</slot>
 		</component>
-	</li>
+	</component>
 </template>
 
 <script setup lang="ts">
@@ -34,29 +48,35 @@ import { useRoute } from '../lib/route';
 import Link from './Link.vue';
 import LegacyLink from './LegacyLink.vue';
 
-defineOptions({ inheritAttrs: false });
 const {
 	to,
-	method,
+	method = 'get',
 	legacy = false,
+	active = false,
 	color = 'text-muted-color',
 	activeColor = 'text-primary-contrast',
+	showText = false,
+	tooltip = true,
 	tooltipPosition,
+	wrapper = 'li',
 } = defineProps<{
 	icon: IconDefinition;
 	label: string;
 	to?: RouteName;
 	method?: Method;
 	legacy?: boolean;
-	button?: boolean;
+	active?: boolean;
 	color?: string;
 	activeColor?: string;
+	showText?: boolean;
+	tooltip?: boolean;
 	tooltipPosition?: string;
+	wrapper?: string;
 }>();
 
 const route = useRoute();
 
-const isActive = computed(() => Boolean(to && route().current()?.startsWith(to)));
+const isActive = computed(() => active || Boolean(to && route().current()?.startsWith(to)));
 const isButton = toRef(() => !to || method !== 'get');
 
 /**
