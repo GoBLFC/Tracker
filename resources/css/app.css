@@ -1,4 +1,4 @@
-@layer tailwind-base, primevue, tailwind-utilities;
+@layer tailwind-base, app-base, primevue, tailwind-utilities;
 
 @layer tailwind-base {
 	@tailwind base;
@@ -9,6 +9,17 @@
 	@tailwind utilities;
 }
 
-:root {
-	@apply bg-surface-50 dark:text-primary-50 dark:bg-surface-950;
+@layer app-base {
+	:root {
+		@apply bg-surface-50 dark:text-primary-50 dark:bg-surface-950;
+	}
+
+	a {
+		@apply text-primary transition-colors;
+	}
+
+	a:hover,
+	a:focus {
+		@apply text-primary-emphasis;
+	}
 }
