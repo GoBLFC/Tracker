@@ -3,13 +3,11 @@
 		<AppNav />
 
 		<div class="w-full lg:overflow-auto">
-			<DevBadges v-if="isDevMode" class="mx-2 mb-4 lg:mt-4" />
+			<DevBadges v-if="isDevMode" class="mx-2 lg:mt-4" />
 
-			<div class="container mx-auto">
-				<main>
-					<slot />
-				</main>
-			</div>
+			<main class="h-full px-4 py-4 pt-0 lg:ps-0 lg:pt-4">
+				<slot />
+			</main>
 		</div>
 	</div>
 </template>

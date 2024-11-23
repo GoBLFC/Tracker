@@ -1,55 +1,102 @@
 <template>
-	<div class="card mb-4">
-		<div class="card-header">{{ actionWord }} for Event</div>
+	<InputGroup v-if="events.length > 0">
+		<InputGroupAddon @click="focus()">
+			<label :for="selectId">
+				<FontAwesomeIcon :icon="faCalendarDay" aria-hidden />
+				<span class="sr-only">Event</span>
+			</label>
+		</InputGroupAddon>
 
-		<div class="card-body">
-			<div v-if="events.length > 0" class="input-group">
-				<label :for="selectId" class="input-group-text">Event</label>
-
-				<select
-					:id="selectId"
-					class="form-control"
-					:disabled="loading"
-					@change="navigateToEvent"
+		<Select
+			ref="select"
+			v-model="selectedEvent"
+			option-label="name"
+			:options="events"
+			:placeholder="`Select an event to ${actionWord}`"
+			:id="selectId"
+			:loading
+		>
+			<template
+				#value="{
+					value,
+					placeholder,
+				}: {
+					value: TrackerEvent | null | undefined,
+					placeholder: string,
+				}"
+			>
+				<div
+					v-if="value"
+					class="flex grow gap-4 justify-between items-center"
 				>
-					<option v-if="!event" value="" selected disabled hidden>
-						Select an Event
-					</option>
+					<span class="truncate">{{ value.name }}</span>
+					<Tag
+						:value="
+							value.id === activeEvent?.id ? 'Active' : 'Inactive'
+						"
+						:severity="
+							value.id === activeEvent?.id
+								? 'success'
+								: 'secondary'
+						"
+					/>
+				</div>
 
-					<option
-						v-for="otherEvent of events"
-						:key="otherEvent.id"
-						:value="otherEvent.id"
-						:selected="otherEvent.id === event?.id"
-					>
-						{{ otherEvent.name }}
-					</option>
-				</select>
-			</div>
+				<div v-else>{{ placeholder }}</div>
+			</template>
 
-			<p v-else-if="isAdmin" class="mb-0">
-				There aren't any events yet - you'll need to
-				<LegacyLink to="admin.events">create one</LegacyLink> to manage.
-			</p>
+			<template #option="{ option }: { option: TrackerEvent }">
+				<div class="flex grow gap-6 justify-between items-center">
+					<span class="truncate">{{ option.name }}</span>
+					<Tag
+						:value="
+							option.id === activeEvent?.id
+								? 'Active'
+								: 'Inactive'
+						"
+						:severity="
+							option.id === activeEvent?.id
+								? 'success'
+								: 'secondary'
+						"
+					/>
+				</div>
+			</template>
+		</Select>
+	</InputGroup>
 
-			<p v-else class="mb-0">There aren't any events yet.</p>
-		</div>
-	</div>
+	<Message v-else-if="isAdmin" class="w-full">
+		<p class="text-lg">
+			<span class="font-semibold">There aren't any events yet.</span>
+			You'll need to
+			<LegacyLink to="admin.events">create one</LegacyLink> to manage.
+		</p>
+	</Message>
+
+	<Message v-else class="w-full">
+		<p class="text-lg font-semibold">
+			There aren't any events to manage yet.
+		</p>
+	</Message>
 </template>
 
 <script setup lang="ts">
-import { ref, useId } from 'vue';
+import { ref, useId, useTemplateRef, watch } from 'vue';
 import { router } from '@inertiajs/vue3';
 import type { RequestPayload, Errors } from '@inertiajs/core';
+import { useSettings } from '../lib/settings';
 import { useUser } from '../lib/user';
 import type TrackerEvent from '../data/Event';
 import type { EventId } from '../data/Event';
+
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faCalendarDay } from '@fortawesome/free-solid-svg-icons';
 import LegacyLink from './LegacyLink.vue';
 
 const {
 	event,
 	resolver,
-	actionWord = 'Edit',
+	actionWord = 'edit',
 } = defineProps<{
 	event: TrackerEvent | null;
 	events: TrackerEvent[];
@@ -67,21 +114,23 @@ const emit = defineEmits<{
 	(e: 'error', errors: Errors): void;
 }>();
 
-const selectId = useId();
+const { activeEvent } = useSettings();
 const { isAdmin } = useUser();
 
+const selectedEvent = ref(event);
 const loading = ref(false);
+const select = useTemplateRef('select');
+const selectId = useId();
 
-/**
- * Calls the provided resolver with the event ID from the JS event target's value and navigates to the resulting URL
- */
-function navigateToEvent(evt: Event) {
-	const oldEventId = event?.id;
-	const newEventId = (evt.target! as HTMLSelectElement).value as EventId;
-	const { url, data = {}, only, ...options } = resolver(newEventId);
+// Navigate to the appropriate URL when switching events
+watch(selectedEvent, (newEvent, oldEvent) => {
+	if (!newEvent) return;
 
+	// Resolve the router properties to use
+	const { url, data = {}, only, ...options } = resolver(newEvent.id);
 	if (only && !only.includes('event')) only.push('event');
 
+	// Navigate!
 	router.get(url, data, {
 		preserveState: true,
 		preserveScroll: true,
@@ -90,18 +139,26 @@ function navigateToEvent(evt: Event) {
 
 		onStart() {
 			loading.value = true;
-			emit('changing', newEventId);
+			emit('changing', newEvent.id);
 		},
 		onSuccess() {
-			emit('change', newEventId);
+			emit('change', newEvent.id);
 		},
 		onError(errors) {
-			(evt.target! as HTMLSelectElement).value = oldEventId ?? '';
+			selectedEvent.value = oldEvent;
 			emit('error', errors);
 		},
 		onFinish() {
 			loading.value = false;
 		},
 	});
+});
+
+/**
+ * Sets focus on the dropdown
+ */
+function focus() {
+	// @ts-expect-error
+	select.value?.$el?.querySelector('[tabindex]')?.focus();
 }
 </script>

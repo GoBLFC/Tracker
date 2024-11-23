@@ -1,122 +1,102 @@
 <template>
-	<div>
-		<Head title="Management" />
+	<div class="flex flex-col h-full gap-4">
+		<Head title="Manager Dashboard" />
 
-		<div class="card mb-3">
-			<h4 class="card-header text-bg-warning">Management Controls</h4>
+		<!-- Event selector -->
+		<div
+			class="flex w-full gap-3 items-center"
+			:class="{
+				'justify-center': events.length === 0,
+				'justify-between': events.length > 0,
+			}"
+		>
+			<EventSelector
+				:event
+				:events
+				:resolver="eventRequestResolver"
+				action-word="manage"
+			/>
 
-			<div class="card-body">
-				<EventSelector
-					:event
-					:events
-					:resolver="eventRequestResolver"
-					action-word="Manage"
-					class="mb-4"
-				/>
+			<div
+				v-if="isReadOnly"
+				class="text-2xl text-muted-color"
+				v-tooltip.left="'Read-only'"
+			>
+				<FontAwesomeIcon :icon="faEye" aria-hidden="true" />
+				<span class="sr-only">Read-only</span>
+			</div>
+		</div>
 
-				<div
-					v-if="!event || event.id !== activeEvent?.id"
-					class="alert alert-info mb-4"
-					role="alert"
-				>
-					<p
-						v-if="event && event.id !== activeEvent?.id"
-						class="mb-0"
-					>
-						You are managing data for an inactive event.
-						<template v-if="!isAdmin">
-							Everything will be read-only.
-						</template>
-					</p>
-					<p v-else-if="!event" class="mb-0">
-						There isn't currently any event running, and you haven't
-						selected one above. All time-related
-						information/functionality will be unavailable.
-					</p>
+		<div class="flex flex-col xl:flex-row flex-wrap h-full gap-4">
+			<!-- Recent activity -->
+			<Panel header="Recent Activity" class="grow xl:w-2/5">
+				<div v-if="recentTimeActivities.length > 0">
+					<TimeActivitiesTable
+						:activities="recentTimeActivities"
+						:now
+						@select="loadVolunteer"
+					/>
 				</div>
 
+				<p v-else>There are no recent check-ins/check-outs.</p>
+			</Panel>
+
+			<!-- Ongoing shifts -->
+			<Panel header="Ongoing Shifts" class="grow xl:w-2/5">
+				<div v-if="longestOngoingEntries.length > 0">
+					<TimeEntriesTable
+						:entries="longestOngoingEntries"
+						:now
+						@select="loadVolunteer"
+					/>
+				</div>
+				<p v-else>There are no ongoing shifts.</p>
+			</Panel>
+
+			<!-- Volunteer search -->
+			<Panel header="Volunteer Search" class="grow xl:w-2/5">
 				<UserSearchCard class="mb-4" @select="loadVolunteer" />
 
 				<VolunteerManageCard
 					v-if="volunteer"
 					ref="volunteer-card"
-					class="mb-5"
+					v-model="volunteer"
 					:event
 					:rewards
 					:departments
 					:now
-					v-model="volunteer"
 					@close="volunteer = null"
 				/>
 
-				<div class="card mb-4">
-					<div class="card-header">Recent Check-in / Check-out</div>
-					<div
-						v-if="recentTimeActivities.length > 0"
-						class="card-body p-0"
-					>
-						<TimeActivitiesTable
-							:activities="recentTimeActivities"
-							:now
-							@select="loadVolunteer"
-						/>
-					</div>
-					<p v-else class="card-body mb-0">
-						There are no recent check-ins/check-outs.
-					</p>
-				</div>
-
-				<div class="card mb-4">
-					<div class="card-header">Longest Ongoing Shifts</div>
-					<div
-						v-if="longestOngoingEntries.length > 0"
-						class="card-body p-0"
-					>
-						<TimeEntriesTable
-							:entries="longestOngoingEntries"
-							:now
-							@select="loadVolunteer"
-						/>
-					</div>
-					<p v-else class="card-body mb-0">
-						There are no ongoing shifts.
-					</p>
-				</div>
-
 				<UserCreateCard header-tag="div" class="mb-4" />
+			</Panel>
 
-				<div class="card mb-4">
-					<div class="card-header">Kiosk Settings</div>
-					<div class="card-body">
-						<dl class="mb-0">
-							<div class="row">
-								<dt
-									class="col-xl-4 col-md-4 col-sm-12 mb-2 mb-md-0 align-self-center text-center"
-								>
-									<KioskToggleButton class="float-md-end" />
-								</dt>
-								<dd class="col-xl-6 col-md-8 col-sm-12 mb-0">
-									<p class="mb-0">
-										Authorizing this device as a kiosk will
-										allow volunteers to check in or out on
-										this device. This is required when
-										setting up dedicated devices pre-con for
-										checking in or out. Kiosks remain
-										authorized for
-										{{ kioskLifetimeText }}.
-									</p>
-								</dd>
-							</div>
-						</dl>
+			<!-- Quick settings -->
+			<Panel header="Quick Settings" class="grow xl:w-2/5">
+				<dl>
+					<div class="flex">
+						<dt class="grow w-fit">
+							<KioskToggleSwitch class="float-md-end" />
+						</dt>
+						<dd class="grow-0">
+							<p>
+								Authorizing this device as a kiosk will allow
+								volunteers to check in or out on this device.
+								This is required when setting up dedicated
+								devices pre-con for checking in or out. Kiosks
+								remain authorized for
+								{{ kioskLifetimeText }}.
+							</p>
+						</dd>
 					</div>
-				</div>
-			</div>
+				</dl>
+			</Panel>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, useTemplateRef, nextTick, onMounted, onUnmounted } from 'vue';
+import { ref, computed, watch, useTemplateRef, nextTick, onMounted, onUnmounted, toRef } from 'vue';
 import { router, Head } from '@inertiajs/vue3';
 import humanizeDuration from 'humanize-duration';
 import { useUser } from '../lib/user';
@@ -139,7 +119,9 @@ import VolunteerManageCard from '../Components/VolunteerManageCard.vue';
 import TimeActivitiesTable from '../Components/TimeActivitiesTable.vue';
 import TimeEntriesTable from '../Components/TimeEntriesTable.vue';
 import UserCreateCard from '../Components/UserCreateCard.vue';
-import KioskToggleButton from '../Components/KioskToggleButton.vue';
+import KioskToggleSwitch from '../Components/KioskToggleSwitch.vue';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faEye } from '@fortawesome/free-solid-svg-icons';
 
 const { event, kioskLifetime } = defineProps<{
 	event: Event;
@@ -156,6 +138,8 @@ const { activeEvent } = useSettings();
 const { isAdmin } = useUser();
 const { now } = useNow();
 
+const isActiveEventSelected = toRef(() => event && event.id !== activeEvent.value?.id);
+const isReadOnly = toRef(() => !isAdmin && isActiveEventSelected.value);
 const kioskLifetimeText = computed(() => humanizeDuration(kioskLifetime * 1000 * 60));
 
 /**
