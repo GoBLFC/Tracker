@@ -74,17 +74,26 @@
 			<!-- Quick settings -->
 			<Panel header="Quick Settings" class="grow xl:w-2/5">
 				<dl>
-					<div class="flex">
-						<dt class="grow w-fit">
-							<KioskToggleSwitch class="float-md-end" />
+					<div class="flex items-center gap-4">
+						<dt>
+							<KioskToggleSwitch
+								class="float-md-end"
+								:aria-labelledby="kioskSettingId"
+							/>
 						</dt>
-						<dd class="grow-0">
+						<dd>
+							<p
+								class="text-lg text-semibold"
+								:id="kioskSettingId"
+							>
+								Kiosk authorization
+							</p>
 							<p>
 								Authorizing this device as a kiosk will allow
-								volunteers to check in or out on this device.
-								This is required when setting up dedicated
-								devices pre-con for checking in or out. Kiosks
-								remain authorized for
+								non-staff volunteers to check in or out on this
+								device. This is required when setting up
+								dedicated devices pre-con for checking in or
+								out. Kiosks remain authorized for
 								{{ kioskLifetimeText }}.
 							</p>
 						</dd>
@@ -96,7 +105,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, useTemplateRef, nextTick, onMounted, onUnmounted, toRef } from 'vue';
+import { ref, computed, watch, useId, useTemplateRef, nextTick, onMounted, onUnmounted, toRef } from 'vue';
 import { router, Head } from '@inertiajs/vue3';
 import humanizeDuration from 'humanize-duration';
 import { useUser } from '../lib/user';
@@ -140,6 +149,7 @@ const { now } = useNow();
 
 const isActiveEventSelected = toRef(() => event && event.id !== activeEvent.value?.id);
 const isReadOnly = toRef(() => !isAdmin && isActiveEventSelected.value);
+const kioskSettingId = useId();
 const kioskLifetimeText = computed(() => humanizeDuration(kioskLifetime * 1000 * 60));
 
 /**
