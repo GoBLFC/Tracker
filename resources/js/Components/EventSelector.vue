@@ -1,10 +1,8 @@
 <template>
 	<InputGroup v-if="events.length > 0">
-		<InputGroupAddon @click="focus()">
-			<label :for="selectId">
-				<FontAwesomeIcon :icon="faCalendarDay" aria-hidden />
-				<span class="sr-only">Event</span>
-			</label>
+		<InputGroupAddon @click="focus()" :id="labelId">
+			<FontAwesomeIcon :icon="faCalendarDay" aria-hidden />
+			<span class="sr-only">Event</span>
 		</InputGroupAddon>
 
 		<Select
@@ -13,8 +11,8 @@
 			option-label="name"
 			:options="events"
 			:placeholder="`Select an event to ${actionWord}`"
-			:id="selectId"
 			:loading
+			:aria-labelledby="labelId"
 		>
 			<template
 				#value="{
@@ -120,7 +118,7 @@ const { isAdmin } = useUser();
 const selectedEvent = ref(event);
 const loading = ref(false);
 const select = useTemplateRef('select');
-const selectId = useId();
+const labelId = useId();
 
 // Navigate to the appropriate URL when switching events
 watch(selectedEvent, (newEvent, oldEvent) => {
