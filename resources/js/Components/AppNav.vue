@@ -55,7 +55,7 @@
 				<AppNavItem
 					to="attendee-logs.index"
 					label="Attendee Logs"
-					:icon="faListCheck"
+					:icon="faBookOpen"
 					:legacy="true"
 					:show-text="showMenu"
 					:tooltip-position
@@ -119,7 +119,7 @@
 import { ref, toRef, useId } from 'vue';
 import {
 	faHouseCircleCheck,
-	faListCheck,
+	faBookOpen,
 	faBusinessTime,
 	faUsers,
 	faCalendarDay,
