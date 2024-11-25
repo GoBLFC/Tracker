@@ -1,4 +1,4 @@
-import { onMounted, onUnmounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref, toRef } from 'vue';
 
 export type Theme = 'light' | 'dark';
 
@@ -53,8 +53,17 @@ const breakpointOrder: Breakpoint[] = ['2xl', 'xl', 'lg', 'md', 'sm', 'xs'];
 /**
  * Composable wrapper for breakpoint handling
  */
-export function useBreakpoint() {
+export function useBreakpoints() {
 	const breakpoint = ref<Breakpoint>(getBreakpoint());
+	const isSm = toRef(() => BREAKPOINTS[breakpoint.value] >= BREAKPOINTS.sm);
+	const isMd = toRef(() => BREAKPOINTS[breakpoint.value] >= BREAKPOINTS.md);
+	const isLg = toRef(() => BREAKPOINTS[breakpoint.value] >= BREAKPOINTS.lg);
+	const isXl = toRef(() => BREAKPOINTS[breakpoint.value] >= BREAKPOINTS.xl);
+	const isNotSm = toRef(() => BREAKPOINTS[breakpoint.value] < BREAKPOINTS.sm);
+	const isNotMd = toRef(() => BREAKPOINTS[breakpoint.value] < BREAKPOINTS.md);
+	const isNotLg = toRef(() => BREAKPOINTS[breakpoint.value] < BREAKPOINTS.lg);
+	const isNotXl = toRef(() => BREAKPOINTS[breakpoint.value] < BREAKPOINTS.xl);
+
 	let matchers: MediaQueryList[] | null = null;
 
 	// Start listening for breakpoint changes with a MediaQueryList per breakpoint. We do this rather than listen to the
@@ -97,5 +106,5 @@ export function useBreakpoint() {
 		breakpoint.value = getBreakpoint();
 	}
 
-	return { breakpoint, getBreakpoint };
+	return { breakpoint, isSm, isMd, isLg, isXl, isNotSm, isNotMd, isNotLg, isNotXl, getBreakpoint };
 }
