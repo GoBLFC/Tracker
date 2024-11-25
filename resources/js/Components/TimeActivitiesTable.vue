@@ -1,67 +1,93 @@
 <template>
-	<div class="table-responsive">
-		<table class="table table-dark table-striped w-100 mb-0">
-			<thead>
-				<tr>
-					<th scope="col">ID</th>
-					<th scope="col">Username</th>
-					<th scope="col">Badge Name</th>
-					<th scope="col">Real Name</th>
-					<th scope="col">Action</th>
-					<th scope="col">Time</th>
-					<th scope="col">Duration</th>
-					<th scope="col"></th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr v-for="activity of activities" :key="activity.id">
-					<th scope="row">{{ activity.subject.user.badge_id }}</th>
-					<td>{{ activity.subject.user.username }}</td>
-					<td>{{ activity.subject.user.badge_name }}</td>
-					<td>{{ activity.subject.user.full_name }}</td>
-					<td>
-						<div
-							v-if="activity.properties.attributes.stop"
-							class="checkin-badge badge rounded-pill text-bg-warning"
-						>
-							<FontAwesomeIcon
-								:icon="faArrowRightFromBracket"
-								class="float-start"
-							/>
-							Checked Out
-						</div>
-						<div
-							v-else
-							class="checkin-badge badge rounded-pill text-bg-success"
-						>
-							<FontAwesomeIcon
-								:icon="faArrowRightToBracket"
-								class="float-start"
-							/>
-							Checked In
-						</div>
-					</td>
-					<td>{{ isoToDateTimeString(activity.subject.start) }}</td>
-					<td>
-						<Duration
-							:start="activity.subject.start"
-							:stop="activity.subject.stop"
-							:now
-						/>
-					</td>
-					<td>
-						<button
-							class="btn btn-link btn-sm link-info float-end mx-1 p-0"
-							title="Lookup user"
-							@click="emit('select', activity.subject.user.id)"
-						>
-							<FontAwesomeIcon :icon="faMagnifyingGlass" />
-						</button>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
+	<DataTable
+		:value="activities"
+		paginator
+		:rows="10"
+		:rows-per-page-options="[5, 10, 20]"
+		scrollable
+		scroll-height="flex"
+		:dt="{ paginator: { bottom: { border: { width: 0 } } } }"
+	>
+		<Column header="ID">
+			<template #body="{ data: activity }: { data: TimeEntryActivity }">
+				{{ activity.subject.user.badge_id }}
+			</template>
+		</Column>
+
+		<Column header="Badge Name">
+			<template #body="{ data: activity }: { data: TimeEntryActivity }">
+				{{ activity.subject.user.badge_name }}
+			</template>
+		</Column>
+
+		<Column header="Action Taken">
+			<template #body="{ data: activity }: { data: TimeEntryActivity }">
+				<Chip
+					v-if="activity.properties.attributes.stop"
+					class="md:w-[9em] py-1"
+					v-tooltip.right="'Checked Out'"
+				>
+					<FontAwesomeIcon
+						:icon="faArrowRightFromBracket"
+						class="text-yellow-500"
+						aria-hidden
+					/>
+					<span class="sr-only md:not-sr-only">Checked Out</span>
+				</Chip>
+
+				<Chip
+					v-else
+					label="Checked In"
+					class="md:w-[9em] py-1"
+					v-tooltip.right="'Checked Out'"
+				>
+					<FontAwesomeIcon
+						:icon="faArrowRightToBracket"
+						class="text-green-500"
+						aria-hidden
+					/>
+					<span class="sr-only md:not-sr-only">Checked In</span>
+				</Chip>
+			</template>
+		</Column>
+
+		<Column header="Time">
+			<template #body="{ data: activity }: { data: TimeEntryActivity }">
+				{{ isoToDateTimeString(activity.subject.start) }}
+			</template>
+		</Column>
+
+		<Column header="Duration">
+			<template #body="{ data: activity }: { data: TimeEntryActivity }">
+				<Duration
+					:start="activity.subject.start"
+					:stop="activity.subject.stop"
+					:now
+				/>
+			</template>
+		</Column>
+
+		<Column
+			header="Actions"
+			class="text-end"
+			:pt="{ columnHeaderContent: { class: 'justify-end' } }"
+		>
+			<template #body="{ data: activity }: { data: TimeEntryActivity }">
+				<Button
+					variant="link"
+					class="p-0"
+					size="small"
+					aria-label="View Volunteer"
+					v-tooltip.left="'View Volunteer'"
+					@click="emit('select', activity.subject.user.id)"
+				>
+					<template #icon>
+						<FontAwesomeIcon :icon="faMagnifyingGlass" />
+					</template>
+				</Button>
+			</template>
+		</Column>
+	</DataTable>
 </template>
 
 <script setup lang="ts">

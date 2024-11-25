@@ -1,46 +1,64 @@
 <template>
-	<div class="table-responsive">
-		<table class="table table-dark table-striped w-100 mb-0">
-			<thead>
-				<tr>
-					<th scope="col">ID</th>
-					<th scope="col">Username</th>
-					<th scope="col">Badge Name</th>
-					<th scope="col">Real Name</th>
-					<th scope="col">Department</th>
-					<th scope="col">Start Time</th>
-					<th scope="col">Duration</th>
-					<th scope="col"></th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr v-for="entry of entries" :key="entry.id">
-					<th scope="row">{{ entry.user.badge_id }}</th>
-					<td>{{ entry.user.username }}</td>
-					<td>{{ entry.user.badge_name }}</td>
-					<td>{{ entry.user.full_name }}</td>
-					<td>{{ entry.department.name }}</td>
-					<td>{{ isoToDateTimeString(entry.start) }}</td>
-					<td>
-						<Duration
-							:start="entry.start"
-							:stop="entry.stop"
-							:now
-						/>
-					</td>
-					<td>
-						<button
-							class="btn btn-link btn-sm link-info float-end mx-1 p-0"
-							title="Lookup user"
-							@click="emit('select', entry.user.id)"
-						>
-							<FontAwesomeIcon :icon="faMagnifyingGlass" />
-						</button>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
+	<DataTable
+		:value="entries"
+		paginator
+		:rows="10"
+		:rows-per-page-options="[5, 10, 20]"
+		scrollable
+		scroll-height="flex"
+		:dt="{ paginator: { bottom: { border: { width: 0 } } } }"
+	>
+		<Column header="ID">
+			<template #body="{ data: entry }: { data: TimeEntry }">
+				{{ entry.user.badge_id }}
+			</template>
+		</Column>
+
+		<Column header="Badge Name">
+			<template #body="{ data: entry }: { data: TimeEntry }">
+				{{ entry.user.badge_name }}
+			</template>
+		</Column>
+
+		<Column header="Department">
+			<template #body="{ data: entry }: { data: TimeEntry }">
+				{{ entry.department.name }}
+			</template>
+		</Column>
+
+		<Column header="Start Time">
+			<template #body="{ data: entry }: { data: TimeEntry }">
+				{{ isoToDateTimeString(entry.start) }}
+			</template>
+		</Column>
+
+		<Column header="Duration">
+			<template #body="{ data: entry }: { data: TimeEntry }">
+				<Duration :start="entry.start" :stop="entry.stop" :now />
+			</template>
+		</Column>
+
+		<Column
+			header="Actions"
+			class="text-end"
+			:pt="{ columnHeaderContent: { class: 'justify-end' } }"
+		>
+			<template #body="{ data: entry }: { data: TimeEntry }">
+				<Button
+					variant="link"
+					class="p-0"
+					size="small"
+					aria-label="View Volunteer"
+					v-tooltip.left="'View Volunteer'"
+					@click="emit('select', entry.user.id)"
+				>
+					<template #icon>
+						<FontAwesomeIcon :icon="faMagnifyingGlass" />
+					</template>
+				</Button>
+			</template>
+		</Column>
+	</DataTable>
 </template>
 
 <script setup lang="ts">

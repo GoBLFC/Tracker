@@ -61,14 +61,13 @@ class ManagementController extends Controller {
 				->forEvent($event)
 				->ongoing()
 				->orderBy('start')
-				->limit(10)
 				->get(),
 			'recentTimeActivities' => Activity::with(['subject', 'subject.user'])
 				->whereHasMorph('subject', TimeEntry::class, function (Builder $query) use ($event) {
 					$query->whereEventId($event?->id);
 				})
 				->orderByDesc('created_at')
-				->limit(10)
+				->limit(20)
 				->get(),
 		]);
 	}

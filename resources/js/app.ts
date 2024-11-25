@@ -36,7 +36,7 @@ createInertiaApp({
 					options: {
 						cssLayer: {
 							name: 'primevue',
-							order: 'tailwind-base, app-base, primevue, tailwind-utilities',
+							order: 'tailwind-base, app-base, primevue, app, tailwind-utilities',
 						},
 					},
 				},
