@@ -5,11 +5,11 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title>{{ config('app.name') }}</title>
 
-	<link rel="icon" sizes="32x32" href="{!! Vite::asset('resources/img/blfc-chip-32.png') !!}" />
-	<link rel="icon" sizes="64x64" href="{!! Vite::asset('resources/img/blfc-chip-64.png') !!}" />
-	<link rel="icon" sizes="128x128" href="{!! Vite::asset('resources/img/blfc-chip-128.png') !!}" />
-	<link rel="icon" sizes="180x180" href="{!! Vite::asset('resources/img/blfc-chip-180.png') !!}" />
-	<link rel="icon" sizes="192x192" href="{!! Vite::asset('resources/img/blfc-chip-192.png') !!}" />
+	<link rel="icon" sizes="32x32" href="{!! Vite::asset('resources/img/event-logo-32.png') !!}" />
+	<link rel="icon" sizes="64x64" href="{!! Vite::asset('resources/img/event-logo-64.png') !!}" />
+	<link rel="icon" sizes="128x128" href="{!! Vite::asset('resources/img/event-logo-128.png') !!}" />
+	<link rel="icon" sizes="180x180" href="{!! Vite::asset('resources/img/event-logo-180.png') !!}" />
+	<link rel="icon" sizes="192x192" href="{!! Vite::asset('resources/img/event-logo-192.png') !!}" />
 
 	@prepend('styles')
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -29,7 +29,7 @@
 	<div class="container my-4 my-md-5 {!! config('debugbar.enabled') ?? config('app.debug') ? 'mb-5 pb-5' : '' !!}">
 		<header class="mb-3 mb-md-4 text-center">
 			<a href="{!! route('tracker.index') !!}" title="{{ config('app.name') }}">
-				<img src="{!! Vite::asset('resources/img/blfc-chip.png') !!}" width="128" height="146" alt="BLFC Poker Chip Logo" class="img-fluid mw-25" />
+				<img src="{!! Vite::asset('resources/img/event-logo.png') !!}" width="128" height="146" alt="Event Logo" class="img-fluid mw-25" />
 			</a>
 		</header>
 

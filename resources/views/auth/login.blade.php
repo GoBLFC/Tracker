@@ -5,7 +5,7 @@
 		<div class="col-sm-10 col-md-8 col-lg-6 col-xl-5 col-xxl-4">
 			<div class="card mb-3">
 				<div class="card-body">
-					<h2 class="text-center mb-3">BLFC Volunteer Check-In</h2>
+					<h2 class="text-center mb-3">Volunteer Check-In</h2>
 					<div class="alert alert-light text-center" role="alert">Welcome! Click below to sign in.</div>
 					<a class="btn btn-success d-block mb-3" href="{!! route('auth.redirect') !!}" role="button">Sign In</a>
 
