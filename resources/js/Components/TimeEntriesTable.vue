@@ -58,15 +58,22 @@
 				</Button>
 			</template>
 		</Column>
+
+		<template #empty>
+			<slot name="empty">
+				<p>There aren't any time entries.</p>
+			</slot>
+		</template>
 	</DataTable>
 </template>
 
 <script setup lang="ts">
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { useTime } from '../lib/time';
 import type TimeEntry from '../data/TimeEntry';
 import type { UserId } from '../data/User';
+
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import Duration from './Duration.vue';
 
 defineProps<{

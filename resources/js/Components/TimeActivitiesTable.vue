@@ -22,32 +22,9 @@
 
 		<Column header="Action Taken">
 			<template #body="{ data: activity }: { data: TimeEntryActivity }">
-				<Chip
-					v-if="activity.properties.attributes.stop"
-					class="md:w-[9em] py-1"
-					v-tooltip.right="'Checked Out'"
-				>
-					<FontAwesomeIcon
-						:icon="faArrowRightFromBracket"
-						class="text-yellow-500"
-						aria-hidden
-					/>
-					<span class="sr-only md:not-sr-only">Checked Out</span>
-				</Chip>
-
-				<Chip
-					v-else
-					label="Checked In"
-					class="md:w-[9em] py-1"
-					v-tooltip.right="'Checked Out'"
-				>
-					<FontAwesomeIcon
-						:icon="faArrowRightToBracket"
-						class="text-green-500"
-						aria-hidden
-					/>
-					<span class="sr-only md:not-sr-only">Checked In</span>
-				</Chip>
+				<ShiftStatusChip
+					:checked-in="!activity.properties.attributes.stop"
+				/>
 			</template>
 		</Column>
 
@@ -87,15 +64,23 @@
 				</Button>
 			</template>
 		</Column>
+
+		<template #empty>
+			<slot name="empty">
+				<p>There aren't any time activities.</p>
+			</slot>
+		</template>
 	</DataTable>
 </template>
 
 <script setup lang="ts">
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faMagnifyingGlass, faArrowRightToBracket, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { useTime } from '../lib/time';
 import type TimeEntryActivity from '../data/TimeEntryActivity';
 import type { UserId } from '../data/User';
+
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import ShiftStatusChip from './ShiftStatusChip.vue';
 import Duration from './Duration.vue';
 
 defineProps<{
