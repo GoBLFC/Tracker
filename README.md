@@ -51,9 +51,9 @@ Docker is recommended to run Tracker, as a Docker Compose file and corresponding
 Certbot-based Let's Encrypt automatic SSL renewal support is provided out-of-the-box with the default production Compose file.
 
 1. Clone this repository whereever you will be building/running the Docker containers
-1. Copy all of the `*.env.example` files in `.docker/env` to just `*.env` (in the same directory).
-	`.docker/env` should have `app.env`, `certbot.env`, `nginx.env`, `postgres.env`, and `redis.env`.
-1. Modify the `.env` files in `.docker/env` for your configuration.
+1. Copy all of the `*.env.example` files in `.docker/` to just `*.env` (in the same directory).
+	`.docker/` should have `app.env`, `certbot.env`, `nginx.env`, `postgres.env`, and `redis.env`.
+1. Modify the `.env` files in `.docker/` for your configuration.
 	Specifically, you should ensure the following keys are updated at the very least:
 	- **app.env:** `APP_KEY`, `APP_URL`, `DB_PASSWORD`, `REDIS_PASSWORD`, `CONCAT_CLIENT_ID`, `CONCAT_CLIENT_SECRET`, `TELEGRAM_BOT_TOKEN` (see details in the development section for the ConCat and Telegram config keys, as well as for generating a key for `APP_KEY` the first time)
 	- **certbot.env:** `LETSENCRYPT_DOMAIN`, `LETSENCRYPT_EMAIL`, `LETSENCRYPT_DRY_RUN` (clear the value for this once confirmed working)
