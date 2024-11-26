@@ -61,8 +61,7 @@ Certbot-based Let's Encrypt automatic SSL renewal support is provided out-of-the
 	- **postgres.env:** `POSTGRES_PASSWORD` (should match `DB_PASSWORD` in `app.env`)
 	- **redis.env:** `REDIS_PASSWORD` (should match `REDIS_PASSWORD` in `app.env`)
 1. Run `docker compose -f docker-compose.prod.yml build` to build the necessary (app and nginx) images
-1. Run `REDIS_PASSWORD=<redis password here> docker compose -f docker-compose.prod.yml up -d` to run the images in the Docker daemon
-	- Defining `REDIS_PASSWORD` is sadly currently required to start the Redis container properly due to the way the variable is obtained
+1. Run `docker compose -f docker-compose.prod.yml up -d` to run the images in the Docker daemon
 1. Once everything has started up, the application will not yet be functional if it's the first time running.
 	Follow these steps once the containers are up:
 	1. Run `docker compose -f docker-compose.prod.yml exec app php artisan migrate` to run migrations on the database
