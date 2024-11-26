@@ -1,4 +1,5 @@
 {
+	"$schema": "https://getcomposer.org/schema.json",
 	"name": "goblfc/tracker",
 	"type": "project",
 	"license": "AGPL-3.0-only",
@@ -8,7 +9,7 @@
 		"guzzlehttp/guzzle": "^7.9",
 		"inertiajs/inertia-laravel": "^1.3",
 		"irazasyed/telegram-bot-sdk": "^3.14",
-		"laravel/framework": "^11.24",
+		"laravel/framework": "^11.31",
 		"laravel/socialite": "^5.16",
 		"laravel/tinker": "^2.9",
 		"maatwebsite/excel": "^3.1",
@@ -43,14 +44,22 @@
 		}
 	},
 	"scripts": {
-		"format": ["php-cs-fixer fix"],
-		"format:check": ["php-cs-fixer check"],
+		"format": [
+			"php-cs-fixer fix"
+		],
+		"format:check": [
+			"php-cs-fixer check"
+		],
 		"post-autoload-dump": [
 			"Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
 			"@php artisan package:discover --ansi"
 		],
-		"post-update-cmd": ["@php artisan vendor:publish --tag=laravel-assets --ansi --force"],
-		"post-root-package-install": ["@php -r \"file_exists('.env') || copy('.env.example', '.env');\""],
+		"post-update-cmd": [
+			"@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+		],
+		"post-root-package-install": [
+			"@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+		],
 		"post-create-project-cmd": [
 			"@php artisan key:generate --ansi",
 			"@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
