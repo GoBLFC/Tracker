@@ -10,8 +10,8 @@ env:
   REGISTRY: ghcr.io
 
 jobs:
-  publish:
-    name: Publish
+  images:
+    name: Images
     runs-on: ubuntu-latest
     permissions:
       contents: read
