@@ -22,7 +22,10 @@ services:
 
   redis:
     image: redis:7
-    command: sh -c 'exec redis-server --save 60 1 --loglevel warning --requirepass "${REDIS_PASSWORD:?REDIS_PASSWORD not provided}"'
+    command:
+      - /bin/sh
+      - -c
+      - redis-server --save 60 1 --loglevel warning --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD not provided}"
     restart: always
     env_file:
       - .docker/env/redis.env
