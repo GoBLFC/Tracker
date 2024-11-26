@@ -1,3 +1,4 @@
+name: blfc-tracker
 services:
   app:
     build:
@@ -13,7 +14,7 @@ services:
       - redis
 
   postgres:
-    image: postgres:16
+    image: postgres:17
     restart: always
     env_file:
       - .docker/env/postgres.env
