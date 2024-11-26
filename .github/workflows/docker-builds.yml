@@ -8,9 +8,6 @@ on:
 permissions:
   packages: write
 
-env:
-  IMAGE_NAME: "ghcr.io/${{ github.repository }}"
-
 jobs:
   publish:
     name: Publish images
@@ -18,9 +15,9 @@ jobs:
     strategy:
       matrix:
         image:
-          - name: ${{ env.IMAGE_NAME }}
+          - name: ghcr.io/${{ github.repository }}
             file: .docker/Dockerfile-app
-          - name: ${{ env.IMAGE_NAME }}-nginx
+          - name: ghcr.io/${{ github.repository }}-nginx
             file: .docker/Dockerfile-nginx
     steps:
       - name: Checkout repository
