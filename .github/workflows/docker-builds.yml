@@ -1,0 +1,50 @@
+---
+name: Publish images
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  packages: write
+
+env:
+  IMAGE_NAME: "ghcr.io/${{ github.repository }}"
+
+jobs:
+  publish:
+    name: Publish images
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image:
+          - name: ${{ env.IMAGE_NAME }}
+            file: .docker/Dockerfile-app
+          - name: ${{ env.IMAGE_NAME }}-nginx
+            file: .docker/Dockerfile-nginx
+    steps:
+      - name: Checkout repository
+        id: checkout
+        uses: actions/checkout@v4
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: amd64,arm64
+      - name: Setup Docker BuildX
+        uses: docker/setup-buildx-action@v3
+      - name: Login to GitHub Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+      - name: Build & push container images
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.image.file }}
+          platforms: linux/amd64,linux/arm64
+          push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          tags: "${{ matrix.image.name }}:${{ steps.checkout.outputs.commit }},${{ matrix.image.name }}:latest"
