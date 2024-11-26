@@ -19,6 +19,8 @@ jobs:
             file: .docker/app/Dockerfile
           - name: ghcr.io/${{ github.repository }}-nginx
             file: .docker/nginx/Dockerfile
+          - name: ghcr.io/${{ github.repository }}-certbot
+            file: .docker/certbot/Dockerfile
     steps:
       - name: Checkout repository
         id: checkout
