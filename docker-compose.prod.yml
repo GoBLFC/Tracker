@@ -1,13 +1,13 @@
-name: GoBLFC/Tracker
+name: goblfc/tracker
 services:
   app:
-    image: ghcr.io/GoBLFC/Tracker
+    image: ghcr.io/goblfc/tracker
     build:
       context: ./
-      dockerfile: .docker/Dockerfile-app
+      dockerfile: .docker/app/Dockerfile
     restart: always
     env_file:
-      - .docker/env/app.env
+      - .docker/app.env
     volumes:
       - app-logs:/var/www/html/storage/logs
     depends_on:
@@ -18,7 +18,7 @@ services:
     image: postgres:17
     restart: always
     env_file:
-      - .docker/env/postgres.env
+      - .docker/postgres.env
     volumes:
       - postgres:/var/lib/postgresql/data
 
@@ -30,18 +30,18 @@ services:
       - redis-server --save 60 1 --loglevel warning --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD not provided}"
     restart: always
     env_file:
-      - .docker/env/redis.env
+      - .docker/redis.env
     volumes:
       - redis:/data
 
   nginx:
-    image: ghcr.io/GoBLFC/Tracker-nginx
+    image: ghcr.io/goblfc/tracker-nginx
     build:
       context: ./
-      dockerfile: .docker/Dockerfile-nginx
+      dockerfile: .docker/nginx/Dockerfile
     restart: always
     env_file:
-      - .docker/env/nginx.env
+      - .docker/nginx.env
     ports:
       - '80:80'
       - '443:443'
@@ -52,13 +52,13 @@ services:
       - app
 
   certbot:
-    image: ghcr.io/GoBLFC/Tracker-certbot
+    image: ghcr.io/goblfc/tracker-certbot
     build:
       context: ./
-      dockerfile: .docker/Dockerfile-certbot
+      dockerfile: .docker/certbot/Dockerfile
     restart: unless-stopped
     env_file:
-      - .docker/env/certbot.env
+      - .docker/certbot.env
     volumes:
       - certbot-conf:/etc/letsencrypt
       - certbot-www:/var/www/certbot

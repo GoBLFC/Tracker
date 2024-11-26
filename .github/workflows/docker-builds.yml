@@ -16,9 +16,9 @@ jobs:
       matrix:
         image:
           - name: ghcr.io/${{ github.repository }}
-            file: .docker/Dockerfile-app
+            file: .docker/app/Dockerfile
           - name: ghcr.io/${{ github.repository }}-nginx
-            file: .docker/Dockerfile-nginx
+            file: .docker/nginx/Dockerfile
     steps:
       - name: Checkout repository
         id: checkout

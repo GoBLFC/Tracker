@@ -35,8 +35,8 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg && docker-php-ext-in
 RUN pecl install redis-6.1.0 && docker-php-ext-enable redis
 
 # Override some PHP configuration
-COPY .docker/fpm-overrides.conf /usr/local/etc/php-fpm.d/zzz-overrides.conf
-COPY .docker/php-overrides.ini $PHP_INI_DIR/conf.d/overrides.ini
+COPY .docker/app/fpm-overrides.conf /usr/local/etc/php-fpm.d/zzz-overrides.conf
+COPY .docker/app/php-overrides.ini $PHP_INI_DIR/conf.d/overrides.ini
 
 # Configure cron
 RUN echo '* * * * * cd /var/www/html && /usr/local/bin/php artisan schedule:run >> /dev/null 2>&1' >> /etc/cron.d/laravel-scheduler \
@@ -44,7 +44,7 @@ RUN echo '* * * * * cd /var/www/html && /usr/local/bin/php artisan schedule:run 
 	&& chmod u+s /usr/sbin/cron
 
 # Configure supervisor
-COPY .docker/supervisord.ini /etc/supervisor.d/supervisord.ini
+COPY .docker/app/supervisord.ini /etc/supervisor.d/supervisord.ini
 ENTRYPOINT ["supervisord", "-n", "-c", "/etc/supervisor.d/supervisord.ini"]
 
 # Copy everything over
