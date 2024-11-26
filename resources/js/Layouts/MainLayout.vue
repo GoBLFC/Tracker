@@ -3,10 +3,10 @@
 		<header class="mb-3 mb-md-4 text-center">
 			<LegacyLink to="tracker.index" :title="$appName">
 				<img
-					src="../../img/blfc-chip.png"
+					src="../../img/event-logo.png"
 					width="128"
 					height="146"
-					alt="BLFC Poker Chip Logo"
+					alt="Event Logo"
 					class="img-fluid mw-25"
 				/>
 			</LegacyLink>
