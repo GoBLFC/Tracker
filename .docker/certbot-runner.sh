@@ -7,7 +7,6 @@ if [ ! -f /etc/letsencrypt/installed ]; then
 	rm -rf /etc/letsencrypt/live
 	certbot certonly --non-interactive \
 		${LETSENCRYPT_DRY_RUN:+--dry-run} \
-		--force-renewal \
 		--agree-tos \
 		--email ${LETSENCRYPT_EMAIL} \
 		--webroot -w /var/www/certbot \
