@@ -59,6 +59,9 @@ RUN php artisan view:cache
 RUN php artisan event:cache
 USER root
 
+# Mark expected volumes
+VOLUME /var/www/html/storage/logs
+
 # Set up basic healthcheck
 HEALTHCHECK --interval=10s --timeout=3s \
   CMD SCRIPT_NAME=/ping SCRIPT_FILENAME=/ping REQUEST_METHOD=GET cgi-fcgi -bind -connect 127.0.0.1:9000 || exit 1
