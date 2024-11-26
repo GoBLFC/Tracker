@@ -52,15 +52,16 @@ services:
       - app
 
   certbot:
-    image: certbot/certbot
+    image: ghcr.io/GoBLFC/Tracker-certbot
+    build:
+      context: ./
+      dockerfile: .docker/Dockerfile-certbot
     restart: unless-stopped
     env_file:
       - .docker/env/certbot.env
     volumes:
       - certbot-conf:/etc/letsencrypt
       - certbot-www:/var/www/certbot
-      - .docker/certbot-runner.sh:/usr/local/bin/certbot-runner
-    entrypoint: /bin/sh /usr/local/bin/certbot-runner
     depends_on:
       - nginx
 
