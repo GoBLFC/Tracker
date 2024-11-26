@@ -9,7 +9,7 @@
 	>
 		<div class="flex justify-between">
 			<img
-				src="../../img/blfc-chip.png"
+				src="../../img/event-logo.png"
 				width="128"
 				height="146"
 				class="w-auto h-12 lg:w-12 lg:h-auto"
@@ -116,7 +116,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, toRef, useId } from 'vue';
+import { ref, toRef, useId } from "vue";
 import {
 	faHouseCircleCheck,
 	faBookOpen,
@@ -129,9 +129,9 @@ import {
 	faArrowRightFromBracket,
 	faBars,
 	faClose,
-} from '@fortawesome/free-solid-svg-icons';
-import { useBreakpoints } from '../lib/media-query';
-import AppNavItem from './AppNavItem.vue';
+} from "@fortawesome/free-solid-svg-icons";
+import { useBreakpoints } from "../lib/media-query";
+import AppNavItem from "./AppNavItem.vue";
 
 const { isNotSm, isNotLg } = useBreakpoints();
 
@@ -139,5 +139,5 @@ const showHamburger = toRef(() => isNotSm.value);
 const hamburgerOpen = ref(false);
 const menuId = useId();
 
-const tooltipPosition = toRef(() => (isNotLg.value ? 'bottom' : 'right'));
+const tooltipPosition = toRef(() => (isNotLg.value ? "bottom" : "right"));
 </script>

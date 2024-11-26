@@ -42,7 +42,7 @@ abstract class Command extends BaseCommand {
 		if (!$user) {
 			$trackerLink = static::trackerLink('Tracker site');
 			$this->replyWithMessage([
-				'text' => "I don't have a BLFC volunteer account associated with you yet. Please link your account by scanning a QR code at the volunteer desk or the {$trackerLink}.",
+				'text' => "I don't have a volunteer account associated with you yet. Please link your account by scanning a QR code at the volunteer desk or the {$trackerLink}.",
 				'parse_mode' => 'HTML',
 			]);
 			return null;
