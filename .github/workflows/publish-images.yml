@@ -8,6 +8,9 @@ on:
 permissions:
   packages: write
 
+env:
+  REGISTRY: ghcr.io
+
 jobs:
   publish:
     name: Publish images
@@ -15,35 +18,46 @@ jobs:
     strategy:
       matrix:
         image:
-          - name: ghcr.io/${{ github.repository }}
+          - name: ${{ github.repository }}
             file: .docker/app/Dockerfile
-          - name: ghcr.io/${{ github.repository }}-nginx
+          - name: ${{ github.repository }}-nginx
             file: .docker/nginx/Dockerfile
-          - name: ghcr.io/${{ github.repository }}-certbot
+          - name: ${{ github.repository }}-certbot
             file: .docker/certbot/Dockerfile
     steps:
       - name: Checkout repository
         id: checkout
         uses: actions/checkout@v4
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ matrix.image.name }}
+
       - name: Setup QEMU
         uses: docker/setup-qemu-action@v3
         with:
           platforms: amd64,arm64
-      - name: Setup Docker BuildX
+
+      - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
+
       - name: Login to GitHub Container registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ github.token }}
+
       - name: Build & push container images
         uses: docker/build-push-action@v6
         with:
           context: .
           file: ${{ matrix.image.file }}
           platforms: linux/amd64,linux/arm64
-          push: true
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          tags: "${{ matrix.image.name }}:${{ steps.checkout.outputs.commit }},${{ matrix.image.name }}:latest"
