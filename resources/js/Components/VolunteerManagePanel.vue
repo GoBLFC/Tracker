@@ -20,7 +20,7 @@
 				@click="emit('close')"
 			>
 				<template #icon>
-					<FontAwesomeIcon :icon="faXmark" aria-hidden="true" />
+					<FontAwesomeIcon :icon="faXmark" />
 				</template>
 			</Button>
 		</template>

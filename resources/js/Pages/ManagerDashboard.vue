@@ -22,7 +22,7 @@
 				class="text-2xl text-muted-color"
 				v-tooltip.left="'Read-only'"
 			>
-				<FontAwesomeIcon :icon="faEye" aria-hidden="true" />
+				<FontAwesomeIcon :icon="faEye" />
 				<span class="sr-only">Read-only</span>
 			</div>
 		</div>

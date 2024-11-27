@@ -4,11 +4,7 @@
 	>
 		<div v-if="ongoing">
 			<div class="mb-2 text-2xl sm:text-4xl lg:text-5xl">
-				<FontAwesomeIcon
-					:icon="faClock"
-					class="me-3"
-					aria-hidden="true"
-				/>
+				<FontAwesomeIcon :icon="faClock" class="me-3" />
 				<Duration format="clock" :start="ongoing.start" :now />
 			</div>
 			<div class="uppercase text-muted-color">Shift Duration</div>
@@ -16,11 +12,7 @@
 
 		<div>
 			<div class="mb-2 text-2xl sm:text-4xl lg:text-5xl">
-				<FontAwesomeIcon
-					:icon="faClock"
-					class="me-3"
-					aria-hidden="true"
-				/>
+				<FontAwesomeIcon :icon="faClock" class="me-3" />
 				<Duration
 					:start="dayStart"
 					:ms="ongoing ? undefined : stats.day * 1000"
@@ -32,11 +24,7 @@
 
 		<div>
 			<div class="mb-2 text-2xl sm:text-4xl lg:text-5xl">
-				<FontAwesomeIcon
-					:icon="faClock"
-					class="me-3"
-					aria-hidden="true"
-				/>
+				<FontAwesomeIcon :icon="faClock" class="me-3" />
 				<Duration
 					:start="totalStart"
 					:ms="ongoing ? undefined : stats.total * 1000"

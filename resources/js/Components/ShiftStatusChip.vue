@@ -13,7 +13,6 @@
 				'text-green-500': checkedIn,
 				'text-yellow-500': !checkedIn,
 			}"
-			aria-hidden="true"
 		/>
 		<span class="sr-only md:not-sr-only">
 			Checked {{ checkedIn ? "In" : "Out"

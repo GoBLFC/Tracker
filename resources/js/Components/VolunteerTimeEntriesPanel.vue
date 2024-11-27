@@ -39,10 +39,7 @@
 							class="py-1"
 							v-tooltip.bottom="entry.notes"
 						>
-							<FontAwesomeIcon
-								:icon="faNoteSticky"
-								aria-hidden="true"
-							/>
+							<FontAwesomeIcon :icon="faNoteSticky" />
 							<span class="sr-only xl:not-sr-only">Notes</span>
 						</Chip>
 
@@ -53,10 +50,7 @@
 								'This entry was automatically closed at the end of the day.'
 							"
 						>
-							<FontAwesomeIcon
-								:icon="faHourglassEnd"
-								aria-hidden="true"
-							/>
+							<FontAwesomeIcon :icon="faHourglassEnd" />
 							<span class="sr-only xl:not-sr-only">Auto</span>
 						</Chip>
 					</div>
