@@ -34,7 +34,7 @@
 						<FontAwesomeIcon
 							:icon="faUserSlash"
 							class="text-red-500"
-							aria-hidden
+							aria-hidden="true"
 						/>
 						<span class="sr-only md:not-sr-only">Banned</span>
 					</Chip>
@@ -50,8 +50,8 @@
 			<template #body="{ data: user }: { data: User }">
 				<Button
 					variant="link"
-					class="p-0"
 					size="small"
+					class="p-1"
 					aria-label="View Volunteer"
 					v-tooltip.left="'View Volunteer'"
 					@click="emit('select', user.id)"
@@ -65,7 +65,7 @@
 
 		<template #header>
 			<div class="flex justify-between">
-				<IconField>
+				<IconField class="sm:w-96">
 					<InputIcon>
 						<FontAwesomeIcon
 							:icon="faMagnifyingGlass"
@@ -74,13 +74,14 @@
 					</InputIcon>
 					<InputText
 						v-model="query"
-						placeholder="Badge number, name, username..."
+						placeholder="Search volunteers"
+						class="w-full"
 						aria-label="Search volunteers"
 						v-debounce:400ms="searchUsers"
 					/>
 				</IconField>
 
-				<Button text severity="secondary" v-tooltip.top="'Create User'">
+				<Button severity="secondary" text v-tooltip.top="'Create User'">
 					<template #icon>
 						<FontAwesomeIcon
 							:icon="faUserPlus"

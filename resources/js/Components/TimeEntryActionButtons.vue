@@ -1,48 +1,50 @@
 <template>
-	<div
-		class="btn-group float-end"
-		role="group"
-		aria-label="Time entry actions"
-	>
-		<button
+	<ButtonGroup aria-label="Time entry actions">
+		<Button
 			v-if="!entry.stop"
-			type="button"
-			class="btn btn-sm btn-warning checkout"
-			title="Check Out"
+			size="small"
+			severity="warn"
+			:loading="request.processing.value"
 			:disabled="deleted || request.processing.value"
+			v-tooltip.bottom="'Check Out'"
 			@click="checkout"
 		>
-			<FontAwesomeIcon
-				:icon="
-					request.processing.value
-						? faCircleNotch
-						: faArrowRightFromBracket
-				"
-				:spin="request.processing.value"
-			/>
-		</button>
-		<button
-			type="button"
-			class="btn btn-sm btn-danger delete"
-			title="Delete"
+			<template #icon>
+				<FontAwesomeIcon :icon="faArrowRightFromBracket" />
+			</template>
+
+			<template #loadingicon>
+				<FontAwesomeIcon :icon="faCircleNotch" spin />
+			</template>
+		</Button>
+
+		<Button
+			size="small"
+			severity="danger"
+			:loading="request.processing.value"
 			:disabled="deleted || request.processing.value"
+			v-tooltip.bottom="'Delete'"
 			@click="del"
 		>
-			<FontAwesomeIcon
-				:icon="request.processing.value ? faCircleNotch : faTrash"
-				:spin="request.processing.value"
-			/>
-		</button>
-	</div>
+			<template #icon>
+				<FontAwesomeIcon :icon="faTrash" />
+			</template>
+
+			<template #loadingicon>
+				<FontAwesomeIcon :icon="faCircleNotch" spin />
+			</template>
+		</Button>
+	</ButtonGroup>
 </template>
 
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faCircleNotch, faTrash, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { useConfirm } from '../lib/confirm';
 import { useRequest } from '../lib/request';
 import type TimeEntry from '../data/TimeEntry';
+
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faCircleNotch, faTrash, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 
 const { entry } = defineProps<{ entry: TimeEntry }>();
 const emit = defineEmits<{
@@ -54,7 +56,6 @@ const { confirm } = useConfirm();
 const request = useRequest();
 
 const deleted = ref(false);
-
 watch(
 	() => entry,
 	() => {

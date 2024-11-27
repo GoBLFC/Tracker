@@ -16,7 +16,7 @@
 		>
 			<template
 				#value="{
-					value,
+					value: event,
 					placeholder,
 				}: {
 					value: TrackerEvent | null | undefined,
@@ -24,16 +24,16 @@
 				}"
 			>
 				<div
-					v-if="value"
+					v-if="event"
 					class="flex grow gap-4 justify-between items-center"
 				>
-					<span class="truncate">{{ value.name }}</span>
+					<span class="truncate">{{ event.name }}</span>
 					<Tag
 						:value="
-							value.id === activeEvent?.id ? 'Active' : 'Inactive'
+							event.id === activeEvent?.id ? 'Active' : 'Inactive'
 						"
 						:severity="
-							value.id === activeEvent?.id
+							event.id === activeEvent?.id
 								? 'success'
 								: 'secondary'
 						"
@@ -43,17 +43,15 @@
 				<div v-else>{{ placeholder }}</div>
 			</template>
 
-			<template #option="{ option }: { option: TrackerEvent }">
+			<template #option="{ option: event }: { option: TrackerEvent }">
 				<div class="flex grow gap-6 justify-between items-center">
-					<span class="truncate">{{ option.name }}</span>
+					<span class="truncate">{{ event.name }}</span>
 					<Tag
 						:value="
-							option.id === activeEvent?.id
-								? 'Active'
-								: 'Inactive'
+							event.id === activeEvent?.id ? 'Active' : 'Inactive'
 						"
 						:severity="
-							option.id === activeEvent?.id
+							event.id === activeEvent?.id
 								? 'success'
 								: 'secondary'
 						"

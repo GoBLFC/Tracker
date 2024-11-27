@@ -116,7 +116,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, toRef, useId } from "vue";
+import { ref, toRef, useId } from 'vue';
 import {
 	faHouseCircleCheck,
 	faBookOpen,
@@ -129,9 +129,9 @@ import {
 	faArrowRightFromBracket,
 	faBars,
 	faClose,
-} from "@fortawesome/free-solid-svg-icons";
-import { useBreakpoints } from "../lib/media-query";
-import AppNavItem from "./AppNavItem.vue";
+} from '@fortawesome/free-solid-svg-icons';
+import { useBreakpoints } from '../lib/media-query';
+import AppNavItem from './AppNavItem.vue';
 
 const { isNotSm, isNotLg } = useBreakpoints();
 
@@ -139,5 +139,5 @@ const showHamburger = toRef(() => isNotSm.value);
 const hamburgerOpen = ref(false);
 const menuId = useId();
 
-const tooltipPosition = toRef(() => (isNotLg.value ? "bottom" : "right"));
+const tooltipPosition = toRef(() => (isNotLg.value ? 'bottom' : 'right'));
 </script>

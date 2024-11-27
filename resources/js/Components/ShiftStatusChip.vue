@@ -1,6 +1,6 @@
 <template>
 	<Chip
-		class="min-w-[8.7em] py-1"
+		class="md:min-w-[8.7em] py-1"
 		v-tooltip.bottom="
 			`Checked ${checkedIn ? 'In' : 'Out'}${
 				department ? `: ${department.name}` : ''
@@ -13,7 +13,7 @@
 				'text-green-500': checkedIn,
 				'text-yellow-500': !checkedIn,
 			}"
-			aria-hidden
+			aria-hidden="true"
 		/>
 		<span class="sr-only md:not-sr-only">
 			Checked {{ checkedIn ? "In" : "Out"

@@ -46,8 +46,8 @@
 			<template #body="{ data: entry }: { data: TimeEntry }">
 				<Button
 					variant="link"
-					class="p-0"
 					size="small"
+					class="p-1"
 					aria-label="View Volunteer"
 					v-tooltip.left="'View Volunteer'"
 					@click="emit('select', entry.user.id)"
