@@ -27,7 +27,10 @@
 			</div>
 		</div>
 
-		<div class="flex flex-col xl:flex-row xl:flex-wrap h-full gap-4">
+		<div
+			v-if="event"
+			class="flex flex-col xl:flex-row xl:flex-wrap h-full gap-4"
+		>
 			<!-- Recent activity -->
 			<Panel
 				header="Recent Activity"
@@ -131,6 +134,13 @@
 				</dl>
 			</Panel>
 		</div>
+
+		<p
+			v-else
+			class="flex h-full items-center justify-center text-xl text-semibold text-muted-color"
+		>
+			Select an event to manage above.
+		</p>
 	</div>
 </template>
 
@@ -164,7 +174,7 @@ import UserCreateCard from '../Components/UserCreateCard.vue';
 import KioskToggleSwitch from '../Components/KioskToggleSwitch.vue';
 
 const { event, kioskLifetime } = defineProps<{
-	event: Event;
+	event: Event | null;
 	events: Event[];
 	departments: Department[];
 	rewards: Reward[];
