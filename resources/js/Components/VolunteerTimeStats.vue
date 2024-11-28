@@ -1,18 +1,22 @@
 <template>
 	<div
-		class="flex px-4 py-6 justify-around gap-8 sm:gap-16 lg:gap-24 text-center"
+		class="flex flex-wrap px-4 py-6 justify-around gap-8 lg:gap-16 text-center"
 	>
 		<div v-if="ongoing">
-			<div class="mb-2 text-2xl sm:text-4xl lg:text-5xl">
-				<FontAwesomeIcon :icon="faClock" class="me-3" />
+			<div
+				class="flex flex-col lg:flex-row items-center gap-3 text-2xl md:text-4xl"
+			>
+				<FontAwesomeIcon :icon="faClock" />
 				<Duration format="clock" :start="ongoing.start" :now />
 			</div>
 			<div class="uppercase text-muted-color">Shift Duration</div>
 		</div>
 
 		<div>
-			<div class="mb-2 text-2xl sm:text-4xl lg:text-5xl">
-				<FontAwesomeIcon :icon="faClock" class="me-3" />
+			<div
+				class="flex flex-col lg:flex-row items-center gap-3 text-2xl md:text-4xl"
+			>
+				<FontAwesomeIcon :icon="faClock" />
 				<Duration
 					:start="dayStart"
 					:ms="ongoing ? undefined : stats.day * 1000"
@@ -23,8 +27,10 @@
 		</div>
 
 		<div>
-			<div class="mb-2 text-2xl sm:text-4xl lg:text-5xl">
-				<FontAwesomeIcon :icon="faClock" class="me-3" />
+			<div
+				class="flex flex-col lg:flex-row items-center gap-3 text-2xl md:text-4xl"
+			>
+				<FontAwesomeIcon :icon="faClock" />
 				<Duration
 					:start="totalStart"
 					:ms="ongoing ? undefined : stats.total * 1000"

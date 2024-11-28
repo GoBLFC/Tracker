@@ -25,10 +25,12 @@ export function useTime() {
 
 	/**
 	 * Parses an ISO 8601 datetime string, converts it to Tracker's configured timezone, and builds a human-friendly
-	 * datetime string (including abbreviated weekday) using the browser's default locale.
+	 * datetime string using the browser's default locale.
 	 */
-	function isoToDateTimeString(iso: string): string {
-		return isoToTrackerTime(iso).toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY);
+	function isoToDateTimeString(iso: string, short = true): string {
+		return isoToTrackerTime(iso).toLocaleString(
+			short ? DateTime.DATETIME_SHORT : DateTime.DATETIME_MED_WITH_WEEKDAY,
+		);
 	}
 
 	/**

@@ -1,7 +1,7 @@
 <template>
 	<Panel header="Add Shift">
-		<div class="flex flex-wrap gap-2">
-			<FloatLabel variant="on">
+		<div class="flex flex-wrap gap-4">
+			<FloatLabel variant="on" class="grow w-[13em]">
 				<DatePicker
 					v-model="start"
 					show-time
@@ -9,14 +9,14 @@
 					hour-format="12"
 					show-icon
 					icon-display="input"
-					class="grow w-[13em]"
+					class="w-full"
 					:input-id="startId"
 				/>
 
 				<label :for="startId">In time</label>
 			</FloatLabel>
 
-			<FloatLabel variant="on">
+			<FloatLabel variant="on" class="grow w-[13em]">
 				<DatePicker
 					v-model="stop"
 					show-time
@@ -24,18 +24,18 @@
 					hour-format="12"
 					show-icon
 					icon-display="input"
-					class="grow w-[13em]"
+					class="w-full"
 					:input-id="stopId"
 				/>
 
 				<label :for="startId">Out time</label>
 			</FloatLabel>
 
-			<FloatLabel variant="on">
+			<FloatLabel variant="on" class="grow w-64">
 				<Select
 					v-model="department"
 					:options="departments"
-					class="grow w-64"
+					class="w-full"
 					:input-id="deptId"
 				>
 					<template
@@ -45,19 +45,20 @@
 							value: Department | null | undefined,
 						}"
 					>
-						<div
+						<span
 							v-if="dept"
-							class="flex grow gap-4 justify-between items-center"
+							class="flex grow gap-2 justify-between items-center"
 						>
 							<span class="truncate">{{ dept.name }}</span>
 							<Tag
 								v-if="dept.hidden"
 								value="Hidden"
 								severity="secondary"
+								class="text-xs"
 							/>
-						</div>
+						</span>
 
-						<div v-else>&nbsp;</div>
+						<span v-else>&nbsp;</span>
 					</template>
 
 					<template
@@ -71,6 +72,7 @@
 								v-if="dept.hidden"
 								value="Hidden"
 								severity="secondary"
+								class="text-xs"
 							/>
 						</div>
 					</template>
@@ -78,39 +80,37 @@
 
 				<label :for="deptId">Department</label>
 			</FloatLabel>
-
-			<InputGroup class="grow w-96">
-				<FloatLabel variant="on">
-					<InputText v-model="notes" :input-id="notesId" />
-					<label :for="notesId">Notes</label>
-				</FloatLabel>
-
-				<Button
-					severity="success"
-					class="shrink-0"
-					:label="!start || stop ? 'Add Shift' : 'Check In'"
-					:loading="request.processing.value"
-					:disabled="
-						!start || !department || request.processing.value
-					"
-					@click="store"
-				>
-					<template #icon>
-						<FontAwesomeIcon
-							:icon="
-								!start || stop
-									? faCalendarPlus
-									: faArrowRightToBracket
-							"
-						/>
-					</template>
-
-					<template #loadingicon>
-						<FontAwesomeIcon :icon="faCircleNotch" spin />
-					</template>
-				</Button>
-			</InputGroup>
 		</div>
+
+		<InputGroup class="w-full mt-4">
+			<FloatLabel variant="on">
+				<InputText v-model="notes" :input-id="notesId" />
+				<label :for="notesId">Notes</label>
+			</FloatLabel>
+
+			<Button
+				severity="success"
+				class="shrink-0"
+				:label="!start || stop ? 'Add Shift' : 'Check In'"
+				:loading="request.processing.value"
+				:disabled="!start || !department || request.processing.value"
+				@click="store"
+			>
+				<template #icon>
+					<FontAwesomeIcon
+						:icon="
+							!start || stop
+								? faCalendarPlus
+								: faArrowRightToBracket
+						"
+					/>
+				</template>
+
+				<template #loadingicon>
+					<FontAwesomeIcon :icon="faCircleNotch" spin />
+				</template>
+			</Button>
+		</InputGroup>
 	</Panel>
 </template>
 

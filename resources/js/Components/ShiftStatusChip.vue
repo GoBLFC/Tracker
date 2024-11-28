@@ -1,6 +1,6 @@
 <template>
 	<Chip
-		class="md:min-w-[8.7em] py-1"
+		class="md:min-w-[8.8em] py-1"
 		v-tooltip.bottom="
 			`Checked ${checkedIn ? 'In' : 'Out'}${
 				department ? `: ${department.name}` : ''

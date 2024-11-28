@@ -10,13 +10,7 @@
 	>
 		<Column header="ID" field="badge_id" />
 
-		<Column header="Badge Name" field="badge_name" />
-
-		<Column header="Real Name">
-			<template #body="{ data: user }: { data: User }">
-				{{ user.first_name }} {{ user.last_name }}
-			</template>
-		</Column>
+		<Column header="Name" field="badge_name" />
 
 		<Column header="Status">
 			<template #body="{ data: user }: { data: User }">
@@ -70,8 +64,8 @@
 					</InputIcon>
 					<InputText
 						v-model="query"
-						placeholder="Search volunteers"
 						class="w-full"
+						placeholder="Search volunteers"
 						aria-label="Search volunteers"
 						v-debounce:400ms="searchUsers"
 					/>

@@ -4,7 +4,7 @@
 
 		<!-- Event selector -->
 		<div
-			class="flex gap-3 items-center"
+			class="flex items-center gap-3"
 			:class="{
 				'justify-center': events.length === 0,
 				'justify-between': events.length > 0,
@@ -27,105 +27,112 @@
 			</div>
 		</div>
 
-		<div
-			v-if="event"
-			class="flex flex-col xl:flex-row xl:flex-wrap h-full gap-4"
-		>
-			<!-- Recent activity -->
-			<Panel
-				header="Recent Activity"
-				class="flex-auto min-w-[33.333%]"
-				:pt="{
-					contentContainer: { class: 'h-full' },
-					content: { class: 'h-full' },
-				}"
-			>
-				<TimeActivitiesTable
-					class="w-full"
-					:activities="recentTimeActivities"
-					:now
-					@select="loadVolunteer"
+		<div v-if="event" class="flex flex-col h-full gap-4">
+			<div class="flex flex-col xl:flex-row xl:flex-wrap gap-4">
+				<!-- Recent activity -->
+				<Panel
+					header="Recent Activity"
+					class="flex-auto min-w-[30%]"
+					:pt="{
+						contentContainer: { class: 'h-full' },
+						content: { class: 'h-full' },
+					}"
 				>
-					<template #empty>
-						<p>There is no recent time activity.</p>
-					</template>
-				</TimeActivitiesTable>
-			</Panel>
+					<TimeActivitiesTable
+						class="w-full"
+						:activities="recentTimeActivities"
+						:now
+						@select="loadVolunteer"
+					>
+						<template #empty>
+							<p>There is no recent time activity.</p>
+						</template>
+					</TimeActivitiesTable>
+				</Panel>
 
-			<!-- Ongoing shifts -->
-			<Panel
-				header="Ongoing Shifts"
-				class="flex-auto min-w-[33.333%]"
-				:pt="{
-					contentContainer: { class: 'h-full' },
-					content: { class: 'h-full' },
-				}"
-			>
-				<TimeEntriesTable
-					class="w-full"
-					:entries="longestOngoingEntries"
-					:now
-					@select="loadVolunteer"
+				<!-- Ongoing shifts -->
+				<Panel
+					header="Ongoing Shifts"
+					class="flex-auto min-w-[30%]"
+					:pt="{
+						contentContainer: { class: 'h-full' },
+						content: { class: 'h-full' },
+					}"
 				>
-					<template #empty>
-						<p>There aren't any ongoing shifts.</p>
-					</template>
-				</TimeEntriesTable>
-			</Panel>
+					<TimeEntriesTable
+						class="w-full"
+						:entries="longestOngoingEntries"
+						:now
+						@select="loadVolunteer"
+					>
+						<template #empty>
+							<p>There aren't any ongoing shifts.</p>
+						</template>
+					</TimeEntriesTable>
+				</Panel>
+			</div>
 
-			<!-- Volunteer search -->
-			<Panel
-				header="Volunteer Search"
-				class="flex-auto min-w-[33.333%]"
-				:pt="{
-					contentContainer: { class: 'h-full' },
-					content: { class: 'h-full' },
-				}"
-			>
-				<VolunteerSearchTable class="w-full" @select="loadVolunteer" />
-			</Panel>
+			<div class="flex flex-col xl:flex-row xl:flex-wrap gap-4">
+				<!-- Volunteer search -->
+				<Panel
+					header="Volunteer Search"
+					class="grow basis-1/3 min-w-[30%]"
+					:pt="{
+						contentContainer: { class: 'h-full' },
+						content: { class: 'h-full' },
+					}"
+				>
+					<VolunteerSearchTable
+						class="w-full"
+						@select="loadVolunteer"
+					/>
+				</Panel>
 
-			<!-- Volunteer details -->
-			<VolunteerManagePanel
-				v-if="volunteer"
-				v-model="volunteer"
-				ref="volunteer-panel"
-				:event="event!"
-				:rewards
-				:departments
-				:now
-				@close="volunteer = null"
-				class="flex-auto min-w-[33.333%]"
-			/>
+				<!-- Volunteer details -->
+				<VolunteerManagePanel
+					v-if="volunteer"
+					v-model="volunteer"
+					ref="volunteer-panel"
+					class="flex-auto min-w-[30%]"
+					:event="event!"
+					:rewards
+					:departments
+					:now
+					@close="volunteer = null"
+				/>
+			</div>
 
-			<!-- Quick settings -->
-			<Panel header="Quick Settings" class="flex-1 min-w-[33.333%]">
-				<dl>
-					<div class="flex items-center gap-4">
-						<dt>
-							<KioskToggleSwitch
-								:aria-labelledby="kioskSettingId"
-							/>
-						</dt>
-						<dd>
-							<p
-								class="text-lg font-semibold"
-								:id="kioskSettingId"
-							>
-								Kiosk authorization
-							</p>
-							<p>
-								Authorizing this device as a kiosk will allow
-								non-staff volunteers to check in or out on this
-								device. This is required when setting up
-								dedicated devices pre-con for checking in or
-								out. Kiosks remain authorized for
-								{{ kioskLifetimeText }}.
-							</p>
-						</dd>
-					</div>
-				</dl>
-			</Panel>
+			<div class="flex flex-col xl:flex-row xl:flex-wrap gap-4">
+				<!-- Quick settings -->
+				<Panel header="Quick Settings" class="flex-1 min-w-[30%]">
+					<dl>
+						<div class="flex items-center gap-4">
+							<dt>
+								<KioskToggleSwitch
+									:aria-labelledby="kioskSettingId"
+								/>
+							</dt>
+							<dd>
+								<p
+									class="text-lg font-semibold"
+									:id="kioskSettingId"
+								>
+									Kiosk authorization
+								</p>
+								<p>
+									Authorizing this device as a kiosk will
+									allow non-staff volunteers to check in or
+									out on this device. This is required when
+									setting up dedicated devices pre-con for
+									checking in or out. Kiosks remain authorized
+									for
+									{{ kioskLifetimeText }}.
+								</p>
+							</dd>
+						</div>
+					</dl>
+				</Panel>
+			</div>
 		</div>
 
 		<p
