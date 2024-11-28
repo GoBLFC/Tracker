@@ -64,6 +64,8 @@ watch(checked, async (makeClaim) => {
 	resetChecked();
 });
 
+watch(claim, () => resetChecked());
+
 /**
  * Sends a request to claim the reward for the user and modifies the model appropriately
  */
