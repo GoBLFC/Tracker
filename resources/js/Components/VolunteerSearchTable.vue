@@ -21,7 +21,7 @@
 					/>
 
 					<ResponsiveTag
-						v-if="user.role !== -2"
+						v-if="user.role === -2"
 						label="Banned"
 						severity="danger"
 						:icon="faUserSlash"
