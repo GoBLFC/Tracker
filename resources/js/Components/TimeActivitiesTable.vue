@@ -3,7 +3,7 @@
 		:value="activities"
 		paginator
 		:rows="10"
-		:rows-per-page-options="[5, 10, 20]"
+		:rows-per-page-options="[5, 10, 15, 20]"
 		scrollable
 		scroll-height="flex"
 		:dt="{ paginator: { bottom: { border: { width: 0 } } } }"
