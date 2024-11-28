@@ -33,26 +33,23 @@
 
 			<Column header="Notes">
 				<template #body="{ data: entry }: { data: TimeEntry }">
-					<div class="flex flex-wrap gap-1">
-						<Chip
+					<div class="flex flex-wrap gap-2">
+						<ResponsiveTag
 							v-if="entry.notes"
-							class="py-1"
-							v-tooltip.bottom="entry.notes"
-						>
-							<FontAwesomeIcon :icon="faNoteSticky" />
-							<span class="sr-only xl:not-sr-only">Notes</span>
-						</Chip>
+							label="Notes"
+							:tooltip="entry.notes"
+							:icon="faNoteSticky"
+							breakpoint="xl"
+						/>
 
-						<Chip
+						<ResponsiveTag
 							v-if="entry.auto"
-							class="py-1 bg-yellow-500 text-gray-950"
-							v-tooltip.bottom="
-								'This entry was automatically closed at the end of the day.'
-							"
-						>
-							<FontAwesomeIcon :icon="faHourglassEnd" />
-							<span class="sr-only xl:not-sr-only">Auto</span>
-						</Chip>
+							label="Auto"
+							tooltip="This entry was automatically closed at the end of the day."
+							:icon="faHourglassEnd"
+							breakpoint="xl"
+							severity="warn"
+						/>
 					</div>
 				</template>
 			</Column>
@@ -84,10 +81,10 @@ import type Volunteer from '../data/Volunteer';
 import type TimeEntry from '../data/TimeEntry';
 import type { TimeEntryId } from '../data/TimeEntry';
 
-import Duration from './Duration.vue';
-import TimeEntryActionButtons from './TimeEntryActionButtons.vue';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faHourglassEnd, faNoteSticky } from '@fortawesome/free-solid-svg-icons';
+import TimeEntryActionButtons from './TimeEntryActionButtons.vue';
+import ResponsiveTag from './ResponsiveTag.vue';
+import Duration from './Duration.vue';
 
 defineProps<{ now?: number }>();
 const volunteer = defineModel<Volunteer>();

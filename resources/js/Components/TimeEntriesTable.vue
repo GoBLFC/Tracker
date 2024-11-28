@@ -44,18 +44,7 @@
 			:pt="{ columnHeaderContent: { class: 'justify-end' } }"
 		>
 			<template #body="{ data: entry }: { data: TimeEntry }">
-				<Button
-					variant="link"
-					size="small"
-					class="p-1"
-					aria-label="View Volunteer"
-					v-tooltip.left="'View Volunteer'"
-					@click="emit('select', entry.user.id)"
-				>
-					<template #icon>
-						<FontAwesomeIcon :icon="faMagnifyingGlass" />
-					</template>
-				</Button>
+				<VolunteerViewButton @click="emit('select', entry.user.id)" />
 			</template>
 		</Column>
 
@@ -72,8 +61,7 @@ import { useTime } from '../lib/time';
 import type TimeEntry from '../data/TimeEntry';
 import type { UserId } from '../data/User';
 
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import VolunteerViewButton from './VolunteerViewButton.vue';
 import Duration from './Duration.vue';
 
 defineProps<{

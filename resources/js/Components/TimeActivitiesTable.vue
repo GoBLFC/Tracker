@@ -22,7 +22,7 @@
 
 		<Column header="Action Taken">
 			<template #body="{ data: activity }: { data: TimeEntryActivity }">
-				<ShiftStatusChip
+				<ShiftStatusTag
 					:checked-in="!activity.properties.attributes.stop"
 				/>
 			</template>
@@ -50,18 +50,9 @@
 			:pt="{ columnHeaderContent: { class: 'justify-end' } }"
 		>
 			<template #body="{ data: activity }: { data: TimeEntryActivity }">
-				<Button
-					variant="link"
-					size="small"
-					class="p-1"
-					aria-label="View Volunteer"
-					v-tooltip.left="'View Volunteer'"
+				<VolunteerViewButton
 					@click="emit('select', activity.subject.user.id)"
-				>
-					<template #icon>
-						<FontAwesomeIcon :icon="faMagnifyingGlass" />
-					</template>
-				</Button>
+				/>
 			</template>
 		</Column>
 
@@ -78,10 +69,9 @@ import { useTime } from '../lib/time';
 import type TimeEntryActivity from '../data/TimeEntryActivity';
 import type { UserId } from '../data/User';
 
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-import ShiftStatusChip from './ShiftStatusChip.vue';
+import ShiftStatusTag from './ShiftStatusTag.vue';
 import Duration from './Duration.vue';
+import VolunteerViewButton from './VolunteerViewButton.vue';
 
 defineProps<{
 	activities: TimeEntryActivity[];

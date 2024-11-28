@@ -14,23 +14,18 @@
 
 		<Column header="Status">
 			<template #body="{ data: user }: { data: User }">
-				<div class="flex flex-wrap gap-1">
-					<ShiftStatusChip
+				<div class="flex flex-wrap gap-2">
+					<ShiftStatusTag
 						:checked-in="Boolean(getDepartment(user))"
 						:department="getDepartment(user)"
 					/>
 
-					<Chip
-						v-if="user.role === -2"
-						class="py-1"
-						v-tooltip.left="'Banned'"
-					>
-						<FontAwesomeIcon
-							:icon="faUserSlash"
-							class="text-red-500"
-						/>
-						<span class="sr-only md:not-sr-only">Banned</span>
-					</Chip>
+					<ResponsiveTag
+						v-if="user.role !== -2"
+						label="Banned"
+						severity="danger"
+						:icon="faUserSlash"
+					/>
 				</div>
 			</template>
 		</Column>
@@ -41,18 +36,7 @@
 			:pt="{ columnHeaderContent: { class: 'justify-end' } }"
 		>
 			<template #body="{ data: user }: { data: User }">
-				<Button
-					variant="link"
-					size="small"
-					class="p-1"
-					aria-label="View Volunteer"
-					v-tooltip.left="'View Volunteer'"
-					@click="emit('select', user.id)"
-				>
-					<template #icon>
-						<FontAwesomeIcon :icon="faMagnifyingGlass" />
-					</template>
-				</Button>
+				<VolunteerViewButton @click="emit('select', user.id)" />
 			</template>
 		</Column>
 
@@ -100,7 +84,9 @@ import type Department from '../data/Department';
 
 import { faUserPlus, faMagnifyingGlass, faUserSlash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import ShiftStatusChip from './ShiftStatusChip.vue';
+import ShiftStatusTag from './ShiftStatusTag.vue';
+import ResponsiveTag from './ResponsiveTag.vue';
+import VolunteerViewButton from './VolunteerViewButton.vue';
 
 const emit = defineEmits<(e: 'select', userId: UserId) => void>();
 
