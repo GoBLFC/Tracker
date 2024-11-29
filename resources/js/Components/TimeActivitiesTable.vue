@@ -14,9 +14,9 @@
 			</template>
 		</Column>
 
-		<Column header="Badge Name">
+		<Column header="Name">
 			<template #body="{ data: activity }: { data: TimeEntryActivity }">
-				{{ activity.subject.user.badge_name }}
+				<VolunteerName :volunteer="activity.subject.user" />
 			</template>
 		</Column>
 
@@ -69,6 +69,7 @@ import type TimeEntryActivity from '../data/TimeEntryActivity';
 import type { UserId } from '../data/User';
 
 import ShiftStatusTag from './ShiftStatusTag.vue';
+import VolunteerName from './VolunteerName.vue';
 import VolunteerViewButton from './VolunteerViewButton.vue';
 import DateTime from './DateTime.vue';
 import Duration from './Duration.vue';

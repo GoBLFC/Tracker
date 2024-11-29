@@ -2,14 +2,17 @@
 	<Panel
 		v-if="volunteer"
 		ref="panel"
-		:header="`Volunteer: ${
-			volunteer.user.badge_name ?? volunteer.user.username
-		} (#${volunteer.user.badge_id})`"
 		:pt="{
 			contentContainer: { class: 'h-full' },
 			content: { class: 'h-full' },
 		}"
 	>
+		<template #header>
+			<span class="p-panel-title">
+				<VolunteerName :volunteer show-id />
+			</span>
+		</template>
+
 		<template #icons>
 			<Button
 				ref="close-btn"
@@ -56,6 +59,7 @@ import VolunteerTimeStats from './VolunteerTimeStats.vue';
 import VolunteerClaimsPanel from './VolunteerClaimsPanel.vue';
 import VolunteerTimeEntriesPanel from './VolunteerTimeEntriesPanel.vue';
 import VolunteerTimeAddPanel from './VolunteerTimeAddPanel.vue';
+import VolunteerName from './VolunteerName.vue';
 
 defineExpose({ attention });
 defineProps<{

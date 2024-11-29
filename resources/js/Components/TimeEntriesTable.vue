@@ -14,9 +14,9 @@
 			</template>
 		</Column>
 
-		<Column header="Badge Name">
+		<Column header="Name">
 			<template #body="{ data: entry }: { data: TimeEntry }">
-				{{ entry.user.badge_name }}
+				<VolunteerName :volunteer="entry.user" />
 			</template>
 		</Column>
 
@@ -60,6 +60,7 @@
 import type TimeEntry from '../data/TimeEntry';
 import type { UserId } from '../data/User';
 
+import VolunteerName from './VolunteerName.vue';
 import VolunteerViewButton from './VolunteerViewButton.vue';
 import DateTime from './DateTime.vue';
 import Duration from './Duration.vue';

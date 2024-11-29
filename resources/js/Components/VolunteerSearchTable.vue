@@ -10,7 +10,11 @@
 	>
 		<Column header="ID" field="badge_id" />
 
-		<Column header="Name" field="badge_name" />
+		<Column header="Name">
+			<template #body="{ data: user }: { data: User }">
+				<VolunteerName :volunteer="user" />
+			</template>
+		</Column>
 
 		<Column header="Status">
 			<template #body="{ data: user }: { data: User }">
@@ -86,6 +90,7 @@ import { faUserPlus, faMagnifyingGlass, faUserSlash } from '@fortawesome/free-so
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import ShiftStatusTag from './ShiftStatusTag.vue';
 import ResponsiveTag from './ResponsiveTag.vue';
+import VolunteerName from './VolunteerName.vue';
 import VolunteerViewButton from './VolunteerViewButton.vue';
 
 const emit = defineEmits<(e: 'select', userId: UserId) => void>();
