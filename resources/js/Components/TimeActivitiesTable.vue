@@ -30,7 +30,7 @@
 
 		<Column header="Time">
 			<template #body="{ data: activity }: { data: TimeEntryActivity }">
-				{{ isoToDateTimeString(activity.subject.start) }}
+				<DateTime :date="activity.subject.start" />
 			</template>
 		</Column>
 
@@ -65,19 +65,17 @@
 </template>
 
 <script setup lang="ts">
-import { useTime } from '../lib/time';
 import type TimeEntryActivity from '../data/TimeEntryActivity';
 import type { UserId } from '../data/User';
 
 import ShiftStatusTag from './ShiftStatusTag.vue';
-import Duration from './Duration.vue';
 import VolunteerViewButton from './VolunteerViewButton.vue';
+import DateTime from './DateTime.vue';
+import Duration from './Duration.vue';
 
 defineProps<{
 	activities: TimeEntryActivity[];
 	now?: number;
 }>();
 const emit = defineEmits<(e: 'select', userId: UserId) => void>();
-
-const { isoToDateTimeString } = useTime();
 </script>

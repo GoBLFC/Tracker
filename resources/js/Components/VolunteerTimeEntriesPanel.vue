@@ -3,13 +3,13 @@
 		<DataTable :value="volunteer!.stats.entries">
 			<Column header="In">
 				<template #body="{ data: entry }: { data: TimeEntry }">
-					{{ isoToDateTimeString(entry.start) }}
+					<DateTime :date="entry.start" />
 				</template>
 			</Column>
 
 			<Column header="Out">
 				<template #body="{ data: entry }: { data: TimeEntry }">
-					{{ entry.stop ? isoToDateTimeString(entry.stop) : "" }}
+					<DateTime v-if="entry.stop" :date="entry.stop" />
 				</template>
 			</Column>
 
@@ -76,7 +76,6 @@
 </template>
 
 <script setup lang="ts">
-import { useTime } from '../lib/time';
 import type Volunteer from '../data/Volunteer';
 import type TimeEntry from '../data/TimeEntry';
 import type { TimeEntryId } from '../data/TimeEntry';
@@ -84,12 +83,11 @@ import type { TimeEntryId } from '../data/TimeEntry';
 import { faHourglassEnd, faNoteSticky } from '@fortawesome/free-solid-svg-icons';
 import TimeEntryActionButtons from './TimeEntryActionButtons.vue';
 import ResponsiveTag from './ResponsiveTag.vue';
+import DateTime from './DateTime.vue';
 import Duration from './Duration.vue';
 
 defineProps<{ now?: number }>();
 const volunteer = defineModel<Volunteer>();
-
-const { isoToDateTimeString } = useTime();
 
 /**
  * Updates a time entry in the entries array with changes from a new version of it
