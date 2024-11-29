@@ -1,6 +1,6 @@
 <template>
 	<nav
-		class="shrink-0 flex flex-col sm:max-lg:flex-row mx-4 my-4 px-3 py-2 lg:px-2 rounded-lg gap-4 sm:gap-6 lg:gap-8 bg-surface-50 dark:bg-surface-900 overflow-clip lg:overflow-auto select-none"
+		class="shrink-0 flex flex-col sm:max-lg:flex-row mx-4 my-4 px-3 py-2 lg:px-2 rounded-lg gap-4 sm:gap-6 lg:gap-8 bg-surface-50 dark:bg-surface-900 overflow-clip lg:overflow-auto select-none -z-20"
 		:class="{
 			'max-h-16': showHamburger && !hamburgerOpen,
 			'max-h-[32rem]': showHamburger && hamburgerOpen,
@@ -9,7 +9,7 @@
 	>
 		<div class="flex justify-between">
 			<img
-				src="../../img/event-logo.png"
+				src="@/img/event-logo.png"
 				width="128"
 				height="146"
 				class="w-auto h-12 lg:w-12 lg:h-auto"
@@ -101,15 +101,7 @@
 					:show-text="showHamburger"
 					:tooltip-position
 				/>
-				<AppNavItem
-					to="auth.logout.post"
-					method="post"
-					label="Sign Out"
-					color="text-red-500 hover:!text-red-300"
-					:icon="faArrowRightFromBracket"
-					:show-text="showHamburger"
-					:tooltip-position
-				/>
+				<AppNavLogoutItem :show-hamburger :tooltip-position />
 			</ul>
 		</div>
 	</nav>
@@ -117,6 +109,8 @@
 
 <script setup lang="ts">
 import { ref, toRef, useId } from 'vue';
+import { useBreakpoints } from '../lib/media-query';
+
 import {
 	faHouseCircleCheck,
 	faBookOpen,
@@ -126,12 +120,11 @@ import {
 	faFileLines,
 	faScrewdriverWrench,
 	faInfoCircle,
-	faArrowRightFromBracket,
 	faBars,
 	faClose,
 } from '@fortawesome/free-solid-svg-icons';
-import { useBreakpoints } from '../lib/media-query';
 import AppNavItem from './AppNavItem.vue';
+import AppNavLogoutItem from './AppNavLogoutItem.vue';
 
 const { isNotSm, isNotLg } = useBreakpoints();
 

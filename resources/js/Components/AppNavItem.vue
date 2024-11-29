@@ -12,7 +12,7 @@
 			class="flex w-full h-full p-2 gap-2 rounded-lg transition-colors items-center"
 			:class="{
 				'justify-center': !showText,
-				[`${color} bg-transparent hover:bg-emphasis`]: !isActive,
+				[`${color} hover:bg-emphasis`]: !isActive,
 				[`${activeColor} bg-primary hover:bg-primary-emphasis`]:
 					isActive,
 			}"
@@ -23,6 +23,7 @@
 				tooltip && !showText ? label : undefined
 			"
 			@click="isButton && to && navigate()"
+			v-bind="$attrs"
 		>
 			<slot>
 				<slot name="icon">
@@ -40,14 +41,16 @@
 <script setup lang="ts">
 import { computed, toRef } from 'vue';
 import { router } from '@inertiajs/vue3';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import type { Method } from '@inertiajs/core';
 import type { IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import type { RouteName } from 'vendor/tightenco/ziggy/src/js';
 import { useRoute } from '../lib/route';
+
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import Link from './Link.vue';
 import LegacyLink from './LegacyLink.vue';
 
+defineOptions({ inheritAttrs: false });
 const {
 	to,
 	method = 'get',

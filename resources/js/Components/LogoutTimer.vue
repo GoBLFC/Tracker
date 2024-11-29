@@ -1,23 +1,13 @@
 <template>
-	<Link
-		to="auth.logout.post"
-		method="post"
-		as="button"
-		type="button"
-		class="btn btn-danger btn-sm"
-	>
-		Logout
-		<template v-if="logoutAt">({{ countdown }})</template>
-	</Link>
+	<slot :logout-at :logout-time :time-left :countdown />
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, computed, watch, toRef } from 'vue';
+import { onMounted, onUnmounted, computed, watch, toRef, ref } from 'vue';
 import { router } from '@inertiajs/vue3';
 import { useRoute } from '../lib/route';
 import { useSettings } from '../lib/settings';
 import { clockDuration, useNow } from '../lib/time';
-import Link from './Link.vue';
 
 defineExpose({ logout });
 const { auto, resetOnNavigate = true } = defineProps<{
@@ -33,15 +23,15 @@ const { now, startTicking, stopTicking } = useNow();
 // Auto-logout
 //
 let logoutTimeout: ReturnType<typeof setTimeout> | null = null;
+
 const logoutTime = toRef(() => auto ?? (isKiosk.value ? (isDevMode.value ? 3600 : 60) : 0));
 const logoutAt = computed(() => {
 	if (logoutTime.value <= 0 || logoutTime.value >= Number.POSITIVE_INFINITY) return null;
 	return new Date(Date.now() + logoutTime.value * 1000 + 500);
 });
-const countdown = computed(() => {
-	const timeDiff = logoutAt.value!.getTime() - now.value!;
-	return timeDiff > 1000 ? clockDuration(timeDiff) : 'Goodbye!';
-});
+
+const timeLeft = computed(() => (logoutAt.value ? logoutAt.value.getTime() - now.value! : logoutTime.value));
+const countdown = computed(() => (timeLeft.value > 1000 ? clockDuration(timeLeft.value) : 'Goodbye!'));
 
 // Set up and tear down the auto logout timer/countdown as needed
 onMounted(setupAutoLogout);
@@ -53,7 +43,7 @@ watch(logoutAt, () => {
 
 // Reset the countdown when changing pages
 onUnmounted(
-	router.on('navigate', () => {
+	router.on('navigate', (evt) => {
 		if (!resetOnNavigate) return;
 		tearDownAutoLogout();
 		setupAutoLogout();
@@ -73,7 +63,7 @@ function logout() {
 function setupAutoLogout() {
 	if (!logoutAt.value) return;
 
-	logoutTimeout = setTimeout(logout, logoutTime.value * 1000 + 500);
+	logoutTimeout = setTimeout(logout, logoutTime.value * 1000 + 1000);
 	startTicking();
 
 	console.debug(`Set up auto-logout for ${logoutTime.value}s (${logoutAt.value})`);

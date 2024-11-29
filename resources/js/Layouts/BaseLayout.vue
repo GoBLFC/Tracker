@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="relative -z-50">
 		<slot />
 
 		<Toast />
