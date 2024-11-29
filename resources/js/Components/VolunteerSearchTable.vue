@@ -48,7 +48,14 @@
 			<div class="flex justify-between">
 				<IconField class="sm:w-96">
 					<InputIcon>
-						<FontAwesomeIcon :icon="faMagnifyingGlass" />
+						<FontAwesomeIcon
+							:icon="
+								request.processing.value
+									? faCircleNotch
+									: faMagnifyingGlass
+							"
+							:spin="request.processing.value"
+						/>
 					</InputIcon>
 					<InputText
 						v-model="query"
@@ -69,7 +76,8 @@
 		</template>
 
 		<template #empty>
-			<p v-if="query">No volunteers found.</p>
+			<p v-if="request.processing.value">Searching&hellip;</p>
+			<p v-else-if="debouncedQuery">No volunteers found.</p>
 			<p v-else>
 				Enter a badge number, name, or username above to search for
 				matching volunteers.
@@ -86,7 +94,7 @@ import type User from '../data/User';
 import type { UserId } from '../data/User';
 import type Department from '../data/Department';
 
-import { faUserPlus, faMagnifyingGlass, faUserSlash } from '@fortawesome/free-solid-svg-icons';
+import { faUserPlus, faMagnifyingGlass, faUserSlash, faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import ShiftStatusTag from './ShiftStatusTag.vue';
 import ResponsiveTag from './ResponsiveTag.vue';
@@ -98,12 +106,15 @@ const emit = defineEmits<(e: 'select', userId: UserId) => void>();
 const vDebounce = vueDebounce({ lock: true });
 const request = useRequest();
 const query = ref('');
+const debouncedQuery = ref('');
 const users = ref<User[] | null>(null);
 
 /**
  * Sends a request to search for users that match the input query
  */
 async function searchUsers() {
+	debouncedQuery.value = query.value;
+
 	if (!query.value.trim()) {
 		users.value = null;
 		return;
