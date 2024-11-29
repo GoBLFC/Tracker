@@ -7,12 +7,12 @@
 				:label="`Sign Out${
 					showHamburger && logoutAt ? ` (${countdown})` : ''
 				}`"
+				class="bg-surface-50 dark:bg-surface-900 border-surface-200 dark:border-surface-700"
 				:class="{
-					'border border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-900 border-progress':
-						!showHamburger,
+					'border border-progress': logoutAt && !showHamburger,
 				}"
 				:style="
-					!showHamburger
+					!showHamburger && logoutAt
 						? `
 								--progress: ${timeLeft / (logoutTime * 10)}%;
 								--progress-radius: 8px;
