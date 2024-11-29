@@ -120,10 +120,12 @@ async function searchUsers() {
 		return;
 	}
 
+	const searchingFor = query.value;
 	const { users: resultUsers } = await request.get<{ users: User[] }>('users.search', {
 		q: query.value,
 	});
-	if (resultUsers) users.value = resultUsers;
+
+	if (resultUsers && searchingFor === query.value) users.value = resultUsers;
 }
 
 /**
