@@ -30,13 +30,9 @@
 		<div v-if="event" class="flex flex-col h-full gap-4">
 			<div class="flex flex-col xl:flex-row xl:flex-wrap gap-4">
 				<!-- Recent activity -->
-				<Panel
+				<FullContentHeightPanel
 					header="Recent Activity"
 					class="flex-auto min-w-[30%]"
-					:pt="{
-						contentContainer: { class: 'h-full' },
-						content: { class: 'h-full' },
-					}"
 				>
 					<TimeActivitiesTable
 						class="w-full"
@@ -48,16 +44,12 @@
 							<p>There is no recent time activity.</p>
 						</template>
 					</TimeActivitiesTable>
-				</Panel>
+				</FullContentHeightPanel>
 
 				<!-- Ongoing shifts -->
-				<Panel
+				<FullContentHeightPanel
 					header="Ongoing Shifts"
 					class="flex-auto min-w-[30%]"
-					:pt="{
-						contentContainer: { class: 'h-full' },
-						content: { class: 'h-full' },
-					}"
 				>
 					<TimeEntriesTable
 						class="w-full"
@@ -69,24 +61,20 @@
 							<p>There aren't any ongoing shifts.</p>
 						</template>
 					</TimeEntriesTable>
-				</Panel>
+				</FullContentHeightPanel>
 			</div>
 
 			<div class="flex flex-col xl:flex-row xl:flex-wrap gap-4">
 				<!-- Volunteer search -->
-				<Panel
+				<FullContentHeightPanel
 					header="Volunteer Search"
 					class="grow basis-1/3 min-w-[30%]"
-					:pt="{
-						contentContainer: { class: 'h-full' },
-						content: { class: 'h-full' },
-					}"
 				>
 					<VolunteerSearchTable
 						class="w-full"
 						@select="loadVolunteer"
 					/>
-				</Panel>
+				</FullContentHeightPanel>
 
 				<!-- Volunteer details -->
 				<VolunteerManagePanel
@@ -166,10 +154,11 @@ import type { UserId } from '../data/User';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import EventSelector from '../Components/EventSelector.vue';
-import VolunteerSearchTable from '../Components/VolunteerSearchTable.vue';
-import VolunteerManagePanel from '../Components/VolunteerManagePanel.vue';
+import FullContentHeightPanel from '../Components/FullContentHeightPanel.vue';
 import TimeActivitiesTable from '../Components/TimeActivitiesTable.vue';
 import TimeEntriesTable from '../Components/TimeEntriesTable.vue';
+import VolunteerSearchTable from '../Components/VolunteerSearchTable.vue';
+import VolunteerManagePanel from '../Components/VolunteerManagePanel.vue';
 import UserCreateCard from '../Components/UserCreateCard.vue';
 import KioskToggleSwitch from '../Components/KioskToggleSwitch.vue';
 

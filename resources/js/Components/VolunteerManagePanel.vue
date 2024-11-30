@@ -3,8 +3,7 @@
 		v-if="volunteer"
 		ref="panel"
 		:pt="{
-			contentContainer: { class: 'h-full' },
-			content: { class: 'h-full' },
+			header: { class: 'items-start' },
 		}"
 	>
 		<template #header>
