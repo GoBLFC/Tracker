@@ -20,7 +20,7 @@ class UserController extends Controller {
 		$user = User::createWithAvailableDetails($request->integer('badge_id'), 'Volunteer');
 		return $request->expectsJson() && !$request->inertia()
 			? response()->json(['user' => $user])
-			: redirect()->back()->withSuccess("User (#{$user->badge_id}) created.");
+			: redirect()->back()->withSuccess("User {$user->audit_name} created.");
 	}
 
 	/**
