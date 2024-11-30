@@ -101,9 +101,18 @@
 					:show-text="showHamburger"
 					:tooltip-position
 				/>
+				<AppNavItem
+					label="Preferences"
+					:icon="faCog"
+					:show-text="showHamburger"
+					:tooltip-position
+					@click="showSettingsModal = true"
+				/>
 				<AppNavLogoutItem :show-hamburger :tooltip-position />
 			</ul>
 		</div>
+
+		<LocalSettingsModal v-model:visible="showSettingsModal" />
 	</nav>
 </template>
 
@@ -122,12 +131,15 @@ import {
 	faInfoCircle,
 	faBars,
 	faClose,
+	faCog,
 } from '@fortawesome/free-solid-svg-icons';
 import AppNavItem from './AppNavItem.vue';
 import AppNavLogoutItem from './AppNavLogoutItem.vue';
+import LocalSettingsModal from './LocalSettingsModal.vue';
 
 const { isNotSm, isNotLg } = useBreakpoints();
 
+const showSettingsModal = ref(false);
 const showHamburger = toRef(() => isNotSm.value);
 const hamburgerOpen = ref(false);
 const menuId = useId();

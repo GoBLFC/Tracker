@@ -25,11 +25,11 @@
 <script setup lang="ts">
 import { computed, useId } from 'vue';
 import humanizeDuration from 'humanize-duration';
-import { useSettings } from '../lib/settings';
+import { useAppSettings } from '../lib/settings';
 
 import KioskToggleSwitch from './KioskToggleSwitch.vue';
 
-const { kioskLifetime } = useSettings();
+const { kioskLifetime } = useAppSettings();
 
 const kioskSettingId = useId();
 const kioskLifetimeText = computed(() => humanizeDuration(kioskLifetime.value * 1000 * 60));

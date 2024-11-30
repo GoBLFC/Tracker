@@ -80,7 +80,7 @@
 import { ref, useId, useTemplateRef, watch } from 'vue';
 import { router } from '@inertiajs/vue3';
 import type { RequestPayload, Errors } from '@inertiajs/core';
-import { useSettings } from '../lib/settings';
+import { useAppSettings } from '../lib/settings';
 import { useUser } from '../lib/user';
 import type TrackerEvent from '../data/Event';
 import type { EventId } from '../data/Event';
@@ -110,7 +110,7 @@ const emit = defineEmits<{
 	(e: 'error', errors: Errors): void;
 }>();
 
-const { activeEvent } = useSettings();
+const { activeEvent } = useAppSettings();
 const { isAdmin } = useUser();
 
 const selectedEvent = ref(event);

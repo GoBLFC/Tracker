@@ -10,7 +10,7 @@
 import { ref, watch } from 'vue';
 import { router } from '@inertiajs/vue3';
 import type { Errors } from '@inertiajs/core';
-import { useSettings } from '../lib/settings';
+import { useAppSettings } from '../lib/settings';
 import { useToast } from '../lib/toast';
 import { useRoute } from '../lib/route';
 
@@ -24,7 +24,7 @@ const emit = defineEmits<{
 }>();
 
 const route = useRoute();
-const { isKiosk } = useSettings();
+const { isKiosk } = useAppSettings();
 const toast = useToast();
 
 const checked = ref(isKiosk.value);

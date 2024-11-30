@@ -54,8 +54,8 @@
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faCode, faUser, faIdCard, faLock, faLockOpen, faCalendarDay } from '@fortawesome/free-solid-svg-icons';
 import { useUser } from '../lib/user';
-import { useSettings } from '../lib/settings';
+import { useAppSettings } from '../lib/settings';
 
 const { isLoggedIn, badgeId, id: uuid, roleName } = useUser();
-const { activeEvent, isKiosk } = useSettings();
+const { activeEvent, isKiosk } = useAppSettings();
 </script>

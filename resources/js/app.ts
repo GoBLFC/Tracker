@@ -9,6 +9,7 @@ import ToastService from 'primevue/toastservice';
 import ConfirmationService from 'primevue/confirmationservice';
 import Tooltip from 'primevue/tooltip';
 import type { route as routeFn } from 'vendor/tightenco/ziggy/src/js';
+import { appNameInjectKey } from './lib/settings';
 import { injectKey as routeInjectKey } from './lib/route';
 import Theme from './theme';
 
@@ -34,6 +35,7 @@ createInertiaApp({
 				theme: {
 					preset: Theme,
 					options: {
+						darkModeSelector: '.dark',
 						cssLayer: {
 							name: 'primevue',
 							order: 'tailwind-base, app-base, primevue, app, tailwind-utilities',
@@ -44,6 +46,7 @@ createInertiaApp({
 			.use(ToastService)
 			.use(ConfirmationService)
 			.directive('tooltip', Tooltip)
+			.provide(appNameInjectKey, appName)
 			.provide(routeInjectKey, route);
 
 		app.config.globalProperties.$appName = appName;

@@ -112,7 +112,7 @@
 import { ref, watch, useTemplateRef, nextTick, onMounted, onUnmounted, toRef } from 'vue';
 import { router, Head } from '@inertiajs/vue3';
 import { useUser } from '../lib/user';
-import { useSettings } from '../lib/settings';
+import { useAppSettings } from '../lib/settings';
 import { useNow } from '../lib/time';
 import { useRequest } from '../lib/request';
 import { useRoute } from '../lib/route';
@@ -147,7 +147,7 @@ const { event } = defineProps<{
 }>();
 
 const route = useRoute();
-const { activeEvent } = useSettings();
+const { activeEvent } = useAppSettings();
 const { isAdmin } = useUser();
 const { now } = useNow();
 

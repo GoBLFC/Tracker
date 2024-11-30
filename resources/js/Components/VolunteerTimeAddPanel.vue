@@ -36,7 +36,7 @@
 					v-model="department"
 					:options="departments"
 					fluid
-					:input-id="deptId"
+					:label-id="deptId"
 				>
 					<template
 						#value="{
@@ -84,7 +84,7 @@
 
 		<InputGroup class="w-full mt-4">
 			<FloatLabel variant="on">
-				<InputText v-model="notes" :input-id="notesId" />
+				<InputText v-model="notes" :id="notesId" />
 				<label :for="notesId">Notes</label>
 			</FloatLabel>
 

@@ -13,7 +13,7 @@
 					<InputText
 						v-model="form.badge_id"
 						name="badge_id"
-						:input-id="badgeNumberId"
+						:id="badgeNumberId"
 						:invalid="Boolean(form.errors.badge_id)"
 						inputmode="numeric"
 						required

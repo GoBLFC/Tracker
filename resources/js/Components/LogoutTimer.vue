@@ -6,7 +6,7 @@
 import { onMounted, onUnmounted, computed, watch, toRef, ref } from 'vue';
 import { router } from '@inertiajs/vue3';
 import { useRoute } from '../lib/route';
-import { useSettings } from '../lib/settings';
+import { useAppSettings } from '../lib/settings';
 import { clockDuration, useNow } from '../lib/time';
 
 defineExpose({ logout });
@@ -16,7 +16,7 @@ const { auto, resetOnNavigate = true } = defineProps<{
 }>();
 
 const route = useRoute();
-const { isKiosk, isDevMode } = useSettings();
+const { isKiosk, isDevMode } = useAppSettings();
 const { now, startTicking, stopTicking } = useNow();
 
 //

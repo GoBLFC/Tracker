@@ -17,7 +17,7 @@ import { computed } from 'vue';
 import { DateTime } from 'luxon';
 import { useTime } from '../lib/time';
 
-const { dateToTrackerTime, isoToTrackerTime } = useTime();
+const { dateToPreferredTime, isoToPreferredTime } = useTime();
 
 const { date, short = true } = defineProps<{
 	date: Date | string;
@@ -25,7 +25,7 @@ const { date, short = true } = defineProps<{
 }>();
 
 const tzDate = computed(() => {
-	if (typeof date === 'string') return isoToTrackerTime(date);
-	return dateToTrackerTime(date);
+	if (typeof date === 'string') return isoToPreferredTime(date);
+	return dateToPreferredTime(date);
 });
 </script>

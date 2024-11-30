@@ -13,9 +13,9 @@
 </template>
 
 <script setup lang="ts">
-import { useSettings } from '../lib/settings';
+import { useAppSettings } from '../lib/settings';
 import AppNav from '../Components/AppNav.vue';
 import DevBadges from '../Components/DevBadges.vue';
 
-const { isDevMode } = useSettings();
+const { isDevMode } = useAppSettings();
 </script>
