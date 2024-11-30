@@ -95,34 +95,10 @@
 				<VolunteerCreatePanel class="flex-1 min-w-[30%]" />
 
 				<!-- Quick settings -->
-				<Panel header="Quick Settings" class="flex-1 min-w-[30%]">
-					<dl>
-						<div class="flex items-center gap-4">
-							<dt>
-								<KioskToggleSwitch
-									:aria-labelledby="kioskSettingId"
-								/>
-							</dt>
-							<dd>
-								<p
-									class="text-lg font-semibold"
-									:id="kioskSettingId"
-								>
-									Kiosk authorization
-								</p>
-								<p>
-									Authorizing this device as a kiosk will
-									allow non-staff volunteers to check in or
-									out on this device. This is required when
-									setting up dedicated devices pre-con for
-									checking in or out. Kiosks remain authorized
-									for
-									{{ kioskLifetimeText }}.
-								</p>
-							</dd>
-						</div>
-					</dl>
-				</Panel>
+				<QuickSettingsPanel
+					:kiosk-lifetime
+					class="flex-1 min-w-[30%]"
+				/>
 			</div>
 		</div>
 
@@ -136,9 +112,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, useId, useTemplateRef, nextTick, onMounted, onUnmounted, toRef } from 'vue';
+import { ref, watch, useTemplateRef, nextTick, onMounted, onUnmounted, toRef } from 'vue';
 import { router, Head } from '@inertiajs/vue3';
-import humanizeDuration from 'humanize-duration';
 import { useUser } from '../lib/user';
 import { useSettings } from '../lib/settings';
 import { useNow } from '../lib/time';
@@ -163,7 +138,7 @@ import TimeEntriesTable from '../Components/TimeEntriesTable.vue';
 import VolunteerSearchTable from '../Components/VolunteerSearchTable.vue';
 import VolunteerManagePanel from '../Components/VolunteerManagePanel.vue';
 import VolunteerCreatePanel from '../Components/VolunteerCreatePanel.vue';
-import KioskToggleSwitch from '../Components/KioskToggleSwitch.vue';
+import QuickSettingsPanel from '../Components/QuickSettingsPanel.vue';
 
 const { event, kioskLifetime } = defineProps<{
 	event: Event | null;
@@ -182,8 +157,6 @@ const { now } = useNow();
 
 const isActiveEventSelected = toRef(() => event && event.id !== activeEvent.value?.id);
 const isReadOnly = toRef(() => !isAdmin && isActiveEventSelected.value);
-const kioskSettingId = useId();
-const kioskLifetimeText = computed(() => humanizeDuration(kioskLifetime * 1000 * 60));
 
 /**
  * Resolves an event ID to a navigable URL and additional properties to pass to the router
