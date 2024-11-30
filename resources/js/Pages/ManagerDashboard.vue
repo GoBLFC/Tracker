@@ -91,6 +91,9 @@
 			</div>
 
 			<div class="flex flex-col xl:flex-row xl:flex-wrap gap-4">
+				<!-- Create volunteer -->
+				<VolunteerCreatePanel class="flex-1 min-w-[30%]" />
+
 				<!-- Quick settings -->
 				<Panel header="Quick Settings" class="flex-1 min-w-[30%]">
 					<dl>
@@ -159,7 +162,7 @@ import TimeActivitiesTable from '../Components/TimeActivitiesTable.vue';
 import TimeEntriesTable from '../Components/TimeEntriesTable.vue';
 import VolunteerSearchTable from '../Components/VolunteerSearchTable.vue';
 import VolunteerManagePanel from '../Components/VolunteerManagePanel.vue';
-import UserCreateCard from '../Components/UserCreateCard.vue';
+import VolunteerCreatePanel from '../Components/VolunteerCreatePanel.vue';
 import KioskToggleSwitch from '../Components/KioskToggleSwitch.vue';
 
 const { event, kioskLifetime } = defineProps<{

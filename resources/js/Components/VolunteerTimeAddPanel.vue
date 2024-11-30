@@ -9,7 +9,7 @@
 					hour-format="12"
 					show-icon
 					icon-display="input"
-					class="w-full"
+					fluid
 					:input-id="startId"
 				/>
 
@@ -24,7 +24,7 @@
 					hour-format="12"
 					show-icon
 					icon-display="input"
-					class="w-full"
+					fluid
 					:input-id="stopId"
 				/>
 
@@ -35,7 +35,7 @@
 				<Select
 					v-model="department"
 					:options="departments"
-					class="w-full"
+					fluid
 					:input-id="deptId"
 				>
 					<template

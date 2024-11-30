@@ -45,34 +45,25 @@
 		</Column>
 
 		<template #header>
-			<div class="flex justify-between">
-				<IconField class="sm:w-96">
-					<InputIcon>
-						<FontAwesomeIcon
-							:icon="
-								request.processing.value
-									? faCircleNotch
-									: faMagnifyingGlass
-							"
-							:spin="request.processing.value"
-						/>
-					</InputIcon>
-					<InputText
-						v-model="query"
-						class="w-full"
-						placeholder="Search volunteers"
-						aria-label="Search volunteers"
-						v-debounce:400ms="searchUsers"
+			<IconField class="sm:w-96">
+				<InputIcon>
+					<FontAwesomeIcon
+						:icon="
+							request.processing.value
+								? faCircleNotch
+								: faMagnifyingGlass
+						"
+						:spin="request.processing.value"
 					/>
-				</IconField>
-
-				<Button severity="secondary" text v-tooltip.top="'Create User'">
-					<template #icon>
-						<FontAwesomeIcon :icon="faUserPlus" />
-						<span class="sr-only">Create User</span>
-					</template>
-				</Button>
-			</div>
+				</InputIcon>
+				<InputText
+					v-model="query"
+					fluid
+					placeholder="Search volunteers"
+					aria-label="Search volunteers"
+					v-debounce:400ms="searchUsers"
+				/>
+			</IconField>
 		</template>
 
 		<template #empty>

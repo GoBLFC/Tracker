@@ -13,7 +13,6 @@
 </template>
 
 <script setup lang="ts">
-import { useUser } from '../lib/user';
 import { useSettings } from '../lib/settings';
 import AppNav from '../Components/AppNav.vue';
 import DevBadges from '../Components/DevBadges.vue';
