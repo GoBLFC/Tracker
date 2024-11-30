@@ -1,10 +1,10 @@
 <template>
 	<Panel header="Create Volunteer">
-		<p class="mb-4">
+		<p class="mb-6">
 			If there is a volunteer that hasn't logged in to the system yet, but
 			you need to manage data for them, you may add them here using just
 			their badge number. Their name and other details will be
-			automatically imported if available.
+			automatically imported when available.
 		</p>
 
 		<form @submit.prevent="createUser" @input="form.clearErrors()">
