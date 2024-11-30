@@ -95,10 +95,7 @@
 				<VolunteerCreatePanel class="flex-1 min-w-[30%]" />
 
 				<!-- Quick settings -->
-				<QuickSettingsPanel
-					:kiosk-lifetime
-					class="flex-1 min-w-[30%]"
-				/>
+				<QuickSettingsPanel class="flex-1 min-w-[30%]" />
 			</div>
 		</div>
 
@@ -140,12 +137,11 @@ import VolunteerManagePanel from '../Components/VolunteerManagePanel.vue';
 import VolunteerCreatePanel from '../Components/VolunteerCreatePanel.vue';
 import QuickSettingsPanel from '../Components/QuickSettingsPanel.vue';
 
-const { event, kioskLifetime } = defineProps<{
+const { event } = defineProps<{
 	event: Event | null;
 	events: Event[];
 	departments: Department[];
 	rewards: Reward[];
-	kioskLifetime: number;
 	recentTimeActivities: TimeEntryActivity[];
 	longestOngoingEntries: TimeEntry[];
 }>();

@@ -12,10 +12,10 @@ export default interface SharedProps extends PageProps {
 	};
 	activeEvent: Event | null;
 	timezone: string;
+	kioskLifetime: number;
 	isGatekeeper: boolean;
 	isDevMode: boolean;
 	isKiosk: boolean;
 	isDebug: boolean;
-	hasDebugbar: boolean;
 	flash: Flashes;
 }

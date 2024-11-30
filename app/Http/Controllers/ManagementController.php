@@ -56,7 +56,6 @@ class ManagementController extends Controller {
 			'events' => fn () => Event::orderBy('name')->get(),
 			'rewards' => fn () => Reward::forEvent($event)->orderBy('hours')->get(),
 			'departments' => fn () => Department::orderBy('hidden')->orderBy('name')->get(),
-			'kioskLifetime' => fn () => config('tracker.kiosk_lifetime'),
 			'longestOngoingEntries' => TimeEntry::with(['user', 'department'])
 				->forEvent($event)
 				->ongoing()

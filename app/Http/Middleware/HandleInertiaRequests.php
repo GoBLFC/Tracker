@@ -38,11 +38,11 @@ class HandleInertiaRequests extends Middleware {
 			'auth.user' => fn () => $request->user()?->only('id', 'badge_id', 'badge_name', 'username', 'role'),
 			'activeEvent' => fn () => Setting::activeEvent()?->only('id', 'name'),
 			'timezone' => config('tracker.timezone'),
+			'kioskLifetime' => config('tracker.kiosk_lifetime'),
 			'isGatekeeper' => fn () => $request->user()?->isGatekeeper() ?? false,
 			'isDevMode' => fn () => Setting::isDevMode(),
 			'isKiosk' => fn () => Kiosk::isSessionAuthorized(true),
 			'isDebug' => config('app.debug'),
-			'hasDebugbar' => config('debugbar.enabled') ?? config('app.debug'),
 			'flash' => [
 				'success' => fn () => $request->session()->get('success'),
 				'error' => fn () => $request->session()->get('error'),
