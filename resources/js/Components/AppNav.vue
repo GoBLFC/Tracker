@@ -3,7 +3,7 @@
 		class="shrink-0 flex flex-col sm:max-lg:flex-row mx-4 my-4 px-3 py-2 lg:px-2 rounded-lg gap-4 sm:gap-6 lg:gap-8 bg-surface-50 dark:bg-surface-900 overflow-clip lg:overflow-auto select-none -z-20"
 		:class="{
 			'max-h-16': showHamburger && !hamburgerOpen,
-			'max-h-[32rem]': showHamburger && hamburgerOpen,
+			'max-h-[34rem]': showHamburger && hamburgerOpen,
 		}"
 		style="transition: max-height ease-in-out 400ms"
 	>
