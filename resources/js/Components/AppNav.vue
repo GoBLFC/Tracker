@@ -41,7 +41,6 @@
 					to="tracker.index"
 					label="Home"
 					:icon="faHouseCircleCheck"
-					:legacy="true"
 					:show-text="showHamburger"
 					:tooltip-position
 				/>

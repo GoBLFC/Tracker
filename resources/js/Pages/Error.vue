@@ -23,7 +23,7 @@
 				</template>
 			</Button>
 
-			<Button :as="LegacyLink" to="tracker.index" severity="secondary">
+			<Button :as="Link" to="tracker.index" severity="secondary">
 				<FontAwesomeIcon :icon="faHouse" />
 				Home
 			</Button>
@@ -36,7 +36,7 @@ import { computed } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faHouse, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import LegacyLink from '../Components/LegacyLink.vue';
+import Link from '../Components/Link.vue';
 
 const { status } = defineProps<{ status: number }>();
 

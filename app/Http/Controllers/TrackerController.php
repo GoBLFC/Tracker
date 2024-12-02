@@ -15,12 +15,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class TrackerController extends Controller {
 	/**
 	 * Render the tracker index
 	 */
-	public function getIndex(): View|RedirectResponse {
+	public function getIndex(): Response|RedirectResponse {
 		/** @var User */
 		$user = Auth::user();
 
@@ -28,10 +30,12 @@ class TrackerController extends Controller {
 		if ($user->unreadNotifications()->exists()) return redirect()->route('notifications.index');
 
 		$stats = $user->getTimeStats();
-		return view('tracker.index', [
+		return Inertia::render('VolunteerHome', [
 			'stats' => $stats,
 			'ongoing' => $stats['entries']->first(fn (TimeEntry $entry) => $entry->isOngoing()),
 			'departments' => $user->isAdmin() ? Department::all() : Department::whereHidden(false)->get(),
+			'telegramSetupUrl' => $user->getTelegramSetupUrl(),
+			'hasTelegram' => !empty($user->tg_chat_id),
 		]);
 	}
 

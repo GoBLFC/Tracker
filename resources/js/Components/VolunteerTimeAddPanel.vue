@@ -31,55 +31,7 @@
 				<label :for="startId">Out time</label>
 			</FloatLabel>
 
-			<FloatLabel variant="on" class="grow w-64">
-				<Select
-					v-model="department"
-					:options="departments"
-					fluid
-					:label-id="deptId"
-				>
-					<template
-						#value="{
-							value: dept,
-						}: {
-							value: Department | null | undefined,
-						}"
-					>
-						<span
-							v-if="dept"
-							class="flex grow gap-2 justify-between items-center"
-						>
-							<span class="truncate">{{ dept.name }}</span>
-							<Tag
-								v-if="dept.hidden"
-								value="Hidden"
-								severity="secondary"
-								class="text-xs"
-							/>
-						</span>
-
-						<span v-else>&nbsp;</span>
-					</template>
-
-					<template
-						#option="{ option: dept }: { option: Department }"
-					>
-						<div
-							class="flex grow gap-6 justify-between items-center"
-						>
-							<span class="truncate">{{ dept.name }}</span>
-							<Tag
-								v-if="dept.hidden"
-								value="Hidden"
-								severity="secondary"
-								class="text-xs"
-							/>
-						</div>
-					</template>
-				</Select>
-
-				<label :for="deptId">Department</label>
-			</FloatLabel>
+			<DepartmentSelector v-model="department" :departments />
 		</div>
 
 		<InputGroup class="w-full mt-4">
@@ -126,6 +78,7 @@ import type TimeEntry from '../data/TimeEntry';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faCircleNotch, faArrowRightToBracket, faCalendarPlus } from '@fortawesome/free-solid-svg-icons';
+import DepartmentSelector from './DepartmentSelector.vue';
 
 const { event, departments } = defineProps<{
 	event: Event;
@@ -144,7 +97,6 @@ const notes = ref('');
 
 const startId = useId();
 const stopId = useId();
-const deptId = useId();
 const notesId = useId();
 
 /**
