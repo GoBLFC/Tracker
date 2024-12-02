@@ -40,7 +40,7 @@
 
 <script setup lang="ts">
 import { computed, toRef } from 'vue';
-import { router } from '@inertiajs/vue3';
+import { router, usePage } from '@inertiajs/vue3';
 import type { Method } from '@inertiajs/core';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import type { RouteName } from 'vendor/tightenco/ziggy/src/js';
@@ -78,8 +78,9 @@ const {
 }>();
 
 const route = useRoute();
+const page = usePage();
 
-const isActive = computed(() => active || Boolean(to && route().current()?.startsWith(to)));
+const isActive = computed(() => active || Boolean(page.url && to && route().current()?.startsWith(to)));
 const isButton = toRef(() => !to || method !== 'get');
 
 /**
