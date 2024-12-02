@@ -42,7 +42,7 @@
 import { computed, toRef } from 'vue';
 import { router } from '@inertiajs/vue3';
 import type { Method } from '@inertiajs/core';
-import type { IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import type { RouteName } from 'vendor/tightenco/ziggy/src/js';
 import { useRoute } from '../lib/route';
 

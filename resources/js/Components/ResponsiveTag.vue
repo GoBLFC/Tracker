@@ -16,8 +16,7 @@
 
 <script setup lang="ts">
 import { toRef } from 'vue';
-import type { IconDefinition as RegularIconDefinition } from '@fortawesome/free-regular-svg-icons';
-import type { IconDefinition as SolidIconDefinition } from '@fortawesome/free-solid-svg-icons';
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { BREAKPOINTS, useBreakpoints, type Breakpoint } from '../lib/media-query';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -29,7 +28,7 @@ const {
 } = defineProps<{
 	label: string;
 	tooltip?: string;
-	icon: RegularIconDefinition | SolidIconDefinition;
+	icon: IconDefinition;
 	breakpoint?: Breakpoint;
 }>();
 
