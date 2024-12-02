@@ -22,22 +22,15 @@
 					<label :for="badgeNumberId">Badge number</label>
 				</FloatLabel>
 
-				<Button
+				<ResponsiveButton
+					label="Add Volunteer"
+					:icon="faUserPlus"
 					type="submit"
 					severity="success"
-					label="Add Volunteer"
 					class="shrink-0"
 					:loading="form.processing"
-					:disabled="form.processing"
-				>
-					<template #icon>
-						<FontAwesomeIcon :icon="faUserPlus" />
-					</template>
-
-					<template #loadingicon>
-						<FontAwesomeIcon :icon="faCircleNotch" spin />
-					</template>
-				</Button>
+					:disabled="form.processing || !form.badge_id"
+				/>
 			</InputGroup>
 
 			<Message
@@ -57,8 +50,8 @@ import { useId } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import { useRoute } from '../lib/route';
 
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faUserPlus, faCircleNotch } from '@fortawesome/free-solid-svg-icons';
+import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import ResponsiveButton from './ResponsiveButton.vue';
 
 const route = useRoute();
 const form = useForm({ badge_id: '' });

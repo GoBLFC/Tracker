@@ -1,6 +1,10 @@
 <template>
-	<Button>
-		<FontAwesomeIcon :icon :class="iconClass" />
+	<Button :disabled="loading">
+		<FontAwesomeIcon
+			:icon="loading ? faCircleNotch : icon"
+			:class="iconClass"
+			:spin="loading"
+		/>
 
 		<span
 			v-if="$slots.default"
@@ -17,6 +21,7 @@
 <script setup lang="ts">
 import type { Breakpoint } from '../lib/media-query';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 

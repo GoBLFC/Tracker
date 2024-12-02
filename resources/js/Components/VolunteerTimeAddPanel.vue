@@ -40,28 +40,15 @@
 				<label :for="notesId">Notes</label>
 			</FloatLabel>
 
-			<Button
+			<ResponsiveButton
 				severity="success"
 				class="shrink-0"
 				:label="!start || stop ? 'Add Shift' : 'Check In'"
+				:icon="!start || stop ? faCalendarPlus : faArrowRightToBracket"
 				:loading="request.processing.value"
 				:disabled="!start || !department || request.processing.value"
 				@click="store"
-			>
-				<template #icon>
-					<FontAwesomeIcon
-						:icon="
-							!start || stop
-								? faCalendarPlus
-								: faArrowRightToBracket
-						"
-					/>
-				</template>
-
-				<template #loadingicon>
-					<FontAwesomeIcon :icon="faCircleNotch" spin />
-				</template>
-			</Button>
+			/>
 		</InputGroup>
 	</Panel>
 </template>
@@ -76,9 +63,9 @@ import type Event from '../data/Event';
 import type Department from '../data/Department';
 import type TimeEntry from '../data/TimeEntry';
 
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faCircleNotch, faArrowRightToBracket, faCalendarPlus } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRightToBracket, faCalendarPlus } from '@fortawesome/free-solid-svg-icons';
 import DepartmentSelector from './DepartmentSelector.vue';
+import ResponsiveButton from './ResponsiveButton.vue';
 
 const { event, departments } = defineProps<{
 	event: Event;
