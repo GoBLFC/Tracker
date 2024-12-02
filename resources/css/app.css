@@ -19,6 +19,7 @@
 		@apply relative -z-50;
 	}
 
+	/* Links */
 	a {
 		@apply text-primary transition-colors;
 	}
@@ -30,18 +31,7 @@
 }
 
 @layer app {
-	/* Workarounds for scrollable DataTable overflowing with paginator/header */
-	.p-datatable-flex-scrollable:has(.p-datatable-paginator-bottom) > .p-datatable-table-container {
-		max-height: calc(100% - 6.5rem);
-	}
-	.p-datatable-flex-scrollable:has(.p-datatable-header) > .p-datatable-table-container {
-		max-height: calc(100% - 6.5rem);
-	}
-	.p-datatable-flex-scrollable:has(.p-datatable-paginator-bottom):has(.p-datatable-header)
-		> .p-datatable-table-container {
-		max-height: calc(100% - 10.5rem);
-	}
-
+	/* Border progress bar */
 	@property --progress {
 		syntax: "<percentage>";
 		initial-value: 0%;
@@ -84,5 +74,19 @@
 			transparent var(--progress)
 		);
 		transition: --progress 1s linear;
+	}
+
+	/* Hacky workarounds for scrollable DataTable overflowing with paginator/header */
+	.p-datatable-flex-scrollable:has(.p-datatable-paginator-bottom) > .p-datatable-table-container {
+		max-height: calc(100% - 6.5rem);
+	}
+
+	.p-datatable-flex-scrollable:has(.p-datatable-header) > .p-datatable-table-container {
+		max-height: calc(100% - 6.5rem);
+	}
+
+	.p-datatable-flex-scrollable:has(.p-datatable-paginator-bottom):has(.p-datatable-header)
+		> .p-datatable-table-container {
+		max-height: calc(100% - 10.5rem);
 	}
 }
