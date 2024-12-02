@@ -1,6 +1,6 @@
 import { toRef } from 'vue';
 import { usePage } from '@inertiajs/vue3';
-import type SharedProps from './SharedProps';
+import type SharedProps from '../data/SharedProps';
 
 /**
  * Provides information about the authenticated user from the Inertia page properties

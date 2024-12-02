@@ -1,7 +1,7 @@
 import type { PageProps } from '@inertiajs/core';
-import type User from '../data/User';
-import type Event from '../data/Event';
-import type { Flashes } from './toast';
+import type User from './User';
+import type Event from './Event';
+import type { Flashes } from '../lib/toast';
 
 /**
  * Inertia shared data properties

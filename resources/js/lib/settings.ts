@@ -1,7 +1,7 @@
 import { computed, inject, onMounted, onUnmounted, ref, toRef, type InjectionKey } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import mitt from 'mitt';
-import type SharedProps from './SharedProps';
+import type SharedProps from '../data/SharedProps';
 
 /**
  * Provides information about the application's settings/state from the Inertia page properties

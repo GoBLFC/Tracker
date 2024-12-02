@@ -2,7 +2,7 @@ import { onMounted, watch } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import { useToast as usePrimeVueToast } from 'primevue/usetoast';
 import type { ToastMessageOptions } from 'primevue/toast';
-import type SharedProps from './SharedProps';
+import type SharedProps from '../data/SharedProps';
 
 /**
  * Displays toast messages
