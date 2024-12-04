@@ -217,9 +217,9 @@ Reverting the project (or at least the Compose file) to the previous version sho
 Follow this procedure to properly upgrade the database (starting with the server running the old version):
 
 1. Run `./docker/scripts/postgres-dump.sh` to dump the contents of the database to `pgdump.sql` in the project directory
-1. Stop the Postgres container (`docker compose -f docker-compose.prod.yml stop postgres`)
+1. Stop the Postgres container (`docker compose stop postgres`)
 1. Find the correct volume for the Postgres container in `docker volume ls` - it should be something like `projectname_postgres`
 1. Delete the volume of the Postgres container (`docker volume rm postgres_volume_name`)
-1. Start the Postgres container (`docker compose -f docker-compose.prod.yml start postgres`)
+1. Start the Postgres container (`docker compose start postgres`)
 1. Run `./docker/scripts/postgres-restore.sh` to import `pgdump.sql` into the new Postgres version
 1. Verify that the application is running properly and all of the correct data is in place
