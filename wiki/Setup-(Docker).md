@@ -22,14 +22,14 @@ With a single Compose file, you can configure and control all of the necessary c
 1. Adjust all placeholder configuration values in each containers' `env` keys.
    The critical ones that absolutely _must_ be changed are:
     - **App:** Main application services container for Tracker, where all of the actual code runs
-        - `APP_KEY` (see [Generating APP_KEY](#generating_app_key))
+        - `APP_KEY` (see [Generating APP_KEY](#generating-app_key))
         - `APP_URL` (full URL to Tracker without a trailing slash)
         - `DB_PASSWORD` (choose a long random password)
         - `REDIS_PASSWORD` (choose a long random password, different from the DB password)
         - `CONCAT_BASE_URI` (full URL to your ConCat instance without a trailing slash)
-        - `CONCAT_CLIENT_ID` (see [ConCat setup](#concat_setup))
-        - `CONCAT_CLIENT_SECRET` (see [ConCat setup](#concat_setup))
-        - `TELEGRAM_BOT_TOKEN` (see [Telegram setup](#telegram_setup))
+        - `CONCAT_CLIENT_ID` (see [ConCat setup](#concat-setup))
+        - `CONCAT_CLIENT_SECRET` (see [ConCat setup](#concat-setup))
+        - `TELEGRAM_BOT_TOKEN` (see [Telegram setup](#telegram-setup))
     - **Postgres:** All persistent data is stored in the PostgreSQL database running here
         - `POSTGRES_PASSWORD` (must match `DB_PASSWORD` on the Tracker container)
     - **Redis:** Ephemeral data is stored in the Redis cache running here
@@ -191,7 +191,7 @@ The resulting value should look something like `base64:QSiqblPkv+xnBBhP4Y3rvC4gt
 
 ## Updating
 
-A convenient update script is provided at [../.docker/scripts/update.sh](../.docker/scripts/update.sh).
+A convenient update script is provided at [/.docker/scripts/update.sh](/.docker/scripts/update.sh).
 In this order, that script does the following:
 
 1. Pulls the latest container images (`docker compose pull`)
