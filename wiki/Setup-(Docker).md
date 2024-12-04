@@ -67,34 +67,34 @@ services:
         restart: always
         env:
             APP_NAME: BLFC Tracker
-			APP_ENV: production
-			APP_KEY: "base64:<randomly-generated app key>"
-			APP_DEBUG: false
-			APP_URL: https://tracker.test
-			LOG_CHANNEL: stack
-			LOG_STACK: daily
-			LOG_LEVEL: info
-			DB_CONNECTION: pgsql
-			DB_HOST: postgres
-			DB_PORT: 5432
-			DB_DATABASE: tracker
-			DB_USERNAME: tracker
-			DB_PASSWORD: "<some secure password>"
-			SESSION_DRIVER: redis
-			SESSION_LIFETIME: 60
-			SESSION_ENCRYPT: false
-			SESSION_PATH: /
-			SESSION_DOMAIN: null
-			QUEUE_CONNECTION: redis
-			CACHE_STORE: redis
-			REDIS_HOST: redis
-			REDIS_PORT: 6379
-			REDIS_PASSWORD: "<some secure password>"
-			CONCAT_BASE_URI: https://reg.gobltc.com
-			CONCAT_CLIENT_ID: "<ConCat client ID>"
-			CONCAT_CLIENT_SECRET: "<ConCat client secret>"
-			TELEGRAM_BOT_TOKEN: "<Telegram bot token>"
-			TRACKER_TIMEZONE: America/Los_Angeles
+            APP_ENV: production
+            APP_KEY: "base64:<randomly-generated app key>"
+            APP_DEBUG: false
+            APP_URL: https://tracker.test
+            LOG_CHANNEL: stack
+            LOG_STACK: daily
+            LOG_LEVEL: info
+            DB_CONNECTION: pgsql
+            DB_HOST: postgres
+            DB_PORT: 5432
+            DB_DATABASE: tracker
+            DB_USERNAME: tracker
+            DB_PASSWORD: "<some secure password>"
+            SESSION_DRIVER: redis
+            SESSION_LIFETIME: 60
+            SESSION_ENCRYPT: false
+            SESSION_PATH: /
+            SESSION_DOMAIN: null
+            QUEUE_CONNECTION: redis
+            CACHE_STORE: redis
+            REDIS_HOST: redis
+            REDIS_PORT: 6379
+            REDIS_PASSWORD: "<some secure password>"
+            CONCAT_BASE_URI: https://reg.gobltc.com
+            CONCAT_CLIENT_ID: "<ConCat client ID>"
+            CONCAT_CLIENT_SECRET: "<ConCat client secret>"
+            TELEGRAM_BOT_TOKEN: "<Telegram bot token>"
+            TRACKER_TIMEZONE: America/Los_Angeles
         volumes:
             - app-logs:/var/www/html/storage/logs
         depends_on:
@@ -105,9 +105,9 @@ services:
         image: postgres:17
         restart: always
         env:
-			POSTGRES_DB: tracker
-			POSTGRES_USER: tracker
-			POSTGRES_PASSWORD: "<some secure password>"
+            POSTGRES_DB: tracker
+            POSTGRES_USER: tracker
+            POSTGRES_PASSWORD: "<some secure password>"
         volumes:
             - postgres:/var/lib/postgresql/data
 
@@ -119,7 +119,7 @@ services:
             - redis-server --save 60 1 --loglevel warning --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD not provided}"
         restart: always
         env:
-			REDIS_PASSWORD: "<some secure password>"
+            REDIS_PASSWORD: "<some secure password>"
         volumes:
             - redis:/data
 
@@ -127,11 +127,11 @@ services:
         image: ghcr.io/goblfc/tracker-nginx
         restart: always
         env:
-			NGINX_HOST: tracker.test
-			NGINX_HTTP_PORT: 80
-			NGINX_HTTPS_PORT: 443
-			NGINX_EXTERNAL_HTTP_PORT: 80
-			NGINX_EXTERNAL_HTTPS_PORT: 443
+            NGINX_HOST: tracker.test
+            NGINX_HTTP_PORT: 80
+            NGINX_HTTPS_PORT: 443
+            NGINX_EXTERNAL_HTTP_PORT: 80
+            NGINX_EXTERNAL_HTTPS_PORT: 443
         ports:
             - "80:80"
             - "443:443"
@@ -145,9 +145,9 @@ services:
         image: ghcr.io/goblfc/tracker-certbot
         restart: unless-stopped
         env:
-			LETSENCRYPT_DOMAIN: tracker.test
-			LETSENCRYPT_EMAIL: youremail@yourcon.org
-			LETSENCRYPT_DRY_RUN: true
+            LETSENCRYPT_DOMAIN: tracker.test
+            LETSENCRYPT_EMAIL: youremail@yourcon.org
+            LETSENCRYPT_DRY_RUN: true
         volumes:
             - certbot-conf:/etc/letsencrypt
             - certbot-www:/var/www/certbot
