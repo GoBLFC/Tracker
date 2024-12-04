@@ -1,7 +1,12 @@
+While the Docker containers are generally easier to setup and use, manual setup of Tracker isn't terribly complex either.
+This gives you the most control over every aspect of the setup and lets you interact directly with the system without any layers of abstraction that some may find undesireable.
+You'll also be able to run Tracker on a traditional shared web host this way.
+
 ## Requirements
 
 -   A web server, such as Nginx or Apache
 -   PostgreSQL, MariaDB, or MySQL (8.0+) server as a database
+-   _(recommended)_ Redis, Memcached, or another Laravel-compatible key/value store for caching data
 -   PHP 8.2+ with the following extensions:
     -   PDO + your database extension of choice
     -   openssl
