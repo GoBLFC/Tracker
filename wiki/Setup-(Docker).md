@@ -48,7 +48,7 @@ With a single Compose file, you can configure and control all of the necessary c
        Double-check the values for `NGINX_HOST` and `LETSENCRYPT_DOMAIN`.
        You can restart the certbot and nginx containers after modifying their configuration with `docker compose restart certbot` and `docker compose restart nginx`.
        Only move on to the next step once the dry-run has succeeded.
-    1. Clear the value for `CERTBOT_DRY_RUN` IN `docker-compose.yml` (make its value blank, nothing after the `:`)
+    1. Clear the value for `CERTBOT_DRY_RUN` in `docker-compose.yml` (make its value blank, nothing after the `:`)
     1. Restart the certbot container with `docker compose restart certbot`.
        Wait 30 seconds and check Certbot's log output again (`docker compose logs certbot`) to confirm that the actual certificate issuance succeeded.
     1. Restart the nginx container with `docker compose restart nginx`.
@@ -191,7 +191,7 @@ The resulting value should look something like `base64:QSiqblPkv+xnBBhP4Y3rvC4gt
 
 ## Updating
 
-A convenient update script is provided at [/.docker/scripts/update.sh](/.docker/scripts/update.sh).
+A convenient update script is provided at [.docker/scripts/update.sh](../.docker/scripts/update.sh).
 In this order, that script does the following:
 
 1. Pulls the latest container images (`docker compose pull`)
@@ -216,10 +216,10 @@ DETAIL:  The data directory was initialized by PostgreSQL version 15, which is n
 Reverting the project (or at least the Compose file) to the previous version should allow the server to start again.
 Follow this procedure to properly upgrade the database (starting with the server running the old version):
 
-1. Run `./docker/scripts/postgres-dump.sh` to dump the contents of the database to `pgdump.sql` in the project directory
+1. Run [`.docker/scripts/postgres-dump.sh`](../.docker/scripts/postgres-dump.sh) to dump the contents of the database to `pgdump.sql` in the project directory
 1. Stop the Postgres container (`docker compose stop postgres`)
 1. Find the correct volume for the Postgres container in `docker volume ls` - it should be something like `projectname_postgres`
 1. Delete the volume of the Postgres container (`docker volume rm postgres_volume_name`)
 1. Start the Postgres container (`docker compose start postgres`)
-1. Run `./docker/scripts/postgres-restore.sh` to import `pgdump.sql` into the new Postgres version
+1. Run [`.docker/scripts/postgres-restore.sh`](../.docker/scripts/postgres-restore.sh) to import `pgdump.sql` into the new Postgres version
 1. Verify that the application is running properly and all of the correct data is in place
