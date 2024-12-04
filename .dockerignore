@@ -1,20 +1,50 @@
 /.git
+
+# Editors
+/.fleet
 /.idea
+/.nova
 /.vscode
-/.docker/env
-/storage/logs/*
-/storage/debugbar/*
-/storage/framework/cache/*
-/storage/framework/sessions/*
-/storage/framework/testing/*
-/storage/framework/views/*
+/.zed
+
+# Dependencies
+/vendor
+/node_modules
+
+# Build output/cache
 /public/build
 /bootstrap/cache/*
 /bootstrap/ssr
 /resources/js/ziggy.js
-/vendor
-/node_modules
+/resources/js/ziggy.d.ts
+.phpunit.cache
+.phpunit.result.cache
+.php-cs-fixer.cache
+
+# Logs
 npm-debug.log
 yarn-error.log
-*.env
-.env.*
+
+# Environment config
+.phpactor.json
+Homestead.json
+Homestead.yaml
+auth.json
+**/.env.*
+**/*.env
+**/*.env.*
+
+# Docs/repo config
+/.github
+/wiki
+
+# Storage
+/storage/app/private/*
+/storage/app/public/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/testing/*
+/storage/framework/views/*
+/storage/logs/*
+/storage/debugbar/*
+/storage/pail/*

@@ -1,28 +1,39 @@
-/.phpunit.cache
-/node_modules
-/public/build
-/public/hot
-/public/storage
-/storage/*.key
-/storage/pail
-/resources/js/ziggy.js
-/resources/js/ziggy.d.ts
-/vendor
-.env
-*.env
-.env.*
-!.env.example
-.phpactor.json
-.phpunit.result.cache
-.php-cs-fixer.cache
-Homestead.json
-Homestead.yaml
-auth.json
-npm-debug.log
-yarn-error.log
+# Editors
 /.fleet
 /.idea
 /.nova
 /.zed
+
+# Dependencies
+/vendor
+/node_modules
+
+# Build output/cache
+/public/build
+/bootstrap/cache/*
+/bootstrap/ssr
+/resources/js/ziggy.js
+/resources/js/ziggy.d.ts
+.phpunit.cache
+.phpunit.result.cache
+.php-cs-fixer.cache
+
+# Logs
+npm-debug.log
+yarn-error.log
+
+# Environment config
+.phpactor.json
+Homestead.json
+Homestead.yaml
+auth.json
+.env
+*.env
+.env.*
+!.env.example
+
+# Misc
+/public/storage
+/storage/*.key
 pgdump.sql
 components.d.ts
