@@ -23,9 +23,9 @@ You'll also be able to run Tracker on a traditional shared web host this way.
 -   Your event's instance of [ConCat](https://concat.app) to allow volunteers and staff to authenticate with the system
     -   All users log in to the application using ConCat with OAuth.
     -   You will need Developer access to your event's ConCat instance to create the OAuth app.
-        Specifically, you will need the `oauth:manage` permission.
-        Alternatively, have someone else create an OAuth app in ConCat for you and have them provide you the client ID and secret.
-    -   The OAuth app itself will require the `volunteer:read` and `registration:read` application permissions for OAuth Bearer tokens, which are used for generating the Volunteer Applications reports and retrieving badge details inside Tracker.
+        Specifically, you will need the `oauth:manage` permission to set everything up.
+        Alternatively, have someone else create an OAuth app in ConCat for you and have them provide you with the client ID and secret.
+    -   The OAuth app will require the `volunteer:read` and `registration:read` application permissions for OAuth Bearer tokens, which are used for generating the Volunteer Applications reports and retrieving badge details inside Tracker.
 
 ## Installation
 

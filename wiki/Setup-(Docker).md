@@ -1,5 +1,5 @@
-Docker is recommended to run Tracker, official container images are already built to make the process as easy as possible.
-Certbot-based Let's Encrypt automatic SSL renewal support is provided out-of-the-box with the official images.
+Docker is recommended to run Tracker, as a set of official container images are already built to make the process as easy as possible.
+This removes/simplifies a lot of effort, both when setting everything up initially, and when updating to a newer version.
 
 ## Requirements
 
@@ -7,20 +7,34 @@ Certbot-based Let's Encrypt automatic SSL renewal support is provided out-of-the
 -   Your event's instance of [ConCat](https://concat.app) to allow volunteers and staff to authenticate with the system
     -   All users log in to the application using ConCat with OAuth.
     -   You will need Developer access to your event's ConCat instance to create the OAuth app.
-        Specifically, you will need the `oauth:manage` permission.
-        Alternatively, have someone else create an OAuth app in ConCat for you and have them provide you the client ID and secret.
-    -   The OAuth app itself will require the `volunteer:read` and `registration:read` application permissions for OAuth Bearer tokens, which are used for generating the Volunteer Applications reports and retrieving badge details inside Tracker.
+        Specifically, you will need the `oauth:manage` permission to set everything up.
+        Alternatively, have someone else create an OAuth app in ConCat for you and have them provide you with the client ID and secret.
+    -   The OAuth app will require the `volunteer:read` and `registration:read` application permissions for OAuth Bearer tokens, which are used for generating the Volunteer Applications reports and retrieving badge details inside Tracker.
 
 ## Installation
+
+### Official container images
+
+Certbot-based Let's Encrypt automatic SSL renewal support is provided out-of-the-box when using these together.
+It's certainly not mandatory to use them all, though - the main image is just the application layer and can be combined with any FastCGI-compatible web server.
+
+Details on each individual image can be seen on their corresponding pages.
+
+-   [goblfc/tracker](https://github.com/GoBLFC/Tracker/pkgs/container/tracker):
+    Main application service running PHP-FPM, cron, a queue worker, and Telegram integrations
+-   [goblfc/tracker-nginx](https://github.com/GoBLFC/Tracker/pkgs/container/tracker-nginx):
+    Nginx web server configured for specific use with Tracker and its static assets
+-   [goblfc/tracker-certbot](https://github.com/GoBLFC/Tracker/pkgs/container/tracker-certbot):
+    Certbot runner to auto-install and auto-renew SSL certificates for the Nginx server
+
+### Compose setup
 
 The simplest way to run Tracker's Docker containers is to use [Docker Compose](https://docs.docker.com/compose/).
 With a single Compose file, you can configure and control all of the necessary containers to run Tracker in one spot.
 
-### Compose setup
-
 1. Create a `docker-compose.yml` file from the example below
 1. Adjust all placeholder configuration values in each containers' `env` keys.
-   The critical ones that absolutely _must_ be changed are:
+   The critical ones that absolutely _must_ be changed for each container are below.
     - **App:** Main application services container for Tracker, where all of the actual code runs
         - `APP_KEY` (see [Generating APP_KEY](#generating-app_key))
         - `APP_URL` (full URL to Tracker without a trailing slash)
@@ -40,7 +54,7 @@ With a single Compose file, you can configure and control all of the necessary c
         - `LETSENCRYPT_DOMAIN` (must match `NGINX_HOST` on the Nginx container)
         - `LETSENCRYPT_EMAIL` (email address to associate with the issued certificates, used for notifications of problems)
 1. Start the containers in the background (in the Docker daemon) by running `docker compose up -d` in the directory that the Compose file is in
-1. Once everything has started up, the application won't yet be functional if it's the first time running.
+1. Once everything has started up, the application won't yet be functional if it's the first time it has been run.
    Follow these steps once the containers are up:
     1. Run `docker compose exec app php artisan migrate` to run migrations on the database
     1. Wait for output from certbot in `docker compose logs certbot` to confirm that the dry-run succeeded.
