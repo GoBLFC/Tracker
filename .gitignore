@@ -10,6 +10,7 @@
 
 # Build output/cache
 /public/build
+/public/hot
 /bootstrap/cache/*
 /bootstrap/ssr
 /resources/js/ziggy.js
