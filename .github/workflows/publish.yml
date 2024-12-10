@@ -65,7 +65,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
-      - name: Build image by digest
+      - name: Build & push image by digest
         id: build
         uses: docker/build-push-action@v6
         with:
@@ -88,7 +88,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: github.event_name != 'pull_request'
         with:
-          name: digests-${{ env.ARTIFACT_NAME }}-${{ env.PLATFORM_PAIR }}
+          name: digest-${{ env.ARTIFACT_NAME }}-${{ env.PLATFORM_PAIR }}
           path: /tmp/digests/${{ env.ARTIFACT_NAME }}/*
           if-no-files-found: error
           retention-days: 1
@@ -115,11 +115,15 @@ jobs:
           echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_ENV
           echo "ARTIFACT_NAME=${IMAGE_NAME//\//-}" >> $GITHUB_ENV
 
+      - name: Checkout repository
+        id: checkout
+        uses: actions/checkout@v4
+
       - name: Download digests
         uses: actions/download-artifact@v4
         with:
           path: /tmp/digests/${{ env.ARTIFACT_NAME }}
-          pattern: digests-${{ env.ARTIFACT_NAME }}-*
+          pattern: digest-${{ env.ARTIFACT_NAME }}-*
           merge-multiple: true
 
       - name: Extract Docker metadata
@@ -143,7 +147,7 @@ jobs:
         working-directory: /tmp/digests/${{ env.ARTIFACT_NAME }}
         run: |
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf '${{ env.ARTIFACT_NAME }}@sha256:%s ' *)
+            $(printf '${{ env.IMAGE_NAME }}@sha256:%s ' *)
 
       - name: Inspect image
         run: |
