@@ -78,16 +78,16 @@ jobs:
       - name: Export digest
         if: github.event_name != 'pull_request'
         run: |
-          mkdir -p /tmp/digests
+          mkdir -p /tmp/digests/${{ env.IMAGE_NAME }}
           digest="${{ steps.build.outputs.digest }}"
-          touch "/tmp/digests/${digest#sha256:}"
+          touch "/tmp/digests/${{ env.IMAGE_NAME }}/${digest#sha256:}"
 
       - name: Upload digest
         uses: actions/upload-artifact@v4
         if: github.event_name != 'pull_request'
         with:
-          name: digests-${{ env.PLATFORM_PAIR }}
-          path: /tmp/digests/*
+          name: digests-${{ env.IMAGE_NAME }}-${{ env.PLATFORM_PAIR }}
+          path: /tmp/digests/${{ env.IMAGE_NAME }}/*
           if-no-files-found: error
           retention-days: 1
 
@@ -114,8 +114,8 @@ jobs:
       - name: Download digests
         uses: actions/download-artifact@v4
         with:
-          path: /tmp/digests
-          pattern: digests-*
+          path: /tmp/digests/${{ env.IMAGE_NAME }}
+          pattern: digests-${{ env.IMAGE_NAME }}-*
           merge-multiple: true
 
       - name: Extract Docker metadata
@@ -136,7 +136,7 @@ jobs:
           password: ${{ github.token }}
 
       - name: Create manifest list and push
-        working-directory: /tmp/digests
+        working-directory: /tmp/digests/${{ env.IMAGE_NAME }}
         run: |
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
             $(printf '${{ env.IMAGE_NAME }}@sha256:%s ' *)
