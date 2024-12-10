@@ -35,7 +35,8 @@ jobs:
           platform=${{ matrix.platform }}
           echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
           image="${{ env.REGISTRY }}/${{ matrix.image.name }}"
-          echo "IMAGE_NAME=${image,,}" >> $GITHUB_ENV
+          IMAGE_NAME="${image,,}"
+          echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_ENV
           echo "ARTIFACT_NAME=${IMAGE_NAME//\//-}" >> $GITHUB_ENV
 
       - name: Checkout repository
@@ -110,7 +111,8 @@ jobs:
       - name: Set environment variables
         run: |
           image="${{ env.REGISTRY }}/${{ matrix.image.name }}"
-          echo "IMAGE_NAME=${image,,}" >> $GITHUB_ENV
+          IMAGE_NAME="${image,,}"
+          echo "IMAGE_NAME=${IMAGE_NAME}" >> $GITHUB_ENV
           echo "ARTIFACT_NAME=${IMAGE_NAME//\//-}" >> $GITHUB_ENV
 
       - name: Download digests
