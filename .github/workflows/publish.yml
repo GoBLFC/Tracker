@@ -88,7 +88,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: github.event_name != 'pull_request'
         with:
-          name: digest-${{ env.ARTIFACT_NAME }}-${{ env.PLATFORM_PAIR }}
+          name: digest-${{ env.ARTIFACT_NAME }}_${{ env.PLATFORM_PAIR }}
           path: /tmp/digests/${{ env.ARTIFACT_NAME }}/*
           if-no-files-found: error
           retention-days: 1
@@ -119,13 +119,6 @@ jobs:
         id: checkout
         uses: actions/checkout@v4
 
-      - name: Download digests
-        uses: actions/download-artifact@v4
-        with:
-          path: /tmp/digests/${{ env.ARTIFACT_NAME }}
-          pattern: digest-${{ env.ARTIFACT_NAME }}-*
-          merge-multiple: true
-
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@v5
@@ -134,6 +127,13 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+
+      - name: Download digests
+        uses: actions/download-artifact@v4
+        with:
+          path: /tmp/digests/${{ env.ARTIFACT_NAME }}
+          pattern: digest-${{ env.ARTIFACT_NAME }}_*
+          merge-multiple: true
 
       - name: "Login to container registry: ${{ env.REGISTRY }}"
         if: github.event_name != 'pull_request'
