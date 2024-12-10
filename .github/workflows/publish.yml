@@ -30,10 +30,12 @@ jobs:
           - linux/amd64
           - linux/arm64
     steps:
-      - name: Set PLATFORM_PAIR environment variable
+      - name: Set environment variables
         run: |
           platform=${{ matrix.platform }}
           echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
+          image="${{ env.REGISTRY }}/${{ matrix.image.name }}"
+          echo "IMAGE_NAME=${image,,}" >> $GITHUB_ENV
 
       - name: Checkout repository
         id: checkout
@@ -69,7 +71,7 @@ jobs:
           platforms: ${{ matrix.platform }}
           push: ${{ github.event_name != 'pull_request' }}
           labels: ${{ steps.meta.outputs.labels }}
-          outputs: type=image,name=${{ env.REGISTRY }}/${{ matrix.image.name }},push-by-digest=true,name-canonical=true
+          outputs: type=image,name=${{ env.IMAGE_NAME }},push-by-digest=true,name-canonical=true
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -104,6 +106,11 @@ jobs:
           - name: ${{ github.repository }}-certbot
             file: .docker/certbot/Dockerfile
     steps:
+      - name: Set environment variables
+        run: |
+          image="${{ env.REGISTRY }}/${{ matrix.image.name }}"
+          echo "IMAGE_NAME=${image,,}" >> $GITHUB_ENV
+
       - name: Download digests
         uses: actions/download-artifact@v4
         with:
@@ -132,8 +139,8 @@ jobs:
         working-directory: /tmp/digests
         run: |
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf '${{ env.REGISTRY }}/${{ matrix.image.name }}@sha256:%s ' *)
+            $(printf '${{ env.IMAGE_NAME }}@sha256:%s ' *)
 
       - name: Inspect image
         run: |
-          docker buildx imagetools inspect ${{ env.REGISTRY }}/${{ matrix.image.name }}:${{ steps.meta.outputs.version }}
+          docker buildx imagetools inspect ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
