@@ -28,12 +28,7 @@
 		</template>
 
 		<div class="flex flex-col">
-			<VolunteerTimeStats
-				class="mb-4"
-				:stats="volunteer.stats"
-				:ongoing
-				:now
-			/>
+			<VolunteerTimeStats class="mb-4" :time="volunteer.time" :now />
 
 			<VolunteerClaimsPanel v-model="volunteer" class="mb-4" :rewards />
 
@@ -45,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, useTemplateRef } from 'vue';
+import { useTemplateRef } from 'vue';
 import { isElementInView } from '../lib/util';
 import type Volunteer from '../data/Volunteer';
 import type Event from '../data/Event';
@@ -72,8 +67,6 @@ const volunteer = defineModel<Volunteer>();
 
 const panel = useTemplateRef('panel');
 const closeBtn = useTemplateRef('close-btn');
-
-const ongoing = computed(() => volunteer.value!.stats.entries.find((entry) => !entry.stop));
 
 /**
  * Pulses the panel's border and scrolls the viewport to it

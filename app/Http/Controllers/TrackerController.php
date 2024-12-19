@@ -29,11 +29,10 @@ class TrackerController extends Controller {
 		// If the user has notifications, present those first
 		if ($user->unreadNotifications()->exists()) return redirect()->route('notifications.index');
 
-		$stats = $user->getTimeStats();
 		return Inertia::render('VolunteerHome', [
-			'stats' => $stats,
-			'ongoing' => $stats['entries']->first(fn (TimeEntry $entry) => $entry->isOngoing()),
-			'departments' => $user->isAdmin() ? Department::all() : Department::whereHidden(false)->get(),
+			'volunteer' => $user->getVolunteerInfo(),
+			'departments' => $user->isManager() ? Department::all() : Department::whereHidden(false)->get(),
+			'rewards' => Setting::activeEvent()?->rewards,
 			'telegramSetupUrl' => $user->getTelegramSetupUrl(),
 			'hasTelegram' => !empty($user->tg_chat_id),
 		]);
@@ -120,16 +119,7 @@ class TrackerController extends Controller {
 	 */
 	public function getStats(User $user, ?Event $event = null): JsonResponse {
 		$this->authorize('viewAny', [TimeEntry::class, $user]);
-
-		// Get the time stats and add a bonus_time property to each time entry
-		$stats = $user->getTimeStats($event);
-		foreach ($stats['entries'] as $entry) $entry->bonus_time = $entry->calculateBonusTime($event, $stats['bonuses']);
-
-		return response()->json([
-			'user' => $user,
-			'stats' => $stats,
-			'ongoing' => $stats['entries']->first(fn (TimeEntry $entry) => $entry->isOngoing()),
-		]);
+		return response()->json(['time' => $user->getTimeStats($event)]);
 	}
 
 	/**

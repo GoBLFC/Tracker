@@ -216,7 +216,7 @@ class TimeEntry extends UuidModel {
 	 * @param ?Event $event Event to get the earned time for - if null, then the active event will be used
 	 * @param ?Collection $bonuses Bonuses to look through (to avoid extra queries if already retrieved)
 	 */
-	public function calculateBonusTime(?Event $event = null, ?Collection $bonuses = null): int {
+	public function calculateBonusTime(?Event $event = null, ?Collection $bonuses = null): float {
 		// Retrieve a list of potentially applicable bonuses if they haven't been supplied
 		if (!$bonuses) {
 			$bonuses = TimeBonus::forEvent($event)
@@ -243,7 +243,7 @@ class TimeEntry extends UuidModel {
 	 * @param ?Event $event Event to get the earned time for - if null, then the active event will be used
 	 * @param ?Collection $bonuses Bonuses to look through (to avoid extra queries if already retrieved)
 	 */
-	public function calculateTotalTime(?Event $event = null, ?Collection $bonuses = null): int {
+	public function calculateTotalTime(?Event $event = null, ?Collection $bonuses = null): float {
 		return $this->getDuration() + $this->calculateBonusTime($event, $bonuses);
 	}
 

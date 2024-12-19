@@ -19,7 +19,7 @@
 				<FontAwesomeIcon :icon="faClock" />
 				<Duration
 					:start="dayStart"
-					:ms="ongoing ? undefined : stats.day * 1000"
+					:ms="ongoing ? undefined : time.day * 1000"
 					:now="ongoing ? now : undefined"
 				/>
 			</div>
@@ -33,7 +33,7 @@
 				<FontAwesomeIcon :icon="faClock" />
 				<Duration
 					:start="totalStart"
-					:ms="ongoing ? undefined : stats.total * 1000"
+					:ms="ongoing ? undefined : time.total * 1000"
 					:now="ongoing ? now : undefined"
 				/>
 			</div>
@@ -44,19 +44,18 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import type TimeStats from '../data/TimeStats';
-import type TimeEntry from '../data/TimeEntry';
+import type VolunteerTime from '../data/VolunteerTime';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
 import Duration from './Duration.vue';
 
-const { ongoing, stats } = defineProps<{
-	stats: TimeStats;
-	ongoing?: TimeEntry;
+const { time } = defineProps<{
+	time: VolunteerTime;
 	now?: number;
 }>();
 
-const dayStart = computed(() => (ongoing ? Date.now() - stats.day * 1000 : null));
-const totalStart = computed(() => (ongoing ? Date.now() - stats.total * 1000 : null));
+const ongoing = computed(() => time.entries.find((entry) => !entry.stop));
+const dayStart = computed(() => (ongoing ? Date.now() - time.day * 1000 : null));
+const totalStart = computed(() => (ongoing ? Date.now() - time.total * 1000 : null));
 </script>

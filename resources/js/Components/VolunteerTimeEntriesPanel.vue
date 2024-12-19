@@ -1,6 +1,6 @@
 <template>
 	<Panel header="Shift Log">
-		<DataTable :value="volunteer!.stats.entries">
+		<DataTable :value="volunteer!.time.entries">
 			<Column header="In">
 				<template #body="{ data: entry }: { data: TimeEntry }">
 					<DateTime :date="entry.start" />
@@ -93,7 +93,7 @@ const volunteer = defineModel<Volunteer>();
  * Updates a time entry in the entries array with changes from a new version of it
  */
 function updateEntry(newEntry: TimeEntry) {
-	const entry = volunteer.value!.stats.entries.find((entry) => entry.id === newEntry.id);
+	const entry = volunteer.value!.time.entries.find((entry) => entry.id === newEntry.id);
 	Object.assign(entry!, newEntry);
 }
 
@@ -101,7 +101,7 @@ function updateEntry(newEntry: TimeEntry) {
  * Removes a time entry from the entries array
  */
 function deleteEntry(id: TimeEntryId) {
-	const entryIdx = volunteer.value!.stats.entries.findIndex((entry) => entry.id === id);
-	volunteer.value!.stats.entries.splice(entryIdx, 1);
+	const entryIdx = volunteer.value!.time.entries.findIndex((entry) => entry.id === id);
+	volunteer.value!.time.entries.splice(entryIdx, 1);
 }
 </script>

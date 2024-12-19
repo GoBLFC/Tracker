@@ -106,7 +106,7 @@ async function store() {
 
 	// Store the new time entry
 	newEntry.department = dept;
-	volunteer.value!.stats.entries.push(newEntry);
+	volunteer.value!.time.entries.push(newEntry);
 
 	toast.success(isOngoing ? 'User checked in.' : 'Added time entry.');
 }

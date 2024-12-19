@@ -28,7 +28,7 @@ class RewardsCommand extends Command {
 
 		// Build the list of rewards
 		$rewardInfo = $user->getRewardInfo();
-		$rewardList = $rewardInfo['rewards']->sortBy('hours')
+		$rewardList = $rewardInfo['all']->sortBy('hours')
 			->map(function (Reward $reward) use ($rewardInfo): string {
 				$claimed = $rewardInfo['claimed']->contains($reward);
 				$eligible = !$claimed && $rewardInfo['eligible']->contains($reward);

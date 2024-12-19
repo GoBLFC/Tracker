@@ -37,7 +37,7 @@ const volunteer = defineModel<Volunteer>();
 const request = useRequest();
 const { confirm } = useConfirm();
 
-const claim = computed(() => volunteer.value!.claims.find((claim) => claim.reward_id === reward.id));
+const claim = computed(() => volunteer.value!.reward_claims.find((claim) => claim.reward_id === reward.id));
 
 const checked = ref(Boolean(claim.value));
 let checkedResetting = false;
@@ -78,7 +78,7 @@ async function claimReward() {
 	});
 
 	// Store the claim
-	volunteer.value!.claims.push(newClaim);
+	volunteer.value!.reward_claims.push(newClaim);
 }
 
 /**
@@ -93,10 +93,10 @@ async function unclaimReward() {
 
 	// Make the request
 	await request.del(['claims.destroy', claim.value!.id]);
-	const claimIdx = volunteer.value!.claims.findIndex((clm) => clm.id === claim.value!.id);
+	const claimIdx = volunteer.value!.reward_claims.findIndex((clm) => clm.id === claim.value!.id);
 
 	// Remove the claim
-	volunteer.value!.claims.splice(claimIdx, 1);
+	volunteer.value!.reward_claims.splice(claimIdx, 1);
 }
 
 /**

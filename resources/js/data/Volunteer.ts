@@ -1,9 +1,9 @@
 import type RewardClaim from './RewardClaim';
-import type TimeStats from './TimeStats';
+import type VolunteerTime from './VolunteerTime';
 import type User from './User';
 
 export default interface Volunteer {
 	user: User;
-	stats: TimeStats;
-	claims: RewardClaim[];
+	time: VolunteerTime;
+	reward_claims: RewardClaim[];
 }

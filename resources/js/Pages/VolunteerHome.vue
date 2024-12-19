@@ -8,8 +8,8 @@
 	>
 		<div class="flex justify-between items-end gap-2">
 			<h1 class="text-3xl font-light">
-				Welcome, <span class="font-normal">{{ displayName }}</span
-				>!
+				Welcome,
+				<span class="font-normal"> {{ displayName }} </span>!
 			</h1>
 
 			<ResponsiveButton
@@ -85,7 +85,7 @@
 			</Panel>
 
 			<Panel header="Time stats">
-				<VolunteerTimeStats :stats :ongoing :now />
+				<VolunteerTimeStats :time="volunteer.time" :now />
 			</Panel>
 		</template>
 
@@ -109,15 +109,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, useTemplateRef } from 'vue';
+import { computed, ref, useTemplateRef } from 'vue';
 import { router } from '@inertiajs/vue3';
 import { useAppSettings } from '../lib/settings';
 import { useUser } from '../lib/user';
 import { useNow } from '../lib/time';
 import { useRoute } from '../lib/route';
 import { useToast } from '../lib/toast';
-import type TimeEntry from '../data/TimeEntry';
-import type TimeStats from '../data/TimeStats';
+import type Volunteer from '../data/Volunteer';
 import type Department from '../data/Department';
 
 import { faArrowRightFromBracket, faArrowRightToBracket } from '@fortawesome/free-solid-svg-icons';
@@ -128,9 +127,8 @@ import ResponsiveButton from '../Components/ResponsiveButton.vue';
 import TelegramModal from '../Components/TelegramModal.vue';
 import SwalSuccessDialog from '../Components/SwalSuccessDialog.vue';
 
-const { ongoing, departments } = defineProps<{
-	stats: TimeStats;
-	ongoing?: TimeEntry;
+const { volunteer, departments } = defineProps<{
+	volunteer: Volunteer;
 	departments: Department[];
 	telegramSetupUrl: string;
 	hasTelegram: boolean;
@@ -142,7 +140,8 @@ const { now } = useNow();
 const route = useRoute();
 const toast = useToast();
 
-const department = ref(ongoing?.department);
+const ongoing = computed(() => volunteer.time.entries.find((entry) => !entry.stop));
+const department = ref(ongoing.value?.department);
 const loading = ref(false);
 const isTelegramDialogVisible = ref(false);
 const successDialog = useTemplateRef('success-dialog');
