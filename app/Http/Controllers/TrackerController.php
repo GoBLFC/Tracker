@@ -30,11 +30,11 @@ class TrackerController extends Controller {
 		if ($user->unreadNotifications()->exists()) return redirect()->route('notifications.index');
 
 		return Inertia::render('VolunteerHome', [
-			'volunteer' => $user->getVolunteerInfo(),
-			'departments' => $user->isManager() ? Department::all() : Department::whereHidden(false)->get(),
-			'rewards' => Setting::activeEvent()?->rewards,
-			'telegramSetupUrl' => $user->getTelegramSetupUrl(),
-			'hasTelegram' => !empty($user->tg_chat_id),
+			'volunteer' => fn () => $user->getVolunteerInfo(),
+			'departments' => fn () => $user->isManager() ? Department::all() : Department::whereHidden(false)->get(),
+			'rewards' => fn () => Setting::activeEvent()?->rewards,
+			'telegramSetupUrl' => fn () => $user->getTelegramSetupUrl(),
+			'hasTelegram' => fn () => !empty($user->tg_chat_id),
 		]);
 	}
 

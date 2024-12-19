@@ -110,7 +110,7 @@
 
 <script setup lang="ts">
 import { computed, ref, useTemplateRef } from 'vue';
-import { router } from '@inertiajs/vue3';
+import { router, usePoll } from '@inertiajs/vue3';
 import { useAppSettings } from '../lib/settings';
 import { useUser } from '../lib/user';
 import { useNow } from '../lib/time';
@@ -139,6 +139,7 @@ const { displayName } = useUser();
 const { now } = useNow();
 const route = useRoute();
 const toast = useToast();
+usePoll(15000, { only: ['volunteer', 'hasTelegram'] });
 
 const ongoing = computed(() => volunteer.time.entries.find((entry) => !entry.stop));
 const department = ref(ongoing.value?.department);
