@@ -54,7 +54,7 @@ onUnmounted(
  * Sends a request to log the user out
  */
 function logout() {
-	router.post(route('auth.logout.post'));
+	router.get(route('auth.logout'));
 }
 
 /**

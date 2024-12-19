@@ -2,8 +2,7 @@
 	<LogoutTimer>
 		<template #default="{ logoutAt, logoutTime, timeLeft, countdown }">
 			<AppNavItem
-				to="auth.logout.post"
-				method="post"
+				to="auth.logout"
 				:label="`Sign Out${
 					showHamburger && logoutAt ? ` (${countdown})` : ''
 				}`"

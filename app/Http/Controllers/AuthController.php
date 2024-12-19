@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\View\View;
 use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
 use Laravel\Socialite\Facades\Socialite;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -22,45 +23,32 @@ class AuthController extends Controller {
 	/**
 	 * Presents the login page
 	 */
-	public function getLogin(): View {
-		return view('auth.login');
+	public function getLogin(): InertiaResponse {
+		return Inertia::render('Login');
 	}
 
 	/**
-	 * Logs the user out and redirects to the login page.
-	 * Only for use from legacy (non-Inertia) pages.
+	 * Logs the user out and redirects to the login page
 	 */
 	public function getLogout(): RedirectResponse {
 		if (!Auth::check()) return redirect()->route('auth.login');
 		Auth::logout();
 
 		$conCatLogout = $this->buildConCatLogoutUrl();
-		if ($conCatLogout) return redirect()->to($conCatLogout);
+		if ($conCatLogout) return Inertia::location(redirect()->to($conCatLogout));
 
 		return redirect()->route('auth.login');
 	}
 
 	/**
-	 * Logs the user out and redirects to the login page.
-	 * Only for use from Inertia pages.
-	 */
-	public function postLogout(): Response {
-		if (!Auth::check()) return Inertia::location(redirect()->route('auth.login'));
-		Auth::logout();
-
-		$conCatLogout = $this->buildConCatLogoutUrl();
-		if ($conCatLogout) return Inertia::location($conCatLogout);
-
-		return Inertia::location(redirect()->route('auth.login'));
-	}
-
-	/**
 	 * Redirects to the beginning of the ConCat OAuth flow
 	 */
-	public function getRedirect(): RedirectResponse {
-		return Socialite::driver('concat')
-			->scopes(['pii:basic'])
-			->redirect();
+	public function getRedirect(): Response {
+		return Inertia::location(
+			Socialite::driver('concat')
+				->scopes(['pii:basic'])
+				->redirect()
+		);
 	}
 
 	/**
@@ -95,7 +83,7 @@ class AuthController extends Controller {
 			$error = 'Too many failed quick code login attempts have been made from this location. Try again in a minute.';
 			return $request->expectsJson()
 				? response()->json(['error' => $error], 429)
-				: redirect()->back()->withError($error)->withInput();
+				: redirect()->back()->withErrors(['code' => $error])->withInput();
 		}
 
 		// Retrieve the quick code
@@ -109,8 +97,8 @@ class AuthController extends Controller {
 			RateLimiter::hit($rateLimitKey);
 			$error = 'Quick code not recognized.';
 			return $request->expectsJson()
-				? response()->json(['error' => 'Quick code not recognized.'], 401)
-				: redirect()->back()->withError($error)->withInput();
+				? response()->json(['errors' => $error], 401)
+				: redirect()->back()->withErrors(['code' => $error])->withInput();
 		}
 
 		// Log the user in and delete the quick code to ensure it can't be used again
