@@ -1,5 +1,5 @@
 <template>
-	<div class="flex flex-col lg:flex-row h-screen relative -z-50">
+	<div class="h-full flex flex-col lg:flex-row relative -z-50">
 		<AppNav />
 
 		<div class="w-full h-full lg:overflow-auto">

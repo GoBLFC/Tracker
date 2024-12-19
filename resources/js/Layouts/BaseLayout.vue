@@ -1,10 +1,8 @@
 <template>
-	<div class="relative -z-50">
-		<slot />
+	<slot />
 
-		<Toast />
-		<ConfirmPopup />
-	</div>
+	<Toast />
+	<ConfirmPopup />
 </template>
 
 <script setup lang="ts">
@@ -19,6 +17,7 @@ useToast({ flashes: true });
 
 watchEffect(() => {
 	const dark = preferredTheme.value === 'dark' || (preferredTheme.value === 'system' && systemTheme.value === 'dark');
+
 	if (dark) document.documentElement.classList.add('dark');
 	else document.documentElement.classList.remove('dark');
 });
