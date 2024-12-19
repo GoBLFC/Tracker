@@ -1,9 +1,9 @@
 <template>
 	<div
-		class="flex flex-col h-full justify-center gap-4"
+		class="h-full mx-auto flex flex-col justify-center gap-4"
 		:class="{
-			'container mx-auto': activeEvent,
-			'items-center': !activeEvent,
+			'container max-w-[80rem]': activeEvent,
+			'w-fit': !activeEvent,
 		}"
 	>
 		<div class="flex justify-between items-end gap-2">
@@ -48,7 +48,7 @@
 				</div>
 			</Message>
 
-			<Panel header="Shift entry">
+			<Panel header="Shift Entry">
 				<div class="flex flex-col lg:flex-row gap-4">
 					<Message :severity="ongoing ? 'success' : 'secondary'">
 						{{
@@ -84,7 +84,7 @@
 				</div>
 			</Panel>
 
-			<Panel header="Time stats">
+			<Panel header="Time Stats">
 				<VolunteerTimeStats :time="volunteer.time" :now />
 			</Panel>
 		</template>
@@ -150,7 +150,7 @@ const successDialog = useTemplateRef('success-dialog');
  * Sends a request to check the user in or out
  */
 function checkInOrOut() {
-	const checkingIn = !ongoing;
+	const checkingIn = !ongoing.value;
 	router.post(
 		route(`tracker.check${checkingIn ? 'in' : 'out'}.post`),
 		{
