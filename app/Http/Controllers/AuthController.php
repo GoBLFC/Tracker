@@ -13,7 +13,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\View\View;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 use Laravel\Socialite\Facades\Socialite;
@@ -114,9 +113,9 @@ class AuthController extends Controller {
 	/**
 	 * Display the banned notice
 	 */
-	public function getBanned(): View|RedirectResponse {
+	public function getBanned(): InertiaResponse|RedirectResponse {
 		if (!Auth::user()?->isBanned()) return redirect()->route('tracker.index');
-		return view('auth.banned');
+		return Inertia::render('Suspended');
 	}
 
 	/**
