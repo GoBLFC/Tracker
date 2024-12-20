@@ -2,7 +2,7 @@
 	<main class="px-4 flex flex-col items-center gap-4 md:gap-8">
 		<img
 			src="../../img/event-logo.png"
-			class="h-[128px] md:h-[148px] mt-4 md:mt-16 object-scale-down"
+			class="h-[128px] md:h-[146px] mt-4 md:mt-16 object-scale-down"
 			:alt="$appName"
 		/>
 
