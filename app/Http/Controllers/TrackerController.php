@@ -14,15 +14,14 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
 use Inertia\Inertia;
-use Inertia\Response;
+use Inertia\Response as InertiaResponse;
 
 class TrackerController extends Controller {
 	/**
 	 * Render the tracker index
 	 */
-	public function getIndex(): Response|RedirectResponse {
+	public function getIndex(): InertiaResponse|RedirectResponse {
 		/** @var User */
 		$user = Auth::user();
 
@@ -168,8 +167,8 @@ class TrackerController extends Controller {
 	/**
 	 * Display the lockdown notice
 	 */
-	public function getLockdown(): View|RedirectResponse {
+	public function getLockdown(): InertiaResponse|RedirectResponse {
 		if (!Setting::isLockedDown()) return redirect()->route('tracker.index');
-		return view('tracker.lockdown');
+		return Inertia::render('Maintenance');
 	}
 }
