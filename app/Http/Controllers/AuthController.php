@@ -30,7 +30,7 @@ class AuthController extends Controller {
 	/**
 	 * Logs the user out and redirects to the login page
 	 */
-	public function getLogout(): RedirectResponse {
+	public function getLogout(): Response {
 		if (!Auth::check()) return redirect()->route('auth.login');
 		Auth::logout();
 
