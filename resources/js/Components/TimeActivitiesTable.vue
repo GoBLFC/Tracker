@@ -1,5 +1,6 @@
 <template>
 	<DataTable
+		v-if="activities"
 		:value="activities"
 		paginator
 		:rows="10"
@@ -62,12 +63,18 @@
 			</slot>
 		</template>
 	</DataTable>
+
+	<SkeletonTable
+		v-else
+		:columns="['ID', 'Name', 'Action Taken', 'Time', 'Duration', 'Actions']"
+	/>
 </template>
 
 <script setup lang="ts">
 import type TimeEntryActivity from '../data/TimeEntryActivity';
 import type { UserId } from '../data/User';
 
+import SkeletonTable from './SkeletonTable.vue';
 import ShiftStatusTag from './ShiftStatusTag.vue';
 import VolunteerName from './VolunteerName.vue';
 import VolunteerViewButton from './VolunteerViewButton.vue';
@@ -75,7 +82,7 @@ import DateTime from './DateTime.vue';
 import Duration from './Duration.vue';
 
 defineProps<{
-	activities: TimeEntryActivity[];
+	activities?: TimeEntryActivity[];
 	now?: number;
 }>();
 const emit = defineEmits<(e: 'select', userId: UserId) => void>();

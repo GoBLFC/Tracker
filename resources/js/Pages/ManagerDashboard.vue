@@ -140,9 +140,9 @@ const { event, volunteer } = defineProps<{
 	events: Event[];
 	departments: Department[];
 	rewards: Reward[];
-	recentTimeActivities: TimeEntryActivity[];
-	ongoingEntries: TimeEntry[];
-	volunteer: Volunteer | null;
+	recentTimeActivities?: TimeEntryActivity[];
+	ongoingEntries?: TimeEntry[];
+	volunteer?: Volunteer | null;
 }>();
 
 const route = useRoute();

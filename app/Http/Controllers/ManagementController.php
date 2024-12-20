@@ -56,18 +56,22 @@ class ManagementController extends Controller {
 			'events' => fn () => Event::orderBy('name')->get(),
 			'rewards' => fn () => Reward::forEvent($event)->orderBy('hours')->get(),
 			'departments' => fn () => Department::orderBy('hidden')->orderBy('name')->get(),
-			'ongoingEntries' => fn () => TimeEntry::with(['user', 'department'])
-				->forEvent($event)
-				->ongoing()
-				->orderBy('start')
-				->get(),
-			'recentTimeActivities' => fn () => Activity::with(['subject', 'subject.user'])
-				->whereHasMorph('subject', TimeEntry::class, function (Builder $query) use ($event) {
-					$query->whereEventId($event?->id);
-				})
-				->orderByDesc('created_at')
-				->limit(20)
-				->get(),
+			'ongoingEntries' => Inertia::defer(
+				fn () => TimeEntry::with(['user', 'department'])
+					->forEvent($event)
+					->ongoing()
+					->orderBy('start')
+					->get()
+			),
+			'recentTimeActivities' => Inertia::defer(
+				fn () => Activity::with(['subject', 'subject.user'])
+					->whereHasMorph('subject', TimeEntry::class, function (Builder $query) use ($event) {
+						$query->whereEventId($event?->id);
+					})
+					->orderByDesc('created_at')
+					->limit(20)
+					->get()
+			),
 			'volunteer' => fn () => $user?->getVolunteerInfo($event),
 		]);
 	}
