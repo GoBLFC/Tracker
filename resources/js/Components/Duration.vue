@@ -13,8 +13,8 @@ const {
 	format = 'short',
 	now,
 } = defineProps<{
-	start?: number | string | null;
-	stop?: number | string | null;
+	start?: number | string | Date | null;
+	stop?: number | string | Date | null;
 	ms?: number;
 	format?: string;
 	now?: number;
@@ -37,10 +37,11 @@ const text = computed(() => {
 /**
  * Parses an input value into a millisecond timestamp
  */
-function parseTime(time: number | string): number {
+function parseTime(time: number | string | Date): number {
 	const type = typeof time;
 	if (type === 'number') return time as number;
 	if (type === 'string') return new Date(time).getTime();
+	if (time instanceof Date) return time.getTime();
 
 	throw new TypeError(`Time must be a number of milliseconds or an ISO 8601 datetime string, received ${time}.`);
 }

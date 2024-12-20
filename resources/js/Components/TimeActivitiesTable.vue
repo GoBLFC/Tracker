@@ -1,41 +1,54 @@
 <template>
 	<DataTable
 		v-if="activities"
-		:value="activities"
+		:value="values"
+		data-key="id"
 		paginator
 		:rows="10"
 		:rows-per-page-options="[5, 10, 15, 20]"
+		sortable
+		sort-field="subject.start"
+		:sort-order="-1"
 		scrollable
 		scroll-height="flex"
 		:dt="{ paginator: { bottom: { border: { width: 0 } } } }"
 	>
-		<Column header="ID">
+		<Column
+			field="subject.user.badge_id"
+			header="ID"
+			sortable
+			data-type="number"
+		/>
+
+		<Column field="subject.user.display_name" sortable header="Name">
 			<template #body="{ data: activity }: { data: TimeEntryActivity }">
-				{{ activity.subject.user.badge_id }}
+				<VolunteerName :volunteer="activity.subject.user!" />
 			</template>
 		</Column>
 
-		<Column header="Name">
+		<Column
+			field="checked_in"
+			header="Action Taken"
+			sortable
+			data-type="boolean"
+		>
 			<template #body="{ data: activity }: { data: TimeEntryActivity }">
-				<VolunteerName :volunteer="activity.subject.user" />
+				<ShiftStatusTag :checked-in="activity.checked_in" />
 			</template>
 		</Column>
 
-		<Column header="Action Taken">
-			<template #body="{ data: activity }: { data: TimeEntryActivity }">
-				<ShiftStatusTag
-					:checked-in="!activity.properties.attributes.stop"
-				/>
-			</template>
-		</Column>
-
-		<Column header="Time">
+		<Column field="subject.start" header="Time" sortable data-type="date">
 			<template #body="{ data: activity }: { data: TimeEntryActivity }">
 				<DateTime :date="activity.subject.start" />
 			</template>
 		</Column>
 
-		<Column header="Duration">
+		<Column
+			field="subject.duration"
+			header="Duration"
+			sortable
+			data-type="number"
+		>
 			<template #body="{ data: activity }: { data: TimeEntryActivity }">
 				<Duration
 					:start="activity.subject.start"
@@ -52,7 +65,7 @@
 		>
 			<template #body="{ data: activity }: { data: TimeEntryActivity }">
 				<VolunteerViewButton
-					@click="emit('select', activity.subject.user.id)"
+					@click="emit('select', activity.subject.user!.id)"
 				/>
 			</template>
 		</Column>
@@ -71,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-import type TimeEntryActivity from '../data/TimeEntryActivity';
+import type RawTimeEntryActivity from '../data/TimeEntryActivity';
 import type { UserId } from '../data/User';
 
 import SkeletonTable from './SkeletonTable.vue';
@@ -80,10 +93,14 @@ import VolunteerName from './VolunteerName.vue';
 import VolunteerViewButton from './VolunteerViewButton.vue';
 import DateTime from './DateTime.vue';
 import Duration from './Duration.vue';
+import { computed } from 'vue';
+import TimeEntryActivity from '../data/impl/TimeEntryActivity';
 
-defineProps<{
-	activities?: TimeEntryActivity[];
+const { activities } = defineProps<{
+	activities?: RawTimeEntryActivity[];
 	now?: number;
 }>();
 const emit = defineEmits<(e: 'select', userId: UserId) => void>();
+
+const values = computed(() => (activities ? TimeEntryActivity.load(activities) : undefined));
 </script>

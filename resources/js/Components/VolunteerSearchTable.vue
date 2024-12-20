@@ -1,16 +1,19 @@
 <template>
 	<DataTable
 		:value="users"
+		data-key="id"
 		paginator
 		:rows="10"
 		:rows-per-page-options="[5, 10, 15, 20]"
+		sortable
+		:removable-sort="true"
 		scrollable
 		scroll-height="flex"
 		:dt="{ paginator: { bottom: { border: { width: 0 } } } }"
 	>
-		<Column header="ID" field="badge_id" />
+		<Column field="badge_id" header="ID" sortable />
 
-		<Column header="Name">
+		<Column field="display_name" header="Name" sortable>
 			<template #body="{ data: user }: { data: User }">
 				<VolunteerName :volunteer="user" />
 			</template>
@@ -81,12 +84,13 @@
 import { ref } from 'vue';
 import vueDebounce from 'vue-debounce';
 import { useRequest } from '../lib/request';
-import type User from '../data/User';
+import User from '../data/impl/User';
+import type RawUser from '../data/User';
 import type { UserId } from '../data/User';
 import type Department from '../data/Department';
 
-import { faUserPlus, faMagnifyingGlass, faUserSlash, faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faMagnifyingGlass, faUserSlash, faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 import ShiftStatusTag from './ShiftStatusTag.vue';
 import ResponsiveTag from './ResponsiveTag.vue';
 import VolunteerName from './VolunteerName.vue';
@@ -112,11 +116,11 @@ async function searchUsers() {
 	}
 
 	const searchingFor = query.value;
-	const { users: resultUsers } = await request.get<{ users: User[] }>('users.search', {
+	const { users: resultUsers } = await request.get<{ users: RawUser[] }>('users.search', {
 		q: query.value,
 	});
 
-	if (resultUsers && searchingFor === query.value) users.value = resultUsers;
+	if (resultUsers && searchingFor === query.value) users.value = User.load(resultUsers);
 }
 
 /**

@@ -1,33 +1,48 @@
 <template>
 	<Panel header="Shift Log">
-		<DataTable :value="volunteer!.time.entries">
-			<Column header="In">
+		<DataTable
+			:value="values"
+			data-key="id"
+			paginator
+			:rows="10"
+			:rows-per-page-options="[5, 10, 15, 20]"
+			:always-show-paginator="false"
+			sortable
+			sort-field="start"
+			:sort-order="1"
+			scrollable
+			scroll-height="flex"
+			:dt="{ paginator: { bottom: { border: { width: 0 } } } }"
+			class="w-full"
+		>
+			<Column field="start" header="In" sortable data-type="date">
 				<template #body="{ data: entry }: { data: TimeEntry }">
 					<DateTime :date="entry.start" />
 				</template>
 			</Column>
 
-			<Column header="Out">
+			<Column field="stop" header="Out" sortable data-type="date">
 				<template #body="{ data: entry }: { data: TimeEntry }">
 					<DateTime v-if="entry.stop" :date="entry.stop" />
 				</template>
 			</Column>
 
-			<Column header="Department">
-				<template #body="{ data: entry }: { data: TimeEntry }">
-					{{ entry.department.name }}
-				</template>
-			</Column>
+			<Column field="department.name" header="Department" sortable />
 
-			<Column header="Worked">
+			<Column
+				field="duration"
+				header="Worked"
+				sortable
+				data-type="number"
+			>
 				<template #body="{ data: entry }: { data: TimeEntry }">
 					<Duration :start="entry.start" :stop="entry.stop" :now />
 				</template>
 			</Column>
 
-			<Column header="Earned">
+			<Column field="earned" header="Earned" sortable data-type="number">
 				<template #body="{ data: entry }: { data: TimeEntry }">
-					<Duration :start="entry.start" :stop="entry.stop" :now />
+					<Duration :ms="entry.earned * 1000" :now />
 				</template>
 			</Column>
 
@@ -76,8 +91,10 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
+import TimeEntry from '../data/impl/TimeEntry';
 import type Volunteer from '../data/Volunteer';
-import type TimeEntry from '../data/TimeEntry';
+import type RawTimeEntry from '../data/TimeEntry';
 import type { TimeEntryId } from '../data/TimeEntry';
 
 import { faHourglassEnd, faNoteSticky } from '@fortawesome/free-solid-svg-icons';
@@ -89,10 +106,12 @@ import Duration from './Duration.vue';
 defineProps<{ now?: number }>();
 const volunteer = defineModel<Volunteer>();
 
+const values = computed(() => (volunteer.value?.time?.entries ? TimeEntry.load(volunteer.value.time.entries) : []));
+
 /**
  * Updates a time entry in the entries array with changes from a new version of it
  */
-function updateEntry(newEntry: TimeEntry) {
+function updateEntry(newEntry: RawTimeEntry) {
 	const entry = volunteer.value!.time.entries.find((entry) => entry.id === newEntry.id);
 	Object.assign(entry!, newEntry);
 }

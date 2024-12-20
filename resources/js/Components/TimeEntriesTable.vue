@@ -1,39 +1,35 @@
 <template>
 	<DataTable
 		v-if="entries"
-		:value="entries"
+		:value="values"
+		data-key="id"
 		paginator
 		:rows="10"
 		:rows-per-page-options="[5, 10, 15, 20]"
+		sortable
+		sort-field="start"
+		:sort-order="1"
 		scrollable
 		scroll-height="flex"
 		:dt="{ paginator: { bottom: { border: { width: 0 } } } }"
 	>
-		<Column header="ID">
+		<Column field="user.badge_id" header="ID" sortable data-type="number" />
+
+		<Column field="user.display_name" header="Name" sortable>
 			<template #body="{ data: entry }: { data: TimeEntry }">
-				{{ entry.user.badge_id }}
+				<VolunteerName :volunteer="entry.user!" />
 			</template>
 		</Column>
 
-		<Column header="Name">
-			<template #body="{ data: entry }: { data: TimeEntry }">
-				<VolunteerName :volunteer="entry.user" />
-			</template>
-		</Column>
+		<Column field="department.name" header="Department" sortable />
 
-		<Column header="Department">
-			<template #body="{ data: entry }: { data: TimeEntry }">
-				{{ entry.department.name }}
-			</template>
-		</Column>
-
-		<Column header="Start Time">
+		<Column field="start" header="Start Time" sortable data-type="date">
 			<template #body="{ data: entry }: { data: TimeEntry }">
 				<DateTime :date="entry.start" />
 			</template>
 		</Column>
 
-		<Column header="Duration">
+		<Column field="duration" header="Duration" sortable data-type="number">
 			<template #body="{ data: entry }: { data: TimeEntry }">
 				<Duration :start="entry.start" :stop="entry.stop" :now />
 			</template>
@@ -45,7 +41,7 @@
 			:pt="{ columnHeaderContent: { class: 'justify-end' } }"
 		>
 			<template #body="{ data: entry }: { data: TimeEntry }">
-				<VolunteerViewButton @click="emit('select', entry.user.id)" />
+				<VolunteerViewButton @click="emit('select', entry.user!.id)" />
 			</template>
 		</Column>
 
@@ -70,7 +66,9 @@
 </template>
 
 <script setup lang="ts">
-import type TimeEntry from '../data/TimeEntry';
+import { computed } from 'vue';
+import TimeEntry from '../data/impl/TimeEntry';
+import type RawTimeEntry from '../data/TimeEntry';
 import type { UserId } from '../data/User';
 
 import SkeletonTable from './SkeletonTable.vue';
@@ -79,9 +77,11 @@ import VolunteerViewButton from './VolunteerViewButton.vue';
 import DateTime from './DateTime.vue';
 import Duration from './Duration.vue';
 
-defineProps<{
-	entries?: TimeEntry[];
+const { entries } = defineProps<{
+	entries?: RawTimeEntry[];
 	now?: number;
 }>();
 const emit = defineEmits<(e: 'select', userId: UserId) => void>();
+
+const values = computed(() => (entries ? TimeEntry.load(entries) : undefined));
 </script>

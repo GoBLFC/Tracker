@@ -7,8 +7,9 @@ export default interface TimeEntry {
 	stop: string | null;
 	notes: string | null;
 	auto: boolean;
-	user: User;
+	user?: User;
 	department: Department;
+	bonus_time?: number;
 }
 
 export type TimeEntryId = string & { __timeEntryIdType: never };

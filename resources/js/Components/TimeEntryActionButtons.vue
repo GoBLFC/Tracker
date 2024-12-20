@@ -41,14 +41,15 @@
 import { ref, watch } from 'vue';
 import { useConfirm } from '../lib/confirm';
 import { useRequest } from '../lib/request';
-import type TimeEntry from '../data/TimeEntry';
+import type TimeEntry from '../data/impl/TimeEntry';
+import type RawTimeEntry from '../data/TimeEntry';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faCircleNotch, faTrash, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 
-const { entry } = defineProps<{ entry: TimeEntry }>();
+const { entry } = defineProps<{ entry: RawTimeEntry | TimeEntry }>();
 const emit = defineEmits<{
-	(e: 'checkout', entry: TimeEntry): void;
+	(e: 'checkout', entry: RawTimeEntry): void;
 	(e: 'delete'): void;
 }>();
 
@@ -73,7 +74,7 @@ async function checkout() {
 	if (!confirmed) return;
 
 	const { time_entry: newEntry } = await request.post<{
-		time_entry: TimeEntry;
+		time_entry: RawTimeEntry;
 	}>(['tracker.time.checkout.post', entry.id]);
 	emit('checkout', newEntry);
 }
