@@ -87,7 +87,7 @@
 	</main>
 </template>
 
-<script setup lang="tsx">
+<script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
 import { useRoute } from '../lib/route';
 

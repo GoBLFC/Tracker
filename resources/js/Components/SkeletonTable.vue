@@ -16,7 +16,7 @@
 	</DataTable>
 </template>
 
-<script setup lang="tsx">
+<script setup lang="ts">
 const { rows = 10 } = defineProps<{
 	columns: string[];
 	rows?: number;
