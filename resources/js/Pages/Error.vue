@@ -2,7 +2,7 @@
 	<div class="flex flex-col h-full justify-center items-center gap-8">
 		<Head :title="`${status}: ${title}`" />
 
-		<LegacyLink to="tracker.index" :title="$appName">
+		<Link to="tracker.index" :title="$appName">
 			<img
 				src="../../img/event-logo.png"
 				width="128"
@@ -10,7 +10,7 @@
 				alt="Event Logo"
 				class="object-scale-down"
 			/>
-		</LegacyLink>
+		</Link>
 
 		<h1 class="text-3xl text-center font-light">
 			{{ status }}: {{ title }}
