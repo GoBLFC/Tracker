@@ -1,5 +1,5 @@
 <template>
-	<div class="h-full flex flex-col justify-center items-center gap-8">
+	<div class="grow flex flex-col justify-center items-center gap-8">
 		<Head :title />
 
 		<FontAwesomeIcon class="text-6xl" :icon />

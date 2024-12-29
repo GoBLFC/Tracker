@@ -1,5 +1,5 @@
 <template>
-	<div class="flex flex-col h-full justify-center items-center gap-8">
+	<div class="grow flex flex-col justify-center items-center gap-8">
 		<Head :title="`${status}: ${title}`" />
 
 		<Link to="tracker.index" :title="$appName">

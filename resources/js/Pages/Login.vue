@@ -1,8 +1,8 @@
 <template>
-	<main class="px-4 flex flex-col items-center gap-4 md:gap-8">
+	<div class="grow flex flex-col justify-center items-center gap-4 md:gap-8">
 		<img
 			src="../../img/event-logo.png"
-			class="h-[128px] md:h-[146px] mt-4 md:mt-16 object-scale-down"
+			class="h-[128px] md:h-[146px] mt-4 object-scale-down"
 			:alt="$appName"
 		/>
 
@@ -84,7 +84,7 @@
 				</form>
 			</Panel>
 		</Panel>
-	</main>
+	</div>
 </template>
 
 <script setup lang="ts">
@@ -92,10 +92,11 @@ import { useForm } from '@inertiajs/vue3';
 import { useRoute } from '../lib/route';
 
 import BaseLayout from '../Layouts/BaseLayout.vue';
+import NavlessLayout from '../Layouts/NavlessLayout.vue';
 import HelpIcon from '../Components/HelpIcon.vue';
 import Link from '../Components/Link.vue';
 
-defineOptions({ layout: [BaseLayout] });
+defineOptions({ layout: [BaseLayout, NavlessLayout] });
 
 const route = useRoute();
 const qcForm = useForm({ code: '' });

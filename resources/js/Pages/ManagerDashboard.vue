@@ -1,5 +1,5 @@
 <template>
-	<div class="flex flex-col h-full gap-4">
+	<div class="grow flex flex-col gap-4">
 		<Head title="Manager Dashboard" />
 
 		<!-- Event selector -->

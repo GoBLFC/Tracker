@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="h-full mx-auto flex flex-col justify-center gap-4"
+		class="grow mx-auto flex flex-col justify-center gap-4"
 		:class="{
 			'container max-w-[80rem]': activeEvent,
 			'w-fit': !activeEvent,

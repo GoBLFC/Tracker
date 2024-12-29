@@ -14,7 +14,7 @@ import { injectKey as routeInjectKey } from './lib/route';
 import Theme from './theme';
 
 import BaseLayout from './Layouts/BaseLayout.vue';
-import MainLayout from './Layouts/MainLayout.vue';
+import NavLayout from './Layouts/NavLayout.vue';
 
 const appName = document.getElementsByTagName('title')[0]?.innerText;
 
@@ -24,7 +24,7 @@ createInertiaApp({
 	async resolve(name) {
 		const pages = import.meta.glob<Promise<DefineComponent>>('./Pages/**/*.vue', { eager: true });
 		const page = await resolvePageComponent<DefineComponent>(`./Pages/${name}.vue`, pages);
-		page.default.layout ??= [BaseLayout, MainLayout];
+		page.default.layout ??= [BaseLayout, NavLayout];
 		return page;
 	},
 

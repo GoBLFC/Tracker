@@ -2,10 +2,10 @@
 	<div class="h-full flex flex-col lg:flex-row relative -z-50">
 		<AppNav />
 
-		<div class="w-full h-full lg:overflow-auto">
+		<div class="grow lg:overflow-auto flex flex-col">
 			<DevBadges v-if="isDevMode" class="mx-2 mb-4 lg:mb-0 lg:mt-4" />
 
-			<main class="h-full px-4 py-4 pt-0 lg:ps-0 lg:pt-4">
+			<main class="grow p-4 pt-0 lg:ps-0 lg:pt-4 flex flex-col">
 				<slot />
 			</main>
 		</div>
