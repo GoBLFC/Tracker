@@ -39,13 +39,6 @@ class ManagementController extends Controller {
 	];
 
 	/**
-	 * Render the lead panel
-	 */
-	public function getLeadIndex(): View {
-		return view('management.lead');
-	}
-
-	/**
 	 * Render the management panel
 	 */
 	public function getManageIndex(?Event $event = null, ?User $user = null): Response {

@@ -63,10 +63,6 @@ Route::middleware(['auth', 'not-banned', 'lockdown'])->group(function () {
 	});
 
 	Route::controller(\App\Http\Controllers\ManagementController::class)->group(function () {
-		Route::middleware('role:lead')->group(function () {
-			Route::get('/lead', 'getLeadIndex')->name('management.lead');
-		});
-
 		Route::middleware('role:manager')->group(function () {
 			Route::get('/manage/{event?}', 'getManageIndex')->name('management.manage');
 			Route::get('/manage/{event}/volunteer/{user}', 'getManageIndex')->name('management.manage.volunteer');
