@@ -44,8 +44,8 @@
 <script setup lang="ts">
 import { useTemplateRef } from 'vue';
 import QRCode from 'qrcode';
-import { useToast } from '../lib/toast';
-import { useAppSettings } from '../lib/settings';
+import { useToast } from '@/lib/toast';
+import { useAppSettings } from '@/lib/settings';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faTelegram } from '@fortawesome/free-brands-svg-icons';

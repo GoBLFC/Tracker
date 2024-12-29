@@ -62,12 +62,12 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import type VolunteerTime from '../data/VolunteerTime';
+import type VolunteerTime from '@/data/VolunteerTime';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
-import HelpIcon from './HelpIcon.vue';
-import Duration from './Duration.vue';
+import HelpIcon from '../Common/HelpIcon.vue';
+import Duration from '../Common/Duration.vue';
 
 const { time } = defineProps<{
 	time: VolunteerTime;

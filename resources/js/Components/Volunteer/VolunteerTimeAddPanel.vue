@@ -55,17 +55,17 @@
 
 <script setup lang="ts">
 import { ref, useId } from 'vue';
-import { useTime } from '../lib/time';
-import { useToast } from '../lib/toast';
-import { useRequest } from '../lib/request';
-import type Volunteer from '../data/Volunteer';
-import type Event from '../data/Event';
-import type Department from '../data/Department';
-import type TimeEntry from '../data/TimeEntry';
+import { useTime } from '@/lib/time';
+import { useToast } from '@/lib/toast';
+import { useRequest } from '@/lib/request';
+import type Volunteer from '@/data/Volunteer';
+import type Event from '@/data/Event';
+import type Department from '@/data/Department';
+import type TimeEntry from '@/data/TimeEntry';
 
 import { faArrowRightToBracket, faCalendarPlus } from '@fortawesome/free-solid-svg-icons';
 import DepartmentSelector from './DepartmentSelector.vue';
-import ResponsiveButton from './ResponsiveButton.vue';
+import ResponsiveButton from '../Common/ResponsiveButton.vue';
 
 const { event, departments } = defineProps<{
 	event: Event;

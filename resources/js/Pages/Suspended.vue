@@ -11,5 +11,5 @@
 
 <script setup lang="ts">
 import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
-import BasicPage from '../Components/BasicPage.vue';
+import BasicPage from '@/Components/App/BasicPage.vue';
 </script>

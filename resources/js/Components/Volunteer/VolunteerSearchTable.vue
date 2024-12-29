@@ -83,18 +83,18 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import vueDebounce from 'vue-debounce';
-import { useRequest } from '../lib/request';
-import User from '../data/impl/User';
-import type RawUser from '../data/User';
-import type { UserId } from '../data/User';
-import type Department from '../data/Department';
+import { useRequest } from '@/lib/request';
+import User from '@/data/impl/User';
+import type RawUser from '@/data/User';
+import type { UserId } from '@/data/User';
+import type Department from '@/data/Department';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faMagnifyingGlass, faUserSlash, faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 import ShiftStatusTag from './ShiftStatusTag.vue';
-import ResponsiveTag from './ResponsiveTag.vue';
 import VolunteerName from './VolunteerName.vue';
 import VolunteerViewButton from './VolunteerViewButton.vue';
+import ResponsiveTag from '../Common/ResponsiveTag.vue';
 
 const emit = defineEmits<(e: 'select', userId: UserId) => void>();
 

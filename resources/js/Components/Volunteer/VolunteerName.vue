@@ -7,9 +7,9 @@
 
 <script setup lang="ts">
 import { toRef } from 'vue';
-import type User from '../data/impl/User';
-import type RawUser from '../data/User';
-import type Volunteer from '../data/Volunteer';
+import type User from '@/data/impl/User';
+import type RawUser from '@/data/User';
+import type Volunteer from '@/data/Volunteer';
 
 const { volunteer, showId = false } = defineProps<{
 	volunteer: Volunteer | RawUser | User;

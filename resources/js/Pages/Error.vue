@@ -4,7 +4,7 @@
 
 		<Link to="tracker.index" :title="$appName">
 			<img
-				src="../../img/event-logo.png"
+				src="@/../img/event-logo.png"
 				width="128"
 				height="146"
 				alt="Event Logo"
@@ -33,10 +33,11 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
+
 import { Head } from '@inertiajs/vue3';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faHouse, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import Link from '../Components/Link.vue';
+import Link from '@/Components/Common/Link.vue';
 
 const { status } = defineProps<{ status: number }>();
 

@@ -40,9 +40,9 @@
 
 <script setup lang="ts">
 import { ref, toRef } from 'vue';
-import type Notification from '../data/Notification';
-
 import { Head, router } from '@inertiajs/vue3';
+import type Notification from '@/data/Notification';
+
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faCheck, faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 

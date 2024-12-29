@@ -5,9 +5,9 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, computed, watch, toRef, ref } from 'vue';
 import { router } from '@inertiajs/vue3';
-import { useRoute } from '../lib/route';
-import { useAppSettings } from '../lib/settings';
-import { clockDuration, useNow } from '../lib/time';
+import { useRoute } from '@/lib/route';
+import { useAppSettings } from '@/lib/settings';
+import { clockDuration, useNow } from '@/lib/time';
 
 defineExpose({ logout });
 const { auto, resetOnNavigate = true } = defineProps<{

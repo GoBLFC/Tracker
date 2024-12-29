@@ -44,11 +44,11 @@ import { router, usePage } from '@inertiajs/vue3';
 import type { Method } from '@inertiajs/core';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import type { RouteName } from 'vendor/tightenco/ziggy/src/js';
-import { useRoute } from '../lib/route';
+import { useRoute } from '@/lib/route';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import Link from './Link.vue';
-import LegacyLink from './LegacyLink.vue';
+import Link from '../Common/Link.vue';
+import LegacyLink from '../Common/LegacyLink.vue';
 
 defineOptions({ inheritAttrs: false });
 const {

@@ -7,9 +7,9 @@
 
 <script setup lang="ts">
 import { watchEffect } from 'vue';
-import { useLocalSettings } from '../lib/settings';
-import { useTheme } from '../lib/media-query';
-import { useToast } from '../lib/toast';
+import { useLocalSettings } from '@/lib/settings';
+import { useTheme } from '@/lib/media-query';
+import { useToast } from '@/lib/toast';
 
 const { theme: systemTheme } = useTheme();
 const { theme: preferredTheme } = useLocalSettings();

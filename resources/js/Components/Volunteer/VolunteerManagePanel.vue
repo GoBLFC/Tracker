@@ -41,11 +41,11 @@
 
 <script setup lang="ts">
 import { useTemplateRef } from 'vue';
-import { isElementInView } from '../lib/util';
-import type Volunteer from '../data/Volunteer';
-import type Event from '../data/Event';
-import type Reward from '../data/Reward';
-import type Department from '../data/Department';
+import { isElementInView } from '@/lib/util';
+import type Volunteer from '@/data/Volunteer';
+import type Event from '@/data/Event';
+import type Reward from '@/data/Reward';
+import type Department from '@/data/Department';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';

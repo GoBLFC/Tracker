@@ -111,21 +111,21 @@
 <script setup lang="ts">
 import { computed, ref, useTemplateRef } from 'vue';
 import { router, usePoll } from '@inertiajs/vue3';
-import { useAppSettings } from '../lib/settings';
-import { useUser } from '../lib/user';
-import { useNow } from '../lib/time';
-import { useRoute } from '../lib/route';
-import { useToast } from '../lib/toast';
-import type Volunteer from '../data/Volunteer';
-import type Department from '../data/Department';
+import { useAppSettings } from '@/lib/settings';
+import { useUser } from '@/lib/user';
+import { useNow } from '@/lib/time';
+import { useRoute } from '@/lib/route';
+import { useToast } from '@/lib/toast';
+import type Volunteer from '@/data/Volunteer';
+import type Department from '@/data/Department';
 
 import { faArrowRightFromBracket, faArrowRightToBracket } from '@fortawesome/free-solid-svg-icons';
 import { faTelegram } from '@fortawesome/free-brands-svg-icons';
-import VolunteerTimeStats from '../Components/VolunteerTimeStats.vue';
-import DepartmentSelector from '../Components/DepartmentSelector.vue';
-import ResponsiveButton from '../Components/ResponsiveButton.vue';
-import TelegramModal from '../Components/TelegramModal.vue';
-import SwalSuccessDialog from '../Components/SwalSuccessDialog.vue';
+import VolunteerTimeStats from '@/Components/Volunteer/VolunteerTimeStats.vue';
+import DepartmentSelector from '@/Components/Volunteer/DepartmentSelector.vue';
+import TelegramModal from '@/Components/Dialogs/TelegramModal.vue';
+import SwalSuccessDialog from '@/Components/Dialogs/SwalSuccessDialog.vue';
+import ResponsiveButton from '@/Components/Common/ResponsiveButton.vue';
 
 const { volunteer, departments } = defineProps<{
 	volunteer: Volunteer;

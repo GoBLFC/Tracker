@@ -92,16 +92,16 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import TimeEntry from '../data/impl/TimeEntry';
-import type Volunteer from '../data/Volunteer';
-import type RawTimeEntry from '../data/TimeEntry';
-import type { TimeEntryId } from '../data/TimeEntry';
+import TimeEntry from '@/data/impl/TimeEntry';
+import type Volunteer from '@/data/Volunteer';
+import type RawTimeEntry from '@/data/TimeEntry';
+import type { TimeEntryId } from '@/data/TimeEntry';
 
 import { faHourglassEnd, faNoteSticky } from '@fortawesome/free-solid-svg-icons';
-import TimeEntryActionButtons from './TimeEntryActionButtons.vue';
-import ResponsiveTag from './ResponsiveTag.vue';
-import DateTime from './DateTime.vue';
-import Duration from './Duration.vue';
+import TimeEntryActionButtons from '../Manage/TimeEntryActionButtons.vue';
+import ResponsiveTag from '../Common/ResponsiveTag.vue';
+import DateTime from '../Common/DateTime.vue';
+import Duration from '../Common/Duration.vue';
 
 defineProps<{ now?: number }>();
 const volunteer = defineModel<Volunteer>();

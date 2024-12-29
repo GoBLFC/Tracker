@@ -32,8 +32,8 @@
 </template>
 
 <script setup lang="ts">
-import type Volunteer from '../data/Volunteer';
-import type Reward from '../data/Reward';
+import type Volunteer from '@/data/Volunteer';
+import type Reward from '@/data/Reward';
 
 import VolunteerClaimToggleButton from './VolunteerClaimToggleButton.vue';
 

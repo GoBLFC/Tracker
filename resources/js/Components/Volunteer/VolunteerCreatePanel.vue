@@ -48,10 +48,10 @@
 <script setup lang="ts">
 import { useId } from 'vue';
 import { useForm } from '@inertiajs/vue3';
-import { useRoute } from '../lib/route';
+import { useRoute } from '@/lib/route';
 
 import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
-import ResponsiveButton from './ResponsiveButton.vue';
+import ResponsiveButton from '../Common/ResponsiveButton.vue';
 
 const route = useRoute();
 const form = useForm({ badge_id: '' });

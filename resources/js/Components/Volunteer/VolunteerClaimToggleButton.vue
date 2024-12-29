@@ -22,11 +22,11 @@
 
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue';
-import { useRequest } from '../lib/request';
-import { useConfirm } from '../lib/confirm';
-import type Volunteer from '../data/Volunteer';
-import type Reward from '../data/Reward';
-import type RewardClaim from '../data/RewardClaim';
+import { useRequest } from '@/lib/request';
+import { useConfirm } from '@/lib/confirm';
+import type Volunteer from '@/data/Volunteer';
+import type Reward from '@/data/Reward';
+import type RewardClaim from '@/data/RewardClaim';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faCircleNotch, faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';

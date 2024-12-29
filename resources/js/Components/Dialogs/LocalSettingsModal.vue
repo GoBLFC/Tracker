@@ -55,9 +55,10 @@
 
 <script setup lang="ts">
 import { computed, useId } from 'vue';
-import { useAppSettings, useLocalSettings } from '../lib/settings';
-import { getTimezoneLabel } from '../lib/time';
-import { useTheme } from '../lib/media-query';
+import { useAppSettings, useLocalSettings } from '@/lib/settings';
+import { getTimezoneLabel } from '@/lib/time';
+import { useTheme } from '@/lib/media-query';
+
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faComputer, faMoon, faSun, faClock } from '@fortawesome/free-solid-svg-icons';
 

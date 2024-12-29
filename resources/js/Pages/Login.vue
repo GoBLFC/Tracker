@@ -1,7 +1,7 @@
 <template>
 	<div class="grow flex flex-col justify-center items-center gap-4 md:gap-8">
 		<img
-			src="../../img/event-logo.png"
+			src="@/../img/event-logo.png"
 			class="h-[128px] md:h-[146px] object-scale-down"
 			:alt="$appName"
 		/>
@@ -88,23 +88,23 @@
 </template>
 
 <script setup lang="ts">
-import { useForm } from "@inertiajs/vue3";
-import { useRoute } from "../lib/route";
+import { useForm } from '@inertiajs/vue3';
+import { useRoute } from '@/lib/route';
 
-import BaseLayout from "../Layouts/BaseLayout.vue";
-import NavlessLayout from "../Layouts/NavlessLayout.vue";
-import HelpIcon from "../Components/HelpIcon.vue";
-import Link from "../Components/Link.vue";
+import BaseLayout from '@/Layouts/BaseLayout.vue';
+import NavlessLayout from '@/Layouts/NavlessLayout.vue';
+import HelpIcon from '@/Components/Common/HelpIcon.vue';
+import Link from '@/Components/Common/Link.vue';
 
 defineOptions({ layout: [BaseLayout, NavlessLayout] });
 
 const route = useRoute();
-const qcForm = useForm({ code: "" });
+const qcForm = useForm({ code: '' });
 
 /**
  * Submits the quick code form, logging the user in if it's valid
  */
 function submitQuickCode() {
-	qcForm.post(route("auth.quickcode.post"), { replace: true });
+	qcForm.post(route('auth.quickcode.post'), { replace: true });
 }
 </script>

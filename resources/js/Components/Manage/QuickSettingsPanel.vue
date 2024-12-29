@@ -25,7 +25,7 @@
 <script setup lang="ts">
 import { computed, useId } from 'vue';
 import humanizeDuration from 'humanize-duration';
-import { useAppSettings } from '../lib/settings';
+import { useAppSettings } from '@/lib/settings';
 
 import KioskToggleSwitch from './KioskToggleSwitch.vue';
 

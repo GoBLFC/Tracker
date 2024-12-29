@@ -19,11 +19,11 @@
 </template>
 
 <script setup lang="ts">
-import type { Breakpoint } from '../lib/media-query';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
+import type { Breakpoint } from '@/lib/media-query';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 
 const { breakpoint = 'sm' } = defineProps<{
 	label: string;

@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useRoute } from '../lib/route';
+import { useRoute } from '@/lib/route';
 
 const route = useRoute();
 

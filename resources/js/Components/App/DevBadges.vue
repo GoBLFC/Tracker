@@ -51,10 +51,11 @@
 </template>
 
 <script setup lang="ts">
+import { useUser } from '@/lib/user';
+import { useAppSettings } from '@/lib/settings';
+
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faCode, faUser, faIdCard, faLock, faLockOpen, faCalendarDay } from '@fortawesome/free-solid-svg-icons';
-import { useUser } from '../lib/user';
-import { useAppSettings } from '../lib/settings';
 
 const { isLoggedIn, badgeId, id: uuid, roleName } = useUser();
 const { activeEvent, isKiosk } = useAppSettings();

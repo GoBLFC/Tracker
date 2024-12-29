@@ -9,7 +9,7 @@
 	>
 		<div class="flex justify-between">
 			<img
-				src="@/img/event-logo.png"
+				src="@/../img/event-logo.png"
 				width="128"
 				height="146"
 				class="w-auto h-12 lg:w-12 lg:h-auto"
@@ -117,7 +117,7 @@
 
 <script setup lang="ts">
 import { ref, toRef, useId } from 'vue';
-import { useBreakpoints } from '../lib/media-query';
+import { useBreakpoints } from '@/lib/media-query';
 
 import {
 	faHouseCircleCheck,
@@ -134,7 +134,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import AppNavItem from './AppNavItem.vue';
 import AppNavLogoutItem from './AppNavLogoutItem.vue';
-import LocalSettingsModal from './LocalSettingsModal.vue';
+import LocalSettingsModal from '../Dialogs/LocalSettingsModal.vue';
 
 const { isNotSm, isNotLg } = useBreakpoints();
 

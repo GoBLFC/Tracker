@@ -67,15 +67,15 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import TimeEntry from '../data/impl/TimeEntry';
-import type RawTimeEntry from '../data/TimeEntry';
-import type { UserId } from '../data/User';
+import TimeEntry from '@/data/impl/TimeEntry';
+import type RawTimeEntry from '@/data/TimeEntry';
+import type { UserId } from '@/data/User';
 
-import SkeletonTable from './SkeletonTable.vue';
-import VolunteerName from './VolunteerName.vue';
-import VolunteerViewButton from './VolunteerViewButton.vue';
-import DateTime from './DateTime.vue';
-import Duration from './Duration.vue';
+import VolunteerName from '../Volunteer/VolunteerName.vue';
+import VolunteerViewButton from '../Volunteer/VolunteerViewButton.vue';
+import DateTime from '../Common/DateTime.vue';
+import Duration from '../Common/Duration.vue';
+import SkeletonTable from '../Common/SkeletonTable.vue';
 
 const { entries } = defineProps<{
 	entries?: RawTimeEntry[];

@@ -111,29 +111,29 @@
 <script setup lang="ts">
 import { useTemplateRef, nextTick, toRef } from 'vue';
 import { router, Head, usePoll } from '@inertiajs/vue3';
-import { useUser } from '../lib/user';
-import { useAppSettings } from '../lib/settings';
-import { useNow } from '../lib/time';
-import { useRoute } from '../lib/route';
-import type Volunteer from '../data/Volunteer';
-import type Event from '../data/Event';
-import type { EventId } from '../data/Event';
-import type Department from '../data/Department';
-import type Reward from '../data/Reward';
-import type TimeEntryActivity from '../data/TimeEntryActivity';
-import type TimeEntry from '../data/TimeEntry';
-import type { UserId } from '../data/User';
+import { useUser } from '@/lib/user';
+import { useAppSettings } from '@/lib/settings';
+import { useNow } from '@/lib/time';
+import { useRoute } from '@/lib/route';
+import type Volunteer from '@/data/Volunteer';
+import type Event from '@/data/Event';
+import type { EventId } from '@/data/Event';
+import type Department from '@/data/Department';
+import type Reward from '@/data/Reward';
+import type TimeEntryActivity from '@/data/TimeEntryActivity';
+import type TimeEntry from '@/data/TimeEntry';
+import type { UserId } from '@/data/User';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
-import EventSelector from '../Components/EventSelector.vue';
-import FullContentHeightPanel from '../Components/FullContentHeightPanel.vue';
-import TimeActivitiesTable from '../Components/TimeActivitiesTable.vue';
-import TimeEntriesTable from '../Components/TimeEntriesTable.vue';
-import VolunteerSearchTable from '../Components/VolunteerSearchTable.vue';
-import VolunteerManagePanel from '../Components/VolunteerManagePanel.vue';
-import VolunteerCreatePanel from '../Components/VolunteerCreatePanel.vue';
-import QuickSettingsPanel from '../Components/QuickSettingsPanel.vue';
+import EventSelector from '@/Components/Manage/EventSelector.vue';
+import QuickSettingsPanel from '@/Components/Manage/QuickSettingsPanel.vue';
+import TimeActivitiesTable from '@/Components/Manage/TimeActivitiesTable.vue';
+import TimeEntriesTable from '@/Components/Manage/TimeEntriesTable.vue';
+import VolunteerSearchTable from '@/Components/Volunteer/VolunteerSearchTable.vue';
+import VolunteerManagePanel from '@/Components/Volunteer/VolunteerManagePanel.vue';
+import VolunteerCreatePanel from '@/Components/Volunteer/VolunteerCreatePanel.vue';
+import FullContentHeightPanel from '@/Components/Common/FullContentHeightPanel.vue';
 
 const { event, volunteer } = defineProps<{
 	event: Event | null;

@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import { toRef } from 'vue';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import { BREAKPOINTS, useBreakpoints, type Breakpoint } from '../lib/media-query';
+import { BREAKPOINTS, useBreakpoints, type Breakpoint } from '@/lib/media-query';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 

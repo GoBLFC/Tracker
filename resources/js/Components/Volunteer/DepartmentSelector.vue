@@ -50,7 +50,7 @@
 
 <script setup lang="ts">
 import { useId } from 'vue';
-import type Department from '../data/Department';
+import type Department from '@/data/Department';
 
 defineOptions({ inheritAttrs: false });
 defineProps<{ departments: Department[] }>();

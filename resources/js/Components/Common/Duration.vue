@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { computed, toRef } from 'vue';
-import { shortDuration, clockDuration } from '../lib/time';
+import { shortDuration, clockDuration } from '@/lib/time';
 
 const {
 	start,

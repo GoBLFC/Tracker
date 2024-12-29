@@ -13,9 +13,10 @@
 </template>
 
 <script setup lang="ts">
-import { useAppSettings } from '../lib/settings';
-import AppNav from '../Components/AppNav.vue';
-import DevBadges from '../Components/DevBadges.vue';
+import { useAppSettings } from '@/lib/settings';
+
+import AppNav from '@/Components/App/AppNav.vue';
+import DevBadges from '@/Components/App/DevBadges.vue';
 
 const { isDevMode } = useAppSettings();
 </script>

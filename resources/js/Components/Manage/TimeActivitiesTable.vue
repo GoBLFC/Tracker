@@ -84,17 +84,17 @@
 </template>
 
 <script setup lang="ts">
-import type RawTimeEntryActivity from '../data/TimeEntryActivity';
-import type { UserId } from '../data/User';
-
-import SkeletonTable from './SkeletonTable.vue';
-import ShiftStatusTag from './ShiftStatusTag.vue';
-import VolunteerName from './VolunteerName.vue';
-import VolunteerViewButton from './VolunteerViewButton.vue';
-import DateTime from './DateTime.vue';
-import Duration from './Duration.vue';
 import { computed } from 'vue';
-import TimeEntryActivity from '../data/impl/TimeEntryActivity';
+import TimeEntryActivity from '@/data/impl/TimeEntryActivity';
+import type RawTimeEntryActivity from '@/data/TimeEntryActivity';
+import type { UserId } from '@/data/User';
+
+import ShiftStatusTag from '../Volunteer/ShiftStatusTag.vue';
+import VolunteerName from '../Volunteer/VolunteerName.vue';
+import VolunteerViewButton from '../Volunteer/VolunteerViewButton.vue';
+import DateTime from '../Common/DateTime.vue';
+import Duration from '../Common/Duration.vue';
+import SkeletonTable from '../Common/SkeletonTable.vue';
 
 const { activities } = defineProps<{
 	activities?: RawTimeEntryActivity[];

@@ -80,14 +80,14 @@
 import { ref, useId, useTemplateRef, watch } from 'vue';
 import { router } from '@inertiajs/vue3';
 import type { RequestPayload, Errors } from '@inertiajs/core';
-import { useAppSettings } from '../lib/settings';
-import { useUser } from '../lib/user';
-import type TrackerEvent from '../data/Event';
-import type { EventId } from '../data/Event';
+import { useAppSettings } from '@/lib/settings';
+import { useUser } from '@/lib/user';
+import type TrackerEvent from '@/data/Event';
+import type { EventId } from '@/data/Event';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faCalendarDay } from '@fortawesome/free-solid-svg-icons';
-import LegacyLink from './LegacyLink.vue';
+import LegacyLink from '../Common/LegacyLink.vue';
 
 const {
 	event,

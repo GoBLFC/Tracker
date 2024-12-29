@@ -10,9 +10,9 @@
 import { ref, watch } from 'vue';
 import { router } from '@inertiajs/vue3';
 import type { Errors } from '@inertiajs/core';
-import { useAppSettings } from '../lib/settings';
-import { useToast } from '../lib/toast';
-import { useRoute } from '../lib/route';
+import { useAppSettings } from '@/lib/settings';
+import { useToast } from '@/lib/toast';
+import { useRoute } from '@/lib/route';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';

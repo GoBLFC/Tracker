@@ -15,7 +15,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { DateTime } from 'luxon';
-import { useTime } from '../lib/time';
+import { useTime } from '@/lib/time';
 
 const { dateToPreferredTime, isoToPreferredTime } = useTime();
 

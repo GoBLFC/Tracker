@@ -39,10 +39,10 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import { useConfirm } from '../lib/confirm';
-import { useRequest } from '../lib/request';
-import type TimeEntry from '../data/impl/TimeEntry';
-import type RawTimeEntry from '../data/TimeEntry';
+import { useConfirm } from '@/lib/confirm';
+import { useRequest } from '@/lib/request';
+import type TimeEntry from '@/data/impl/TimeEntry';
+import type RawTimeEntry from '@/data/TimeEntry';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faCircleNotch, faTrash, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';

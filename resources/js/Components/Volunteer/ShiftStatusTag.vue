@@ -10,10 +10,10 @@
 </template>
 
 <script setup lang="ts">
-import type Department from '../data/Department';
+import type Department from '@/data/Department';
 
 import { faArrowRightFromBracket, faArrowRightToBracket } from '@fortawesome/free-solid-svg-icons';
-import ResponsiveTag from './ResponsiveTag.vue';
+import ResponsiveTag from '../Common/ResponsiveTag.vue';
 
 defineProps<{
 	checkedIn: boolean;

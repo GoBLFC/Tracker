@@ -9,8 +9,9 @@
 </template>
 
 <script setup lang="ts">
-import { useAppSettings } from '../lib/settings';
-import DevBadges from '../Components/DevBadges.vue';
+import { useAppSettings } from '@/lib/settings';
+
+import DevBadges from '@/Components/App/DevBadges.vue';
 
 const { isDevMode } = useAppSettings();
 </script>
