@@ -95,6 +95,7 @@
 
 			<ul class="flex flex-col sm:max-lg:flex-row gap-1">
 				<AppNavItem
+					to="about"
 					label="About Tracker"
 					:icon="faInfoCircle"
 					:show-text="showHamburger"

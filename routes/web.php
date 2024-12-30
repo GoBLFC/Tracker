@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
+Route::inertia('/about', 'About')->name('about');
+
 Route::controller(\App\Http\Controllers\AuthController::class)->group(function () {
 	Route::get('/login', 'getLogin')->name('auth.login')->middleware('guest');
 	Route::get('/logout', 'getLogout')->name('auth.logout');
