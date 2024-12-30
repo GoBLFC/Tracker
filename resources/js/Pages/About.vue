@@ -44,10 +44,26 @@
 				<ul class="flex justify-center gap-3 text-3xl">
 					<li>
 						<a
+							href="https://bsky.app/profile/ghostcabb.it"
+							title="Ghost's Bluesky"
+							target="_blank"
+							><FontAwesomeIcon :icon="faBluesky"
+						/></a>
+					</li>
+					<li>
+						<a
 							href="https://twitter.com/GhostCabbit"
 							title="Ghost's Twitter"
 							target="_blank"
 							><FontAwesomeIcon :icon="faTwitter"
+						/></a>
+					</li>
+					<li>
+						<a
+							href="https://ghostcabbit.com/"
+							title="Ghost's Website"
+							target="_blank"
+							><FontAwesomeIcon :icon="faGlobe"
 						/></a>
 					</li>
 				</ul>
