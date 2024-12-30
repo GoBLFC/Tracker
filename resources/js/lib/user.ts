@@ -15,14 +15,14 @@ export function useUser() {
 		badgeName: toRef(() => page.props.auth.user?.badge_name),
 		displayName: toRef(() => page.props.auth.user?.badge_name ?? page.props.auth.user?.username),
 		role: toRef(() => page.props.auth.user?.role),
-		roleName: toRef(() => (page.props.auth.user?.role ? roleNames[page.props.auth.user?.role] : null)),
+		roleName: toRef(() => (page.props.auth.user?.role ? roleNames[page.props.auth.user.role] : null)),
 
 		isLoggedIn: toRef(() => Boolean(page.props.auth.user)),
 		isGatekeeper: toRef(() => page.props.isGatekeeper),
 		isBanned: toRef(() => page.props.auth.user?.role === -2),
-		isStaff: toRef(() => page.props.auth.user?.role ?? 0 >= 1),
-		isLead: toRef(() => page.props.auth.user?.role ?? 0 >= 2),
-		isManager: toRef(() => page.props.auth.user?.role ?? 0 >= 3),
+		isStaff: toRef(() => (page.props.auth.user?.role ?? 0) >= 1),
+		isLead: toRef(() => (page.props.auth.user?.role ?? 0) >= 2),
+		isManager: toRef(() => (page.props.auth.user?.role ?? 0) >= 3),
 		isAdmin: toRef(() => page.props.auth.user?.role === 4),
 	};
 }
