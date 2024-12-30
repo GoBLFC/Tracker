@@ -7,8 +7,8 @@
 				src="@/../img/event-logo.png"
 				width="128"
 				height="146"
-				alt="Event Logo"
 				class="object-scale-down"
+				:alt="$appName"
 			/>
 		</Link>
 
