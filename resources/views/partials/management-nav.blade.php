@@ -7,11 +7,6 @@
 					<a role="button" class="btn btn-secondary d-block" href="{!! route('attendee-logs.index') !!}">Attendee Logs</a>
 				</div>
 			@endgatekeeper
-			@lead
-				<div class="col-md">
-					<a role="button" class="btn btn-secondary d-block" href="{!! route('management.lead') !!}">Lead Panel</a>
-				</div>
-			@endlead
 			@manager
 				<div class="col-md">
 					<a role="button" class="btn btn-secondary d-block" href="{!! route('management.manage') !!}">Management Panel</a>
