@@ -5,6 +5,6 @@
 </template>
 
 <script setup lang="ts">
-import { faHardHat } from "@fortawesome/free-solid-svg-icons";
-import BasicPage from "@/Components/App/BasicPage.vue";
+import { faHardHat } from '@fortawesome/free-solid-svg-icons';
+import BasicPage from '@/Components/App/BasicPage.vue';
 </script>
