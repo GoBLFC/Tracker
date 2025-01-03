@@ -15,7 +15,11 @@ export function useUser() {
 		badgeName: toRef(() => page.props.auth.user?.badge_name),
 		displayName: toRef(() => page.props.auth.user?.badge_name ?? page.props.auth.user?.username),
 		role: toRef(() => page.props.auth.user?.role),
-		roleName: toRef(() => (page.props.auth.user?.role ? roleNames[page.props.auth.user.role] : null)),
+		roleName: toRef(() =>
+			page.props.auth.user?.role || page.props.auth.user?.role === 0
+				? roleNames[page.props.auth.user.role]
+				: null,
+		),
 
 		isLoggedIn: toRef(() => Boolean(page.props.auth.user)),
 		isGatekeeper: toRef(() => page.props.isGatekeeper),
