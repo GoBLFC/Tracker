@@ -13,6 +13,7 @@
 </template>
 
 <script setup lang="ts">
+import { Head } from '@inertiajs/vue3';
 import type { MessageProps } from 'primevue/message';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
