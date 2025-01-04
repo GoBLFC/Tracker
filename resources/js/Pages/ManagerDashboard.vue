@@ -1,116 +1,89 @@
 <template>
-	<div class="grow flex flex-col gap-4">
-		<Head title="Manager Dashboard" />
-
-		<!-- Event selector -->
-		<div
-			class="flex items-center gap-3"
-			:class="{
-				'justify-center': events.length === 0,
-				'justify-between': events.length > 0,
-			}"
-		>
-			<EventSelector
-				:event
-				:events
-				:resolver="eventRequestResolver"
-				action-word="manage"
-			/>
-
-			<div
-				v-if="isReadOnly"
-				class="text-2xl text-muted-color"
-				v-tooltip.left="'Read-only'"
-			>
+	<EventDataPage
+		title="Manager Dashboard"
+		:event
+		:events
+		:resolver="eventRequestResolver"
+	>
+		<template #status v-if="isReadOnly">
+			<div class="text-2xl text-muted-color" v-tooltip.left="'Read-only'">
 				<FontAwesomeIcon :icon="faEye" />
 				<span class="sr-only">Read-only</span>
 			</div>
-		</div>
+		</template>
 
-		<div v-if="event" class="flex flex-col h-full gap-4">
-			<div class="flex flex-col xl:flex-row xl:flex-wrap gap-4">
-				<!-- Recent activity -->
-				<FullContentHeightPanel
-					header="Recent Activity"
-					class="flex-auto min-w-[30%]"
-				>
-					<TimeActivitiesTable
-						class="w-full"
-						:activities="recentTimeActivities"
-						:now
-						@select="loadVolunteer"
-					>
-						<template #empty>
-							<p>There is no recent time activity.</p>
-						</template>
-					</TimeActivitiesTable>
-				</FullContentHeightPanel>
-
-				<!-- Ongoing shifts -->
-				<FullContentHeightPanel
-					header="Ongoing Shifts"
-					class="flex-auto min-w-[30%]"
-				>
-					<TimeEntriesTable
-						class="w-full"
-						:entries="ongoingEntries"
-						:now
-						@select="loadVolunteer"
-					>
-						<template #empty>
-							<p>There aren't any ongoing shifts.</p>
-						</template>
-					</TimeEntriesTable>
-				</FullContentHeightPanel>
-			</div>
-
-			<div class="flex flex-col xl:flex-row xl:flex-wrap gap-4">
-				<!-- Volunteer search -->
-				<FullContentHeightPanel
-					header="Volunteer Search"
-					class="grow basis-1/3 min-w-[30%]"
-				>
-					<VolunteerSearchTable
-						class="w-full"
-						@select="loadVolunteer"
-					/>
-				</FullContentHeightPanel>
-
-				<!-- Volunteer details -->
-				<VolunteerManagePanel
-					v-if="volunteer"
-					ref="volunteer-panel"
-					class="flex-auto min-w-[30%]"
-					:model-value="volunteer"
-					:event="event!"
-					:rewards
-					:departments
+		<div class="flex flex-col xl:flex-row xl:flex-wrap gap-4">
+			<!-- Recent activity -->
+			<FullContentHeightPanel
+				header="Recent Activity"
+				class="flex-auto min-w-[30%]"
+			>
+				<TimeActivitiesTable
+					class="w-full"
+					:activities="recentTimeActivities"
 					:now
-					@close="resetVolunteer"
-				/>
-			</div>
+					@select="loadVolunteer"
+				>
+					<template #empty>
+						<p>There is no recent time activity.</p>
+					</template>
+				</TimeActivitiesTable>
+			</FullContentHeightPanel>
 
-			<div class="flex flex-col xl:flex-row xl:flex-wrap gap-4">
-				<!-- Create volunteer -->
-				<VolunteerCreatePanel class="flex-1 min-w-[30%]" />
-
-				<!-- Quick settings -->
-				<QuickSettingsPanel class="flex-1 min-w-[30%]" />
-			</div>
+			<!-- Ongoing shifts -->
+			<FullContentHeightPanel
+				header="Ongoing Shifts"
+				class="flex-auto min-w-[30%]"
+			>
+				<TimeEntriesTable
+					class="w-full"
+					:entries="ongoingEntries"
+					:now
+					@select="loadVolunteer"
+				>
+					<template #empty>
+						<p>There aren't any ongoing shifts.</p>
+					</template>
+				</TimeEntriesTable>
+			</FullContentHeightPanel>
 		</div>
 
-		<p
-			v-else
-			class="flex h-full items-center justify-center text-xl text-muted-color"
-		>
-			Select an event to manage above.
-		</p>
-	</div>
+		<div class="flex flex-col xl:flex-row xl:flex-wrap gap-4">
+			<!-- Volunteer search -->
+			<FullContentHeightPanel
+				header="Volunteer Search"
+				class="grow basis-1/3 min-w-[30%]"
+			>
+				<VolunteerSearchTable class="w-full" @select="loadVolunteer" />
+			</FullContentHeightPanel>
+
+			<!-- Volunteer details -->
+			<VolunteerManagePanel
+				v-if="volunteer"
+				ref="volunteer-panel"
+				class="flex-auto min-w-[30%]"
+				:model-value="volunteer"
+				:event="event!"
+				:rewards
+				:departments
+				:now
+				@close="resetVolunteer"
+			/>
+		</div>
+
+		<div class="flex flex-col xl:flex-row xl:flex-wrap gap-4">
+			<!-- Create volunteer -->
+			<VolunteerCreatePanel class="flex-1 min-w-[30%]" />
+
+			<!-- Quick settings -->
+			<QuickSettingsPanel class="flex-1 min-w-[30%]" />
+		</div>
+	</EventDataPage>
 </template>
 
 <script setup lang="ts">
 import { useTemplateRef, nextTick, toRef } from 'vue';
-import { router, Head, usePoll } from '@inertiajs/vue3';
+import { router, usePoll } from '@inertiajs/vue3';
 import { useUser } from '@/lib/user';
 import { useAppSettings } from '@/lib/settings';
 import { useNow } from '@/lib/time';
@@ -126,7 +99,6 @@ import type { UserId } from '@/data/User';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
-import EventSelector from '@/Components/Manage/EventSelector.vue';
 import QuickSettingsPanel from '@/Components/Manage/QuickSettingsPanel.vue';
 import TimeActivitiesTable from '@/Components/Manage/TimeActivitiesTable.vue';
 import TimeEntriesTable from '@/Components/Manage/TimeEntriesTable.vue';
@@ -134,6 +106,7 @@ import VolunteerSearchTable from '@/Components/Volunteer/VolunteerSearchTable.vu
 import VolunteerManagePanel from '@/Components/Volunteer/VolunteerManagePanel.vue';
 import VolunteerCreatePanel from '@/Components/Volunteer/VolunteerCreatePanel.vue';
 import FullContentHeightPanel from '@/Components/Common/FullContentHeightPanel.vue';
+import EventDataPage from '@/Components/App/EventDataPage.vue';
 
 const { event, volunteer } = defineProps<{
 	event: Event | null;

@@ -96,12 +96,7 @@ const {
 } = defineProps<{
 	event: TrackerEvent | null;
 	events: TrackerEvent[];
-	resolver: (eventId: EventId) => {
-		url: string;
-		data?: RequestPayload;
-		only?: string[];
-		[key: string]: unknown;
-	};
+	resolver: EventRequestResolver;
 	actionWord?: string;
 }>();
 const emit = defineEmits<{
@@ -157,4 +152,11 @@ function focus() {
 	// @ts-expect-error
 	select.value?.$el?.querySelector('[tabindex]')?.focus();
 }
+
+export type EventRequestResolver = (eventId: EventId) => {
+	url: string;
+	data?: RequestPayload;
+	only?: string[];
+	[key: string]: unknown;
+};
 </script>
