@@ -91,8 +91,13 @@
 		max-height: calc(100% - 6.5rem);
 	}
 
-	.p-datatable-flex-scrollable:has(.p-datatable-paginator-bottom):has(.p-datatable-header)
+	.p-datatable-flex-scrollable:has(.p-datatable-paginator-bottom):has(.p-datatable-header, .p-datatable-footer)
 		> .p-datatable-table-container {
 		max-height: calc(100% - 10.5rem);
+	}
+
+	.p-datatable-flex-scrollable:has(.p-datatable-paginator-bottom):has(.p-datatable-header):has(.p-datatable-footer)
+		> .p-datatable-table-container {
+		max-height: calc(100% - 14.5rem);
 	}
 }
