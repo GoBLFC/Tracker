@@ -12,11 +12,18 @@
 		>
 			<EventSelector :event :events :resolver :action-word />
 
-			<slot name="status" />
+			<div
+				v-if="isReadOnly"
+				class="text-2xl text-muted-color"
+				v-tooltip.left="'Read-only'"
+			>
+				<FontAwesomeIcon :icon="faEye" />
+				<span class="sr-only">Read-only</span>
+			</div>
 		</div>
 
 		<div v-if="event" class="grow flex flex-col gap-4">
-			<slot />
+			<slot :is-read-only />
 		</div>
 
 		<template v-else>
@@ -32,9 +39,13 @@
 </template>
 
 <script setup lang="ts">
+import { toRef } from 'vue';
+import { useReadOnly } from '@/lib/readonly';
 import type Event from '@/data/Event';
 
 import { Head } from '@inertiajs/vue3';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faEye } from '@fortawesome/free-solid-svg-icons';
 import EventSelector, { type EventRequestResolver } from '../Manage/EventSelector.vue';
 
 const { event, actionWord = 'manage' } = defineProps<{
@@ -44,4 +55,8 @@ const { event, actionWord = 'manage' } = defineProps<{
 	resolver: EventRequestResolver;
 	actionWord?: string;
 }>();
+
+const isEventReadOnly = useReadOnly();
+
+const isReadOnly = toRef(() => event && isEventReadOnly(event));
 </script>

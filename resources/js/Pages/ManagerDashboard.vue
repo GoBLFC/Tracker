@@ -5,13 +5,6 @@
 		:events
 		:resolver="eventRequestResolver"
 	>
-		<template #status v-if="isReadOnly">
-			<div class="text-2xl text-muted-color" v-tooltip.left="'Read-only'">
-				<FontAwesomeIcon :icon="faEye" />
-				<span class="sr-only">Read-only</span>
-			</div>
-		</template>
-
 		<div class="flex flex-col xl:flex-row xl:flex-wrap gap-4">
 			<!-- Recent activity -->
 			<FullContentHeightPanel
@@ -82,10 +75,8 @@
 </template>
 
 <script setup lang="ts">
-import { useTemplateRef, nextTick, toRef } from 'vue';
+import { useTemplateRef, nextTick } from 'vue';
 import { router, usePoll } from '@inertiajs/vue3';
-import { useUser } from '@/lib/user';
-import { useAppSettings } from '@/lib/settings';
 import { useNow } from '@/lib/time';
 import { useRoute } from '@/lib/route';
 import type Volunteer from '@/data/Volunteer';
@@ -97,8 +88,6 @@ import type TimeEntryActivity from '@/data/TimeEntryActivity';
 import type TimeEntry from '@/data/TimeEntry';
 import type { UserId } from '@/data/User';
 
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faEye } from '@fortawesome/free-solid-svg-icons';
 import QuickSettingsPanel from '@/Components/Manage/QuickSettingsPanel.vue';
 import TimeActivitiesTable from '@/Components/Manage/TimeActivitiesTable.vue';
 import TimeEntriesTable from '@/Components/Manage/TimeEntriesTable.vue';
@@ -119,15 +108,10 @@ const { event, volunteer } = defineProps<{
 }>();
 
 const route = useRoute();
-const { activeEvent } = useAppSettings();
-const { isAdmin } = useUser();
 const { now } = useNow();
 usePoll(15000, {
 	only: ['recentTimeActivities', 'ongoingEntries', 'volunteer'],
 });
-
-const isActiveEventSelected = toRef(() => event && event.id !== activeEvent.value?.id);
-const isReadOnly = toRef(() => !isAdmin && isActiveEventSelected.value);
 
 /**
  * Resolves an event ID to a navigable URL and additional properties to pass to the router
