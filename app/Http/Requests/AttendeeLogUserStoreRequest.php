@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\AttendeeType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class AttendeeLogUserStoreRequest extends FormRequest {
 	/**
@@ -21,7 +23,11 @@ class AttendeeLogUserStoreRequest extends FormRequest {
 	public function rules(): array {
 		return [
 			'badge_id' => 'required|integer|digits_between:1,8',
-			'type' => 'sometimes|nullable|in:attendee,gatekeeper',
+			'type' => [
+				'sometimes',
+				'nullable',
+				Rule::enum(AttendeeType::class),
+			],
 		];
 	}
 }

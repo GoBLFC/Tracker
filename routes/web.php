@@ -61,7 +61,7 @@ Route::middleware(['auth', 'not-banned', 'lockdown'])->group(function () {
 	Route::controller(\App\Http\Controllers\AttendeeLogController::class)->group(function () {
 		Route::get('/attendee-logs', 'index')->name('attendee-logs.index');
 		Route::put('/attendee-logs/{attendeeLog}/users', 'storeUser')->name('attendee-logs.users.store');
-		Route::delete('/attendee-logs/{attendeeLog}/users/{user}', 'destroyUser')->name('attendee-logs.users.destroy');
+		Route::delete('/attendee-logs/{attendeeLog}/{type}/{user}', 'destroyUser')->name('attendee-logs.users.destroy');
 	});
 
 	Route::controller(\App\Http\Controllers\ManagementController::class)->group(function () {
@@ -79,8 +79,6 @@ Route::middleware(['auth', 'not-banned', 'lockdown'])->group(function () {
 			Route::get('/admin/event/{event}/rewards', 'getAdminRewards')->name('admin.event.rewards');
 			Route::get('/admin/bonuses', 'getAdminBonuses')->name('admin.bonuses');
 			Route::get('/admin/event/{event}/bonuses', 'getAdminBonuses')->name('admin.event.bonuses');
-			Route::get('/admin/attendee-logs', 'getAdminAttendeeLogs')->name('admin.attendee-logs');
-			Route::get('/admin/event/{event}/attendee-logs', 'getAdminAttendeeLogs')->name('admin.event.attendee-logs');
 			Route::get('/admin/reports', 'getAdminReportList')->name('admin.reports');
 			Route::get('/admin/event/{event}/reports', 'getAdminReportList')->name('admin.event.reports');
 			Route::get('/admin/reports/{reportType}', 'getAdminReport')->name('admin.reports.view');

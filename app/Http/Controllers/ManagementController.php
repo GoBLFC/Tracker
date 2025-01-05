@@ -140,23 +140,6 @@ class ManagementController extends Controller {
 	}
 
 	/**
-	 * Render the attendee logs admin page
-	 */
-	public function getAdminAttendeeLogs(?Event $event = null): View|RedirectResponse {
-		// Get the event and redirect to the page for the active event, if applicable
-		if (!$event) {
-			$event = Setting::activeEvent();
-			if ($event) return redirect()->route('admin.event.attendee-logs', $event);
-		}
-
-		return view('admin.attendee-logs', [
-			'event' => $event,
-			'events' => Event::all(),
-			'attendeeLogs' => $event?->attendeeLogs()?->with('gatekeepers')?->get(),
-		]);
-	}
-
-	/**
 	 * Render the reports list admin page
 	 */
 	public function getAdminReportList(?Event $event = null): View|RedirectResponse {

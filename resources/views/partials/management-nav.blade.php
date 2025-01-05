@@ -23,7 +23,6 @@
 							<li><a class="dropdown-item" href="{!! route('admin.events') !!}">Events</a></li>
 							<li><a class="dropdown-item" href="{!! route('admin.bonuses') !!}">Bonuses</a></li>
 							<li><a class="dropdown-item" href="{!! route('admin.rewards') !!}">Rewards</a></li>
-							<li><a class="dropdown-item" href="{!! route('admin.attendee-logs') !!}">Attendee Logs</a></li>
 							<li><a class="dropdown-item" href="{!! route('admin.reports') !!}">Reports</a></li>
 						</ul>
 					</div>

@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\AttendeeLog;
+use App\Models\Event;
 use App\Models\User;
 
 class AttendeeLogPolicy {
@@ -18,7 +19,16 @@ class AttendeeLogPolicy {
 	 */
 	public function view(User $user, AttendeeLog $attendeeLog): bool {
 		return $user->isManager()
-			|| ($attendeeLog->gatekeepers()->whereUserId($user->id)->exists() && $attendeeLog->event->isActive());
+			|| ($attendeeLog->isForActiveEvent() && $attendeeLog->hasGatekeeper($user));
+	}
+
+	/**
+	 * Determine whether the user can view some models that belong to an event.
+	 */
+	public function viewForEvent(User $user, ?Event $event): bool {
+		return $user->isManager()
+			|| ($event?->isActive()
+				&& $user->attendeeLogs()->forEvent($event)->wherePivot('type', 'gatekeeper')->exists());
 	}
 
 	/**
@@ -60,8 +70,8 @@ class AttendeeLogPolicy {
 	 * Determine whether the user can manage gatekeepers on the log.
 	 */
 	public function manageGatekeepers(User $user, AttendeeLog $attendeeLog): bool {
-		return ($user->isManager() && $attendeeLog->isForActiveEvent())
-			|| $user->isAdmin();
+		return $user->isAdmin() ||
+			($user->isManager() && $attendeeLog->isForActiveEvent());
 	}
 
 	/**
@@ -70,7 +80,6 @@ class AttendeeLogPolicy {
 	public function manageAttendees(User $user, AttendeeLog $attendeeLog): bool {
 		$isActive = $attendeeLog->isForActiveEvent();
 		return $user->isAdmin()
-			|| ($user->isManager() && $isActive)
-			|| ($attendeeLog->gatekeepers()->whereUserId($user->id)->exists() && $isActive);
+			|| ($isActive && ($user->isManager() || $attendeeLog->hasGatekeeper($user)));
 	}
 }
