@@ -13,7 +13,7 @@ export function useReadOnly() {
 	 * Checks whether an event is read-only to the current user
 	 */
 	function isReadOnly(event: Event) {
-		return !isAdmin && event.id !== activeEvent.value?.id;
+		return !isAdmin.value && event.id !== activeEvent.value?.id;
 	}
 
 	return isReadOnly;
