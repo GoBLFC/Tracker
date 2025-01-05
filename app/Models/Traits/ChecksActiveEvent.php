@@ -6,7 +6,7 @@ use App\Models\Setting;
 
 trait ChecksActiveEvent {
 	/**
-	 * Checks whether the reward is for the active event
+	 * Checks whether the entity belongs to the active event
 	 */
 	public function isForActiveEvent(): bool {
 		return $this->event_id === Setting::activeEvent()?->id;
