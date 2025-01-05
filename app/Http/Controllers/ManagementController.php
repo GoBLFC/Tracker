@@ -43,6 +43,7 @@ class ManagementController extends Controller {
 	 */
 	public function getManageIndex(?Event $event = null, ?User $user = null): Response {
 		if (!$event) $event = Setting::activeEvent();
+		if ($event) $this->authorize('view', $event);
 
 		return Inertia::render('ManagerDashboard', [
 			'event' => $event,
