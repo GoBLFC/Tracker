@@ -6,12 +6,16 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { Link } from '@inertiajs/vue3';
 import { useRoute } from '@/lib/route';
+
+import { Link } from '@inertiajs/vue3';
 
 const route = useRoute();
 
-const { to, url } = defineProps<{ to?: string; url?: string }>();
+const { to, url } = defineProps<{
+	to?: string | Parameters<typeof route>;
+	url?: string;
+}>();
 
-const href = computed(() => (to ? route(to) : url!));
+const href = computed(() => (to ? (Array.isArray(to) ? route(...to) : route(to)) : url!));
 </script>
