@@ -98,7 +98,7 @@ import type RawTimeEntry from '@/data/TimeEntry';
 import type { TimeEntryId } from '@/data/TimeEntry';
 
 import { faHourglassEnd, faNoteSticky } from '@fortawesome/free-solid-svg-icons';
-import TimeEntryActionButtons from '../Manage/TimeEntryActionButtons.vue';
+import TimeEntryActionButtons from '../TimeEntry/TimeEntryActionButtons.vue';
 import ResponsiveTag from '../Common/ResponsiveTag.vue';
 import DateTime from '../Common/DateTime.vue';
 import Duration from '../Common/Duration.vue';

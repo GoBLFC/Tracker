@@ -27,7 +27,7 @@ import { computed, useId } from 'vue';
 import humanizeDuration from 'humanize-duration';
 import { useAppSettings } from '@/lib/settings';
 
-import KioskToggleSwitch from './KioskToggleSwitch.vue';
+import KioskToggleSwitch from '../Kiosk/KioskToggleSwitch.vue';
 
 const { kioskLifetime } = useAppSettings();
 

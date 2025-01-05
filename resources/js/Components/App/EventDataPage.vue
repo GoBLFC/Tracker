@@ -10,7 +10,7 @@
 				'justify-between': events.length > 0,
 			}"
 		>
-			<EventSelector :event :events :resolver :action-word />
+			<EventNavigator :event :events :resolver :action-word />
 
 			<div
 				v-if="readOnly"
@@ -46,7 +46,7 @@ import type Event from '@/data/Event';
 import { Head } from '@inertiajs/vue3';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
-import EventSelector, { type EventRequestResolver } from '../Manage/EventSelector.vue';
+import EventNavigator, { type EventRequestResolver } from '../Event/EventNavigator.vue';
 
 const { event, actionWord = 'manage' } = defineProps<{
 	title: string;

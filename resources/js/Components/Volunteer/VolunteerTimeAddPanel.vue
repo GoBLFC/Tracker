@@ -31,7 +31,7 @@
 				<label :for="startId">Out time</label>
 			</FloatLabel>
 
-			<DepartmentSelector v-model="department" :departments />
+			<DepartmentPicker v-model="department" :departments />
 		</div>
 
 		<InputGroup class="w-full mt-4">
@@ -64,7 +64,7 @@ import type Department from '@/data/Department';
 import type TimeEntry from '@/data/TimeEntry';
 
 import { faArrowRightToBracket, faCalendarPlus } from '@fortawesome/free-solid-svg-icons';
-import DepartmentSelector from './DepartmentSelector.vue';
+import DepartmentPicker from '../Department/DepartmentPicker.vue';
 import ResponsiveButton from '../Common/ResponsiveButton.vue';
 
 const { event, departments } = defineProps<{

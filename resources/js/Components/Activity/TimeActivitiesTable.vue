@@ -89,7 +89,7 @@ import TimeEntryActivity from '@/data/impl/TimeEntryActivity';
 import type RawTimeEntryActivity from '@/data/TimeEntryActivity';
 import type { UserId } from '@/data/User';
 
-import ShiftStatusTag from '../Volunteer/ShiftStatusTag.vue';
+import ShiftStatusTag from '../TimeEntry/ShiftStatusTag.vue';
 import VolunteerName from '../Volunteer/VolunteerName.vue';
 import VolunteerViewButton from '../Volunteer/VolunteerViewButton.vue';
 import DateTime from '../Common/DateTime.vue';

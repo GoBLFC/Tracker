@@ -3,8 +3,8 @@
 	<div class="card-body">
 		@if($events)
 			<div class="input-group">
-				<label for="eventSelector" class="input-group-text">Event</label>
-				<select id="eventSelector" class="form-control" data-route="{!! $route !!}">
+				<label for="EventNavigator" class="input-group-text">Event</label>
+				<select id="EventNavigator" class="form-control" data-route="{!! $route !!}">
 					@if(!$event) <option value="" selected disabled hidden>Select an Event</option> @endif
 					@foreach($events as $otherEvent)
 						<option value="{!! $otherEvent->id !!}" {!! $otherEvent->id === $event?->id ? 'selected' : '' !!}>

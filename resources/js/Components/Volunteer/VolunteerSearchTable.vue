@@ -91,7 +91,7 @@ import type Department from '@/data/Department';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faMagnifyingGlass, faUserSlash, faCircleNotch } from '@fortawesome/free-solid-svg-icons';
-import ShiftStatusTag from './ShiftStatusTag.vue';
+import ShiftStatusTag from '../TimeEntry/ShiftStatusTag.vue';
 import VolunteerName from './VolunteerName.vue';
 import VolunteerViewButton from './VolunteerViewButton.vue';
 import ResponsiveTag from '../Common/ResponsiveTag.vue';

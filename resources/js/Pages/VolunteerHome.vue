@@ -60,7 +60,7 @@
 
 					<form @submit.prevent="checkInOrOut" class="flex-1">
 						<InputGroup>
-							<DepartmentSelector
+							<DepartmentPicker
 								v-model="department"
 								:departments
 								:disabled="Boolean(ongoing)"
@@ -122,7 +122,7 @@ import type Department from '@/data/Department';
 import { faArrowRightFromBracket, faArrowRightToBracket } from '@fortawesome/free-solid-svg-icons';
 import { faTelegram } from '@fortawesome/free-brands-svg-icons';
 import VolunteerTimeStats from '@/Components/Volunteer/VolunteerTimeStats.vue';
-import DepartmentSelector from '@/Components/Volunteer/DepartmentSelector.vue';
+import DepartmentPicker from '@/Components/Department/DepartmentPicker.vue';
 import TelegramModal from '@/Components/Dialogs/TelegramModal.vue';
 import SwalSuccessDialog from '@/Components/Dialogs/SwalSuccessDialog.vue';
 import ResponsiveButton from '@/Components/Common/ResponsiveButton.vue';

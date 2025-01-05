@@ -89,8 +89,8 @@ import type TimeEntry from '@/data/TimeEntry';
 import type { UserId } from '@/data/User';
 
 import QuickSettingsPanel from '@/Components/Manage/QuickSettingsPanel.vue';
-import TimeActivitiesTable from '@/Components/Manage/TimeActivitiesTable.vue';
-import TimeEntriesTable from '@/Components/Manage/TimeEntriesTable.vue';
+import TimeActivitiesTable from '@/Components/Activity/TimeActivitiesTable.vue';
+import TimeEntriesTable from '@/Components/TimeEntry/TimeEntriesTable.vue';
 import VolunteerSearchTable from '@/Components/Volunteer/VolunteerSearchTable.vue';
 import VolunteerManagePanel from '@/Components/Volunteer/VolunteerManagePanel.vue';
 import VolunteerCreatePanel from '@/Components/Volunteer/VolunteerCreatePanel.vue';
