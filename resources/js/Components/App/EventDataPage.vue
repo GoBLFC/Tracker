@@ -13,7 +13,7 @@
 			<EventSelector :event :events :resolver :action-word />
 
 			<div
-				v-if="isReadOnly"
+				v-if="readOnly"
 				class="text-2xl text-muted-color"
 				v-tooltip.left="'Read-only'"
 			>
@@ -23,7 +23,7 @@
 		</div>
 
 		<div v-if="event" class="grow flex flex-col gap-4">
-			<slot :is-read-only />
+			<slot :read-only />
 		</div>
 
 		<template v-else>
@@ -58,5 +58,5 @@ const { event, actionWord = 'manage' } = defineProps<{
 
 const isEventReadOnly = useReadOnly();
 
-const isReadOnly = toRef(() => event && isEventReadOnly(event));
+const readOnly = toRef(() => event && isEventReadOnly(event));
 </script>
