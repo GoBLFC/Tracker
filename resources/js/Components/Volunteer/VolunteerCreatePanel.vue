@@ -36,7 +36,7 @@
 			<Message
 				v-if="form.hasErrors"
 				size="small"
-				severity="danger"
+				severity="error"
 				variant="simple"
 			>
 				{{ form.errors.badge_id }}
