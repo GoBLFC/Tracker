@@ -2,6 +2,7 @@
 	<ButtonGroup aria-label="Time entry actions">
 		<Button
 			v-if="!entry.stop"
+			variant="text"
 			size="small"
 			severity="warn"
 			:loading="request.processing.value"
@@ -19,6 +20,7 @@
 		</Button>
 
 		<Button
+			variant="text"
 			size="small"
 			severity="danger"
 			:loading="request.processing.value"

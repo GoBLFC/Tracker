@@ -1,6 +1,6 @@
 <template>
 	<Button
-		variant="link"
+		variant="text"
 		size="small"
 		class="mt-[-0.375rem] relative top-[0.1875rem]"
 		aria-label="View Volunteer"
