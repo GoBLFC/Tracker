@@ -23,7 +23,7 @@
 		</div>
 
 		<div v-if="event" class="grow flex flex-col gap-4">
-			<slot :read-only />
+			<slot :event :read-only />
 		</div>
 
 		<template v-else>
