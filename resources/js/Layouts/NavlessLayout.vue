@@ -1,5 +1,5 @@
 <template>
-	<div class="h-full overflow-auto flex flex-col relative -z-50">
+	<div class="h-full flex flex-col relative -z-50">
 		<DevBadges v-if="isDevMode" class="mx-2 my-4" />
 
 		<main class="grow p-4 flex flex-col">
