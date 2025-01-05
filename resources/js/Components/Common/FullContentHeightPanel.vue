@@ -1,7 +1,8 @@
 <template>
 	<Panel
+		class="flex flex-col"
 		:pt="{
-			contentContainer: { class: 'h-full' },
+			contentContainer: { class: 'grow' },
 			content: { class: 'h-full' },
 		}"
 	>
