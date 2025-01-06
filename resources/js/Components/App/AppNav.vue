@@ -142,7 +142,7 @@ const mainMenuItems = computed(() => {
 			to: 'attendee-logs.index',
 			label: 'Attendee Logs',
 			icon: faBookOpen,
-			legacy: true,
+			legacy: false,
 		});
 	}
 
