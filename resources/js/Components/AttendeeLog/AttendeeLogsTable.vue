@@ -56,7 +56,11 @@
 
 	<SkeletonTable
 		v-else
-		:columns="['Name', 'Attendees', 'Gatekeepers', 'Total', 'Actions']"
+		:columns="
+			isAdmin
+				? ['Name', 'Attendees', 'Gatekeepers', 'Total', 'Actions']
+				: ['Name', 'Attendees', 'Gatekeepers', 'Total']
+		"
 	/>
 </template>
 

@@ -50,10 +50,18 @@
 		</template>
 	</DataTable>
 
-	<SkeletonTable v-else :columns="['ID', 'Name', 'Logged', 'Actions']" />
+	<SkeletonTable
+		v-else
+		:columns="
+			hasActions
+				? ['ID', 'Name', 'Logged', 'Actions']
+				: ['ID', 'Name', 'Logged']
+		"
+	/>
 </template>
 
 <script setup lang="ts">
+import { toRef } from 'vue';
 import { useUser } from '@/lib/user';
 import type AttendeeLog from '@/data/AttendeeLog';
 import type Attendee from '@/data/Attendee';
@@ -76,4 +84,6 @@ const {
 }>();
 
 const { isManager } = useUser();
+
+const hasActions = toRef(() => !readOnly && (!gatekeeper || isManager.value));
 </script>
