@@ -58,5 +58,5 @@ const { event, actionWord = 'manage' } = defineProps<{
 
 const isEventReadOnly = useReadOnly();
 
-const readOnly = toRef(() => event && isEventReadOnly(event));
+const readOnly = toRef(() => Boolean(event && isEventReadOnly(event)));
 </script>

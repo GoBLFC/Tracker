@@ -3,7 +3,7 @@
 		v-model="checked"
 		on-label="Claimed"
 		off-label="Unclaimed"
-		:disabled="request.processing.value"
+		:disabled="disabled || request.processing.value"
 	>
 		<template #icon>
 			<FontAwesomeIcon
@@ -31,7 +31,10 @@ import type RewardClaim from '@/data/RewardClaim';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faCircleNotch, faCheck, faXmark } from '@fortawesome/free-solid-svg-icons';
 
-const { reward } = defineProps<{ reward: Reward }>();
+const { reward, disabled = false } = defineProps<{
+	reward: Reward;
+	disabled?: boolean;
+}>();
 const volunteer = defineModel<Volunteer>();
 
 const request = useRequest();

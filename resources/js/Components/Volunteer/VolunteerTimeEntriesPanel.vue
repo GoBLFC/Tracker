@@ -70,6 +70,7 @@
 			</Column>
 
 			<Column
+				v-if="!readOnly"
 				header="Actions"
 				class="text-end"
 				:pt="{ columnHeaderContent: { class: 'justify-end' } }"
@@ -103,7 +104,10 @@ import ResponsiveTag from '../Common/ResponsiveTag.vue';
 import DateTime from '../Common/DateTime.vue';
 import Duration from '../Common/Duration.vue';
 
-defineProps<{ now?: number }>();
+const { readOnly = false } = defineProps<{
+	now?: number;
+	readOnly?: boolean;
+}>();
 const volunteer = defineModel<Volunteer>();
 
 const values = computed(() => (volunteer.value?.time?.entries ? TimeEntry.load(volunteer.value.time.entries) : []));

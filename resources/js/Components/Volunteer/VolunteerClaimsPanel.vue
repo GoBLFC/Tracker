@@ -23,6 +23,7 @@
 				<VolunteerClaimToggleButton
 					v-model="volunteer"
 					:reward="reward"
+					:disabled="readOnly"
 				/>
 			</div>
 		</div>
@@ -37,6 +38,9 @@ import type Reward from '@/data/Reward';
 
 import VolunteerClaimToggleButton from './VolunteerClaimToggleButton.vue';
 
-defineProps<{ rewards: Reward[] }>();
+const { readOnly = false } = defineProps<{
+	rewards: Reward[];
+	readOnly?: boolean;
+}>();
 const volunteer = defineModel<Volunteer>();
 </script>

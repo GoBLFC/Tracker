@@ -24,14 +24,19 @@
 			/>
 		</template>
 
-		<div class="flex flex-col">
-			<VolunteerTimeStats class="mb-4" :time="volunteer.time" :now />
+		<div class="flex flex-col gap-4">
+			<VolunteerTimeStats :time="volunteer.time" :now />
 
-			<VolunteerClaimsPanel v-model="volunteer" class="mb-4" :rewards />
+			<VolunteerClaimsPanel v-model="volunteer" :rewards :read-only />
 
-			<VolunteerTimeEntriesPanel v-model="volunteer" class="mb-4" :now />
+			<VolunteerTimeEntriesPanel v-model="volunteer" :now :read-only />
 
-			<VolunteerTimeAddPanel v-model="volunteer" :event :departments />
+			<VolunteerTimeAddPanel
+				v-if="!readOnly"
+				v-model="volunteer"
+				:event
+				:departments
+			/>
 		</div>
 	</Panel>
 </template>
@@ -53,11 +58,12 @@ import VolunteerName from './VolunteerName.vue';
 import IconButton from '../Common/IconButton.vue';
 
 defineExpose({ attention });
-defineProps<{
+const { readOnly = false } = defineProps<{
 	event: Event;
 	rewards: Reward[];
 	departments: Department[];
 	now?: number;
+	readOnly?: boolean;
 }>();
 const emit = defineEmits<(e: 'close') => void>();
 const volunteer = defineModel<Volunteer>();

@@ -5,78 +5,84 @@
 		:events
 		:resolver="eventRequestResolver"
 	>
-		<div class="flex flex-col xl:flex-row xl:flex-wrap gap-4">
-			<!-- Recent activity -->
-			<FullContentHeightPanel
-				header="Recent Activity"
-				class="flex-auto min-w-[30%]"
-			>
-				<TimeActivitiesTable
-					class="w-full"
-					:activities="recentTimeActivities"
-					:now
-					:skeleton="!recentTimeActivities"
-					@select="loadVolunteer"
+		<template #default="{ readOnly }">
+			<div class="flex flex-col xl:flex-row xl:flex-wrap gap-4">
+				<!-- Recent activity -->
+				<FullContentHeightPanel
+					header="Recent Activity"
+					class="flex-auto min-w-[30%]"
 				>
-					<template #empty>
-						<p>There is no recent time activity.</p>
-					</template>
-				</TimeActivitiesTable>
-			</FullContentHeightPanel>
+					<TimeActivitiesTable
+						class="w-full"
+						:activities="recentTimeActivities"
+						:now
+						:skeleton="!recentTimeActivities"
+						@select="loadVolunteer"
+					>
+						<template #empty>
+							<p>There is no recent time activity.</p>
+						</template>
+					</TimeActivitiesTable>
+				</FullContentHeightPanel>
 
-			<!-- Ongoing shifts -->
-			<FullContentHeightPanel
-				header="Ongoing Shifts"
-				class="flex-auto min-w-[30%]"
-			>
-				<TimeEntriesTable
-					class="w-full"
-					:entries="ongoingEntries"
-					:now
-					:skeleton="!recentTimeActivities"
-					@select="loadVolunteer"
+				<!-- Ongoing shifts -->
+				<FullContentHeightPanel
+					header="Ongoing Shifts"
+					class="flex-auto min-w-[30%]"
 				>
-					<template #empty>
-						<p>There aren't any ongoing shifts.</p>
-					</template>
-				</TimeEntriesTable>
-			</FullContentHeightPanel>
-		</div>
+					<TimeEntriesTable
+						class="w-full"
+						:entries="ongoingEntries"
+						:now
+						:skeleton="!recentTimeActivities"
+						@select="loadVolunteer"
+					>
+						<template #empty>
+							<p>There aren't any ongoing shifts.</p>
+						</template>
+					</TimeEntriesTable>
+				</FullContentHeightPanel>
+			</div>
 
-		<div class="flex flex-col xl:flex-row xl:flex-wrap gap-4">
-			<!-- Volunteer search -->
-			<FullContentHeightPanel
-				header="Volunteer Search"
-				class="grow basis-1/3 min-w-[30%]"
-			>
-				<VolunteerSearchTable
-					:event
-					class="w-full"
-					@select="loadVolunteer"
+			<div class="flex flex-col xl:flex-row xl:flex-wrap gap-4">
+				<!-- Volunteer search -->
+				<FullContentHeightPanel
+					header="Volunteer Search"
+					class="grow basis-1/3 min-w-[30%]"
+				>
+					<VolunteerSearchTable
+						:event
+						class="w-full"
+						@select="loadVolunteer"
+					/>
+				</FullContentHeightPanel>
+
+				<!-- Volunteer details -->
+				<VolunteerManagePanel
+					v-if="volunteer"
+					ref="volunteer-panel"
+					class="flex-auto min-w-[30%]"
+					:model-value="volunteer"
+					:event="event!"
+					:rewards
+					:departments
+					:now
+					:read-only
+					@close="resetVolunteer"
 				/>
-			</FullContentHeightPanel>
+			</div>
 
-			<!-- Volunteer details -->
-			<VolunteerManagePanel
-				v-if="volunteer"
-				ref="volunteer-panel"
-				class="flex-auto min-w-[30%]"
-				:model-value="volunteer"
-				:event="event!"
-				:rewards
-				:departments
-				:now
-				@close="resetVolunteer"
-			/>
-		</div>
+			<div
+				v-if="!readOnly"
+				class="flex flex-col xl:flex-row xl:flex-wrap gap-4"
+			>
+				<!-- Create volunteer -->
+				<VolunteerCreatePanel class="flex-1 min-w-[30%]" />
 
-		<div class="flex flex-col xl:flex-row xl:flex-wrap gap-4">
-			<!-- Create volunteer -->
-			<VolunteerCreatePanel class="flex-1 min-w-[30%]" />
-
-			<!-- Quick settings -->
-			<QuickSettingsPanel class="flex-1 min-w-[30%]" />
-		</div>
+				<!-- Quick settings -->
+				<QuickSettingsPanel class="flex-1 min-w-[30%]" />
+			</div>
+		</template>
 	</EventDataPage>
 </template>
 
