@@ -3,6 +3,7 @@
 		v-if="entries"
 		:value="values"
 		data-key="id"
+		selection-mode="single"
 		paginator
 		:rows="10"
 		:rows-per-page-options="[5, 10, 15, 20]"
@@ -12,12 +13,17 @@
 		scrollable
 		scroll-height="flex"
 		:dt="{ paginator: { bottom: { border: { width: 0 } } } }"
+		@row-click="(evt) => emit('select', evt.data.user.id)"
 	>
 		<Column field="user.badge_id" header="ID" sortable data-type="number" />
 
 		<Column field="user.display_name" header="Name" sortable>
 			<template #body="{ data: entry }: { data: TimeEntry }">
-				<VolunteerName :volunteer="entry.user!" />
+				<VolunteerName
+					:volunteer="entry.user!"
+					:event="entry.event_id"
+					@click.prevent="emit('select', entry.user_id)"
+				/>
 			</template>
 		</Column>
 
@@ -35,16 +41,6 @@
 			</template>
 		</Column>
 
-		<Column
-			header="Actions"
-			class="text-end"
-			:pt="{ columnHeaderContent: { class: 'justify-end' } }"
-		>
-			<template #body="{ data: entry }: { data: TimeEntry }">
-				<VolunteerViewButton @click="emit('select', entry.user!.id)" />
-			</template>
-		</Column>
-
 		<template #empty>
 			<slot name="empty">
 				<p>There aren't any time entries.</p>
@@ -54,14 +50,7 @@
 
 	<SkeletonTable
 		v-else
-		:columns="[
-			'ID',
-			'Name',
-			'Department',
-			'Start Time',
-			'Duration',
-			'Actions',
-		]"
+		:columns="['ID', 'Name', 'Department', 'Start Time', 'Duration']"
 	/>
 </template>
 
@@ -72,7 +61,6 @@ import type RawTimeEntry from '@/data/TimeEntry';
 import type { UserId } from '@/data/User';
 
 import VolunteerName from '../Volunteer/VolunteerName.vue';
-import VolunteerViewButton from '../Volunteer/VolunteerViewButton.vue';
 import DateTime from '../Common/DateTime.vue';
 import Duration from '../Common/Duration.vue';
 import SkeletonTable from '../Common/SkeletonTable.vue';

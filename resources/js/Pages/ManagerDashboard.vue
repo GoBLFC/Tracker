@@ -47,7 +47,11 @@
 				header="Volunteer Search"
 				class="grow basis-1/3 min-w-[30%]"
 			>
-				<VolunteerSearchTable class="w-full" @select="loadVolunteer" />
+				<VolunteerSearchTable
+					:event
+					class="w-full"
+					@select="loadVolunteer"
+				/>
 			</FullContentHeightPanel>
 
 			<!-- Volunteer details -->

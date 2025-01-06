@@ -4,7 +4,6 @@
 		:value="attendeeLogs"
 		data-key="id"
 		selection-mode="single"
-		:row-hover="true"
 		paginator
 		:rows="10"
 		:rows-per-page-options="[5, 10, 15, 20]"

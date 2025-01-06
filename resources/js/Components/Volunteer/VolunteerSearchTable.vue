@@ -2,6 +2,7 @@
 	<DataTable
 		:value="users"
 		data-key="id"
+		selection-mode="single"
 		paginator
 		:rows="10"
 		:rows-per-page-options="[5, 10, 15, 20]"
@@ -10,12 +11,17 @@
 		scrollable
 		scroll-height="flex"
 		:dt="{ paginator: { bottom: { border: { width: 0 } } } }"
+		@row-click="(evt) => emit('select', evt.data.id)"
 	>
 		<Column field="badge_id" header="ID" sortable />
 
 		<Column field="display_name" header="Name" sortable>
 			<template #body="{ data: user }: { data: User }">
-				<VolunteerName :volunteer="user" />
+				<VolunteerName
+					:volunteer="user"
+					:event
+					@click.prevent="emit('select', user.id)"
+				/>
 			</template>
 		</Column>
 
@@ -34,16 +40,6 @@
 						:icon="faUserSlash"
 					/>
 				</div>
-			</template>
-		</Column>
-
-		<Column
-			header="Actions"
-			class="text-end"
-			:pt="{ columnHeaderContent: { class: 'justify-end' } }"
-		>
-			<template #body="{ data: user }: { data: User }">
-				<VolunteerViewButton @click="emit('select', user.id)" />
 			</template>
 		</Column>
 
@@ -88,14 +84,15 @@ import User from '@/data/impl/User';
 import type RawUser from '@/data/User';
 import type { UserId } from '@/data/User';
 import type Department from '@/data/Department';
+import type Event from '@/data/Event';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faMagnifyingGlass, faUserSlash, faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 import ShiftStatusTag from '../TimeEntry/ShiftStatusTag.vue';
 import VolunteerName from './VolunteerName.vue';
-import VolunteerViewButton from './VolunteerViewButton.vue';
 import ResponsiveTag from '../Common/ResponsiveTag.vue';
 
+defineProps<{ event?: Event | null }>();
 const emit = defineEmits<(e: 'select', userId: UserId) => void>();
 
 const vDebounce = vueDebounce({ lock: true });
