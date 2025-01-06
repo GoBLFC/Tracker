@@ -121,8 +121,8 @@ class AttendeeLogController extends Controller {
 					'error' => $err,
 				]);
 				return $request->expectsJson()
-					? response()->json(['error' => 'Unable to find user with given badge number.'], 404)
-					: redirect()->back()->withErrors(['badge_id' => 'Unable to find user with given badge number.']);
+					? response()->json(['error' => "Unable to find user with badge #{$badgeId}."], 404)
+					: redirect()->back()->withErrors(['badge_id' => "Unable to find user with badge #{$badgeId}."]);
 			}
 
 			$user = User::createFromConCatRegistration($registration, 'Attendee');
