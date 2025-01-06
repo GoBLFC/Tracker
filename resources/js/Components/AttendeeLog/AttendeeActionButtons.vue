@@ -1,21 +1,14 @@
 <template>
-	<Button
+	<IconButton
 		size="small"
 		severity="danger"
 		variant="text"
+		:icon="faTrash"
 		:loading
 		:disabled="loading"
 		v-tooltip.bottom="'Remove'"
 		@click="del"
-	>
-		<template #icon>
-			<FontAwesomeIcon :icon="faTrash" />
-		</template>
-
-		<template #loadingicon>
-			<FontAwesomeIcon :icon="faCircleNotch" spin />
-		</template>
-	</Button>
+	/>
 </template>
 
 <script setup lang="ts">
@@ -26,8 +19,8 @@ import { useConfirm } from '@/lib/confirm';
 import type AttendeeLog from '@/data/AttendeeLog';
 import type Attendee from '@/data/Attendee';
 
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faTrash, faCircleNotch } from '@fortawesome/free-solid-svg-icons';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import IconButton from '../Common/IconButton.vue';
 
 const { attendeeLog, attendee } = defineProps<{
 	attendeeLog: AttendeeLog;

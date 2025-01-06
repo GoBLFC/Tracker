@@ -13,18 +13,15 @@
 		</template>
 
 		<template #icons>
-			<Button
+			<IconButton
 				ref="close-btn"
+				:icon="faXmark"
 				severity="secondary"
 				rounded
 				text
 				aria-label="Close"
 				@click="emit('close')"
-			>
-				<template #icon>
-					<FontAwesomeIcon :icon="faXmark" />
-				</template>
-			</Button>
+			/>
 		</template>
 
 		<div class="flex flex-col">
@@ -47,13 +44,13 @@ import type Event from '@/data/Event';
 import type Reward from '@/data/Reward';
 import type Department from '@/data/Department';
 
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import VolunteerTimeStats from './VolunteerTimeStats.vue';
 import VolunteerClaimsPanel from './VolunteerClaimsPanel.vue';
 import VolunteerTimeEntriesPanel from './VolunteerTimeEntriesPanel.vue';
 import VolunteerTimeAddPanel from './VolunteerTimeAddPanel.vue';
 import VolunteerName from './VolunteerName.vue';
+import IconButton from '../Common/IconButton.vue';
 
 defineExpose({ attention });
 defineProps<{
@@ -85,8 +82,11 @@ function attention() {
 
 	// Scroll to the panel if the header isn't in view
 	if (!isElementInView(closeBtn.value!.$el)) {
+		// @ts-expect-error
 		panel.value!.$el.scrollIntoView({
-			block: panel.value!.$el.clientHeight < window.innerHeight ? 'center' : 'start',
+			block:
+				// @ts-expect-error
+				panel.value!.$el.clientHeight < window.innerHeight ? 'center' : 'start',
 		});
 	}
 }

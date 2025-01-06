@@ -12,22 +12,15 @@
 				</Message>
 			</div>
 
-			<Button
+			<IconButton
 				label="Acknowledge"
 				severity="success"
+				:icon="faCheck"
 				class="w-fit"
 				:disabled="loading"
 				:loading
 				@click="acknowledge()"
-			>
-				<template #icon>
-					<FontAwesomeIcon :icon="faCheck" />
-				</template>
-
-				<template #loadingicon>
-					<FontAwesomeIcon :icon="faCircleNotch" spin />
-				</template>
-			</Button>
+			/>
 		</template>
 
 		<template v-else>
@@ -43,8 +36,8 @@ import { ref, toRef } from 'vue';
 import { Head, router } from '@inertiajs/vue3';
 import type Notification from '@/data/Notification';
 
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faCheck, faCircleNotch } from '@fortawesome/free-solid-svg-icons';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import IconButton from '@/Components/Common/IconButton.vue';
 
 const { notifications } = defineProps<{ notifications: Notification[] }>();
 

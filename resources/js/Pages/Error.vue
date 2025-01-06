@@ -17,16 +17,20 @@
 		</h1>
 
 		<div class="flex gap-2">
-			<Button label="Back" severity="secondary" @click="goBack">
-				<template #icon>
-					<FontAwesomeIcon :icon="faArrowLeft" />
-				</template>
-			</Button>
+			<IconButton
+				label="Back"
+				:icon="faArrowLeft"
+				severity="secondary"
+				@click="goBack"
+			/>
 
-			<Button :as="Link" to="tracker.index" severity="secondary">
-				<FontAwesomeIcon :icon="faHouse" />
-				Home
-			</Button>
+			<IconButton
+				:as="Link"
+				to="tracker.index"
+				label="Home"
+				:icon="faHouse"
+				severity="secondary"
+			/>
 		</div>
 	</div>
 </template>
@@ -35,9 +39,9 @@
 import { computed } from 'vue';
 
 import { Head } from '@inertiajs/vue3';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faHouse, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import Link from '@/Components/Common/Link.vue';
+import IconButton from '@/Components/Common/IconButton.vue';
 
 const { status } = defineProps<{ status: number }>();
 

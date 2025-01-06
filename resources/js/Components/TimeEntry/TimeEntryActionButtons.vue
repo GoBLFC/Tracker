@@ -1,41 +1,27 @@
 <template>
 	<ButtonGroup aria-label="Time entry actions">
-		<Button
+		<IconButton
 			v-if="!entry.stop"
 			variant="text"
 			size="small"
 			severity="warn"
+			:icon="faArrowRightFromBracket"
 			:loading="request.processing.value"
 			:disabled="deleted || request.processing.value"
 			v-tooltip.bottom="'Check Out'"
 			@click="checkout"
-		>
-			<template #icon>
-				<FontAwesomeIcon :icon="faArrowRightFromBracket" />
-			</template>
+		/>
 
-			<template #loadingicon>
-				<FontAwesomeIcon :icon="faCircleNotch" spin />
-			</template>
-		</Button>
-
-		<Button
+		<IconButton
 			variant="text"
 			size="small"
 			severity="danger"
+			:icon="faTrash"
 			:loading="request.processing.value"
 			:disabled="deleted || request.processing.value"
 			v-tooltip.bottom="'Delete'"
 			@click="del"
-		>
-			<template #icon>
-				<FontAwesomeIcon :icon="faTrash" />
-			</template>
-
-			<template #loadingicon>
-				<FontAwesomeIcon :icon="faCircleNotch" spin />
-			</template>
-		</Button>
+		/>
 	</ButtonGroup>
 </template>
 
@@ -46,8 +32,8 @@ import { useRequest } from '@/lib/request';
 import type TimeEntry from '@/data/impl/TimeEntry';
 import type RawTimeEntry from '@/data/TimeEntry';
 
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faCircleNotch, faTrash, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import IconButton from '../Common/IconButton.vue';
 
 const { entry } = defineProps<{ entry: RawTimeEntry | TimeEntry }>();
 const emit = defineEmits<{
