@@ -1,6 +1,6 @@
 <template>
 	<DataTable
-		v-if="!loading"
+		v-if="!skeleton"
 		:value="attendees"
 		data-key="id"
 		paginator
@@ -73,14 +73,14 @@ import DateTime from '../Common/DateTime.vue';
 const {
 	attendees,
 	gatekeeper = false,
-	loading = false,
 	readOnly = false,
+	skeleton = false,
 } = defineProps<{
 	attendeeLog: AttendeeLog;
 	attendees?: Attendee[];
 	gatekeeper?: boolean;
-	loading?: boolean;
 	readOnly?: boolean;
+	skeleton?: boolean;
 }>();
 
 const { isManager } = useUser();

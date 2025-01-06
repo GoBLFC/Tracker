@@ -13,6 +13,14 @@
 				<Skeleton />
 			</template>
 		</Column>
+
+		<template #header v-if="$slots.header">
+			<slot name="header" />
+		</template>
+
+		<template #footer v-if="$slots.footer">
+			<slot name="footer" />
+		</template>
 	</DataTable>
 </template>
 

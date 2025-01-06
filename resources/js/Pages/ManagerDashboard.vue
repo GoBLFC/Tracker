@@ -15,6 +15,7 @@
 					class="w-full"
 					:activities="recentTimeActivities"
 					:now
+					:skeleton="!recentTimeActivities"
 					@select="loadVolunteer"
 				>
 					<template #empty>
@@ -32,6 +33,7 @@
 					class="w-full"
 					:entries="ongoingEntries"
 					:now
+					:skeleton="!recentTimeActivities"
 					@select="loadVolunteer"
 				>
 					<template #empty>

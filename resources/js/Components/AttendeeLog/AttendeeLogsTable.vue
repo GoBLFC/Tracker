@@ -1,6 +1,6 @@
 <template>
 	<DataTable
-		v-if="!loading"
+		v-if="!skeleton"
 		:value="attendeeLogs"
 		data-key="id"
 		selection-mode="single"
@@ -74,9 +74,9 @@ import AttendeeLogActionButtons from './AttendeeLogActionButtons.vue';
 import SkeletonTable from '../Common/SkeletonTable.vue';
 import Link from '../Common/Link.vue';
 
-const { attendeeLogs, loading = false } = defineProps<{
+const { attendeeLogs, skeleton = false } = defineProps<{
 	attendeeLogs?: AttendeeLog[];
-	loading?: boolean;
+	skeleton?: boolean;
 }>();
 
 const route = useRoute();

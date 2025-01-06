@@ -1,5 +1,6 @@
 <template>
 	<DataTable
+		v-if="!skeleton"
 		:value="users"
 		data-key="id"
 		selection-mode="single"
@@ -74,6 +75,30 @@
 			</p>
 		</template>
 	</DataTable>
+
+	<SkeletonTable v-else :columns="['ID', 'Name', 'Status']">
+		<template #header>
+			<IconField class="sm:w-96">
+				<InputIcon>
+					<FontAwesomeIcon
+						:icon="
+							request.processing.value
+								? faCircleNotch
+								: faMagnifyingGlass
+						"
+						:spin="request.processing.value"
+					/>
+				</InputIcon>
+				<InputText
+					v-model="query"
+					fluid
+					placeholder="Search volunteers"
+					aria-label="Search volunteers"
+					disabled
+				/>
+			</IconField>
+		</template>
+	</SkeletonTable>
 </template>
 
 <script setup lang="ts">
@@ -91,8 +116,12 @@ import { faMagnifyingGlass, faUserSlash, faCircleNotch } from '@fortawesome/free
 import ShiftStatusTag from '../TimeEntry/ShiftStatusTag.vue';
 import VolunteerName from './VolunteerName.vue';
 import ResponsiveTag from '../Common/ResponsiveTag.vue';
+import SkeletonTable from '../Common/SkeletonTable.vue';
 
-defineProps<{ event?: Event | null }>();
+const { skeleton = false } = defineProps<{
+	event?: Event | null;
+	skeleton?: boolean;
+}>();
 const emit = defineEmits<(e: 'select', userId: UserId) => void>();
 
 const vDebounce = vueDebounce({ lock: true });

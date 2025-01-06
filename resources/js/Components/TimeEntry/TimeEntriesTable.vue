@@ -1,6 +1,6 @@
 <template>
 	<DataTable
-		v-if="entries"
+		v-if="!skeleton"
 		:value="values"
 		data-key="id"
 		selection-mode="single"
@@ -65,9 +65,10 @@ import DateTime from '../Common/DateTime.vue';
 import Duration from '../Common/Duration.vue';
 import SkeletonTable from '../Common/SkeletonTable.vue';
 
-const { entries } = defineProps<{
+const { entries, skeleton = false } = defineProps<{
 	entries?: RawTimeEntry[];
 	now?: number;
+	skeleton?: boolean;
 }>();
 const emit = defineEmits<(e: 'select', userId: UserId) => void>();
 
