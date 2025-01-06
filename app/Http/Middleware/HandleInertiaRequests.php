@@ -38,12 +38,12 @@ class HandleInertiaRequests extends Middleware {
 		return array_merge(parent::share($request), [
 			'auth.user' => fn () => $request->user()?->only('id', 'badge_id', 'badge_name', 'username', 'role'),
 			'activeEvent' => fn () => Setting::activeEvent()?->only('id', 'name'),
-			'timezone' => config('tracker.timezone'),
-			'kioskLifetime' => config('tracker.kiosk_lifetime'),
+			'timezone' => fn () => config('tracker.timezone'),
+			'kioskLifetime' => fn () => config('tracker.kiosk_lifetime'),
 			'isGatekeeper' => fn () => $request->user()?->isGatekeeper() ?? false,
 			'isDevMode' => fn () => Setting::isDevMode(),
 			'isKiosk' => fn () => Kiosk::isSessionAuthorized(true),
-			'isDebug' => config('app.debug'),
+			'isDebug' => fn () => config('app.debug'),
 			'flash' => [
 				'success' => fn () => $request->session()->get('success'),
 				'error' => fn () => $request->session()->get('error'),
