@@ -34,6 +34,7 @@ class HandleInertiaRequests extends Middleware {
 	 * @return array<string, mixed>
 	 */
 	public function share(Request $request): array {
+		// Changes here should also be made to the exception handler in /bootstrap/app.php
 		return array_merge(parent::share($request), [
 			'auth.user' => fn () => $request->user()?->only('id', 'badge_id', 'badge_name', 'username', 'role'),
 			'activeEvent' => fn () => Setting::activeEvent()?->only('id', 'name'),
