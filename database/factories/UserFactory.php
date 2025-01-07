@@ -36,6 +36,15 @@ class UserFactory extends Factory {
 	}
 
 	/**
+	 * Indicate that the model's telegram user ID should be set
+	 */
+	public function telegramLinked(): static {
+		return $this->state(fn () => [
+			'tg_chat_id' => fake()->randomNumber(8, true),
+		]);
+	}
+
+	/**
 	 * Indicate that the model's telegram user ID should be null
 	 */
 	public function telegramUnlinked(): static {

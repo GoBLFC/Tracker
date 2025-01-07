@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Activity;
 use App\Models\Department;
 use App\Models\Event;
 use App\Models\TimeBonus;
@@ -26,7 +27,7 @@ class DatabaseSeeder extends Seeder {
 			->create();
 
 		// Create a bunch of volunteer users with time entries
-		User::factory(300)
+		User::factory(100)
 			->telegramUnlinked()
 			->has(
 				TimeEntry::factory(20)
@@ -40,5 +41,12 @@ class DatabaseSeeder extends Seeder {
 					->recycle($departments)
 			)
 			->create();
+
+		// Update all time entry activities' creation time to be appropriate
+		$timeActivities = Activity::with('subject')->whereSubjectType(TimeEntry::class)->lazy();
+		foreach ($timeActivities as $activity) {
+			$activity->created_at = $activity->subject->stop ?? $activity->subject->start;
+			$activity->save();
+		}
 	}
 }

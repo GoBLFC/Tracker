@@ -15,12 +15,11 @@ class TimeEntryFactory extends Factory {
 	 * @return array<string, mixed>
 	 */
 	public function definition(): array {
-		$start = new Carbon(fake()->dateTimeInInterval('-4 days', '+4 days'));
+		$start = new Carbon(fake()->dateTimeInInterval('-4 days', '+3 days 11 hours'));
 		$stop = $start->avoidMutation()
 			->addHours(fake()->numberBetween(1, 12))
 			->addMinutes(fake()->numberBetween(0, 59))
 			->addSeconds(fake()->numberBetween(0, 59));
-		if ($stop->gt(now())) $stop = now();
 
 		return [
 			'user_id' => \App\Models\User::factory(),
@@ -46,6 +45,7 @@ class TimeEntryFactory extends Factory {
 				'start' => $start,
 				'stop' => null,
 				'created_at' => $start,
+				'updated_at' => $start,
 			];
 		});
 	}
@@ -56,6 +56,24 @@ class TimeEntryFactory extends Factory {
 	public function autoStopped(): static {
 		return $this->state(fn () => [
 			'auto' => true,
+		]);
+	}
+
+	/**
+	 * Indicate that the model's auto flag should be unset
+	 */
+	public function notAutoStopped(): static {
+		return $this->state(fn () => [
+			'auto' => false,
+		]);
+	}
+
+	/**
+	 * Indicate that the model's notes should be set
+	 */
+	public function withNotes(): static {
+		return $this->state(fn () => [
+			'notes' => fake()->paragraph(),
 		]);
 	}
 
