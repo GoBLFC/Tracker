@@ -80,7 +80,17 @@ const {
 const route = useRoute();
 const page = usePage();
 
-const isActive = computed(() => active || Boolean(page.url && to && route().current()?.startsWith(to)));
+const isActive = computed(
+	() =>
+		active ||
+		Boolean(
+			page.url &&
+				to &&
+				route()
+					.current()
+					?.includes(to.replace(/\.index$/, '')),
+		),
+);
 const isButton = toRef(() => !to || method !== 'get');
 
 /**
