@@ -77,7 +77,7 @@ With a single Compose file, you can configure and control all of the necessary c
 name: tracker
 services:
     app:
-        image: ghcr.io/goblfc/tracker
+        image: "ghcr.io/goblfc/tracker:v3"
         restart: always
         env:
             APP_NAME: BLFC Tracker
@@ -138,7 +138,7 @@ services:
             - redis:/data
 
     nginx:
-        image: ghcr.io/goblfc/tracker-nginx
+        image: "ghcr.io/goblfc/tracker-nginx:v3"
         restart: always
         env:
             NGINX_HOST: tracker.test
@@ -156,7 +156,7 @@ services:
             - app
 
     certbot:
-        image: ghcr.io/goblfc/tracker-certbot
+        image: "ghcr.io/goblfc/tracker-certbot:v3"
         restart: unless-stopped
         env:
             LETSENCRYPT_DOMAIN: tracker.test
