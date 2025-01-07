@@ -15,11 +15,12 @@ class TimeEntryFactory extends Factory {
 	 * @return array<string, mixed>
 	 */
 	public function definition(): array {
-		$start = new Carbon(fake()->dateTimeInInterval('-7 days', '+5 days'));
+		$start = new Carbon(fake()->dateTimeInInterval('-4 days', '+4 days'));
 		$stop = $start->avoidMutation()
 			->addHours(fake()->numberBetween(1, 12))
 			->addMinutes(fake()->numberBetween(0, 59))
 			->addSeconds(fake()->numberBetween(0, 59));
+		if ($stop->gt(now())) $stop = now();
 
 		return [
 			'user_id' => \App\Models\User::factory(),
@@ -36,13 +37,17 @@ class TimeEntryFactory extends Factory {
 	}
 
 	/**
-	 * Indicate that the model's stop timestamp should be null
+	 * Indicate that the time entry is ongoing (started within 12 hours ago and hasn't yet stopped)
 	 */
 	public function ongoing(): static {
-		return $this->state(fn ($state) => [
-			'stop' => null,
-			'created_at' => $state['start'],
-		]);
+		return $this->state(function () {
+			$start = new Carbon(fake()->dateTimeInInterval('-12 hours', '+12 hours'));
+			return [
+				'start' => $start,
+				'stop' => null,
+				'created_at' => $start,
+			];
+		});
 	}
 
 	/**

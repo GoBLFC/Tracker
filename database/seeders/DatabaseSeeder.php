@@ -22,17 +22,23 @@ class DatabaseSeeder extends Seeder {
 		// Create some events
 		$events = Event::factory(5)
 			->hasRewards(4)
-			->has(
-				TimeBonus::factory(5)
-					->hasAttached($departments)
-			)
+			->has(TimeBonus::factory(5)->hasAttached($departments))
 			->create();
 
-		// Create a bunch of dummy users with some content
-		User::factory(30)->telegramUnlinked()->has(
-			TimeEntry::factory(20)
-				->recycle($events)
-				->recycle($departments)
-		)->create();
+		// Create a bunch of volunteer users with time entries
+		User::factory(300)
+			->telegramUnlinked()
+			->has(
+				TimeEntry::factory(20)
+					->recycle($events)
+					->recycle($departments)
+			)
+			->has(
+				TimeEntry::factory(1)
+					->ongoing()
+					->recycle($events)
+					->recycle($departments)
+			)
+			->create();
 	}
 }

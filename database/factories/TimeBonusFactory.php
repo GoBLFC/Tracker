@@ -15,7 +15,7 @@ class TimeBonusFactory extends Factory {
 	 * @return array<string, mixed>
 	 */
 	public function definition(): array {
-		$start = new Carbon(fake()->dateTimeInInterval('-7 days', '+5 days'));
+		$start = new Carbon(fake()->dateTimeInInterval('-4 days', '+4 days'));
 		$stop = $start->avoidMutation()->addHours(fake()->numberBetween(1, 8));
 
 		return [

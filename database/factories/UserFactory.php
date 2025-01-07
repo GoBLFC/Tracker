@@ -21,8 +21,18 @@ class UserFactory extends Factory {
 			'last_name' => fake()->lastName(),
 			'badge_name' => fake()->name(),
 			'role' => 0,
-			'tg_chat_id' => fake()->randomNumber(8, true),
+			'tg_chat_id' => fake()->boolean(33) ? fake()->randomNumber(8, true) : null,
 		];
+	}
+
+	/**
+	 * Indicate that the model's role should be -1 and telegram user ID should be null
+	 */
+	public function attendee(): static {
+		return $this->state(fn () => [
+			'role' => -1,
+			'tg_chat_id' => null,
+		]);
 	}
 
 	/**
