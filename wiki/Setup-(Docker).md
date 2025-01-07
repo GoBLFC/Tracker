@@ -18,14 +18,14 @@ This removes/simplifies a lot of effort, both when setting everything up initial
 Certbot-based Let's Encrypt automatic SSL renewal support is provided out-of-the-box when using these together.
 It's certainly not mandatory to use them all, though - the main image is just the application layer and can be combined with any FastCGI-compatible web server.
 
-Details on each individual image can be seen on their corresponding pages.
-
 -   [goblfc/tracker](https://github.com/GoBLFC/Tracker/pkgs/container/tracker):
-    Main application service running PHP-FPM, cron, a queue worker, and Telegram integrations
+    All-in-one application services container running PHP-FPM, cron, a queue worker, and Telegram integrations.
+    This is the only "required" container.
+    You can combine this with any web server setup as long as it's FastCGI-compatible.
 -   [goblfc/tracker-nginx](https://github.com/GoBLFC/Tracker/pkgs/container/tracker-nginx):
     Nginx web server configured for specific use with Tracker and its static assets
 -   [goblfc/tracker-certbot](https://github.com/GoBLFC/Tracker/pkgs/container/tracker-certbot):
-    Certbot runner to auto-install and auto-renew SSL certificates for the Nginx server
+    Certbot runner to auto-install and auto-renew SSL certificates for the Nginx container
 
 ### Compose setup
 
