@@ -6,11 +6,13 @@ export default class TimeEntryActivity {
 	id: TimeEntryActivityId;
 	subject: TimeEntry;
 	properties: { attributes: { stop?: number | null } };
+	created_at: Date;
 
 	constructor(raw: RawTimeEntryActivity) {
 		this.id = raw.id;
 		this.subject = new TimeEntry(raw.subject);
 		this.properties = raw.properties;
+		this.created_at = new Date(raw.created_at);
 	}
 
 	get checked_in() {

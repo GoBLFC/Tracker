@@ -8,7 +8,7 @@
 		:rows="10"
 		:rows-per-page-options="[5, 10, 15, 20]"
 		sortable
-		sort-field="subject.start"
+		sort-field="created_at"
 		:sort-order="-1"
 		scrollable
 		scroll-height="flex"
@@ -43,9 +43,9 @@
 			</template>
 		</Column>
 
-		<Column field="subject.start" header="Time" sortable data-type="date">
+		<Column field="created_at" header="Time" sortable data-type="date">
 			<template #body="{ data: activity }: { data: TimeEntryActivity }">
-				<DateTime :date="activity.subject.start" />
+				<DateTime :date="activity.created_at" />
 			</template>
 		</Column>
 

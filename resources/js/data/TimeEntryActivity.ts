@@ -8,6 +8,7 @@ export default interface TimeEntryActivity {
 			stop?: number | null;
 		};
 	};
+	created_at: string;
 }
 
 export type TimeEntryActivityId = string & { __timeEntryActivityIdType: never };
