@@ -26,9 +26,9 @@ class TimeEntryFactory extends Factory {
 			'start' => $start,
 			'stop' => $stop,
 			'department_id' => \App\Models\Department::factory(),
-			'notes' => fake()->paragraph(),
+			'notes' => fake()->boolean(25) ? fake()->paragraph() : null,
 			'creator_user_id' => fn (array $attributes) => $attributes['user_id'],
-			'auto' => false,
+			'auto' => fake()->boolean(5),
 			'event_id' => \App\Models\Event::factory(),
 			'created_at' => $start,
 			'updated_at' => $stop,
@@ -38,7 +38,7 @@ class TimeEntryFactory extends Factory {
 	/**
 	 * Indicate that the model's stop timestamp should be null
 	 */
-	public function inProgress(): static {
+	public function ongoing(): static {
 		return $this->state(fn ($state) => [
 			'stop' => null,
 			'created_at' => $state['start'],
