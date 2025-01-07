@@ -245,6 +245,18 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 	}
 
 	/**
+	 * Gets information about the user's volunteer entities for an event
+	 */
+	public function getVolunteerInfo(?Event $event = null): array {
+		$time = $this->getTimeStats($event);
+		return [
+			'user' => $this,
+			'time' => $time,
+			'reward_claims' => $this->rewardClaims,
+		];
+	}
+
+	/**
 	 * Get the total earned time (in seconds) for an event
 	 *
 	 * @param ?Event $event Event to get the earned time for - if null, then the active event will be used
@@ -278,7 +290,7 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 	 *
 	 * @param ?Event $event Event to get the statistics for - if null, then the active event will be used
 	 * @param ?Carbon $date Day for the day-specific statistics - if null, then today will be used
-	 * @return array{total: int, day: int, entries: Collection<TimeEntry>, bonuses: Collection<TimeBonus>}
+	 * @return array{total: int, bonus: float, day: int, entries: Collection<TimeEntry>, bonuses: Collection<TimeBonus>}
 	 */
 	public function getTimeStats(?Event $event = null, ?Carbon $date = null): array {
 		if (!$event) $event = Setting::activeEvent();
@@ -288,6 +300,7 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 		if (!$event) {
 			return [
 				'total' => 0,
+				'bonus' => 0,
 				'day' => 0,
 				'entries' => new Collection,
 				'bonuses' => new Collection,
@@ -306,10 +319,17 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 			->get();
 		$bonuses = $timeEntries->pluck('department.timeBonuses')->flatten()->unique('id');
 
+		// Add a bonus_time property to each entry and total them
+		$bonusTime = 0;
+		foreach ($timeEntries as $entry) {
+			$entry->bonus_time = $entry->calculateBonusTime($event, $bonuses);
+			$bonusTime += $entry->bonus_time;
+		}
+
 		// Add up the duration and bonus time of all time entries to get the total time for the event
-		$totalTime = $timeEntries->reduce(
-			fn (?int $carry, TimeEntry $entry) => $carry + $entry->calculateTotalTime($event, $bonuses),
-			0
+		$totalTime = $bonusTime + $timeEntries->reduce(
+			fn (?int $carry, TimeEntry $entry) => $carry + $entry->getDuration(),
+			0,
 		);
 
 		// Get the date offset by the day boundary hour for day comparisons
@@ -332,6 +352,7 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 
 		return [
 			'total' => $totalTime,
+			'bonus' => $bonusTime,
 			'day' => $dayTime,
 			'entries' => $timeEntries,
 			'bonuses' => $bonuses,
@@ -342,31 +363,30 @@ class User extends UuidModel implements AuthenticatableContract, AuthorizableCon
 	 * Get applicable rewards, claims, eligible/claimed rewards, and earned hours for an event
 	 *
 	 * @param ?Event $event Event to get the reward info for - if null, then the active event will be used
+	 * @param ?float $earnedHours Number of earned hours (to avoid calculating it if it's already known)
 	 * @param ?Collection $timeEntries Time entries to look through (to avoid extra queries if already retrieved)
 	 * @return array{rewards: Collection<Reward>, eligible: Collection<Reward>, claimed: Collection<Reward>, claims: Collection<RewardClaim>, earnedHours: float}
 	 */
-	public function getRewardInfo(?Event $event = null, ?Collection $timeEntries = null): array {
+	public function getRewardInfo(?Event $event = null, ?float $earnedHours = null, ?Collection $timeEntries = null): array {
 		if (!$event) $event = Setting::activeEvent();
 
 		// If there's no event at all, then skip all of the below work and just return empty results
 		if (!$event) {
 			return [
-				'rewards' => new Collection,
+				'all' => new Collection,
 				'eligible' => new Collection,
 				'claimed' => new Collection,
 				'claims' => new Collection,
-				'earnedHours' => 0,
 			];
 		}
 
 		// Build the reward information
-		$earnedHours = $this->getEarnedTime($event, $timeEntries) / 60 / 60;
+		if ($earnedHours === null) $earnedHours = $this->getEarnedTime($event, $timeEntries) / 60 / 60;
 		return [
-			'rewards' => $event->rewards,
+			'all' => $event->rewards,
 			'eligible' => $event->rewards->filter(fn (Reward $reward) => $earnedHours > $reward->hours),
 			'claimed' => $event->rewards->filter(fn (Reward $reward) => $this->rewardClaims->contains('reward_id', $reward->id)),
 			'claims' => $this->rewardClaims->where('event_id', $event->id),
-			'earnedHours' => $earnedHours,
 		];
 	}
 

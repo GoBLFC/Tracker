@@ -102,4 +102,18 @@ class AttendeeLog extends UuidModel implements HasDisplayName {
 	public function scopeForEvent(Builder $query, Event|string|null $event = null): void {
 		$query->where('event_id', $event->id ?? $event ?? Setting::activeEvent()?->id);
 	}
+
+	/**
+	 * Checks whether this attendee log has a specific user as an attendee
+	 */
+	public function hasAttendee(User|string $user): bool {
+		return $this->attendees()->whereUserId($user->id ?? $user)->exists();
+	}
+
+	/**
+	 * Checks whether this attendee log has a specific user as a gatekeeper
+	 */
+	public function hasGatekeeper(User|string $user): bool {
+		return $this->gatekeepers()->whereUserId($user->id ?? $user)->exists();
+	}
 }

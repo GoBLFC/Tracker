@@ -55,7 +55,7 @@ class NotifyEligibleRewardsCommand extends Command {
 		$notified = 0;
 		/** @var User $user */
 		foreach ($users as $user) {
-			$rewardInfo = $user->getRewardInfo($event, $user->timeEntries);
+			$rewardInfo = $user->getRewardInfo($event, timeEntries: $user->timeEntries);
 			foreach ($rewardInfo['eligible'] as $reward) {
 				// Make sure the user hasn't already been notified for the reward or claimed it
 				if ($user->hasBeenNotifiedForEligibleReward($reward, $user->notifications)) continue;

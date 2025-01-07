@@ -173,7 +173,7 @@ return [
 		'gate' => true,  // Display Laravel Gate checks
 		'session' => false,  // Display session data
 		'symfony_request' => true,  // Only one can be enabled..
-		'mail' => true,  // Catch mail messages
+		'mail' => false,  // Catch mail messages
 		'laravel' => true, // Laravel version and environment
 		'events' => true, // All events fired
 		'default_request' => false, // Regular or special Symfony request logger
@@ -183,7 +183,7 @@ return [
 		'cache' => true, // Display cache events
 		'models' => true,  // Display models
 		'livewire' => true,  // Display Livewire (when available)
-		'jobs' => true, // Display dispatched jobs
+		'jobs' => false, // Display dispatched jobs
 		'pennant' => false, // Display Pennant feature flags
 	],
 

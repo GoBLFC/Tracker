@@ -35,7 +35,7 @@ class TimeEntryAutoStopped extends Notification implements ShouldQueue {
 		return [
 			'time_entry_id' => $this->timeEntry->id,
 			'title' => 'Automatically checked out',
-			'description' => "You were automatically checked out from your shift last night because you may have forgotten to check out.\nYou've been credited with <strong>1 hour</strong> for the shift.\n<strong>Please verify your time with your department lead or the volunteer desk!</strong>",
+			'description' => "You were automatically checked out from your shift last night because you may have forgotten to check out.\nYou've been credited with <strong>{$this->getCredited()}</strong> for the shift.\n<strong>Please verify your time with your department lead or the volunteer desk!</strong>",
 			'type' => 'warning',
 		];
 	}
@@ -47,8 +47,17 @@ class TimeEntryAutoStopped extends Notification implements ShouldQueue {
 	 */
 	public function toTelegram(object $notifiable): array {
 		return [
-			'text' => "⚠️ You were <u>automatically checked out</u> from your shift last night because you may have forgotten to check out.\nYou've been credited with <u>1 hour</u> for the shift.\n\n<b>Please verify your time with your department lead or the volunteer desk!</b>",
+			'text' => "⚠️ You were <u>automatically checked out</u> from your shift last night because you may have forgotten to check out.\nYou've been credited with <u>{$this->getCredited()}</u> for the shift.\n\n<b>Please verify your time with your department lead or the volunteer desk!</b>",
 			'parse_mode' => 'HTML',
 		];
+	}
+
+	/**
+	 * Get the amount of credited time in string form
+	 */
+	public function getCredited(): string {
+		return \Carbon\CarbonInterval::seconds($this->timeEntry->getDuration())
+			->cascade()
+			->forHumans(['parts' => 1]);
 	}
 }

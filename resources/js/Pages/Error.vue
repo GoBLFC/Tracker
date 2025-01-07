@@ -1,54 +1,49 @@
 <template>
-	<div
-		class="d-flex vh-100 flex-column justify-content-center align-items-center"
-	>
+	<div class="grow flex flex-col justify-center items-center gap-8">
 		<Head :title="`${status}: ${title}`" />
 
-		<header class="mb-3 mb-md-4">
-			<LegacyLink to="tracker.index" :title="$appName">
-				<img
-					src="../../img/event-logo.png"
-					width="128"
-					height="146"
-					alt="Event Logo"
-					class="img-fluid mw-25"
-				/>
-			</LegacyLink>
-		</header>
+		<Link to="tracker.index" :title="$appName">
+			<img
+				src="@/../img/event-logo.png"
+				width="128"
+				height="146"
+				class="object-scale-down"
+				:alt="$appName"
+			/>
+		</Link>
 
-		<main
-			class="d-flex flex-column justify-content-center align-items-center"
-		>
-			<h1 class="mb-4">{{ status }}: {{ title }}</h1>
+		<h1 class="text-3xl text-center font-light">
+			{{ status }}: {{ title }}
+		</h1>
 
-			<nav class="d-flex gap-2">
-				<button type="button" class="btn btn-primary" @click="goBack">
-					<FontAwesomeIcon :icon="faArrowLeft" class="me-1" />
-					Back
-				</button>
+		<div class="flex gap-2">
+			<IconButton
+				label="Back"
+				:icon="faArrowLeft"
+				severity="secondary"
+				@click="goBack"
+			/>
 
-				<LegacyLink
-					to="tracker.index"
-					role="button"
-					class="btn btn-primary"
-				>
-					<FontAwesomeIcon :icon="faHouse" class="me-1" />
-					Home
-				</LegacyLink>
-			</nav>
-		</main>
+			<IconButton
+				:as="Link"
+				to="tracker.index"
+				label="Home"
+				:icon="faHouse"
+				severity="secondary"
+			/>
+		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { Head } from '@inertiajs/vue3';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faHouse, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import LegacyLink from '../Components/LegacyLink.vue';
 
-defineOptions({ layout: [] });
-const props = defineProps<{ status: number }>();
+import { Head } from '@inertiajs/vue3';
+import { faHouse, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import Link from '@/Components/Common/Link.vue';
+import IconButton from '@/Components/Common/IconButton.vue';
+
+const { status } = defineProps<{ status: number }>();
 
 const title = computed(() => {
 	return {
@@ -56,7 +51,7 @@ const title = computed(() => {
 		500: 'Internal Server Error',
 		404: 'Not Found',
 		403: 'Forbidden',
-	}[props.status];
+	}[status];
 });
 
 /**

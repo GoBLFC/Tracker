@@ -213,7 +213,7 @@ In this order, that script does the following:
 1. Restarts the containers with the updated images (`docker compose down && docker compose up -d`)
 1. Ensures the log volume's file permissions remain consistent (`docker compose exec app chown -R www-data:www-data /var/www/html/storage`)
 1. Runs any new database migrations (`docker compose exec app php artisan migrate`)
-1. Disables Laravel's maintenace mode (`docker compose exec app php artisan up`)
+1. Disables Laravel's maintenance mode (`docker compose exec app php artisan up`)
 
 These steps can be completed manually if preferred or if any tweaking is desired.
 

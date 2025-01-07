@@ -1,5 +1,7 @@
 import type Department from './Department';
 import type User from './User';
+import type { UserId } from './User';
+import type { EventId } from './Event';
 
 export default interface TimeEntry {
 	id: TimeEntryId;
@@ -7,8 +9,11 @@ export default interface TimeEntry {
 	stop: string | null;
 	notes: string | null;
 	auto: boolean;
-	user: User;
+	event_id: EventId;
+	user_id: UserId;
+	user?: User;
 	department: Department;
+	bonus_time?: number;
 }
 
 export type TimeEntryId = string & { __timeEntryIdType: never };

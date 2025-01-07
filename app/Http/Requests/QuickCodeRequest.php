@@ -20,7 +20,7 @@ class QuickCodeRequest extends FormRequest {
 	 */
 	public function rules(): array {
 		return [
-			'code' => 'required|string|size:4',
+			'code' => 'required|string|alpha_num|size:4',
 		];
 	}
 

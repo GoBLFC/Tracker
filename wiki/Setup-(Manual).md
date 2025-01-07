@@ -54,7 +54,7 @@ You'll also be able to run Tracker on a traditional shared web host this way.
 
 ## Updating
 
-1. Run `php artisan down` to put the application in maintenace mode.
+1. Run `php artisan down` to put the application in maintenance mode.
 1. Pull or upload the current version of the code from this repository.
 1. Run `composer install --no-dev --classmap-authoritative` to download any new production backend dependencies and optimize the autoloader automatically.
 1. Run `npm install` to download any new frontend dependencies.
@@ -68,4 +68,4 @@ You'll also be able to run Tracker on a traditional shared web host this way.
     - `php artisan route:cache` to cache the routes to a file
     - `php artisan event:cache` to cache the auto-discovered event listeners to a file
     - `php artisan view:cache` to pre-compile and cache all of the Blade templates
-1. Run `php artisan up` to pull the application out of maintenace mode.
+1. Run `php artisan up` to pull the application out of maintenance mode.

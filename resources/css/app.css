@@ -1,0 +1,84 @@
+@layer tailwind-base, app-base, primevue, app, tailwind-utilities;
+
+@layer tailwind-base {
+	@tailwind base;
+}
+
+@layer tailwind-utilities {
+	@tailwind components;
+	@tailwind utilities;
+}
+
+@layer app-base {
+	:root {
+		@apply bg-surface-50 dark:text-primary-50 dark:bg-surface-950;
+	}
+
+	:root,
+	body,
+	#app {
+		@apply h-full;
+	}
+
+	body,
+	#app {
+		@apply relative -z-50;
+	}
+
+	/* Links */
+	a {
+		@apply text-primary transition-colors;
+	}
+
+	a:hover,
+	a:focus {
+		@apply text-primary-emphasis;
+	}
+}
+
+@layer app {
+	/* Border progress bar */
+	@property --progress {
+		syntax: "<percentage>";
+		initial-value: 0%;
+		inherits: true;
+	}
+
+	@property --progress-width {
+		syntax: "<length-percentage>";
+		initial-value: 2px;
+		inherits: true;
+	}
+
+	@property --progress-radius {
+		syntax: "<length-percentage>";
+		initial-value: 0;
+		inherits: true;
+	}
+
+	@property --progress-color {
+		syntax: "<color>";
+		initial-value: white;
+		inherits: true;
+	}
+
+	.border-progress {
+		position: relative;
+	}
+
+	.border-progress::after {
+		content: "";
+		display: block;
+		position: absolute;
+		z-index: -10;
+		inset: calc(var(--progress-width) * -1);
+		border-radius: var(--progress-radius);
+		background-color: transparent;
+		background-image: conic-gradient(
+			var(--progress-color),
+			var(--progress-color) var(--progress),
+			transparent var(--progress)
+		);
+		transition: --progress 1s linear;
+	}
+}

@@ -1,19 +1,23 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import { DateTime, Duration } from 'luxon';
 import { humanizer } from 'humanize-duration';
-import { useSettings } from './settings';
+import { useAppSettings, useLocalSettings } from './settings';
 
 /**
  * Composable for working with times in Tracker's configured timezone
  */
 export function useTime() {
-	const { timezone } = useSettings();
+	const { timezone } = useAppSettings();
+	const { timezone: preferredTimezone } = useLocalSettings();
 
 	/**
-	 * Converts a local JS date to Tracker's configured timezone, modifying the timestamp
+	 * Converts a local JS date to Tracker's configured timezone
+	 * @param date
+	 * @param keepLocalTime Whether to preserve the local time when converting timezones, thus modifying the timestamp.
+	 * Defaults to true if the user's preferred timezone is the app's.
 	 */
-	function dateToTrackerTime(date: Date): DateTime {
-		return DateTime.fromJSDate(date).setZone(timezone.value, { keepLocalTime: true });
+	function dateToTrackerTime(date: Date, keepLocalTime = preferredTimezone.value === 'app'): DateTime {
+		return DateTime.fromJSDate(date).setZone(timezone.value, { keepLocalTime });
 	}
 
 	/**
@@ -24,11 +28,22 @@ export function useTime() {
 	}
 
 	/**
-	 * Parses an ISO 8601 datetime string, converts it to Tracker's configured timezone, and builds a human-friendly
-	 * datetime string (including abbreviated weekday) using the browser's default locale.
+	 * Converts a local JS date to the user's preferred timezone
+	 * @param date
+	 * @param keepLocalTime Whether to preserve the local time when converting timezones, thus modifying the timestamp.
+	 * Defaults to true if the user's preferred timezone is the app's.
 	 */
-	function isoToDateTimeString(iso: string): string {
-		return isoToTrackerTime(iso).toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY);
+	function dateToPreferredTime(date: Date, keepLocalTime?: boolean): DateTime {
+		if (preferredTimezone.value === 'app') return dateToTrackerTime(date, keepLocalTime);
+		return DateTime.fromJSDate(date);
+	}
+
+	/**
+	 * Parses an ISO 8601 datetime string and converts it to the user's preferred timezone
+	 */
+	function isoToPreferredTime(iso: string): DateTime {
+		if (preferredTimezone.value === 'app') return isoToTrackerTime(iso);
+		return DateTime.fromISO(iso);
 	}
 
 	/**
@@ -42,7 +57,8 @@ export function useTime() {
 		timezone,
 		dateToTrackerTime,
 		isoToTrackerTime,
-		isoToDateTimeString,
+		dateToPreferredTime,
+		isoToPreferredTime,
 		now,
 	};
 }
@@ -153,4 +169,15 @@ export function getDuration(start: string, stop?: string): number {
 	const startDate = new Date(start);
 	const stopDate = stop ? new Date(stop) : new Date();
 	return stopDate.getTime() - startDate.getTime();
+}
+
+/**
+ * Gets the current full label for a given timezone
+ * @param timezone IANA timezone identifier (like `America/New_York`)
+ * @param short Whether to return just the timezone abbreviation (like `EST`)
+ * @returns Full label for the timezone (like `Eastern Standard Time, UTC-5`) or short label (like `EST`)
+ */
+export function getTimezoneLabel(timezone: string, short = false): string {
+	const date = DateTime.now().setZone(timezone);
+	return `${date.offsetNameLong}, UTC${date.toFormat('Z')}`;
 }

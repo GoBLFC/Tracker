@@ -3,6 +3,7 @@ import axios from 'axios';
 import type { AxiosError, AxiosResponse, Method } from 'axios';
 import { useRoute } from './route';
 import { useToast } from './toast';
+import { reset as resetLogoutTimers } from './logout';
 
 /**
  * Composable wrapper for making a single HTTP request at a time
@@ -62,6 +63,7 @@ export function useRequest() {
 			throw err;
 		} finally {
 			processing.value = false;
+			resetLogoutTimers();
 		}
 	}
 

@@ -37,3 +37,4 @@ auth.json
 /public/storage
 /storage/*.key
 pgdump.sql
+components.d.ts

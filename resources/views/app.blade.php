@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-bs-theme="dark">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -17,14 +17,14 @@
 	@inertiaHead
 </head>
 <body>
+	@inertia
+
 	<noscript>
-		<div class="d-flex flex-column justify-content-center align-items-center mt-5 mb-0">
-			<div class="alert alert-warning">
+		<div class="flex flex-col justify-center items-center h-screen p-4">
+			<p class="p-4 rounded-md text-xl text-center bg-surface-200 dark:bg-surface-700 border border-red-300 dark:border-red-700">
 				Tracker requires JavaScript to work properly.
-			</div>
+			</p>
 		</div>
 	</noscript>
-
-	@inertia
 </body>
 </html>

@@ -39,37 +39,34 @@ class ManagementController extends Controller {
 	];
 
 	/**
-	 * Render the lead panel
-	 */
-	public function getLeadIndex(): View {
-		return view('management.lead');
-	}
-
-	/**
 	 * Render the management panel
 	 */
-	public function getManageIndex(?Event $event = null): Response {
+	public function getManageIndex(?Event $event = null, ?User $user = null): Response {
 		if (!$event) $event = Setting::activeEvent();
+		if ($event) $this->authorize('view', $event);
 
 		return Inertia::render('ManagerDashboard', [
 			'event' => $event,
 			'events' => fn () => Event::orderBy('name')->get(),
 			'rewards' => fn () => Reward::forEvent($event)->orderBy('hours')->get(),
 			'departments' => fn () => Department::orderBy('hidden')->orderBy('name')->get(),
-			'kioskLifetime' => fn () => config('tracker.kiosk_lifetime'),
-			'longestOngoingEntries' => TimeEntry::with(['user', 'department'])
-				->forEvent($event)
-				->ongoing()
-				->orderBy('start')
-				->limit(10)
-				->get(),
-			'recentTimeActivities' => Activity::with(['subject', 'subject.user'])
-				->whereHasMorph('subject', TimeEntry::class, function (Builder $query) use ($event) {
-					$query->whereEventId($event?->id);
-				})
-				->orderByDesc('created_at')
-				->limit(10)
-				->get(),
+			'ongoingEntries' => Inertia::defer(
+				fn () => TimeEntry::with(['user', 'department'])
+					->forEvent($event)
+					->ongoing()
+					->orderBy('start')
+					->get()
+			),
+			'recentTimeActivities' => Inertia::defer(
+				fn () => Activity::with(['subject', 'subject.user'])
+					->whereHasMorph('subject', TimeEntry::class, function (Builder $query) use ($event) {
+						$query->whereEventId($event?->id);
+					})
+					->orderByDesc('created_at')
+					->limit(20)
+					->get()
+			),
+			'volunteer' => fn () => $user?->getVolunteerInfo($event),
 		]);
 	}
 
@@ -139,23 +136,6 @@ class ManagementController extends Controller {
 			'events' => Event::all(),
 			'departments' => Department::all()->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE),
 			'bonuses' => $event?->timeBonuses()?->with('departments')?->get(),
-		]);
-	}
-
-	/**
-	 * Render the attendee logs admin page
-	 */
-	public function getAdminAttendeeLogs(?Event $event = null): View|RedirectResponse {
-		// Get the event and redirect to the page for the active event, if applicable
-		if (!$event) {
-			$event = Setting::activeEvent();
-			if ($event) return redirect()->route('admin.event.attendee-logs', $event);
-		}
-
-		return view('admin.attendee-logs', [
-			'event' => $event,
-			'events' => Event::all(),
-			'attendeeLogs' => $event?->attendeeLogs()?->with('gatekeepers')?->get(),
 		]);
 	}
 

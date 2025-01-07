@@ -2,8 +2,10 @@ Tracker uses Laravel for its backend.
 Since Laravel is an MVC (Model, View, Controller) framework, that structure is generally adhered to.
 [PSR-4](https://www.php-fig.org/psr/psr-4/) autoloading is in use, so as long as the namespace and class filesystem structure is followed, files don't need to be manually included/required.
 
-A significant rework of the frontend is underway to modernize it by rebuilding it with Vue & TypeScript, using Inertia to connect it to the backend.
-At the moment, the only page that has been fully rebuilt is the Manager Controls page.
+For the frontend, things are a little more complicated since a significant rewrite is underway.
+The modern frontend uses [Vue](https://vuejs.org/) & TypeScript, and is connected to the backend with [Inertia](https://inertiajs.com/).
+The legacy frontend just uses plain Laravel Blade templates and JavaScript.
+At this point, only the admin pages are left on the legacy design.
 
 ## Frequently Used Directories
 

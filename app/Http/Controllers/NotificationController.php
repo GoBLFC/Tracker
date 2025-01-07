@@ -8,13 +8,14 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
 
 class NotificationController extends Controller {
 	/**
 	 * List all unread notifications
 	 */
-	public function getIndex(Request $request): View|JsonResponse {
+	public function getIndex(Request $request): InertiaResponse|JsonResponse {
 		/** @var User */
 		$user = Auth::user();
 
@@ -29,7 +30,7 @@ class NotificationController extends Controller {
 
 		return $request->expectsJson()
 			? response()->json(['notifications' => $notifications])
-			: view('notifications.index', ['notifications' => $notifications]);
+			: Inertia::render('Notifications', ['notifications' => $notifications]);
 	}
 
 	/**

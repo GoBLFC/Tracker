@@ -14,24 +14,26 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
 
 class TrackerController extends Controller {
 	/**
 	 * Render the tracker index
 	 */
-	public function getIndex(): View|RedirectResponse {
+	public function getIndex(): InertiaResponse|RedirectResponse {
 		/** @var User */
 		$user = Auth::user();
 
 		// If the user has notifications, present those first
 		if ($user->unreadNotifications()->exists()) return redirect()->route('notifications.index');
 
-		$stats = $user->getTimeStats();
-		return view('tracker.index', [
-			'stats' => $stats,
-			'ongoing' => $stats['entries']->first(fn (TimeEntry $entry) => $entry->isOngoing()),
-			'departments' => $user->isAdmin() ? Department::all() : Department::whereHidden(false)->get(),
+		return Inertia::render('VolunteerHome', [
+			'volunteer' => fn () => $user->getVolunteerInfo(),
+			'departments' => fn () => $user->isManager() ? Department::all() : Department::whereHidden(false)->get(),
+			'rewards' => fn () => Setting::activeEvent()?->rewards,
+			'telegramSetupUrl' => fn () => $user->getTelegramSetupUrl(),
+			'hasTelegram' => fn () => !empty($user->tg_chat_id),
 		]);
 	}
 
@@ -116,16 +118,7 @@ class TrackerController extends Controller {
 	 */
 	public function getStats(User $user, ?Event $event = null): JsonResponse {
 		$this->authorize('viewAny', [TimeEntry::class, $user]);
-
-		// Get the time stats and add a bonus_time property to each time entry
-		$stats = $user->getTimeStats($event);
-		foreach ($stats['entries'] as $entry) $entry->bonus_time = $entry->calculateBonusTime($event, $stats['bonuses']);
-
-		return response()->json([
-			'user' => $user,
-			'stats' => $stats,
-			'ongoing' => $stats['entries']->first(fn (TimeEntry $entry) => $entry->isOngoing()),
-		]);
+		return response()->json(['time' => $user->getTimeStats($event)]);
 	}
 
 	/**
@@ -174,8 +167,8 @@ class TrackerController extends Controller {
 	/**
 	 * Display the lockdown notice
 	 */
-	public function getLockdown(): View|RedirectResponse {
+	public function getLockdown(): InertiaResponse|RedirectResponse {
 		if (!Setting::isLockedDown()) return redirect()->route('tracker.index');
-		return view('tracker.lockdown');
+		return Inertia::render('Maintenance');
 	}
 }
