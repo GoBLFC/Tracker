@@ -4,12 +4,14 @@ import { useRoute } from './route';
 import { useAppSettings } from './settings';
 import { clockDuration, useNow } from './time';
 
+/**
+ * Runs an auto-logout timer
+ */
 export function useAutoLogout({ after, autoReset = true }: { after?: number; autoReset?: boolean } = {}) {
 	const route = useRoute();
 	const { isKiosk, isDevMode } = useAppSettings();
 	const { now, startTicking, stopTicking } = useNow();
 
-	const resets = ref(0);
 	const currentPath = ref(window.location.pathname);
 
 	const logoutAfter = computed(() => after ?? (isKiosk.value ? (isDevMode.value ? 3600e3 : 60e3) : 0));
@@ -75,13 +77,6 @@ export function useAutoLogout({ after, autoReset = true }: { after?: number; aut
 		if (logoutTimeout) clearTimeout(logoutTimeout);
 	}
 
-	/**
-	 * Resets the logout timer
-	 */
-	function reset() {
-		resets.value++;
-	}
-
 	return {
 		logoutAt,
 		logoutAfter,
@@ -90,4 +85,13 @@ export function useAutoLogout({ after, autoReset = true }: { after?: number; aut
 		logout,
 		reset,
 	};
+}
+
+const resets = ref(0);
+
+/**
+ * Forces a reset of all logout timers
+ */
+export function reset() {
+	resets.value++;
 }
