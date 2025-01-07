@@ -22,7 +22,7 @@ createInertiaApp({
 	title: (title) => (title ? `${title} | ${appName}` : appName),
 
 	async resolve(name) {
-		const pages = import.meta.glob<Promise<DefineComponent>>('./Pages/**/*.vue', { eager: true });
+		const pages = import.meta.glob<DefineComponent>('./Pages/**/*.vue');
 		const page = await resolvePageComponent<DefineComponent>(`./Pages/${name}.vue`, pages);
 		page.default.layout ??= [BaseLayout, NavLayout];
 		return page;
