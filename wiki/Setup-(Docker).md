@@ -77,9 +77,9 @@ With a single Compose file, you can configure and control all of the necessary c
 name: tracker
 services:
     app:
-        image: "ghcr.io/goblfc/tracker:v3"
+        image: ghcr.io/goblfc/tracker:v3
         restart: always
-        env:
+        environment:
             APP_NAME: BLFC Tracker
             APP_ENV: production
             APP_KEY: "base64:<randomly-generated app key>"
@@ -118,7 +118,7 @@ services:
     postgres:
         image: postgres:17
         restart: always
-        env:
+        environment:
             POSTGRES_DB: tracker
             POSTGRES_USER: tracker
             POSTGRES_PASSWORD: "<some secure password>"
@@ -132,15 +132,15 @@ services:
             - -c
             - redis-server --save 60 1 --loglevel warning --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD not provided}"
         restart: always
-        env:
+        environment:
             REDIS_PASSWORD: "<some secure password>"
         volumes:
             - redis:/data
 
     nginx:
-        image: "ghcr.io/goblfc/tracker-nginx:v3"
+        image: ghcr.io/goblfc/tracker-nginx:v3
         restart: always
-        env:
+        environment:
             NGINX_HOST: tracker.test
             NGINX_HTTP_PORT: 80
             NGINX_HTTPS_PORT: 443
@@ -156,9 +156,9 @@ services:
             - app
 
     certbot:
-        image: "ghcr.io/goblfc/tracker-certbot:v3"
+        image: ghcr.io/goblfc/tracker-certbot:v3
         restart: unless-stopped
-        env:
+        environment:
             LETSENCRYPT_DOMAIN: tracker.test
             LETSENCRYPT_EMAIL: youremail@yourcon.org
             LETSENCRYPT_DRY_RUN: true
