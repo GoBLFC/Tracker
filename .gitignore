@@ -24,10 +24,10 @@ npm-debug.log
 yarn-error.log
 
 # Environment config
+/auth.json
 .phpactor.json
 Homestead.json
 Homestead.yaml
-auth.json
 .env
 *.env
 .env.*

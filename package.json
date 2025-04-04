@@ -22,7 +22,7 @@
 		"@primevue/themes": "^4.2.1",
 		"@sweetalert2/theme-dark": "^5.0.18",
 		"animate.css": "^4.1.1",
-		"axios": "^1.7.7",
+		"axios": "^1.8.2",
 		"bootstrap": "^5.3.3",
 		"bootstrap-select": "^1.14.0-beta3",
 		"humanize-duration": "^3.32.1",
@@ -52,13 +52,13 @@
 		"autoprefixer": "^10.4.20",
 		"concurrently": "^9.0.1",
 		"cssnano": "^7.0.6",
-		"laravel-vite-plugin": "^1.0.5",
+		"laravel-vite-plugin": "^1.2.0",
 		"postcss": "^8.4.49",
 		"tailwindcss": "^3.4.15",
 		"tsx": "^4.19.2",
 		"typescript": "^5.6.3",
 		"unplugin-vue-components": "^0.28.0",
-		"vite": "^6.0.4",
+		"vite": "^6.2.4",
 		"vue-tsc": "^2.1.6"
 	}
 }
