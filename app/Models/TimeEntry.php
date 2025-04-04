@@ -6,7 +6,9 @@ use App\Models\Traits\ChecksActiveEvent;
 use Carbon\CarbonInterval;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -57,9 +59,9 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @method static static findOrNew($id, $columns = ['*'])
  * @method static null|static find($id, $columns = ['*'])
  */
-class TimeEntry extends UuidModel {
+class TimeEntry extends Model {
 	/** @use HasFactory<\Database\Factories\TimeEntryFactory> */
-	use ChecksActiveEvent, HasFactory, LogsActivity;
+	use ChecksActiveEvent, HasFactory, HasUuids, LogsActivity;
 
 	protected $casts = [
 		'start' => 'datetime',

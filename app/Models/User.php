@@ -11,7 +11,9 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
@@ -75,9 +77,9 @@ use Telegram\Bot\Laravel\Facades\Telegram;
  * @method static static findOrNew($id, $columns = ['*'])
  * @method static null|static find($id, $columns = ['*'])
  */
-class User extends UuidModel implements AuthenticatableContract, AuthorizableContract, HasAuditName, HasDisplayName {
+class User extends Model implements AuthenticatableContract, AuthorizableContract, HasAuditName, HasDisplayName {
 	/** @use HasFactory<\Database\Factories\UserFactory> */
-	use Authenticatable, Authorizable, CausesActivity, HasFactory, LogsActivity, Notifiable, SoftDeletes;
+	use Authenticatable, Authorizable, CausesActivity, HasFactory, HasUuids, LogsActivity, Notifiable, SoftDeletes;
 
 	public $incrementing = false;
 	protected $casts = [

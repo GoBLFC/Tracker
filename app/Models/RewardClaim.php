@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -38,8 +40,8 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @method static static findOrNew($id, $columns = ['*'])
  * @method static null|static find($id, $columns = ['*'])
  */
-class RewardClaim extends UuidModel {
-	use LogsActivity;
+class RewardClaim extends Model {
+	use HasUuids, LogsActivity;
 
 	public function getActivitylogOptions(): LogOptions {
 		return LogOptions::defaults()

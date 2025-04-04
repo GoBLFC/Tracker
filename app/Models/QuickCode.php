@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\MassPrunable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
@@ -35,8 +37,8 @@ use Illuminate\Support\Str;
  * @method static static findOrNew($id, $columns = ['*'])
  * @method static null|static find($id, $columns = ['*'])
  */
-class QuickCode extends UuidModel {
-	use MassPrunable;
+class QuickCode extends Model {
+	use HasUuids, MassPrunable;
 
 	protected static function boot() {
 		parent::boot();

@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\Activitylog\LogOptions;
@@ -43,9 +45,9 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @method static static findOrNew($id, $columns = ['*'])
  * @method static null|static find($id, $columns = ['*'])
  */
-class TimeBonus extends UuidModel {
+class TimeBonus extends Model {
 	/** @use HasFactory<\Database\Factories\TimeBonusFactory> */
-	use HasFactory, LogsActivity;
+	use HasFactory, HasUuids, LogsActivity;
 
 	protected $casts = [
 		'start' => 'datetime',

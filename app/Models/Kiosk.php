@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\MassPrunable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Str;
 use Spatie\Activitylog\LogOptions;
@@ -36,8 +38,8 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @method static static findOrNew($id, $columns = ['*'])
  * @method static null|static find($id, $columns = ['*'])
  */
-class Kiosk extends UuidModel {
-	use LogsActivity, MassPrunable;
+class Kiosk extends Model {
+	use HasUuids, LogsActivity, MassPrunable;
 
 	/**
 	 * Cached authorization status

@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Models\Contracts\HasDisplayName;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -43,9 +45,9 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @method static static findOrNew($id, $columns = ['*'])
  * @method static null|static find($id, $columns = ['*'])
  */
-class Department extends UuidModel implements HasDisplayName {
+class Department extends Model implements HasDisplayName {
 	/** @use HasFactory<\Database\Factories\DepartmentFactory> */
-	use HasFactory, LogsActivity, SoftDeletes;
+	use HasFactory, HasUuids, LogsActivity, SoftDeletes;
 
 	protected $casts = [
 		'hidden' => 'boolean',

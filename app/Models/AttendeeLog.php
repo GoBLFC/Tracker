@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Models\Contracts\HasDisplayName;
 use App\Models\Traits\ChecksActiveEvent;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -46,8 +48,8 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @method static static findOrNew($id, $columns = ['*'])
  * @method static null|static find($id, $columns = ['*'])
  */
-class AttendeeLog extends UuidModel implements HasDisplayName {
-	use ChecksActiveEvent, LogsActivity, SoftDeletes;
+class AttendeeLog extends Model implements HasDisplayName {
+	use ChecksActiveEvent, HasUuids, LogsActivity, SoftDeletes;
 
 	protected $fillable = [
 		'name',

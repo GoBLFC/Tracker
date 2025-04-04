@@ -5,7 +5,9 @@ namespace App\Models;
 use App\Models\Contracts\HasDisplayName;
 use App\Models\Traits\ChecksActiveEvent;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
@@ -45,9 +47,9 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @method static static findOrNew($id, $columns = ['*'])
  * @method static null|static find($id, $columns = ['*'])
  */
-class Reward extends UuidModel implements HasDisplayName {
+class Reward extends Model implements HasDisplayName {
 	/** @use HasFactory<\Database\Factories\RewardFactory> */
-	use ChecksActiveEvent, HasFactory, LogsActivity, SoftDeletes;
+	use ChecksActiveEvent, HasFactory, HasUuids, LogsActivity, SoftDeletes;
 
 	protected $fillable = [
 		'name',

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Casts\JsonValue;
 use App\Models\Contracts\HasDisplayName;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Spatie\Activitylog\LogOptions;
@@ -34,8 +35,8 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @method static static findOrNew($id, $columns = ['*'])
  * @method static null|static find($id, $columns = ['*'])
  */
-class Setting extends UuidModel implements HasDisplayName {
-	use LogsActivity;
+class Setting extends Model implements HasDisplayName {
+	use HasUuids, LogsActivity;
 
 	protected $casts = [
 		'value' => JsonValue::class,

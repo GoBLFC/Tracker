@@ -7,6 +7,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Arr;
@@ -41,7 +42,9 @@ use Spatie\Activitylog\Contracts\Activity as ActivityContract;
  * @method static \Illuminate\Database\Eloquent\Builder|\Spatie\Activitylog\Models\Activity newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\Spatie\Activitylog\Models\Activity query()
  */
-class Activity extends UuidModel implements ActivityContract {
+class Activity extends Model implements ActivityContract {
+	use HasUuids;
+
 	public $guarded = [];
 	protected $casts = [
 		'properties' => 'collection',
