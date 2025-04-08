@@ -5,6 +5,6 @@
 		"onecentlin.laravel-extension-pack",
 		"mansoorkhan96.php-cs-fixer",
 		"bradlc.vscode-tailwindcss",
-		"biomejs.biome",
+		"biomejs.biome"
 	]
 }
