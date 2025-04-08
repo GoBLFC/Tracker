@@ -18,7 +18,7 @@
 				v-tooltip.left="'Read-only'"
 			>
 				<FontAwesomeIcon :icon="faEye" />
-				<span class="sr-only">Read-only</span>
+				<span class="tw-sr-only">Read-only</span>
 			</div>
 		</div>
 

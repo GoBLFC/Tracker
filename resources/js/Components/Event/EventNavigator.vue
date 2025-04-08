@@ -2,7 +2,7 @@
 	<InputGroup v-if="events.length > 0">
 		<InputGroupAddon @click="focus()" :id="labelId">
 			<FontAwesomeIcon :icon="faCalendarDay" />
-			<span class="sr-only">Event</span>
+			<span class="tw-sr-only">Event</span>
 		</InputGroupAddon>
 
 		<Select

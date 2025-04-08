@@ -1,7 +1,7 @@
 <template>
 	<span class="cursor-help">
 		<FontAwesomeIcon :icon="faCircleQuestion" v-tooltip="text" />
-		<span class="sr-only">{{ text }}</span>
+		<span class="tw-sr-only">{{ text }}</span>
 	</span>
 </template>
 

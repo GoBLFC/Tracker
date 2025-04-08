@@ -4,17 +4,17 @@ import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
 import Components from 'unplugin-vue-components/vite';
 import { PrimeVueResolver } from '@primevue/auto-import-resolver';
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
 	plugins: [
 		vue(),
+		tailwindcss(),
 		Components({
 			resolvers: [PrimeVueResolver()],
 		}),
 		laravel({
 			input: [
-				'resources/css/app.css',
-				'resources/sass/app.scss',
 				'resources/js/app.ts',
 				'resources/js/legacy/app.js',
 				'resources/js/legacy/auto-logout.js',

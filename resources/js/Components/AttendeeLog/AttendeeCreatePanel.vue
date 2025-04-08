@@ -13,7 +13,7 @@
 				Enter an attendee into the log. Badge scanners will work as long
 				as they send a
 				<kbd
-					class="px-1 inline-block border rounded border-surface-300 dark:border-surface-600 whitespace-nowrap"
+					class="px-1 inline-block border rounded-sm border-surface-300 dark:border-surface-600 whitespace-nowrap"
 				>
 					Return &#9166;
 				</kbd>

@@ -1,42 +1,55 @@
-@layer tailwind-base, app-base, primevue, app, tailwind-utilities;
+@import "tailwindcss" source(none);
+@import "tailwindcss-primeui";
 
-@layer tailwind-base {
-	@tailwind base;
-}
+@source "../js";
+@source "../views";
+@source inline("{sm:,md:,lg:,xl:,}not-sr-only");
 
-@layer tailwind-utilities {
-	@tailwind components;
-	@tailwind utilities;
-}
+@custom-variant dark (&:where(.dark, .dark *));
 
-@layer app-base {
+@layer theme, base, primevue, components, utilities;
+
+@layer base {
 	:root {
-		@apply bg-surface-50 dark:text-primary-50 dark:bg-surface-950;
+		background-color: var(--p-surface-50);
+
+		@variant dark {
+			background-color: var(--p-surface-950);
+			color: var(--p-primary-50);
+		}
 	}
 
 	:root,
 	body,
 	#app {
-		@apply h-full;
+		height: 100%;
 	}
 
 	body,
 	#app {
-		@apply relative -z-50;
+		position: relative;
+		z-index: -50;
 	}
 
 	/* Links */
 	a {
-		@apply text-primary transition-colors;
+		color: var(--p-primary-color);
+		@apply transition-colors;
 	}
 
 	a:hover,
 	a:focus {
-		@apply text-primary-emphasis;
+		color: var(--p-primary-hover-color);
+	}
+
+	/* Buttons */
+	button:not(:disabled),
+	[role="button"]:not(:disabled) {
+		cursor: pointer;
 	}
 }
 
-@layer app {
+@layer components {
 	/* Border progress bar */
 	@property --progress {
 		syntax: "<percentage>";
@@ -81,4 +94,9 @@
 		);
 		transition: --progress 1s linear;
 	}
+}
+
+/* Workaround to avoid conflicting sr-only class from FontAwesome */
+@utility tw-sr-only {
+	@apply sr-only;
 }

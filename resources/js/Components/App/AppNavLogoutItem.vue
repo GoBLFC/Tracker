@@ -15,7 +15,7 @@
 					`
 				: ''
 		"
-		color="text-red-500 hover:!text-red-300"
+		color="text-red-500 hover:text-red-300!"
 		:icon="faArrowRightFromBracket"
 		:show-text="showHamburger"
 		:tooltip-position
