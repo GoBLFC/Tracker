@@ -1,8 +1,10 @@
 {
 	"recommendations": [
+		"laravel.vscode-laravel",
 		"onecentlin.php-productive-pack",
 		"onecentlin.laravel-extension-pack",
 		"mansoorkhan96.php-cs-fixer",
-		"biomejs.biome"
+		"bradlc.vscode-tailwindcss",
+		"biomejs.biome",
 	]
 }
