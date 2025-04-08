@@ -49,7 +49,16 @@
 			</Message>
 
 			<Panel header="Shift Entry">
-				<div class="flex flex-col lg:flex-row gap-4">
+				<div class="flex flex-col flex-wrap lg:flex-row gap-4">
+					<Message
+						v-if="kioskRequired"
+						severity="warn"
+						class="w-full"
+					>
+						You must visit an authorized volunteer kiosk to check
+						{{ ongoing ? "out" : "in" }}.
+					</Message>
+
 					<Message :severity="ongoing ? 'success' : 'secondary'">
 						{{
 							ongoing
@@ -63,7 +72,7 @@
 							<DepartmentPicker
 								v-model="department"
 								:departments
-								:disabled="Boolean(ongoing)"
+								:disabled="ongoing || kioskRequired"
 							/>
 
 							<ResponsiveButton
@@ -75,7 +84,11 @@
 								"
 								:severity="ongoing ? 'warn' : 'success'"
 								:loading="loading"
-								:disabled="loading || (!ongoing && !department)"
+								:disabled="
+									loading ||
+									(!ongoing && !department) ||
+									kioskRequired
+								"
 								type="submit"
 								class="shrink-0"
 							/>
@@ -134,8 +147,8 @@ const { volunteer, departments } = defineProps<{
 	hasTelegram: boolean;
 }>();
 
-const { activeEvent } = useAppSettings();
-const { displayName } = useUser();
+const { activeEvent, isKiosk, isDevMode } = useAppSettings();
+const { displayName, isStaff } = useUser();
 const { now } = useNow();
 const route = useRoute();
 const toast = useToast();
@@ -143,6 +156,7 @@ usePoll(15000, { only: ['volunteer', 'hasTelegram'] });
 
 const ongoing = computed(() => volunteer.time.entries.find((entry) => !entry.stop));
 const department = ref(ongoing.value?.department);
+const kioskRequired = computed(() => !isKiosk.value && !isDevMode.value && !isStaff.value);
 const loading = ref(false);
 const isTelegramDialogVisible = ref(false);
 const successDialog = useTemplateRef('success-dialog');
@@ -151,6 +165,8 @@ const successDialog = useTemplateRef('success-dialog');
  * Sends a request to check the user in or out
  */
 function checkInOrOut() {
+	if (kioskRequired.value) return;
+
 	const checkingIn = !ongoing.value;
 	router.post(
 		route(`tracker.check${checkingIn ? 'in' : 'out'}.post`),
