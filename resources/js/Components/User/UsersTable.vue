@@ -4,7 +4,7 @@
 		:value="values"
 		data-key="id"
 		lazy
-		:loading
+		:loading="request.processing.value"
 		paginator
 		:rows
 		:rows-per-page-options="[5, 10, 15, 20, 50]"
@@ -80,7 +80,7 @@
 		</Column>
 
 		<Column
-			v-if="isAdmin"
+			v-if="actions && isAdmin"
 			header="Actions"
 			class="text-end"
 			:pt="{ columnHeaderContent: { class: 'justify-end' } }"
@@ -97,16 +97,23 @@
 		</template>
 	</DataTable>
 
-	<SkeletonTable v-else :columns="['ID', 'Name', 'Role', 'Actions']" />
+	<SkeletonTable
+		v-else
+		:columns="
+			actions && isAdmin
+				? ['ID', 'Name', 'Role', 'Actions']
+				: ['ID', 'Name', 'Role']
+		"
+	/>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import vueDebounce from 'vue-debounce';
-import { router } from '@inertiajs/vue3';
 import { FilterMatchMode } from '@primevue/core/api';
 import type { DataTableFilterEvent, DataTablePageEvent, DataTableSortEvent } from 'primevue/datatable';
 
+import { useInertiaRequest } from '@/lib/request';
 import { roleNames, useUser } from '@/lib/user';
 import User from '@/data/impl/User';
 import type RawUser from '@/data/User';
@@ -119,24 +126,27 @@ import UserRoleSelector from './UserRoleSelector.vue';
 const {
 	users,
 	rows = 20,
-	skeleton = false,
 	filterValues = {},
+	actions = true,
+	skeleton = false,
 } = defineProps<{
 	users?: RawUser[];
 	total?: number;
 	rows?: number;
-	skeleton?: boolean;
 	filterValues: {
 		badge_id?: number | null;
 		name?: string | null;
 		role?: number | null;
 	};
+	actions?: boolean;
+	skeleton?: boolean;
 }>();
 
 const vDebounce = vueDebounce({ lock: true, defaultTime: '400ms' });
+const request = useInertiaRequest();
 const { isAdmin } = useUser();
+
 const values = computed(() => (users ? User.load(users) : undefined));
-const loading = ref(!users);
 
 // Filtering
 const filters = ref({
@@ -171,33 +181,19 @@ watch(
  * Loads a page of user results using the current filters and sorting data
  */
 async function loadPage(evt: DataTablePageEvent | DataTableSortEvent | DataTableFilterEvent) {
-	router.get(
-		'/users',
-		{
-			page: 'page' in evt && evt.page !== 0 ? evt.page + 1 : undefined,
-			count: evt.rows !== 20 ? evt.rows : undefined,
-			sortBy: evt.sortField !== 'display_name' ? (evt.sortField as string) : undefined,
-			sortDir:
-				evt.sortField !== 'display_name' || evt.sortOrder !== 1
-					? evt.sortOrder === -1
-						? 'desc'
-						: 'asc'
-					: undefined,
-			badge_id: filters.value.badge_id.value || undefined,
-			name: filters.value.display_name.value || undefined,
-			role: filters.value.role.value ?? undefined,
-		},
-		{
-			preserveState: true,
-			preserveScroll: true,
-
-			onStart() {
-				loading.value = true;
-			},
-			onFinish() {
-				loading.value = false;
-			},
-		},
-	);
+	request.get('users.index', {
+		page: 'page' in evt && evt.page !== 0 ? evt.page + 1 : undefined,
+		count: evt.rows !== 20 ? evt.rows : undefined,
+		sortBy: evt.sortField !== 'display_name' ? (evt.sortField as string) : undefined,
+		sortDir:
+			evt.sortField !== 'display_name' || evt.sortOrder !== 1
+				? evt.sortOrder === -1
+					? 'desc'
+					: 'asc'
+				: undefined,
+		badge_id: filters.value.badge_id.value || undefined,
+		name: filters.value.display_name.value || undefined,
+		role: filters.value.role.value ?? undefined,
+	});
 }
 </script>
