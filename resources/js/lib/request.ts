@@ -1,12 +1,13 @@
-import { ref } from 'vue';
+import { ref, type Ref } from 'vue';
+import { router } from '@inertiajs/vue3';
 import axios from 'axios';
 import type { AxiosError, AxiosResponse, Method } from 'axios';
-import { useRoute } from './route';
+import { useRoute, type RouteName, type ZiggyParams } from './route';
 import { useToast } from './toast';
 import { reset as resetLogoutTimers } from './logout';
 
 /**
- * Composable wrapper for making a single HTTP request at a time
+ * Composable wrapper for making a single HTTP request at a time and tracking loading/error state
  */
 export function useRequest() {
 	const toast = useToast();
@@ -18,19 +19,14 @@ export function useRequest() {
 	/**
 	 * Sends a request
 	 * @param method HTTP method to use for the request
-	 * @param route Name of the route to send the request to, or an array of the name and parameters
+	 * @param route Name of the route to send the request to, or an array of parameters for Ziggy
 	 * @param data Data to send as the request body (or as query params for GET requests)
 	 * @returns Response data
 	 */
-	async function send<T, D = unknown>(
-		method: Method,
-		route: string | [string, string | string[]],
-		data?: D,
-	): Promise<T> {
+	async function send<T, D = unknown>(method: Method, route: RouteName | ZiggyParams, data?: D): Promise<T> {
 		processing.value = true;
 		error.value = null;
 
-		// @ts-ignore: Type weirdness that requires way too much to fix
 		const url = Array.isArray(route) ? resolveRoute(...route) : resolveRoute(route);
 
 		try {
@@ -69,41 +65,41 @@ export function useRequest() {
 
 	/**
 	 * Sends a GET request
-	 * @param route Name of the route to send the request to, or an array of the name and parameters
+	 * @param route Name of the route to send the request to, or an array of parameters for Ziggy
 	 * @param params Query string parameters to send
 	 * @returns Response data
 	 */
-	async function get<T, D = unknown>(route: string | [string, string | string[]], params?: D): Promise<T> {
+	async function get<T, D = unknown>(route: RouteName | ZiggyParams, params?: D): Promise<T> {
 		return await send('GET', route, params);
 	}
 
 	/**
 	 * Sends a POST request
-	 * @param route Name of the route to send the request to, or an array of the name and parameters
+	 * @param route Name of the route to send the request to, or an array of parameters for Ziggy
 	 * @param data Data to send as the request body
 	 * @returns Response data
 	 */
-	async function post<T, D = unknown>(route: string | [string, string | string[]], data?: D): Promise<T> {
+	async function post<T, D = unknown>(route: RouteName | ZiggyParams, data?: D): Promise<T> {
 		return await send('POST', route, data);
 	}
 
 	/**
 	 * Sends a PUT request
-	 * @param route Name of the route to send the request to, or an array of the name and parameters
+	 * @param route Name of the route to send the request to, or an array of parameters for Ziggy
 	 * @param data Data to send as the request body
 	 * @returns Response data
 	 */
-	async function put<T, D = unknown>(route: string | [string, string | string[]], data?: D): Promise<T> {
+	async function put<T, D = unknown>(route: RouteName | ZiggyParams, data?: D): Promise<T> {
 		return await send('PUT', route, data);
 	}
 
 	/**
 	 * Sends a DELETE request
-	 * @param route Name of the route to send the request to, or an array of the name and parameters
+	 * @param route Name of the route to send the request to, or an array of parameters for Ziggy
 	 * @param data Data to send as the request body
 	 * @returns Response data
 	 */
-	async function del<T, D = unknown>(route: string | [string, string | string[]], data?: D): Promise<T> {
+	async function del<T, D = unknown>(route: RouteName | ZiggyParams, data?: D): Promise<T> {
 		return await send('DELETE', route, data);
 	}
 
@@ -116,4 +112,100 @@ export function useRequest() {
 		put,
 		del,
 	};
+}
+
+type InertiaData = Parameters<(typeof router)['get']>[1];
+type InertiaOptions = Parameters<(typeof router)['get']>[2];
+
+/**
+ * Composable wrapper for sending a request with Inertia and tracking loading state
+ */
+export function useInertiaRequest() {
+	const resolveRoute = useRoute();
+	const processing = ref(false);
+
+	/**
+	 * Sends a GET Inertia request
+	 * @param route Name of the route to send the request to, or an array of parameters for Ziggy
+	 * @param data Data to send as query string parameters
+	 * @param options Inertia visit options
+	 */
+	function get(route: RouteName | ZiggyParams, data?: InertiaData, options?: InertiaOptions) {
+		const url = Array.isArray(route) ? resolveRoute(...route) : resolveRoute(route);
+		router.get(url, data, addProcessingToInertiaOptions(processing, options));
+	}
+
+	/**
+	 * Sends a POST Inertia request
+	 * @param route Name of the route to send the request to, or an array of parameters for Ziggy
+	 * @param data Data to send as the request body
+	 * @param options Inertia visit options
+	 */
+	function post(route: RouteName | ZiggyParams, data?: InertiaData, options?: InertiaOptions) {
+		const url = Array.isArray(route) ? resolveRoute(...route) : resolveRoute(route);
+		router.post(url, data, addProcessingToInertiaOptions(processing, options));
+	}
+
+	/**
+	 * Sends a PUT Inertia request
+	 * @param route Name of the route to send the request to, or an array of parameters for Ziggy
+	 * @param data Data to send as the request body
+	 * @param options Inertia visit options
+	 */
+	function put(route: RouteName | ZiggyParams, data?: InertiaData, options?: InertiaOptions) {
+		const url = Array.isArray(route) ? resolveRoute(...route) : resolveRoute(route);
+		router.put(url, data, addProcessingToInertiaOptions(processing, options));
+	}
+
+	/**
+	 * Sends a PATCH Inertia request
+	 * @param route Name of the route to send the request to, or an array of parameters for Ziggy
+	 * @param data Data to send as the request body
+	 * @param options Inertia visit options
+	 */
+	function patch(route: RouteName | ZiggyParams, data?: InertiaData, options?: InertiaOptions) {
+		const url = Array.isArray(route) ? resolveRoute(...route) : resolveRoute(route);
+		router.patch(url, data, addProcessingToInertiaOptions(processing, options));
+	}
+
+	/**
+	 * Sends a DELETE Inertia request
+	 * @param route Name of the route to send the request to, or an array of parameters for Ziggy
+	 * @param options Inertia visit options
+	 */
+	function del(route: RouteName | ZiggyParams, options?: InertiaOptions) {
+		const url = Array.isArray(route) ? resolveRoute(...route) : resolveRoute(route);
+		router.delete(url, addProcessingToInertiaOptions(processing, options));
+	}
+
+	return {
+		processing,
+		get,
+		post,
+		put,
+		patch,
+		del,
+	};
+}
+
+/**
+ * Extends a set of inertia options with onStart and onFinish methods to change the state of a processing boolean ref
+ */
+function addProcessingToInertiaOptions(processing: Ref<boolean, boolean>, options: InertiaOptions = {}) {
+	const extended: InertiaOptions = {
+		preserveState: true,
+		preserveScroll: true,
+		...options,
+
+		onStart(...args) {
+			processing.value = true;
+			if (options.onStart) options.onStart(...args);
+		},
+		onFinish(...args) {
+			processing.value = false;
+			if (options.onFinish) options.onFinish(...args);
+		},
+	};
+
+	return extended;
 }
