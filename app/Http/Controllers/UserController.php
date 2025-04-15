@@ -23,11 +23,16 @@ class UserController extends Controller {
 
 		$sortBy = $request->string('sortBy');
 		$sortDir = $request->string('sortDir');
+		$sortByName = $sortBy->exactly('display_name');
 
-		// Start the query, sorted by the requested field
-		$query = $sortBy->exactly('display_name')
-			? User::orderBy(DB::raw('case when "badge_name" is not null then "badge_name" else "username" end'), $sortDir)
-			: User::orderBy($sortBy, $sortDir);
+		$query = User::query();
+
+		// Sort by the requested field (if any), followed by the display name
+		if (!$sortByName) $query->orderBy($sortBy, $sortDir);
+		$query->orderBy(
+			DB::raw('case when "badge_name" is not null then "badge_name" else "username" end'),
+			$sortByName ? $sortDir : 'asc',
+		);
 
 		// Filter by the requested field(s)
 		if ($request->has('badge_id')) $query->whereBadgeId($request->integer('badge_id'));
