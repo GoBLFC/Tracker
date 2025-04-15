@@ -18,7 +18,7 @@
 						<button class="btn btn-secondary w-100 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Admin Panel</button>
 						<ul class="dropdown-menu dropdown-menu-end">
 							<li><a class="dropdown-item" href="{!! route('admin.site') !!}">Site</a></li>
-							<li><a class="dropdown-item" href="{!! route('admin.users') !!}">Users</a></li>
+							<li><a class="dropdown-item" href="{!! route('users.index') !!}">Users</a></li>
 							<li><a class="dropdown-item" href="{!! route('admin.departments') !!}">Departments</a></li>
 							<li><a class="dropdown-item" href="{!! route('admin.events') !!}">Events</a></li>
 							<li><a class="dropdown-item" href="{!! route('admin.bonuses') !!}">Bonuses</a></li>

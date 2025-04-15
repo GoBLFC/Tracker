@@ -3,7 +3,7 @@
 		<a @class(['nav-link', 'active' => Route::is('admin.site')]) href="{!! route('admin.site') !!}">Site</a>
 	</li>
 	<li class="nav-item">
-		<a @class(['nav-link', 'active' => Route::is('admin.users')]) href="{!! route('admin.users') !!}">Users</a>
+		<a @class(['nav-link', 'active' => Route::is('users.index')]) href="{!! route('users.index') !!}">Users</a>
 	</li>
 	<li class="nav-item">
 		<a @class(['nav-link', 'active' => Route::is('admin.departments')]) href="{!! route('admin.departments') !!}">Departments</a>

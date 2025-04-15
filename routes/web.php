@@ -30,6 +30,7 @@ Route::middleware(['auth', 'not-banned', 'lockdown'])->group(function () {
 		Route::get('/users/search', 'getSearch')->name('users.search');
 		Route::post('/users', 'store')->name('users.store');
 		Route::patch('/users/{user}', 'update')->name('users.update');
+		Route::delete('/users/{user}', 'destroy')->name('users.destroy');
 	});
 
 	Route::controller(\App\Http\Controllers\NotificationController::class)->group(function () {
@@ -57,6 +58,7 @@ Route::middleware(['auth', 'not-banned', 'lockdown'])->group(function () {
 	Route::apiResource('events.bonuses', \App\Http\Controllers\TimeBonusController::class)->shallow();
 	Route::apiResource('events.rewards', \App\Http\Controllers\RewardController::class)->shallow();
 	Route::apiResource('events.attendee-logs', \App\Http\Controllers\AttendeeLogController::class)->shallow();
+	Route::apiResource('users', \App\Http\Controllers\UserController::class)->only(['index', 'store', 'update']);
 
 	Route::controller(\App\Http\Controllers\AttendeeLogController::class)->group(function () {
 		Route::get('/attendee-logs', 'index')->name('attendee-logs.index');
@@ -72,7 +74,6 @@ Route::middleware(['auth', 'not-banned', 'lockdown'])->group(function () {
 
 		Route::middleware('role:admin')->group(function () {
 			Route::get('/admin/site', 'getAdminSiteSettings')->name('admin.site');
-			Route::get('/admin/users', 'getAdminUserRoles')->name('admin.users');
 			Route::get('/admin/departments', 'getAdminDepartments')->name('admin.departments');
 			Route::get('/admin/events', 'getAdminEvents')->name('admin.events');
 			Route::get('/admin/rewards', 'getAdminRewards')->name('admin.rewards');

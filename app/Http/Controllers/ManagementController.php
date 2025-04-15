@@ -6,7 +6,6 @@ use App\Models\Activity;
 use App\Models\Department;
 use App\Models\Event;
 use App\Models\Reward;
-use App\Models\Role;
 use App\Models\Setting;
 use App\Models\TimeEntry;
 use App\Models\User;
@@ -77,16 +76,6 @@ class ManagementController extends Controller {
 		return view('admin.site', [
 			'activeEvent' => Setting::activeEvent(),
 			'events' => Event::all(),
-		]);
-	}
-
-	/**
-	 * Render the user roles admin page
-	 */
-	public function getAdminUserRoles(): View {
-		return view('admin.users', [
-			'users' => User::whereNotIn('role', [Role::Volunteer, Role::Attendee])->get(),
-			'roles' => Role::cases(),
 		]);
 	}
 
@@ -184,7 +173,7 @@ class ManagementController extends Controller {
 	/**
 	 * Provide an exported report file to download
 	 */
-	public function getAdminReportExport(?Event $event, string $reportType, string $fileType): BinaryFileResponse {
+	public function getAdminReportExport(?Event $event, string $reportType, string $fileType): BinaryFileResponse|RedirectResponse {
 		// Get the event and redirect to the page for the active event, if applicable
 		if (!$event || !$event->id) {
 			$event = Setting::activeEvent();
@@ -205,7 +194,7 @@ class ManagementController extends Controller {
 	/**
 	 * Instantiate a report and prefetch data for it
 	 */
-	private function createReport(Event $event, string $reportClass): Report {
+	private function createReport(Event $event, string $reportClass): ?Report {
 		$report = null;
 		$args = [];
 

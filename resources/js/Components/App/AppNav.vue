@@ -149,7 +149,7 @@ const mainMenuItems = computed(() => {
 	if (isAdmin.value) {
 		items.push(
 			{
-				to: 'admin.users',
+				to: 'users.index',
 				label: 'Users',
 				icon: faUsers,
 				legacy: true,
