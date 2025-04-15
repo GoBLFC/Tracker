@@ -5,7 +5,7 @@
 			size="small"
 			severity="danger"
 			:icon="faTrash"
-			:loading
+			:loading="request.processing.value"
 			v-tooltip.bottom="'Delete'"
 			@click="del"
 		/>
@@ -13,11 +13,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { router } from '@inertiajs/vue3';
-
 import { useConfirm } from '@/lib/confirm';
-import { useRoute } from '@/lib/route';
+import { useInertiaRequest } from '@/lib/request';
 import type User from '@/data/impl/User';
 import type RawUser from '@/data/User';
 
@@ -27,9 +24,7 @@ import IconButton from '../Common/IconButton.vue';
 const { user } = defineProps<{ user: RawUser | User }>();
 
 const { confirm } = useConfirm();
-const route = useRoute();
-
-const loading = ref(false);
+const request = useInertiaRequest();
 
 /**
  * Sends a request to delete the time entry
@@ -40,16 +35,6 @@ async function del() {
 	});
 	if (!confirmed) return;
 
-	router.delete(route('users.destroy', user.id), {
-		preserveState: true,
-		preserveScroll: true,
-
-		onStart() {
-			loading.value = true;
-		},
-		onFinish() {
-			loading.value = false;
-		},
-	});
+	request.del(['users.destroy', user.id]);
 }
 </script>

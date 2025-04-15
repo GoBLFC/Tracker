@@ -5,13 +5,13 @@
 			:options="roleOptions"
 			option-label="name"
 			option-value="id"
-			:disabled="loading"
+			:disabled="request.processing.value"
 		/>
 
 		<IconButton
 			severity="secondary"
 			:icon="faCancel"
-			:disabled="loading"
+			:disabled="request.processing.value"
 			v-tooltip.bottom="'Cancel'"
 			@click="
 				picking = false;
@@ -21,7 +21,7 @@
 		<IconButton
 			severity="warn"
 			:icon="faUserCheck"
-			:loading
+			:loading="request.processing.value"
 			v-tooltip.bottom="'Assign Role'"
 			@click="save"
 		/>
@@ -43,9 +43,8 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import { router } from '@inertiajs/vue3';
 
-import { useRoute } from '@/lib/route';
+import { useInertiaRequest } from '@/lib/request';
 import { roleNames } from '@/lib/user';
 import type User from '@/data/impl/User';
 import type RawUser from '@/data/User';
@@ -55,10 +54,9 @@ import { faCancel, faPencil, faUserCheck } from '@fortawesome/free-solid-svg-ico
 
 const { user } = defineProps<{ user: User | RawUser }>();
 
-const route = useRoute();
+const request = useInertiaRequest();
 
 const picking = ref(false);
-const loading = ref(false);
 const role = ref(user.role);
 const roleOptions = Object.entries(roleNames)
 	.map(([id, name]) => ({
@@ -78,20 +76,6 @@ watch(
  * Sends a request to update the user's role
  */
 function save() {
-	router.patch(
-		route('users.update', [user.id]),
-		{ role: role.value },
-		{
-			preserveState: true,
-			preserveScroll: true,
-
-			onStart() {
-				loading.value = true;
-			},
-			onFinish() {
-				loading.value = false;
-			},
-		},
-	);
+	request.patch(['users.update', user.id], { role: role.value });
 }
 </script>
