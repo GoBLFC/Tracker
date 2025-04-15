@@ -4,18 +4,15 @@
 		severity="danger"
 		variant="text"
 		:icon="faTrash"
-		:loading
-		:disabled="loading"
+		:loading="request.processing.value"
 		v-tooltip.bottom="'Delete'"
 		@click="del"
 	/>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { router } from '@inertiajs/vue3';
-import { useRoute } from '@/lib/route';
 import { useConfirm } from '@/lib/confirm';
+import { useInertiaRequest } from '@/lib/request';
 import type AttendeeLog from '@/data/AttendeeLog';
 
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -23,10 +20,8 @@ import IconButton from '../Common/IconButton.vue';
 
 const { attendeeLog } = defineProps<{ attendeeLog: AttendeeLog }>();
 
-const route = useRoute();
 const { confirm } = useConfirm();
-
-const loading = ref(false);
+const request = useInertiaRequest();
 
 /**
  * Sends a request to delete the attendee log
@@ -37,17 +32,8 @@ async function del() {
 	});
 	if (!confirmed) return;
 
-	router.delete(route('attendee-logs.destroy', attendeeLog.id), {
-		replace: true,
-		preserveState: true,
-		preserveScroll: true,
+	request.del(['attendee-logs.destroy', attendeeLog.id], {
 		only: ['attendeeLogs', 'flash'],
-		onStart() {
-			loading.value = true;
-		},
-		onFinish() {
-			loading.value = false;
-		},
 	});
 }
 </script>

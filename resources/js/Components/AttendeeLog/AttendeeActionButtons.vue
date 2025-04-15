@@ -4,18 +4,15 @@
 		severity="danger"
 		variant="text"
 		:icon="faTrash"
-		:loading
-		:disabled="loading"
+		:loading="request.processing.value"
 		v-tooltip.bottom="'Remove'"
 		@click="del"
 	/>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { router } from '@inertiajs/vue3';
-import { useRoute } from '@/lib/route';
 import { useConfirm } from '@/lib/confirm';
+import { useInertiaRequest } from '@/lib/request';
 import type AttendeeLog from '@/data/AttendeeLog';
 import type Attendee from '@/data/Attendee';
 
@@ -27,10 +24,8 @@ const { attendeeLog, attendee } = defineProps<{
 	attendee: Attendee;
 }>();
 
-const route = useRoute();
+const request = useInertiaRequest();
 const { confirm } = useConfirm();
-
-const loading = ref(false);
 
 /**
  * Sends a request to delete the attendee from the attendee log
@@ -41,17 +36,8 @@ async function del() {
 	});
 	if (!confirmed) return;
 
-	router.delete(route('attendee-logs.users.destroy', [attendeeLog.id, attendee.pivot.type, attendee.id]), {
-		replace: true,
-		preserveState: true,
-		preserveScroll: true,
+	request.del(['attendee-logs.users.destroy', [attendeeLog.id, attendee.pivot.type, attendee.id]], {
 		only: ['attendeeLog', 'flash'],
-		onStart() {
-			loading.value = true;
-		},
-		onFinish() {
-			loading.value = false;
-		},
 	});
 }
 </script>

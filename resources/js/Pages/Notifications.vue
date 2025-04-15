@@ -17,8 +17,7 @@
 				severity="success"
 				:icon="faCheck"
 				class="w-fit"
-				:disabled="loading"
-				:loading
+				:loading="request.processing.value"
 				@click="acknowledge()"
 			/>
 		</template>
@@ -32,8 +31,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, toRef } from 'vue';
-import { Head, router } from '@inertiajs/vue3';
+import { toRef } from 'vue';
+import { Head } from '@inertiajs/vue3';
+
+import { useInertiaRequest } from '@/lib/request';
 import type Notification from '@/data/Notification';
 
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
@@ -41,7 +42,8 @@ import IconButton from '@/Components/Common/IconButton.vue';
 
 const { notifications } = defineProps<{ notifications: Notification[] }>();
 
-const loading = ref(false);
+const request = useInertiaRequest();
+
 const plural = toRef(() => (notifications.length !== 1 ? 's' : ''));
 
 /**
@@ -56,14 +58,6 @@ function description(notif: Notification) {
  * Acknowledges all notifications, navigating to the main tracker page
  */
 function acknowledge() {
-	router.post(route('notifications.acknowledge'), undefined, {
-		replace: true,
-		onStart() {
-			loading.value = true;
-		},
-		onFinish() {
-			loading.value = false;
-		},
-	});
+	request.post('notifications.acknowledge');
 }
 </script>
