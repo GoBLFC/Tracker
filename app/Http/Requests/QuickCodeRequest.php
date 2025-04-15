@@ -27,7 +27,7 @@ class QuickCodeRequest extends FormRequest {
 	/**
 	 * Handle a passed validation attempt.
 	 */
-	public function passedValidation(): void {
+	protected function passedValidation(): void {
 		$this->replace(['code' => Str::upper($this->code)]);
 	}
 }
