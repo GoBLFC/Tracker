@@ -1,5 +1,5 @@
 <template>
-	<InputGroup v-if="picking" class="max-w-64">
+	<InputGroup v-if="picking">
 		<Select
 			v-model="role"
 			:options="roleOptions"

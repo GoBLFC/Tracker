@@ -67,6 +67,7 @@
 			sortable
 			data-type="number"
 			:show-filter-menu="false"
+			class="w-76"
 		>
 			<template #body="{ data: user }: { data: User }">
 				<UserRoleSelector :user />
@@ -81,7 +82,7 @@
 						option-value="id"
 						placeholder="Any"
 						show-clear
-						class="grow w-24 max-w-64"
+						class="grow"
 						@change="filterCallback"
 					/>
 				</div>
