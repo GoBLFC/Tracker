@@ -152,7 +152,7 @@ const mainMenuItems = computed(() => {
 				to: 'users.index',
 				label: 'Users',
 				icon: faUsers,
-				legacy: true,
+				legacy: false,
 			},
 			{
 				to: 'admin.events',
