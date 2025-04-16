@@ -23,6 +23,7 @@ class AuthController extends Controller {
 	 * Presents the login page
 	 */
 	public function getLogin(): InertiaResponse {
+		Inertia::clearHistory();
 		return Inertia::render('Login');
 	}
 
@@ -32,6 +33,7 @@ class AuthController extends Controller {
 	public function getLogout(): Response {
 		if (!Auth::check()) return redirect()->route('auth.login');
 		Auth::logout();
+		Inertia::clearHistory();
 
 		$conCatLogout = $this->buildConCatLogoutUrl();
 		if ($conCatLogout) return Inertia::location(redirect()->to($conCatLogout));
