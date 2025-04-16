@@ -1,6 +1,6 @@
 <ul class="nav nav-pills justify-content-center mb-3">
 	<li class="nav-item">
-		<a @class(['nav-link', 'active' => Route::is('admin.site')]) href="{!! route('admin.site') !!}">Site</a>
+		<a @class(['nav-link', 'active' => Route::is('settings.index')]) href="{!! route('settings.index') !!}">Site</a>
 	</li>
 	<li class="nav-item">
 		<a @class(['nav-link', 'active' => Route::is('users.index')]) href="{!! route('users.index') !!}">Users</a>

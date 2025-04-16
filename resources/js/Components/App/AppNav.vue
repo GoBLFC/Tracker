@@ -167,10 +167,10 @@ const mainMenuItems = computed(() => {
 				legacy: true,
 			},
 			{
-				to: 'admin.site',
+				to: 'settings.index',
 				label: 'Configuration',
 				icon: faScrewdriverWrench,
-				legacy: true,
+				legacy: false,
 			},
 		);
 	}

@@ -18,8 +18,6 @@ export default defineConfig({
 				'resources/js/app.ts',
 				'resources/js/legacy/app.js',
 				'resources/js/legacy/auto-logout.js',
-				'resources/js/legacy/toggle-kiosk.js',
-				'resources/js/legacy/create-user.js',
 				'resources/js/legacy/event-selector.js',
 				'resources/js/legacy/seamless-forms.js',
 				'resources/js/legacy/admin/departments.js',

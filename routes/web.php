@@ -51,7 +51,7 @@ Route::middleware(['auth', 'not-banned', 'lockdown'])->group(function () {
 	});
 
 	Route::apiResource('settings', \App\Http\Controllers\SettingController::class)
-		->only(['update', 'destroy'])
+		->only(['index', 'update', 'destroy'])
 		->parameter('settings', 'setting:name');
 	Route::apiResource('departments', \App\Http\Controllers\DepartmentController::class);
 	Route::apiResource('events', \App\Http\Controllers\EventController::class);
@@ -73,7 +73,6 @@ Route::middleware(['auth', 'not-banned', 'lockdown'])->group(function () {
 		});
 
 		Route::middleware('role:admin')->group(function () {
-			Route::get('/admin/site', 'getAdminSiteSettings')->name('admin.site');
 			Route::get('/admin/departments', 'getAdminDepartments')->name('admin.departments');
 			Route::get('/admin/events', 'getAdminEvents')->name('admin.events');
 			Route::get('/admin/rewards', 'getAdminRewards')->name('admin.rewards');

@@ -7,7 +7,7 @@
 			<p>
 				Events are the overarching entity that contain all relevant information for a single convention.
 				They have rewards, time bonuses, time entries, and attendee logs associated with them.<br />
-				All time entries entered by volunteers and managers are automatically associated with the <a href="{!! route('admin.site') !!}">active event</a>.
+				All time entries entered by volunteers and managers are automatically associated with the <a href="{!! route('settings.index') !!}">active event</a>.
 			</p>
 			<p>
 				Deleting events does <strong>not</strong> delete their associated rewards, time bonuses, or time entries, although there is no way to view those for deleted events.<br />

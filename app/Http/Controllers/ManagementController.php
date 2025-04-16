@@ -70,16 +70,6 @@ class ManagementController extends Controller {
 	}
 
 	/**
-	 * Render the site settings admin page
-	 */
-	public function getAdminSiteSettings(): View {
-		return view('admin.site', [
-			'activeEvent' => Setting::activeEvent(),
-			'events' => Event::all(),
-		]);
-	}
-
-	/**
 	 * Render the departments admin page
 	 */
 	public function getAdminDepartments(): View {
