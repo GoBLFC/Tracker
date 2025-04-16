@@ -32,6 +32,7 @@ RUN apt update \
 RUN docker-php-ext-configure pgsql --with-pgsql=/usr/local/pgsql && docker-php-ext-install -j$(nproc) pdo_pgsql
 RUN docker-php-ext-configure zip && docker-php-ext-install -j$(nproc) zip
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg && docker-php-ext-install -j$(nproc) gd
+RUN docker-php-ext-configure pcntl --enable-pcntl && docker-php-ext-install -j$(nproc) pcntl
 RUN pecl install redis-6.2.0 && docker-php-ext-enable redis
 
 # Override some PHP configuration
