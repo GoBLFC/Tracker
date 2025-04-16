@@ -28,11 +28,14 @@
 			:show-filter-menu="false"
 		>
 			<template #filter="{ filterModel, filterCallback }">
-				<InputText
-					v-model="filterModel.value"
-					v-debounce="filterCallback"
-					inputmode="numeric"
-				/>
+				<div class="flex">
+					<InputText
+						v-model="filterModel.value"
+						v-debounce="filterCallback"
+						inputmode="numeric"
+						class="grow w-24"
+					/>
+				</div>
 			</template>
 		</Column>
 
@@ -47,11 +50,14 @@
 			</template>
 
 			<template #filter="{ filterModel, filterCallback }">
-				<InputText
-					v-model="filterModel.value"
-					type="text"
-					v-debounce="filterCallback"
-				/>
+				<div class="flex">
+					<InputText
+						v-model="filterModel.value"
+						v-debounce="filterCallback"
+						type="text"
+						class="grow w-32"
+					/>
+				</div>
 			</template>
 		</Column>
 
@@ -67,15 +73,18 @@
 			</template>
 
 			<template #filter="{ filterModel, filterCallback }">
-				<Select
-					v-model="filterModel.value"
-					:options="roleOptions"
-					option-label="name"
-					option-value="id"
-					placeholder="Any"
-					show-clear
-					@change="filterCallback"
-				/>
+				<div class="flex">
+					<Select
+						v-model="filterModel.value"
+						:options="roleOptions"
+						option-label="name"
+						option-value="id"
+						placeholder="Any"
+						show-clear
+						class="grow w-24 max-w-64"
+						@change="filterCallback"
+					/>
+				</div>
 			</template>
 		</Column>
 
