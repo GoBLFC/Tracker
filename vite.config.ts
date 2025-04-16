@@ -22,7 +22,6 @@ export default defineConfig({
 				'resources/js/legacy/create-user.js',
 				'resources/js/legacy/event-selector.js',
 				'resources/js/legacy/seamless-forms.js',
-				'resources/js/legacy/admin/users.js',
 				'resources/js/legacy/admin/departments.js',
 				'resources/js/legacy/admin/events.js',
 				'resources/js/legacy/admin/bonuses.js',
