@@ -19,8 +19,6 @@ use Inertia\Response as InertiaResponse;
 
 class UserController extends Controller {
 	public function index(UserIndexRequest $request): JsonResponse|InertiaResponse {
-		$this->authorize('viewAny', User::class);
-
 		$sortBy = $request->string('sortBy');
 		$sortDir = $request->string('sortDir');
 		$sortByName = $sortBy->exactly('display_name');
@@ -72,8 +70,6 @@ class UserController extends Controller {
 	 * Create a user with just a badge ID
 	 */
 	public function store(UserStoreRequest $request): JsonResponse|RedirectResponse {
-		$this->authorize('create', User::class);
-
 		$user = User::createWithAvailableDetails($request->integer('badge_id'), 'Volunteer');
 
 		return $request->expectsJson()
@@ -85,8 +81,6 @@ class UserController extends Controller {
 	 * Update a user's details
 	 */
 	public function update(UserUpdateRequest $request, User $user): JsonResponse|RedirectResponse {
-		$this->authorize('update', $user);
-
 		$authUser = $request->user();
 
 		// Prevent modifying a user of a higher role
