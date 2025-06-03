@@ -51,7 +51,7 @@ With a single Compose file, you can configure and control all of the necessary c
     - **Nginx:** Web server/reverse proxy that serves static files and forwards relevant requests to the app
         - `NGINX_HOST` (the plain domain name that you're using for Tracker)
     - **Certbot:** Handles automatic SSL certificate issuance and renewal
-        - `LETSENCRYPT_DOMAIN` (must match `NGINX_HOST` on the Nginx container)
+        - `LETSENCRYPT_DOMAINS` (must match/include `NGINX_HOST` on the Nginx container)
         - `LETSENCRYPT_EMAIL` (email address to associate with the issued certificates, used for notifications of problems)
 1. Start the containers in the background (in the Docker daemon) by running `docker compose up -d` in the directory that the Compose file is in
 1. Once everything has started up, the application won't yet be functional if it's the first time it has been run.
@@ -59,7 +59,7 @@ With a single Compose file, you can configure and control all of the necessary c
     1. Run `docker compose exec app php artisan migrate` to run migrations on the database
     1. Wait for output from certbot in `docker compose logs certbot` to confirm that the dry-run succeeded.
        If this fails, then something is likely wrong with the configuration.
-       Double-check the values for `NGINX_HOST` and `LETSENCRYPT_DOMAIN`.
+       Double-check the values for `NGINX_HOST` and `LETSENCRYPT_DOMAINS`.
        You can restart the certbot and nginx containers after modifying their configuration with `docker compose restart certbot` and `docker compose restart nginx`.
        Only move on to the next step once the dry-run has succeeded.
     1. Clear the value for `CERTBOT_DRY_RUN` in `docker-compose.yml` (make its value blank, nothing after the `:`)
@@ -159,7 +159,7 @@ services:
         image: ghcr.io/goblfc/tracker-certbot:v3
         restart: unless-stopped
         environment:
-            LETSENCRYPT_DOMAIN: tracker.test
+            LETSENCRYPT_DOMAINS: tracker.test
             LETSENCRYPT_EMAIL: youremail@yourcon.org
             LETSENCRYPT_DRY_RUN: true
         volumes:
