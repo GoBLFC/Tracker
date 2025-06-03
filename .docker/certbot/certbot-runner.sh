@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 trap exit TERM
 
 if [ ! -f /etc/letsencrypt/installed ]; then
