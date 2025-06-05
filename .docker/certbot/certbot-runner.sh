@@ -5,8 +5,6 @@ if [ ! -f /etc/letsencrypt/installed ]; then
 	echo "First run; running certbot certonly in 30 seconds"
 	sleep 30s
 
-
-
 	rm -rf /etc/letsencrypt/live
 	certbot certonly --non-interactive \
 		${LETSENCRYPT_DRY_RUN:+--dry-run} \
