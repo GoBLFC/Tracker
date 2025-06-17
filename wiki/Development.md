@@ -84,7 +84,7 @@ Whenever using a Sail command, if you don't have an alias setup, use `sh vendor/
    Follow these steps once the containers are up:
     1. Run `docker compose -f docker-compose.prod.yml exec app php artisan migrate` to run migrations on the database
     1. Wait for output from certbot in `docker compose -f docker-compose.prod.yml logs certbot` to confirm that the dry-run succeeded
-    1. Clear the value for `CERTBOT_DRY_RUN` in certbot.env
+    1. Clear the value for `LETSENCRYPT_DRY_RUN` in certbot.env
     1. Run `docker compose -f docker-compose.prod.yml restart certbot`
     1. Log in to Tracker to make sure a user is created for you
     1. Run `docker compose -f docker-compose.prod.yml exec app php artisan auth:set-role` to set your user's role to admin

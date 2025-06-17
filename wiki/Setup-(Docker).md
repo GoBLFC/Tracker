@@ -62,7 +62,7 @@ With a single Compose file, you can configure and control all of the necessary c
        Double-check the values for `NGINX_HOST` and `LETSENCRYPT_DOMAINS`.
        You can restart the certbot and nginx containers after modifying their configuration with `docker compose restart certbot` and `docker compose restart nginx`.
        Only move on to the next step once the dry-run has succeeded.
-    1. Clear the value for `CERTBOT_DRY_RUN` in `docker-compose.yml` (make its value blank, nothing after the `:`)
+    1. Clear the value for `LETSENCRYPT_DRY_RUN` in `docker-compose.yml` (make its value blank, nothing after the `:`)
     1. Restart the certbot container with `docker compose restart certbot`.
        Wait 30 seconds and check Certbot's log output again (`docker compose logs certbot`) to confirm that the actual certificate issuance succeeded.
     1. Restart the nginx container with `docker compose restart nginx`.
