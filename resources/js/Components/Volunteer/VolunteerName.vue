@@ -30,7 +30,7 @@ const {
 }>();
 
 const user = toRef(() => ('user' in volunteer ? volunteer.user : volunteer));
-const displayName = toRef(() => user.value.badge_name ?? user.value.username);
+const displayName = toRef(() => user.value.badge_name || user.value.username);
 const allNames = toRef(
 	() =>
 		`Badge Name:\n${user.value.badge_name ?? 'N/A'}\n\nUsername:\n${

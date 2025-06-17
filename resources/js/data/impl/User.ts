@@ -25,7 +25,7 @@ export default class User {
 	}
 
 	get display_name() {
-		return this.badge_name ?? this.username;
+		return this.badge_name || this.username;
 	}
 
 	get full_name() {
