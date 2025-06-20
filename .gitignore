@@ -15,15 +15,19 @@
 /bootstrap/ssr
 /resources/js/ziggy.js
 /resources/js/ziggy.d.ts
+/storage/pail
+components.d.ts
 .phpunit.cache
 .phpunit.result.cache
 .php-cs-fixer.cache
 
-# Logs
-npm-debug.log
-yarn-error.log
+# Instance specific
+/public/storage
+pgdump.sql
+*.log
 
 # Environment config
+/storage/*.key
 /auth.json
 .phpactor.json
 Homestead.json
@@ -33,8 +37,6 @@ Homestead.yaml
 .env.*
 !.env.example
 
-# Misc
-/public/storage
-/storage/*.key
-pgdump.sql
-components.d.ts
+# OS stuff
+.DS_Store
+Thumbs.db
