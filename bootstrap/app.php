@@ -1,6 +1,6 @@
 <?php
 
-// Current Laravel skeleton version: v12.0.4
+// Current Laravel skeleton version: v12.0.11
 
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Models\Kiosk;
@@ -19,7 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
 		commands: __DIR__ . '/../routes/console.php',
 		health: '/up',
 	)
-	->withMiddleware(function (Middleware $middleware) {
+	->withMiddleware(function (Middleware $middleware): void {
 		$middleware->web(append: [
 			HandleInertiaRequests::class,
 		]);
@@ -37,7 +37,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
 		$middleware->throttleApi();
 	})
-	->withExceptions(function (Exceptions $exceptions) {
+	->withExceptions(function (Exceptions $exceptions): void {
 		$exceptions->respond(function (Response $response, Throwable $exception, Request $request) {
 			$isLocal = app()->environment(['local', 'testing']);
 			$isHandledStatus = in_array($response->getStatusCode(), [500, 503, 404, 403]);
