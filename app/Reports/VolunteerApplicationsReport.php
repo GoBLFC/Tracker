@@ -56,7 +56,7 @@ class VolunteerApplicationsReport extends EventReport implements FromCollection,
 			// This is pretty hacky because of how options are provided by the ConCat API.
 			foreach ($options as $option) {
 				if (Str::contains($option->name, 'previously volunteered with')) {
-					$con = Str::between($option->name, 'with ', '?');
+					$con = Str::between($option->name, 'with ', '? If');
 					$option->name = Str::replace($con, 'CONVENTION', $option->name);
 				}
 			}
@@ -80,7 +80,6 @@ class VolunteerApplicationsReport extends EventReport implements FromCollection,
 	}
 
 	public function map($volunteer, $excelDates = true): array {
-		$legalName = "{$volunteer->user->firstName} {$volunteer->user->lastName}";
 		$departments = new Collection($volunteer->departments);
 		$contacts = new Collection($volunteer->contactMethods);
 		$createdAt = Carbon::parse($volunteer->createdAt)->timezone(config('tracker.timezone'));
@@ -91,7 +90,9 @@ class VolunteerApplicationsReport extends EventReport implements FromCollection,
 			// General information
 			$volunteer->user->id,
 			$volunteer->badgeName ?? $volunteer->user->username,
-			$volunteer->user->preferredName ? "{$volunteer->user->preferredName} ({$legalName})" : $legalName,
+			$volunteer->user->preferredName,
+			static::getOptionValue($volunteer, 'Formal Name'),
+			"{$volunteer->user->firstName} {$volunteer->user->lastName}",
 			$volunteer->user->isStaff ? 'Yes' : 'No',
 			$departments->filter(fn ($dept) => in_array('assignment', $dept->states))
 				->pluck('name')
@@ -107,7 +108,7 @@ class VolunteerApplicationsReport extends EventReport implements FromCollection,
 			$excelDates ? Date::dateTimeToExcel($updatedAt) : $updatedAt,
 
 			// Application options
-			static::getOptionValue($volunteer, 'Available Hours'),
+			static::getOptionValue($volunteer, 'Roughly, how many hours would you want to volunteer in total?'),
 			$days && in_array('Wednesday', $days) ? 'W' : null,
 			$days && in_array('Thursday', $days) ? 'Th' : null,
 			$days && in_array('Friday', $days) ? 'F' : null,
@@ -128,9 +129,9 @@ class VolunteerApplicationsReport extends EventReport implements FromCollection,
 			// Freetext field, max length 4000
 			static::getOptionValue($volunteer, 'Are there any events you can not miss? [Optional]'),
 
-			// "Have you previously volunteered with <CON NAME>? [Optional]"
+			// "Have you previously volunteered with CONVENTION? If so, what did you do? [Optional]"
 			// Freetext field, max length 4000
-			static::getOptionValue($volunteer, 'Have you previously volunteered with CONVENTION? [Optional]'),
+			static::getOptionValue($volunteer, 'Have you previously volunteered with CONVENTION? If so, what did you do? [Optional]'),
 
 			// "Have you previously volunteered for another convention? If so, which? [Optional]"
 			// Freetext field, max length 4000
@@ -154,6 +155,8 @@ class VolunteerApplicationsReport extends EventReport implements FromCollection,
 			// General information
 			'#',
 			'Badge Name',
+			'Preferred Name',
+			'Formal Name',
 			'Legal Name',
 			'Staff?',
 			'Assigned Departments',

@@ -20,6 +20,8 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 class VolunteerApplicationDepartmentSummaryReport extends Report implements FromCollection, ShouldAutoSize, WithColumnFormatting, WithEvents, WithHeadings, WithMapping, WithStrictNullComparison, WithTotals {
 	use FormatsAsTable, RegistersEventListeners;
 
+	public const AVAILABLE_HOURS_OPTION = 'Roughly, how many hours would you want to volunteer in total?';
+
 	private Collection $departments;
 	private Collection $volunteers;
 
@@ -77,7 +79,7 @@ class VolunteerApplicationDepartmentSummaryReport extends Report implements From
 						$department->assignedVolunteers += 1;
 						$department->totalVolunteers += 1;
 
-						$hours = ($volunteer->options->get('Available Hours')?->value ?? 0) / count($assignedDepartments);
+						$hours = ($volunteer->options->get(self::AVAILABLE_HOURS_OPTION)?->value ?? 0) / count($assignedDepartments);
 						$department->assignedHours += $hours;
 						$department->totalHours += $hours;
 					});
@@ -94,7 +96,7 @@ class VolunteerApplicationDepartmentSummaryReport extends Report implements From
 						$department->unassignedVolunteers += 1;
 						$department->totalVolunteers += 1;
 
-						$hours = ($volunteer->options->get('Available Hours')?->value ?? 0) / count($departments);
+						$hours = ($volunteer->options->get(self::AVAILABLE_HOURS_OPTION)?->value ?? 0) / count($departments);
 						$department->unassignedHours += $hours;
 						$department->totalHours += $hours;
 					});
