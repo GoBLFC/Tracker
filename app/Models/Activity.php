@@ -17,6 +17,7 @@ use Spatie\Activitylog\Contracts\Activity as ActivityContract;
 /**
  * Spatie\Activitylog\Models\Activity.
  *
+ * @property string $id
  * @property string|null $log_name
  * @property string $description
  * @property string|null $subject_type
@@ -28,9 +29,9 @@ use Spatie\Activitylog\Contracts\Activity as ActivityContract;
  * @property \Illuminate\Support\Collection|null $properties
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $causer
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent|null $causer
  * @property-read \Illuminate\Support\Collection $changes
- * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $subject
+ * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent|null $subject
  *
  * @method static \Illuminate\Database\Eloquent\Builder|\Spatie\Activitylog\Models\Activity causedBy(\Illuminate\Database\Eloquent\Model $causer)
  * @method static \Illuminate\Database\Eloquent\Builder|\Spatie\Activitylog\Models\Activity forBatch(string $batchUuid)
@@ -62,6 +63,9 @@ class Activity extends Model implements ActivityContract {
 		parent::__construct($attributes);
 	}
 
+	/**
+	 * @return MorphTo<Model, $this>
+	 */
 	public function subject(): MorphTo {
 		if (config('activitylog.subject_returns_soft_deleted_models')) {
 			return $this->morphTo()->withTrashed();
@@ -70,6 +74,9 @@ class Activity extends Model implements ActivityContract {
 		return $this->morphTo();
 	}
 
+	/**
+	 * @return MorphTo<Model, $this>
+	 */
 	public function causer(): MorphTo {
 		return $this->morphTo();
 	}
