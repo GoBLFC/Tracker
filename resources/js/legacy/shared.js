@@ -5,6 +5,7 @@ import { DateTime, Duration } from 'luxon';
 
 export const Toast = Swal.mixin({
 	toast: true,
+	theme: 'dark',
 	position: 'top-end',
 	showConfirmButton: false,
 	timer: 4000,

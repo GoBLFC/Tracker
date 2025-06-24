@@ -21,6 +21,7 @@ export function setupSeamlessForm(form) {
 			const result = await Swal.fire({
 				title: confirmTitle,
 				text: submitBtn.getAttribute('data-confirm-text'),
+				theme: 'dark',
 				icon: 'warning',
 				showCancelButton: true,
 				focusCancel: true,
