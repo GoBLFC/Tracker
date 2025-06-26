@@ -1,6 +1,6 @@
 <template>
 	<div class="grow flex flex-col gap-4">
-		<Head :title />
+		<Head :title="`${title}${event ? ` | ${event?.name}` : ''}`" />
 
 		<div
 			v-if="events"
