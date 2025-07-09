@@ -2,6 +2,7 @@
 	<Panel
 		v-if="volunteer"
 		ref="panel"
+		class="transition-colors duration-400"
 		:pt="{
 			header: { class: 'items-start' },
 		}"
@@ -70,29 +71,31 @@ const volunteer = defineModel<Volunteer>();
 
 const panel = useTemplateRef('panel');
 const closeBtn = useTemplateRef('close-btn');
+let attnTimeout: ReturnType<typeof setTimeout> | null = null;
 
 /**
  * Pulses the panel's border and scrolls the viewport to it
  */
 function attention() {
+	// @ts-expect-error
+	const el = panel.value!.$el;
+
 	// Pulse the panel border
-	// panel.value!.classList.remove("transition-border");
-	// panel.value!.classList.replace("border-info", "border-info-subtle");
-	// setTimeout(() => {
-	// 	panel.value!.classList.add("transition-border");
-	// 	panel.value!.classList.replace("border-info-subtle", "border-info");
-	// 	setTimeout(() => {
-	// 		panel.value!.classList.replace("border-info", "border-info-subtle");
-	// 	}, 500);
-	// }, 0);
+	setTimeout(() => {
+		el.classList.add('border-primary');
+
+		if (attnTimeout) clearTimeout(attnTimeout);
+
+		attnTimeout = setTimeout(() => {
+			el.classList.remove('border-primary');
+			attnTimeout = null;
+		}, 500);
+	}, 0);
 
 	// Scroll to the panel if the header isn't in view
 	if (!isElementInView(closeBtn.value!.$el)) {
-		// @ts-expect-error
-		panel.value!.$el.scrollIntoView({
-			block:
-				// @ts-expect-error
-				panel.value!.$el.clientHeight < window.innerHeight ? 'center' : 'start',
+		el.scrollIntoView({
+			block: el.clientHeight < window.innerHeight ? 'center' : 'start',
 		});
 	}
 }

@@ -4,6 +4,7 @@
 @source "../js";
 @source "../views";
 @source inline("{sm:,md:,lg:,xl:,}not-sr-only");
+@source inline("border-primary");
 
 @custom-variant dark (&:where(.dark, .dark *));
 
