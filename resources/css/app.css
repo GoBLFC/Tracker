@@ -96,8 +96,3 @@
 		transition: --progress 1s linear;
 	}
 }
-
-/* Workaround to avoid conflicting sr-only class from FontAwesome */
-@utility tw-sr-only {
-	@apply sr-only;
-}
