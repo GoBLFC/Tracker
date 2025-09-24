@@ -8,11 +8,11 @@
 
 		<span
 			v-if="$slots.default"
-			:class="`tw-sr-only ${breakpoint}:not-sr-only`"
+			:class="`sr-only ${breakpoint}:not-sr-only`"
 		>
 			<slot />
 		</span>
-		<span v-else :class="`tw-sr-only ${breakpoint}:not-sr-only`">
+		<span v-else :class="`sr-only ${breakpoint}:not-sr-only`">
 			{{ label }}
 		</span>
 	</Button>

@@ -25,7 +25,7 @@
 						:id="activeEventLabelId"
 					>
 						<FontAwesomeIcon :icon="faCalendarDay" />
-						<span class="tw-sr-only">Event</span>
+						<span class="sr-only">Event</span>
 					</InputGroupAddon>
 
 					<Select

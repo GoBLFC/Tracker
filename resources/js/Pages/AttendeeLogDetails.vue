@@ -16,7 +16,7 @@
 		<template #icons v-if="readOnly">
 			<div class="text-2xl text-muted-color" v-tooltip.left="'Read-only'">
 				<FontAwesomeIcon :icon="faEye" />
-				<span class="tw-sr-only">Read-only</span>
+				<span class="sr-only">Read-only</span>
 			</div>
 		</template>
 
