@@ -22,7 +22,7 @@
 		"@inertiajs/vue3": "^2.0.0",
 		"@primevue/themes": "^4.2.1",
 		"animate.css": "^4.1.1",
-		"axios": "^1.8.2",
+		"axios": "^1.11.0",
 		"bootstrap": "^5.3.3",
 		"bootstrap-select": "^1.14.0-beta3",
 		"humanize-duration": "^3.32.1",

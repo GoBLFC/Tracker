@@ -1,6 +1,6 @@
 <?php
 
-// Current Laravel skeleton version: v12.0.11
+// Current Laravel skeleton version: v12.4.0
 
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Models\Kiosk;
