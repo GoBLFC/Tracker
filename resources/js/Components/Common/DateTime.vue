@@ -26,6 +26,6 @@ const { date, short = true } = defineProps<{
 
 const tzDate = computed(() => {
 	if (typeof date === 'string') return isoToPreferredTime(date);
-	return dateToPreferredTime(date);
+	return dateToPreferredTime(date, false);
 });
 </script>
