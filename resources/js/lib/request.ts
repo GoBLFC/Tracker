@@ -84,6 +84,16 @@ export function useRequest() {
 	}
 
 	/**
+	 * Sends a PATCH request
+	 * @param route Name of the route to send the request to, or an array of parameters for Ziggy
+	 * @param data Data to send as the request body
+	 * @returns Response data
+	 */
+	async function patch<T, D = unknown>(route: Route, data?: D): Promise<T> {
+		return await send('PATCH', route, data);
+	}
+
+	/**
 	 * Sends a PUT request
 	 * @param route Name of the route to send the request to, or an array of parameters for Ziggy
 	 * @param data Data to send as the request body
@@ -109,6 +119,7 @@ export function useRequest() {
 		send,
 		get,
 		post,
+		patch,
 		put,
 		del,
 	};
