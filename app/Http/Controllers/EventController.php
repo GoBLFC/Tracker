@@ -9,6 +9,7 @@ use App\Models\Event;
 use App\Models\Reward;
 use App\Models\TimeBonus;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
@@ -25,11 +26,13 @@ class EventController extends Controller {
 	/**
 	 * Store a newly created resource in storage.
 	 */
-	public function store(EventStoreRequest $request): JsonResponse {
+	public function store(EventStoreRequest $request): JsonResponse|RedirectResponse {
 		$event = new Event($request->validated());
 		$event->save();
-		session()->flash('success', 'Event created.');
-		return response()->json(['event' => $event]);
+
+		return $request->expectsJson()
+			? response()->json(['event' => $event])
+			: redirect()->route('events.show', [$event->id])->withSuccess("Created event {$event->name}.");
 	}
 
 	/**

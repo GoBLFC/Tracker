@@ -9,7 +9,7 @@
 			ref="select"
 			v-model="selectedEvent"
 			option-label="name"
-			:options="events"
+			:options
 			:placeholder="`Select an event to ${actionWord}`"
 			:loading
 			:aria-labelledby="labelId"
@@ -40,8 +40,8 @@
 				<div v-else>{{ placeholder }}</div>
 			</template>
 
-			<template #option="{ option: event }: { option: TrackerEvent }">
-				<div class="flex grow gap-6 justify-between items-center">
+			<template #option="{ option: event }: { option: TrackerEvent|'new' }">
+				<div v-if="event !== 'new'" class="flex grow gap-6 justify-between items-center">
 					<span class="truncate">{{ event.name }}</span>
 					<Tag
 						:value="
@@ -54,6 +54,11 @@
 						"
 					/>
 				</div>
+
+				<div v-else>
+					<FontAwesomeIcon :icon="faPlus" />
+					Create new event
+				</div>
 			</template>
 		</Select>
 	</InputGroup>
@@ -62,18 +67,19 @@
 		<p class="text-lg">
 			<span class="font-semibold">There aren't any events yet.</span>
 			You'll need to
-			<LegacyLink to="admin.events">create one</LegacyLink>
-			to manage.
+			<Button variant="link" @click="showCreateModal = true">create one</Button> to manage.
 		</p>
 	</Message>
 
 	<Message v-else class="w-full">
 		<p class="text-lg font-semibold">There aren't any events to manage yet.</p>
 	</Message>
+
+	<EventCreateModal v-if="isAdmin" v-model:visible="showCreateModal" />
 </template>
 
 <script setup lang="ts">
-import { ref, useId, useTemplateRef, watch } from 'vue';
+import { computed, ref, useId, useTemplateRef, watch } from 'vue';
 import { router } from '@inertiajs/vue3';
 import type { RequestPayload, Errors } from '@inertiajs/core';
 import { useAppSettings } from '@/lib/settings';
@@ -82,11 +88,12 @@ import type TrackerEvent from '@/data/Event';
 import type { EventId } from '@/data/Event';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faCalendarDay } from '@fortawesome/free-solid-svg-icons';
-import LegacyLink from '../Common/LegacyLink.vue';
+import { faCalendarDay, faPlus } from '@fortawesome/free-solid-svg-icons';
+import EventCreateModal from '../Dialogs/EventCreateModal.vue';
 
 const {
 	event,
+	events,
 	resolver,
 	actionWord = 'edit',
 } = defineProps<{
@@ -104,14 +111,23 @@ const emit = defineEmits<{
 const { activeEvent } = useAppSettings();
 const { isAdmin } = useUser();
 
-const selectedEvent = ref(event);
+const selectedEvent = ref<TrackerEvent | 'new' | null>(event);
 const loading = ref(false);
 const select = useTemplateRef('select');
 const labelId = useId();
+const showCreateModal = ref(false);
+const options = computed<(TrackerEvent | 'new')[]>(() => ['new', ...events]);
 
 // Navigate to the appropriate URL when switching events
 watch(selectedEvent, (newEvent, oldEvent) => {
+	console.log('ev switch', newEvent, oldEvent);
 	if (!newEvent) return;
+
+	if (newEvent === 'new') {
+		showCreateModal.value = true;
+		selectedEvent.value = oldEvent;
+		return;
+	}
 
 	// Resolve the router properties to use
 	const { url, data = {}, only, ...options } = resolver(newEvent.id);
