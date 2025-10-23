@@ -25,7 +25,7 @@ class TimeBonusUpdateRequest extends FormRequest {
 			'start' => "{$requiredOrSometimes}|date",
 			'stop' => "{$requiredOrSometimes}|date{$afterStartRule}",
 			'modifier' => "{$requiredOrSometimes}|decimal:0,2|min:1|max:10",
-			'departments' => "{$requiredOrSometimes}|array|exists:App\Models\Department,id",
+			'departments' => "{$requiredOrSometimes}|array|min:1|exists:App\Models\Department,id",
 		];
 	}
 }

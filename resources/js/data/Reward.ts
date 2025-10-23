@@ -1,6 +1,7 @@
 export default interface Reward {
 	id: RewardId;
 	name: string;
+	description: string;
 	hours: number;
 }
 

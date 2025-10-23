@@ -47,6 +47,14 @@ export function useTime() {
 	}
 
 	/**
+	 * Parses an ISO 8601 datetime string and converts it to the user's preferred timezone, then converts it to the
+	 * local timezone while preserving the local time (thus modifying the timestamp)
+	 */
+	function isoToPreferredLocalAdjustedTime(iso: string): DateTime {
+		return isoToPreferredTime(iso).setZone('local', { keepLocalTime: true });
+	}
+
+	/**
 	 * Gets the current time in Tracker's configured timezone
 	 */
 	function now(): DateTime {
@@ -54,11 +62,11 @@ export function useTime() {
 	}
 
 	return {
-		timezone,
 		dateToTrackerTime,
 		isoToTrackerTime,
 		dateToPreferredTime,
 		isoToPreferredTime,
+		isoToPreferredLocalAdjustedTime,
 		now,
 	};
 }
