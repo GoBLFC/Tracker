@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\Event;
 use App\Models\TimeBonus;
 use App\Models\User;
 
@@ -17,7 +18,14 @@ class TimeBonusPolicy {
 	 * Determine whether the user can view the model.
 	 */
 	public function view(User $user, TimeBonus $timeBonus): bool {
-		return $user->isManager();
+		return $user->isManager() || $timeBonus->isForActiveEvent();
+	}
+
+	/**
+	 * Determine whether the user can view some models that belong to an event.
+	 */
+	public function viewForEvent(User $user, ?Event $event): bool {
+		return $user->isManager() || $event?->isActive();
 	}
 
 	/**

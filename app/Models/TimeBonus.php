@@ -88,4 +88,13 @@ class TimeBonus extends Model {
 	public function scopeForEvent(Builder $query, Event|string|null $event = null): void {
 		$query->where('event_id', $event->id ?? $event ?? Setting::activeEvent()?->id);
 	}
+
+	/**
+	 * Builds an array for the time bonus with a list of department IDs
+	 */
+	public function toArrayWithDepartmentIds(): array {
+		$array = $this->toArray();
+		$array['departments'] = $this->departments->pluck('id');
+		return $array;
+	}
 }
