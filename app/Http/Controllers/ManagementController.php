@@ -110,11 +110,20 @@ class ManagementController extends Controller {
 			if ($event) return redirect()->route('admin.event.bonuses', $event);
 		}
 
+		$bonuses = $event?->timeBonuses()?->with('departments')?->get();
+		if ($bonuses) {
+			$bonuses = $bonuses->map(function ($b) {
+				$b->start = $b->start->timezone(config('tracker.timezone'));
+				$b->stop = $b->stop->timezone(config('tracker.timezone'));
+				return $b;
+			});
+		}
+
 		return view('admin.bonuses', [
 			'event' => $event,
 			'events' => Event::all(),
 			'departments' => Department::all()->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE),
-			'bonuses' => $event?->timeBonuses()?->with('departments')?->get(),
+			'bonuses' => $bonuses,
 		]);
 	}
 

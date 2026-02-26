@@ -7,6 +7,7 @@ use App\Http\Requests\TimeBonusUpdateRequest;
 use App\Models\Event;
 use App\Models\TimeBonus;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Carbon;
 
 class TimeBonusController extends Controller {
 	/**
@@ -21,7 +22,9 @@ class TimeBonusController extends Controller {
 	 * Store a newly created resource in storage.
 	 */
 	public function store(TimeBonusStoreRequest $request, Event $event): JsonResponse {
-		$bonus = new TimeBonus($request->safe()->except('departments'));
+		$bonus = new TimeBonus($request->safe()->except('departments', 'start', 'stop'));
+		$bonus->start = Carbon::parse($request->validated('start'), config('tracker.timezone'))->utc();
+		$bonus->stop = Carbon::parse($request->validated('stop'), config('tracker.timezone'))->utc();
 		$bonus->event_id = $event->id;
 		$bonus->save();
 		$bonus->departments()->sync($request->validated('departments'));
@@ -41,7 +44,14 @@ class TimeBonusController extends Controller {
 	 * Update the specified resource in storage.
 	 */
 	public function update(TimeBonusUpdateRequest $request, TimeBonus $bonus): JsonResponse {
-		$bonus->update($request->safe()->except('departments'));
+		$data = $request->safe()->except('departments', 'start', 'stop');
+		if ($request->has('start')) {
+			$data['start'] = Carbon::parse($request->validated('start'), config('tracker.timezone'))->utc();
+		}
+		if ($request->has('stop')) {
+			$data['stop'] = Carbon::parse($request->validated('stop'), config('tracker.timezone'))->utc();
+		}
+		$bonus->update($data);
 		$bonus->departments()->sync($request->validated('departments'));
 		return response()->json(['bonus' => $bonus]);
 	}
