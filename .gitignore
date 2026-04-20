@@ -16,6 +16,7 @@
 /resources/js/ziggy.js
 /resources/js/ziggy.d.ts
 /storage/pail
+/.direnv
 components.d.ts
 .phpunit.cache
 .phpunit.result.cache
