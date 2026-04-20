@@ -1,5 +1,4 @@
 import '../css/app.css';
-import.meta.glob(['../img/**']);
 
 import { createApp, type DefineComponent, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
