@@ -72,7 +72,7 @@
 							<DepartmentPicker
 								v-model="department"
 								:departments
-								:disabled="ongoing || kioskRequired"
+								:disabled="Boolean(ongoing || kioskRequired)"
 							/>
 
 							<ResponsiveButton
