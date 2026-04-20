@@ -15,7 +15,7 @@ services:
       - redis
 
   postgres:
-    image: postgres:17
+    image: postgres:18
     restart: always
     env_file:
       - .docker/postgres.env
@@ -23,7 +23,7 @@ services:
       - postgres:/var/lib/postgresql/data
 
   redis:
-    image: redis:7
+    image: redis:8
     command:
       - /bin/sh
       - -c

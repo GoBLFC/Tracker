@@ -1,5 +1,5 @@
 # Install NPM dependencies and run Vite
-FROM node:22 AS build-npm
+FROM node:24 AS build-npm
 WORKDIR /app
 COPY . .
 RUN npm install

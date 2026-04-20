@@ -5,7 +5,7 @@ COPY . .
 RUN composer install --no-dev --classmap-authoritative --ignore-platform-reqs --no-interaction
 
 # Install NPM dependencies and run Vite
-FROM node:22 AS build-npm
+FROM node:24 AS build-npm
 WORKDIR /app
 COPY . .
 RUN npm install
@@ -13,7 +13,7 @@ ENV NODE_ENV=production
 RUN npm run build
 
 # Set up the application
-FROM php:8.4-fpm AS app
+FROM php:8.5-fpm AS app
 WORKDIR /var/www/html
 
 # Install necessary packages and PHP extensions
@@ -33,7 +33,7 @@ RUN docker-php-ext-configure pgsql --with-pgsql=/usr/local/pgsql && docker-php-e
 RUN docker-php-ext-configure zip && docker-php-ext-install -j$(nproc) zip
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg && docker-php-ext-install -j$(nproc) gd
 RUN docker-php-ext-configure pcntl --enable-pcntl && docker-php-ext-install -j$(nproc) pcntl
-RUN pecl install redis-6.2.0 && docker-php-ext-enable redis
+RUN pecl install redis-6.3.0 && docker-php-ext-enable redis
 
 # Override some PHP configuration
 COPY .docker/app/fpm-overrides.conf /usr/local/etc/php-fpm.d/zzz-overrides.conf

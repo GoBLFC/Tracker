@@ -116,17 +116,17 @@ services:
             - redis
 
     postgres:
-        image: postgres:17
+        image: postgres:18
         restart: always
         environment:
             POSTGRES_DB: tracker
             POSTGRES_USER: tracker
             POSTGRES_PASSWORD: "<some secure password>"
         volumes:
-            - postgres:/var/lib/postgresql/data
+            - postgres:/var/lib/postgresql
 
     redis:
-        image: redis:7
+        image: redis:8
         command:
             - /bin/sh
             - -c
