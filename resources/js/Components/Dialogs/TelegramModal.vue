@@ -1,26 +1,18 @@
 <template>
-	<Dialog
-		modal
-		header="Link Telegram"
-		class="w-full sm:w-[32rem] mx-2"
-		:dismissable-mask="true"
-		@show="renderQrCode"
-	>
+	<Dialog modal header="Link Telegram" class="w-full sm:w-[32rem] mx-2" :dismissable-mask="true" @show="renderQrCode">
 		<canvas
 			ref="canvas"
 			class="block mx-auto mb-8 rounded-md border-2 border-surface-200 dark:border-surface-600 object-scale-down"
 		></canvas>
 
 		<p class="mb-4">
-			Scanning the above QR code will give you a URL to add the Telegram
-			bot and link your Telegram profile to your volunteer account
-			automatically.
+			Scanning the above QR code will give you a URL to add the Telegram bot and link your Telegram profile to
+			your volunteer account automatically.
 			<template v-if="!isKiosk">
-				<span class="me-1">
-					If you can't scan the QR code, use this link instead:
-				</span>
+				<span class="me-1">If you can't scan the QR code, use this link instead:</span>
 				<a :href="setupUrl" target="_blank" class="text-nowrap"
-					><FontAwesomeIcon :icon="faTelegram" /> Add Telegram Bot</a
+					><FontAwesomeIcon :icon="faTelegram" />
+					Add Telegram Bot</a
 				>
 			</template>
 		</p>

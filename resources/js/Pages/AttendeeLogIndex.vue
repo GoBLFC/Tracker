@@ -1,16 +1,7 @@
 <template>
-	<EventDataPage
-		title="Attendee Logs"
-		:event
-		:events
-		:resolver="eventRequestResolver"
-	>
+	<EventDataPage title="Attendee Logs" :event :events :resolver="eventRequestResolver">
 		<FullContentHeightPanel header="Attendee Logs" class="grow">
-			<AttendeeLogsTable
-				:attendee-logs="attendeeLogs"
-				:rows="isAdmin ? 10 : 15"
-				@select="viewAttendeeLog"
-			/>
+			<AttendeeLogsTable :attendee-logs="attendeeLogs" :rows="isAdmin ? 10 : 15" @select="viewAttendeeLog" />
 		</FullContentHeightPanel>
 
 		<AttendeeLogCreatePanel v-if="isAdmin" :event="event!" />

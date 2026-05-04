@@ -1,17 +1,9 @@
 <template>
-	<EventDataPage
-		title="Manager Dashboard"
-		:event
-		:events
-		:resolver="eventRequestResolver"
-	>
+	<EventDataPage title="Manager Dashboard" :event :events :resolver="eventRequestResolver">
 		<template #default="{ readOnly }">
 			<div class="flex flex-col xl:flex-row xl:flex-wrap gap-4">
 				<!-- Recent activity -->
-				<FullContentHeightPanel
-					header="Recent Activity"
-					class="flex-auto min-w-[30%]"
-				>
+				<FullContentHeightPanel header="Recent Activity" class="flex-auto min-w-[30%]">
 					<TimeActivitiesTable
 						class="w-full"
 						:activities="recentTimeActivities"
@@ -19,17 +11,12 @@
 						:skeleton="!recentTimeActivities"
 						@select="loadVolunteer"
 					>
-						<template #empty>
-							<p>There is no recent time activity.</p>
-						</template>
+						<template #empty><p>There is no recent time activity.</p></template>
 					</TimeActivitiesTable>
 				</FullContentHeightPanel>
 
 				<!-- Ongoing shifts -->
-				<FullContentHeightPanel
-					header="Ongoing Shifts"
-					class="flex-auto min-w-[30%]"
-				>
+				<FullContentHeightPanel header="Ongoing Shifts" class="flex-auto min-w-[30%]">
 					<TimeEntriesTable
 						class="w-full"
 						:entries="ongoingEntries"
@@ -37,24 +24,15 @@
 						:skeleton="!recentTimeActivities"
 						@select="loadVolunteer"
 					>
-						<template #empty>
-							<p>There aren't any ongoing shifts.</p>
-						</template>
+						<template #empty><p>There aren't any ongoing shifts.</p></template>
 					</TimeEntriesTable>
 				</FullContentHeightPanel>
 			</div>
 
 			<div class="flex flex-col xl:flex-row xl:flex-wrap gap-4">
 				<!-- Volunteer search -->
-				<FullContentHeightPanel
-					header="Volunteer Search"
-					class="grow basis-1/3 min-w-[30%]"
-				>
-					<VolunteerSearchTable
-						:event
-						class="w-full"
-						@select="loadVolunteer"
-					/>
+				<FullContentHeightPanel header="Volunteer Search" class="grow basis-1/3 min-w-[30%]">
+					<VolunteerSearchTable :event class="w-full" @select="loadVolunteer" />
 				</FullContentHeightPanel>
 
 				<!-- Volunteer details -->
@@ -72,10 +50,7 @@
 				/>
 			</div>
 
-			<div
-				v-if="!readOnly"
-				class="flex flex-col xl:flex-row xl:flex-wrap gap-4"
-			>
+			<div v-if="!readOnly" class="flex flex-col xl:flex-row xl:flex-wrap gap-4">
 				<!-- Create volunteer -->
 				<VolunteerCreatePanel class="flex-1 min-w-[30%]" />
 

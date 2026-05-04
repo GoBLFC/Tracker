@@ -1,12 +1,8 @@
 <template>
 	<Button>
-		<template #icon>
-			<FontAwesomeIcon :icon />
-		</template>
+		<template #icon><FontAwesomeIcon :icon /></template>
 
-		<template #loadingicon>
-			<FontAwesomeIcon :icon="faCircleNotch" spin />
-		</template>
+		<template #loadingicon><FontAwesomeIcon :icon="faCircleNotch" spin /></template>
 	</Button>
 </template>
 

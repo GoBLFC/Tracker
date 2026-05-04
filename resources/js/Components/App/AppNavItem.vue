@@ -13,26 +13,18 @@
 			:class="{
 				'justify-center': !showText,
 				[`${color} hover:bg-emphasis`]: !isActive,
-				[`${activeColor} bg-primary hover:bg-primary-emphasis`]:
-					isActive,
+				[`${activeColor} bg-primary hover:bg-primary-emphasis`]: isActive,
 			}"
 			:to
 			:method
 			:aria-label="!showText ? label : undefined"
-			v-tooltip:[{position:tooltipPosition}]="
-				tooltip && !showText ? label : undefined
-			"
+			v-tooltip:[{position:tooltipPosition}]="tooltip && !showText ? label : undefined"
 			@click="isButton && to && navigate()"
 			v-bind="$attrs"
 		>
 			<slot>
-				<slot name="icon">
-					<FontAwesomeIcon :icon :class="{ 'w-10': showText }" />
-				</slot>
-
-				<slot name="text">
-					<span v-if="showText">{{ label }}</span>
-				</slot>
+				<slot name="icon"><FontAwesomeIcon :icon :class="{ 'w-10': showText }" /></slot>
+				<slot name="text"><span v-if="showText">{{ label }}</span></slot>
 			</slot>
 		</component>
 	</component>

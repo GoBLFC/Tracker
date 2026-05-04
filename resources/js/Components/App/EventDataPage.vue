@@ -12,25 +12,17 @@
 		>
 			<EventNavigator :event :events :resolver :action-word />
 
-			<div
-				v-if="readOnly"
-				class="text-2xl text-muted-color"
-				v-tooltip.left="'Read-only'"
-			>
+			<div v-if="readOnly" class="text-2xl text-muted-color" v-tooltip.left="'Read-only'">
 				<FontAwesomeIcon :icon="faEye" />
 				<span class="sr-only">Read-only</span>
 			</div>
 		</div>
 
-		<div v-if="event" class="grow flex flex-col gap-4">
-			<slot :event :read-only />
-		</div>
+		<div v-if="event" class="grow flex flex-col gap-4"><slot :event :read-only /></div>
 
 		<template v-else>
 			<slot name="placeholder">
-				<p
-					class="grow flex items-center justify-center text-xl text-muted-color"
-				>
+				<p class="grow flex items-center justify-center text-xl text-muted-color">
 					Select an event to {{ actionWord }} above.
 				</p>
 			</slot>

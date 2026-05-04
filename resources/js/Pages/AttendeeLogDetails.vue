@@ -20,53 +20,20 @@
 			</div>
 		</template>
 
-		<div
-			v-if="!readOnly"
-			class="flex flex-col lg:flex-row lg:flex-wrap gap-4"
-		>
-			<AttendeeCreatePanel
-				:attendee-log
-				:read-only
-				class="grow basis-1"
-			/>
+		<div v-if="!readOnly" class="flex flex-col lg:flex-row lg:flex-wrap gap-4">
+			<AttendeeCreatePanel :attendee-log :read-only class="grow basis-1" />
 
-			<AttendeeCreatePanel
-				v-if="isManager"
-				:attendee-log
-				:read-only
-				gatekeeper
-				class="grow basis-1"
-			/>
+			<AttendeeCreatePanel v-if="isManager" :attendee-log :read-only gatekeeper class="grow basis-1" />
 		</div>
 
 		<div class="grow flex flex-col xl:flex-row xl:flex-wrap gap-4">
-			<FullContentHeightPanel
-				header="Attendees"
-				class="flex-auto min-w-[30%]"
-			>
-				<AttendeesTable
-					:attendees="attendees"
-					:attendee-log
-					:rows="readOnly ? 15 : 10"
-					:read-only
-				/>
+			<FullContentHeightPanel header="Attendees" class="flex-auto min-w-[30%]">
+				<AttendeesTable :attendees="attendees" :attendee-log :rows="readOnly ? 15 : 10" :read-only />
 			</FullContentHeightPanel>
 
-			<FullContentHeightPanel
-				v-if="isManager"
-				header="Gatekeepers"
-				class="flex-auto min-w-[30%]"
-			>
-				<AttendeesTable
-					:attendees="gatekeepers"
-					:attendee-log
-					:read-only
-					:rows="readOnly ? 15 : 10"
-					gatekeeper
-				>
-					<template #empty>
-						<p>There aren't any gatekeepers yet.</p>
-					</template>
+			<FullContentHeightPanel v-if="isManager" header="Gatekeepers" class="flex-auto min-w-[30%]">
+				<AttendeesTable :attendees="gatekeepers" :attendee-log :read-only :rows="readOnly ? 15 : 10" gatekeeper>
+					<template #empty><p>There aren't any gatekeepers yet.</p></template>
 				</AttendeesTable>
 			</FullContentHeightPanel>
 		</div>

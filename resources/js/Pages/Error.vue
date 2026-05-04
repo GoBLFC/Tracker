@@ -3,34 +3,15 @@
 		<Head :title="`${status}: ${title}`" />
 
 		<Link to="tracker.index" :title="$appName">
-			<img
-				src="@/../img/event-logo.png"
-				width="128"
-				height="146"
-				class="object-scale-down"
-				:alt="$appName"
-			/>
+			<img src="@/../img/event-logo.png" width="128" height="146" class="object-scale-down" :alt="$appName" />
 		</Link>
 
-		<h1 class="text-3xl text-center font-light">
-			{{ status }}: {{ title }}
-		</h1>
+		<h1 class="text-3xl text-center font-light">{{ status }}: {{ title }}</h1>
 
 		<div class="flex gap-2">
-			<IconButton
-				label="Back"
-				:icon="faArrowLeft"
-				severity="secondary"
-				@click="goBack"
-			/>
+			<IconButton label="Back" :icon="faArrowLeft" severity="secondary" @click="goBack" />
 
-			<IconButton
-				:as="Link"
-				to="tracker.index"
-				label="Home"
-				:icon="faHouse"
-				severity="secondary"
-			/>
+			<IconButton :as="Link" to="tracker.index" label="Home" :icon="faHouse" severity="secondary" />
 		</div>
 	</div>
 </template>

@@ -1,20 +1,9 @@
 <template>
 	<Button :disabled="loading">
-		<FontAwesomeIcon
-			:icon="loading ? faCircleNotch : icon"
-			:class="iconClass"
-			:spin="loading"
-		/>
+		<FontAwesomeIcon :icon="loading ? faCircleNotch : icon" :class="iconClass" :spin="loading" />
 
-		<span
-			v-if="$slots.default"
-			:class="`sr-only ${breakpoint}:not-sr-only`"
-		>
-			<slot />
-		</span>
-		<span v-else :class="`sr-only ${breakpoint}:not-sr-only`">
-			{{ label }}
-		</span>
+		<span v-if="$slots.default" :class="`sr-only ${breakpoint}:not-sr-only`"><slot /></span>
+		<span v-else :class="`sr-only ${breakpoint}:not-sr-only`">{{ label }}</span>
 	</Button>
 </template>
 

@@ -22,11 +22,7 @@
 			/>
 		</template>
 
-		<template v-else>
-			<h1 class="text-3xl font-light text-muted-color-emphasis">
-				No alerts.
-			</h1>
-		</template>
+		<template v-else><h1 class="text-3xl font-light text-muted-color-emphasis">No alerts.</h1></template>
 	</div>
 </template>
 

@@ -1,17 +1,13 @@
 <template>
-	<FullContentHeightPanel
-		:header="gatekeeper ? 'Add Gatekeeper' : 'Log Attendee'"
-	>
+	<FullContentHeightPanel :header="gatekeeper ? 'Add Gatekeeper' : 'Log Attendee'">
 		<div class="h-full flex flex-col gap-6">
 			<p v-if="gatekeeper" class="grow">
-				Gatekeepers can view, add, and delete attendees in the log, but
-				cannot manage gatekeepers themselves. Any volunteer, not just
-				staff, can be added as a gatekeeper.
+				Gatekeepers can view, add, and delete attendees in the log, but cannot manage gatekeepers themselves.
+				Any volunteer, not just staff, can be added as a gatekeeper.
 			</p>
 
 			<p v-else class="grow">
-				Enter an attendee into the log. Badge scanners will work as long
-				as they send a
+				Enter an attendee into the log. Badge scanners will work as long as they send a
 				<kbd
 					class="px-1 inline-block border rounded-sm border-surface-300 dark:border-surface-600 whitespace-nowrap"
 				>
@@ -50,12 +46,7 @@
 					/>
 				</InputGroup>
 
-				<Message
-					v-if="form.hasErrors"
-					size="small"
-					severity="error"
-					variant="simple"
-				>
+				<Message v-if="form.hasErrors" size="small" severity="error" variant="simple">
 					{{ form.errors.badge_id }}
 				</Message>
 			</form>

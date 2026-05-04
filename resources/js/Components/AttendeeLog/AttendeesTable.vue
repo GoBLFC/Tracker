@@ -17,13 +17,7 @@
 
 		<Column field="badge_name" header="Badge Name" sortable />
 
-		<Column
-			v-if="!gatekeeper"
-			field="pivot.created_at"
-			header="Logged"
-			sortable
-			data-type="date"
-		>
+		<Column v-if="!gatekeeper" field="pivot.created_at" header="Logged" sortable data-type="date">
 			<template #body="{ data: attendee }: { data: Attendee }">
 				<DateTime :date="attendee.pivot.created_at" />
 			</template>
@@ -44,7 +38,8 @@
 			<slot name="empty">
 				<p>
 					There aren't any
-					{{ gatekeeper ? "gatekeepers" : "attendees" }} yet.
+					{{ gatekeeper ? "gatekeepers" : "attendees" }}
+					yet.
 				</p>
 			</slot>
 		</template>

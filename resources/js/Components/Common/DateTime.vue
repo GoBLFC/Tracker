@@ -1,15 +1,8 @@
 <template>
-	<span
-		v-if="short"
-		v-tooltip.bottom="
-			tzDate.toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY)
-		"
+	<span v-if="short" v-tooltip.bottom="tzDate.toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY)"
+		>{{ tzDate.toLocaleString(DateTime.DATETIME_SHORT) }}</span
 	>
-		{{ tzDate.toLocaleString(DateTime.DATETIME_SHORT) }}
-	</span>
-	<span v-else>
-		{{ tzDate.toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY) }}
-	</span>
+	<span v-else>{{ tzDate.toLocaleString(DateTime.DATETIME_MED_WITH_WEEKDAY) }}</span>
 </template>
 
 <script setup lang="ts">

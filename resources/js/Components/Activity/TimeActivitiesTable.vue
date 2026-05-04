@@ -15,12 +15,7 @@
 		:dt="{ paginator: { bottom: { border: { width: 0 } } } }"
 		@row-click="(evt) => emit('select', evt.data.subject.user_id)"
 	>
-		<Column
-			field="subject.user.badge_id"
-			header="ID"
-			sortable
-			data-type="number"
-		/>
+		<Column field="subject.user.badge_id" header="ID" sortable data-type="number" />
 
 		<Column field="subject.user.display_name" sortable header="Name">
 			<template #body="{ data: activity }: { data: TimeEntryActivity }">
@@ -32,12 +27,7 @@
 			</template>
 		</Column>
 
-		<Column
-			field="checked_in"
-			header="Action Taken"
-			sortable
-			data-type="boolean"
-		>
+		<Column field="checked_in" header="Action Taken" sortable data-type="boolean">
 			<template #body="{ data: activity }: { data: TimeEntryActivity }">
 				<ShiftStatusTag :checked-in="activity.checked_in" />
 			</template>
@@ -49,32 +39,18 @@
 			</template>
 		</Column>
 
-		<Column
-			field="subject.duration"
-			header="Duration"
-			sortable
-			data-type="number"
-		>
+		<Column field="subject.duration" header="Duration" sortable data-type="number">
 			<template #body="{ data: activity }: { data: TimeEntryActivity }">
-				<Duration
-					:start="activity.subject.start"
-					:stop="activity.subject.stop"
-					:now
-				/>
+				<Duration :start="activity.subject.start" :stop="activity.subject.stop" :now />
 			</template>
 		</Column>
 
 		<template #empty>
-			<slot name="empty">
-				<p>There aren't any time activities.</p>
-			</slot>
+			<slot name="empty"><p>There aren't any time activities.</p></slot>
 		</template>
 	</DataTable>
 
-	<SkeletonTable
-		v-else
-		:columns="['ID', 'Name', 'Action Taken', 'Time', 'Duration']"
-	/>
+	<SkeletonTable v-else :columns="['ID', 'Name', 'Action Taken', 'Time', 'Duration']" />
 </template>
 
 <script setup lang="ts">

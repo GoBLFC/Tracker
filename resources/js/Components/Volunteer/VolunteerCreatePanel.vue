@@ -1,10 +1,9 @@
 <template>
 	<Panel header="Create Volunteer">
 		<p class="mb-6">
-			If there is a volunteer that hasn't logged in to the system yet, but
-			you need to manage data for them, you may add them here using just
-			their badge number. Their name and other details will be
-			automatically imported when available.
+			If there is a volunteer that hasn't logged in to the system yet, but you need to manage data for them, you
+			may add them here using just their badge number. Their name and other details will be automatically imported
+			when available.
 		</p>
 
 		<form @submit.prevent="createUser" @input="form.clearErrors()">
@@ -33,12 +32,7 @@
 				/>
 			</InputGroup>
 
-			<Message
-				v-if="form.hasErrors"
-				size="small"
-				severity="error"
-				variant="simple"
-			>
+			<Message v-if="form.hasErrors" size="small" severity="error" variant="simple">
 				{{ form.errors.badge_id }}
 			</Message>
 		</form>

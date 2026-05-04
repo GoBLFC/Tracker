@@ -13,21 +13,17 @@
 		<h1 class="text-3xl font-light">About Tracker</h1>
 
 		<p>
-			Tracker is an online system for tracking the amount of time
-			volunteers have contributed towards conventions and ensuring they
-			are appropriately rewarded. It was originally designed for
-			<a href="https://goblfc.org" target="_blank">BLFC</a> by Ghost
-			Cabbit, with development being continued primarily by the BLFC
-			Website team.
+			Tracker is an online system for tracking the amount of time volunteers have contributed towards conventions
+			and ensuring they are appropriately rewarded. It was originally designed for
+			<a href="https://goblfc.org" target="_blank">BLFC</a>
+			by Ghost Cabbit, with development being continued primarily by the BLFC Website team.
 		</p>
 
 		<p>
-			Tracker is an open-source project, so all are welcome to use it and
-			contribute to it! Check out the source code on
-			<a href="https://github.com/GoBLFC/Tracker" target="_blank"
-				><FontAwesomeIcon :icon="faGithub" /> GitHub</a
-			>. If you find any issues, please report them to your Volunteer
-			Managers or open an issue on the repository.
+			Tracker is an open-source project, so all are welcome to use it and contribute to it! Check out the source
+			code on
+			<a href="https://github.com/GoBLFC/Tracker" target="_blank"><FontAwesomeIcon :icon="faGithub" /> GitHub</a>.
+			If you find any issues, please report them to your Volunteer Managers or open an issue on the repository.
 		</p>
 
 		<h2 class="text-2xl font-light">Developers</h2>
@@ -43,28 +39,19 @@
 				<p class="mb-2 text-muted-color">Original Creator</p>
 				<ul class="flex justify-center gap-3 text-3xl">
 					<li>
-						<a
-							href="https://bsky.app/profile/ghostcabb.it"
-							title="Ghost's Bluesky"
-							target="_blank"
-							><FontAwesomeIcon :icon="faBluesky"
-						/></a>
+						<a href="https://bsky.app/profile/ghostcabb.it" title="Ghost's Bluesky" target="_blank"
+							><FontAwesomeIcon :icon="faBluesky" /></a
+						>
 					</li>
 					<li>
-						<a
-							href="https://twitter.com/GhostCabbit"
-							title="Ghost's Twitter"
-							target="_blank"
-							><FontAwesomeIcon :icon="faTwitter"
-						/></a>
+						<a href="https://twitter.com/GhostCabbit" title="Ghost's Twitter" target="_blank"
+							><FontAwesomeIcon :icon="faTwitter" /></a
+						>
 					</li>
 					<li>
-						<a
-							href="https://ghostcabbit.com/"
-							title="Ghost's Website"
-							target="_blank"
-							><FontAwesomeIcon :icon="faGlobe"
-						/></a>
+						<a href="https://ghostcabbit.com/" title="Ghost's Website" target="_blank"
+							><FontAwesomeIcon :icon="faGlobe" /></a
+						>
 					</li>
 				</ul>
 			</div>
@@ -79,28 +66,19 @@
 				<p class="mb-2 text-muted-color">BLFC Website Team Lead</p>
 				<ul class="flex justify-center gap-3 text-3xl">
 					<li>
-						<a
-							href="https://bsky.app/profile/glitchfur.net"
-							title="Glitch's Bluesky"
-							target="_blank"
-							><FontAwesomeIcon :icon="faBluesky"
-						/></a>
+						<a href="https://bsky.app/profile/glitchfur.net" title="Glitch's Bluesky" target="_blank"
+							><FontAwesomeIcon :icon="faBluesky" /></a
+						>
 					</li>
 					<li>
-						<a
-							href="https://meow.social/@glitch"
-							title="Glitch's Mastodon"
-							target="_blank"
-							><FontAwesomeIcon :icon="faMastodon"
-						/></a>
+						<a href="https://meow.social/@glitch" title="Glitch's Mastodon" target="_blank"
+							><FontAwesomeIcon :icon="faMastodon" /></a
+						>
 					</li>
 					<li>
-						<a
-							href="https://www.glitchfur.net"
-							title="Glitch's Website"
-							target="_blank"
-							><FontAwesomeIcon :icon="faGlobe"
-						/></a>
+						<a href="https://www.glitchfur.net" title="Glitch's Website" target="_blank"
+							><FontAwesomeIcon :icon="faGlobe" /></a
+						>
 					</li>
 				</ul>
 			</div>
@@ -115,28 +93,19 @@
 				<p class="mb-2 text-muted-color">BLFC Website Team</p>
 				<ul class="flex justify-center gap-3 text-3xl">
 					<li>
-						<a
-							href="https://bsky.app/profile/gawdl3y.dev"
-							title="Gawdl3y's Bluesky"
-							target="_blank"
-							><FontAwesomeIcon :icon="faBluesky"
-						/></a>
+						<a href="https://bsky.app/profile/gawdl3y.dev" title="Gawdl3y's Bluesky" target="_blank"
+							><FontAwesomeIcon :icon="faBluesky" /></a
+						>
 					</li>
 					<li>
-						<a
-							href="https://furry.engineer/Gawdl3y"
-							title="Gawdl3y's Mastodon"
-							target="_blank"
-							><FontAwesomeIcon :icon="faMastodon"
-						/></a>
+						<a href="https://furry.engineer/Gawdl3y" title="Gawdl3y's Mastodon" target="_blank"
+							><FontAwesomeIcon :icon="faMastodon" /></a
+						>
 					</li>
 					<li>
-						<a
-							href="https://gawdl3y.dev"
-							title="Gawdl3y's Website"
-							target="_blank"
-							><FontAwesomeIcon :icon="faGlobe"
-						/></a>
+						<a href="https://gawdl3y.dev" title="Gawdl3y's Website" target="_blank"
+							><FontAwesomeIcon :icon="faGlobe" /></a
+						>
 					</li>
 				</ul>
 			</div>

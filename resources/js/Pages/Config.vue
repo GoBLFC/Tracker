@@ -1,29 +1,17 @@
 <template>
-	<div
-		class="container grow mx-auto max-w-[80rem] flex flex-col justify-center gap-4"
-	>
+	<div class="container grow mx-auto max-w-[80rem] flex flex-col justify-center gap-4">
 		<h1 class="text-3xl font-light">Configuration</h1>
 
 		<Panel header="Active Event">
 			<p class="mb-4">
-				This is the event that all volunteers and managers will be
-				entering/managing time for. When there is no active event,
-				volunteers won't be able to check in or out, and managers won't
-				be able to view or edit any time entries.
+				This is the event that all volunteers and managers will be entering/managing time for. When there is no
+				active event, volunteers won't be able to check in or out, and managers won't be able to view or edit
+				any time entries.
 			</p>
 
-			<form
-				@submit.prevent="
-					activeEventForm.patch(
-						route('settings.update', 'active-event')
-					)
-				"
-			>
+			<form @submit.prevent="activeEventForm.patch(route('settings.update', 'active-event'))">
 				<InputGroup>
-					<InputGroupAddon
-						@click="focusActiveEvent()"
-						:id="activeEventLabelId"
-					>
+					<InputGroupAddon @click="focusActiveEvent()" :id="activeEventLabelId">
 						<FontAwesomeIcon :icon="faCalendarDay" />
 						<span class="sr-only">Event</span>
 					</InputGroupAddon>
@@ -53,9 +41,7 @@
 		</Panel>
 
 		<Panel header="Site Settings">
-			<dl
-				class="grid grid-cols-[min-content_auto] items-center gap-x-4 gap-y-6"
-			>
+			<dl class="grid grid-cols-[min-content_auto] items-center gap-x-4 gap-y-6">
 				<dt>
 					<SettingToggleSwitch
 						setting="dev-mode"
@@ -64,20 +50,12 @@
 					/>
 				</dt>
 				<dd>
-					<p class="text-lg font-semibold" :id="devModeLabelId">
-						Development mode
-					</p>
+					<p class="text-lg font-semibold" :id="devModeLabelId">Development mode</p>
 					<p>
-						Development mode makes it easier to develop and test
-						Tracker by displaying some basic status information on
-						every page, relaxing the kiosk authorization
-						requirement, greatly extending the auto-logout timer,
-						and disabling automatic logging out of ConCat alongside
-						Tracker.
-						<strong>
-							If Tracker is running in a production environment,
-							this should be disabled.
-						</strong>
+						Development mode makes it easier to develop and test Tracker by displaying some basic status
+						information on every page, relaxing the kiosk authorization requirement, greatly extending the
+						auto-logout timer, and disabling automatic logging out of ConCat alongside Tracker.
+						<strong>If Tracker is running in a production environment, this should be disabled.</strong>
 					</p>
 				</dd>
 
@@ -89,18 +67,13 @@
 					/>
 				</dt>
 				<dd>
-					<p class="text-lg font-semibold" :id="lockdownLabelId">
-						Lockdown
-					</p>
+					<p class="text-lg font-semibold" :id="lockdownLabelId">Lockdown</p>
 					<p>
-						Locking the site down makes it entirely inaccessible to
-						volunteers, prohibiting them from checking in/out or
-						even getting their Telegram QR code. Managers and
-						administrators can still log in and perform staff
-						functions, including checking users in/out on their
-						behalf. To simply prevent further time entry for an
-						event, it's recommended to instead clear the active
-						event above and leave this disabled.
+						Locking the site down makes it entirely inaccessible to volunteers, prohibiting them from
+						checking in/out or even getting their Telegram QR code. Managers and administrators can still
+						log in and perform staff functions, including checking users in/out on their behalf. To simply
+						prevent further time entry for an event, it's recommended to instead clear the active event
+						above and leave this disabled.
 					</p>
 				</dd>
 			</dl>

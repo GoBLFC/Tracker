@@ -21,20 +21,9 @@
 			</template>
 		</Column>
 
-		<Column
-			field="attendees_count"
-			header="Attendees"
-			sortable
-			data-type="number"
-		/>
+		<Column field="attendees_count" header="Attendees" sortable data-type="number" />
 
-		<Column
-			v-if="isManager"
-			field="gatekeepers_count"
-			header="Gatekeepers"
-			sortable
-			data-type="number"
-		/>
+		<Column v-if="isManager" field="gatekeepers_count" header="Gatekeepers" sortable data-type="number" />
 
 		<Column
 			v-if="isAdmin"
@@ -48,9 +37,7 @@
 		</Column>
 
 		<template #empty>
-			<slot name="empty">
-				<p>There aren't any attendee logs for this event.</p>
-			</slot>
+			<slot name="empty"><p>There aren't any attendee logs for this event.</p></slot>
 		</template>
 	</DataTable>
 

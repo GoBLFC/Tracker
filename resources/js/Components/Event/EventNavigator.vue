@@ -23,10 +23,7 @@
 					placeholder: string,
 				}"
 			>
-				<div
-					v-if="event"
-					class="flex grow gap-4 justify-between items-center"
-				>
+				<div v-if="event" class="flex grow gap-4 justify-between items-center">
 					<span class="truncate">{{ event.name }}</span>
 					<Tag
 						:value="
@@ -65,14 +62,13 @@
 		<p class="text-lg">
 			<span class="font-semibold">There aren't any events yet.</span>
 			You'll need to
-			<LegacyLink to="admin.events">create one</LegacyLink> to manage.
+			<LegacyLink to="admin.events">create one</LegacyLink>
+			to manage.
 		</p>
 	</Message>
 
 	<Message v-else class="w-full">
-		<p class="text-lg font-semibold">
-			There aren't any events to manage yet.
-		</p>
+		<p class="text-lg font-semibold">There aren't any events to manage yet.</p>
 	</Message>
 </template>
 

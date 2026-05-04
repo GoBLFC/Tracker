@@ -30,9 +30,7 @@
 		<Column field="department.name" header="Department" sortable />
 
 		<Column field="start" header="Start Time" sortable data-type="date">
-			<template #body="{ data: entry }: { data: TimeEntry }">
-				<DateTime :date="entry.start" />
-			</template>
+			<template #body="{ data: entry }: { data: TimeEntry }"><DateTime :date="entry.start" /></template>
 		</Column>
 
 		<Column field="duration" header="Duration" sortable data-type="number">
@@ -42,16 +40,11 @@
 		</Column>
 
 		<template #empty>
-			<slot name="empty">
-				<p>There aren't any time entries.</p>
-			</slot>
+			<slot name="empty"><p>There aren't any time entries.</p></slot>
 		</template>
 	</DataTable>
 
-	<SkeletonTable
-		v-else
-		:columns="['ID', 'Name', 'Department', 'Start Time', 'Duration']"
-	/>
+	<SkeletonTable v-else :columns="['ID', 'Name', 'Department', 'Start Time', 'Duration']" />
 </template>
 
 <script setup lang="ts">

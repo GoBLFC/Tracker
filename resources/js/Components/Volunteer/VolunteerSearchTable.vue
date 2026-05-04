@@ -18,28 +18,16 @@
 
 		<Column field="display_name" header="Name" sortable>
 			<template #body="{ data: user }: { data: User }">
-				<VolunteerName
-					:volunteer="user"
-					:event
-					@click.prevent="emit('select', user.id)"
-				/>
+				<VolunteerName :volunteer="user" :event @click.prevent="emit('select', user.id)" />
 			</template>
 		</Column>
 
 		<Column header="Status">
 			<template #body="{ data: user }: { data: User }">
 				<div class="flex flex-wrap gap-2">
-					<ShiftStatusTag
-						:checked-in="Boolean(getDepartment(user))"
-						:department="getDepartment(user)"
-					/>
+					<ShiftStatusTag :checked-in="Boolean(getDepartment(user))" :department="getDepartment(user)" />
 
-					<ResponsiveTag
-						v-if="user.role === -2"
-						label="Banned"
-						severity="danger"
-						:icon="faUserSlash"
-					/>
+					<ResponsiveTag v-if="user.role === -2" label="Banned" severity="danger" :icon="faUserSlash" />
 				</div>
 			</template>
 		</Column>
@@ -69,10 +57,7 @@
 		<template #empty>
 			<p v-if="request.processing.value">Searching&hellip;</p>
 			<p v-else-if="debouncedQuery">No volunteers found.</p>
-			<p v-else>
-				Enter a badge number, name, or username above to search for
-				matching volunteers.
-			</p>
+			<p v-else>Enter a badge number, name, or username above to search for matching volunteers.</p>
 		</template>
 	</DataTable>
 

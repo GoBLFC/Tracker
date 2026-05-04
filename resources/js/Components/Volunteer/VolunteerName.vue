@@ -1,9 +1,5 @@
 <template>
-	<component
-		:is="event ? Link : 'span'"
-		:to="route"
-		v-tooltip.bottom="allNames"
-	>
+	<component :is="event ? Link : 'span'" :to="route" v-tooltip.bottom="allNames">
 		{{ displayName }}
 		<span v-if="showId" class="font-normal">(#{{ user.badge_id }})</span>
 	</component>

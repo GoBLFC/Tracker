@@ -25,16 +25,11 @@
 		</div>
 
 		<template v-if="activeEvent">
-			<Message
-				v-if="!hasTelegram"
-				severity="info"
-				:pt="{ text: { class: 'w-full' } }"
-			>
+			<Message v-if="!hasTelegram" severity="info" :pt="{ text: { class: 'w-full' } }">
 				<div class="w-full flex justify-between items-center gap-4">
 					<p>
-						Link your Telegram account to get quick sign-in codes,
-						easily check your shift and reward status from anywhere,
-						and receive helpful notifications!
+						Link your Telegram account to get quick sign-in codes, easily check your shift and reward status
+						from anywhere, and receive helpful notifications!
 					</p>
 
 					<ResponsiveButton
@@ -50,21 +45,13 @@
 
 			<Panel header="Shift Entry">
 				<div class="flex flex-col flex-wrap lg:flex-row gap-4">
-					<Message
-						v-if="kioskRequired"
-						severity="warn"
-						class="w-full"
-					>
+					<Message v-if="kioskRequired" severity="warn" class="w-full">
 						You must visit an authorized volunteer kiosk to check
 						{{ ongoing ? "out" : "in" }}.
 					</Message>
 
 					<Message :severity="ongoing ? 'success' : 'secondary'">
-						{{
-							ongoing
-								? "You're checked in for a shift."
-								: "You're not checked in right now."
-						}}
+						{{ ongoing ? "You're checked in for a shift." : "You're not checked in right now." }}
 					</Message>
 
 					<form @submit.prevent="checkInOrOut" class="flex-1">
@@ -77,18 +64,10 @@
 
 							<ResponsiveButton
 								:label="ongoing ? 'Check Out' : 'Check In'"
-								:icon="
-									ongoing
-										? faArrowRightFromBracket
-										: faArrowRightToBracket
-								"
+								:icon="ongoing ? faArrowRightFromBracket : faArrowRightToBracket"
 								:severity="ongoing ? 'warn' : 'success'"
 								:loading="loading"
-								:disabled="
-									loading ||
-									(!ongoing && !department) ||
-									kioskRequired
-								"
+								:disabled="loading || (!ongoing && !department) || kioskRequired"
 								type="submit"
 								class="shrink-0"
 							/>
@@ -97,27 +76,18 @@
 				</div>
 			</Panel>
 
-			<Panel header="Time Stats">
-				<VolunteerTimeStats :time="volunteer.time" :now />
-			</Panel>
+			<Panel header="Time Stats"><VolunteerTimeStats :time="volunteer.time" :now /></Panel>
 		</template>
 
 		<div v-else class="flex flex-col gap-4">
 			<Message severity="secondary" size="large">
-				There isn't an event running right now, so there's nothing to
-				track your time for. Check back later!
+				There isn't an event running right now, so there's nothing to track your time for. Check back later!
 			</Message>
 		</div>
 
-		<TelegramModal
-			v-model:visible="isTelegramDialogVisible"
-			:setup-url="telegramSetupUrl"
-		/>
+		<TelegramModal v-model:visible="isTelegramDialogVisible" :setup-url="telegramSetupUrl" />
 
-		<SwalSuccessDialog
-			ref="success-dialog"
-			:title="`Checked ${ongoing ? 'In' : 'Out'}`"
-		/>
+		<SwalSuccessDialog ref="success-dialog" :title="`Checked ${ongoing ? 'In' : 'Out'}`" />
 	</div>
 </template>
 

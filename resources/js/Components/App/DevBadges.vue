@@ -1,24 +1,15 @@
 <template>
 	<div class="flex flex-wrap gap-2 justify-center text-xs">
 		<Chip label="Dev Mode Enabled" class="bg-amber-400 text-gray-950">
-			<template #icon>
-				<FontAwesomeIcon :icon="faCode" />
-			</template>
+			<template #icon><FontAwesomeIcon :icon="faCode" /></template>
 		</Chip>
 
 		<template v-if="isLoggedIn">
-			<Chip
-				:label="`User: ${badgeId} &nbsp;/&nbsp; ${uuid}`"
-				class="bg-cyan-700 text-gray-50"
-			>
-				<template #icon>
-					<FontAwesomeIcon :icon="faUser" />
-				</template>
+			<Chip :label="`User: ${badgeId} &nbsp;/&nbsp; ${uuid}`" class="bg-cyan-700 text-gray-50">
+				<template #icon><FontAwesomeIcon :icon="faUser" /></template>
 			</Chip>
 			<Chip :label="`Role: ${roleName}`" class="bg-blue-700 text-gray-50">
-				<template #icon>
-					<FontAwesomeIcon :icon="faIdCard" />
-				</template>
+				<template #icon><FontAwesomeIcon :icon="faIdCard" /></template>
 			</Chip>
 		</template>
 
@@ -30,9 +21,7 @@
 				'bg-red-700': !isKiosk,
 			}"
 		>
-			<template #icon>
-				<FontAwesomeIcon :icon="isKiosk ? faLockOpen : faLock" />
-			</template>
+			<template #icon><FontAwesomeIcon :icon="isKiosk ? faLockOpen : faLock" /></template>
 		</Chip>
 
 		<Chip
@@ -43,9 +32,7 @@
 				'bg-red-700': !activeEvent,
 			}"
 		>
-			<template #icon>
-				<FontAwesomeIcon :icon="faCalendarDay" />
-			</template>
+			<template #icon><FontAwesomeIcon :icon="faCalendarDay" /></template>
 		</Chip>
 	</div>
 </template>

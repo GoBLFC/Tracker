@@ -9,18 +9,12 @@
 		:dt="{ paginator: { bottom: { border: { width: 0 } } } }"
 	>
 		<Column v-for="col of columns" :header="col">
-			<template #body>
-				<Skeleton />
-			</template>
+			<template #body><Skeleton /></template>
 		</Column>
 
-		<template #header v-if="$slots.header">
-			<slot name="header" />
-		</template>
+		<template #header v-if="$slots.header"><slot name="header" /></template>
 
-		<template #footer v-if="$slots.footer">
-			<slot name="footer" />
-		</template>
+		<template #footer v-if="$slots.footer"><slot name="footer" /></template>
 	</DataTable>
 </template>
 

@@ -3,13 +3,9 @@
 		<Head :title />
 
 		<Toolbar>
-			<template #start>
-				<Breadcrumbs :trail :pt="{ root: { class: 'p-0' } }" />
-			</template>
+			<template #start><Breadcrumbs :trail :pt="{ root: { class: 'p-0' } }" /></template>
 
-			<template #end v-if="$slots.icons">
-				<slot name="icons" />
-			</template>
+			<template #end v-if="$slots.icons"><slot name="icons" /></template>
 		</Toolbar>
 
 		<slot />

@@ -2,9 +2,7 @@
 	<div class="h-full flex flex-col relative -z-50">
 		<DevBadges v-if="isDevMode" class="mx-2 my-4" />
 
-		<main class="grow p-4 flex flex-col">
-			<slot />
-		</main>
+		<main class="grow p-4 flex flex-col"><slot /></main>
 	</div>
 </template>
 

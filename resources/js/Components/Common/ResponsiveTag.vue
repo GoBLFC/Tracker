@@ -8,9 +8,7 @@
 	>
 		<FontAwesomeIcon :icon />
 
-		<span :class="`sr-only ${breakpoint}:not-sr-only`">
-			{{ label }}
-		</span>
+		<span :class="`sr-only ${breakpoint}:not-sr-only`">{{ label }}</span>
 	</Tag>
 </template>
 

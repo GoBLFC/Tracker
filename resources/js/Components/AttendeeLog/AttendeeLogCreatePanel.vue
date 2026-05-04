@@ -25,12 +25,7 @@
 				/>
 			</InputGroup>
 
-			<Message
-				v-if="form.hasErrors"
-				size="small"
-				severity="error"
-				variant="simple"
-			>
+			<Message v-if="form.hasErrors" size="small" severity="error" variant="simple">
 				{{ form.errors.name }}
 			</Message>
 		</form>

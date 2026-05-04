@@ -6,9 +6,7 @@
 
 		<h1 class="text-3xl text-center font-light">{{ title }}</h1>
 
-		<Message :severity>
-			<slot />
-		</Message>
+		<Message :severity><slot /></Message>
 	</div>
 </template>
 

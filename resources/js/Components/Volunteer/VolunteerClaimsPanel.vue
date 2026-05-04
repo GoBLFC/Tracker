@@ -20,11 +20,7 @@
 					{{ reward.name }}
 				</div>
 
-				<VolunteerClaimToggleButton
-					v-model="volunteer"
-					:reward="reward"
-					:disabled="readOnly"
-				/>
+				<VolunteerClaimToggleButton v-model="volunteer" :reward="reward" :disabled="readOnly" />
 			</div>
 		</div>
 

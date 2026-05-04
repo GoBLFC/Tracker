@@ -1,11 +1,5 @@
 <template>
-	<Dialog
-		v-model:visible="isVisible"
-		modal
-		:show-header="false"
-		:dismissable-mask="true"
-		class="w-4/5 sm:w-64 mx-2"
-	>
+	<Dialog v-model:visible="isVisible" modal :show-header="false" :dismissable-mask="true" class="w-4/5 sm:w-64 mx-2">
 		<div class="h-64 flex flex-col justify-center items-center gap-12">
 			<p v-if="title" class="text-2xl font-light">{{ title }}</p>
 

@@ -27,9 +27,7 @@ export default defineConfig({
 				'resources/js/legacy/admin/report.js',
 			],
 			refresh: true,
-			assets: [
-				'resources/img/**',
-			],
+			assets: ['resources/img/**'],
 		}),
 	],
 

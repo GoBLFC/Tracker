@@ -1,20 +1,9 @@
 <template>
 	<div class="grow flex flex-col justify-center items-center gap-4 md:gap-8">
-		<img
-			src="@/../img/event-logo.png"
-			class="h-[128px] md:h-[146px] object-scale-down"
-			:alt="$appName"
-		/>
+		<img src="@/../img/event-logo.png" class="h-[128px] md:h-[146px] object-scale-down" :alt="$appName" />
 
-		<Panel
-			class="w-full max-w-96"
-			:pt="{ content: { class: 'flex flex-col gap-4 mt-2' } }"
-		>
-			<template #header>
-				<h1 class="w-full text-center text-3xl font-light">
-					Volunteer Check-In
-				</h1>
-			</template>
+		<Panel class="w-full max-w-96" :pt="{ content: { class: 'flex flex-col gap-4 mt-2' } }">
+			<template #header><h1 class="w-full text-center text-3xl font-light">Volunteer Check-In</h1></template>
 
 			<Message
 				severity="secondary"
@@ -28,16 +17,10 @@
 				Welcome! Click below to sign in.
 			</Message>
 
-			<Button :as="Link" to="auth.redirect" severity="success">
-				Sign In
-			</Button>
+			<Button :as="Link" to="auth.redirect" severity="success">Sign In</Button>
 
 			<Panel class="mt-8">
-				<template #header>
-					<h2 class="grow ms-4 text-center text-xl font-thin">
-						Quick Sign-in
-					</h2>
-				</template>
+				<template #header><h2 class="grow ms-4 text-center text-xl font-thin">Quick Sign-in</h2></template>
 
 				<template #icons>
 					<HelpIcon
@@ -46,10 +29,7 @@
 					/>
 				</template>
 
-				<form
-					class="flex flex-col gap-4"
-					@submit.prevent="submitQuickCode()"
-				>
+				<form class="flex flex-col gap-4" @submit.prevent="submitQuickCode()">
 					<InputOtp
 						v-model="qcForm.code"
 						name="code"
@@ -65,12 +45,7 @@
 						@input="qcForm.clearErrors()"
 					/>
 
-					<Message
-						v-if="qcForm.hasErrors"
-						severity="error"
-						variant="simple"
-						class="-mt-3"
-					>
+					<Message v-if="qcForm.hasErrors" severity="error" variant="simple" class="-mt-3">
 						{{ qcForm.errors.code }}
 					</Message>
 

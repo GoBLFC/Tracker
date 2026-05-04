@@ -8,9 +8,7 @@
 		}"
 	>
 		<template #header>
-			<span class="p-panel-title">
-				<VolunteerName :volunteer show-id />
-			</span>
+			<span class="p-panel-title"><VolunteerName :volunteer show-id /></span>
 		</template>
 
 		<template #icons>
@@ -32,12 +30,7 @@
 
 			<VolunteerTimeEntriesPanel v-model="volunteer" :now :read-only />
 
-			<VolunteerTimeAddPanel
-				v-if="!readOnly"
-				v-model="volunteer"
-				:event
-				:departments
-			/>
+			<VolunteerTimeAddPanel v-if="!readOnly" v-model="volunteer" :event :departments />
 		</div>
 	</Panel>
 </template>

@@ -1,11 +1,6 @@
 <template>
-	<BasicPage
-		title="Not Permitted"
-		severity="warn"
-		:icon="faTriangleExclamation"
-	>
-		There is a hold on your volunteer account. Please talk to a Volunteer
-		Manager at the volunteer desk.
+	<BasicPage title="Not Permitted" severity="warn" :icon="faTriangleExclamation">
+		There is a hold on your volunteer account. Please talk to a Volunteer Manager at the volunteer desk.
 	</BasicPage>
 </template>
 

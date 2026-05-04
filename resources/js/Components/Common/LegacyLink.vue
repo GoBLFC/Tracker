@@ -1,7 +1,5 @@
 <template>
-	<a :href>
-		<slot />
-	</a>
+	<a :href><slot /></a>
 </template>
 
 <script setup lang="ts">

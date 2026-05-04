@@ -1,8 +1,6 @@
 <template>
 	<Breadcrumb :model="trail">
-		<template #item="{ item }">
-			<Link :to="item.route">{{ item.label }}</Link>
-		</template>
+		<template #item="{ item }"><Link :to="item.route">{{ item.label }}</Link></template>
 	</Breadcrumb>
 </template>
 

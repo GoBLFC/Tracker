@@ -1,24 +1,11 @@
 <template>
-	<Dialog
-		modal
-		header="Preferences"
-		class="w-full sm:w-[28rem] mx-2"
-		:dismissable-mask="true"
-	>
+	<Dialog modal header="Preferences" class="w-full sm:w-[28rem] mx-2" :dismissable-mask="true">
 		<p class="mb-6">These preferences save to your browser.</p>
 
 		<div class="flex flex-col gap-6 pt-1">
 			<InputGroup>
 				<InputGroupAddon @click="focus(themeId)">
-					<FontAwesomeIcon
-						:icon="
-							theme === 'system'
-								? faComputer
-								: theme === 'light'
-								? faSun
-								: faMoon
-						"
-					/>
+					<FontAwesomeIcon :icon="theme === 'system' ? faComputer : theme === 'light' ? faSun : faMoon" />
 				</InputGroupAddon>
 				<FloatLabel variant="on">
 					<Select
@@ -34,9 +21,7 @@
 			</InputGroup>
 
 			<InputGroup>
-				<InputGroupAddon @click="focus(timezoneId)">
-					<FontAwesomeIcon :icon="faClock" />
-				</InputGroupAddon>
+				<InputGroupAddon @click="focus(timezoneId)"><FontAwesomeIcon :icon="faClock" /></InputGroupAddon>
 				<FloatLabel variant="on">
 					<Select
 						v-model="timezone"

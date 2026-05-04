@@ -1,11 +1,7 @@
 <template>
-	<div
-		class="flex flex-wrap px-4 py-6 justify-around gap-8 lg:gap-16 text-center"
-	>
+	<div class="flex flex-wrap px-4 py-6 justify-around gap-8 lg:gap-16 text-center">
 		<div v-if="ongoing" class="flex flex-col gap-1">
-			<div
-				class="flex flex-col lg:flex-row items-center gap-3 text-2xl md:text-4xl"
-			>
+			<div class="flex flex-col lg:flex-row items-center gap-3 text-2xl md:text-4xl">
 				<FontAwesomeIcon :icon="faClock" />
 				<Duration format="clock" :start="ongoing.start" :now />
 			</div>
@@ -19,9 +15,7 @@
 		</div>
 
 		<div class="flex flex-col gap-1">
-			<div
-				class="flex flex-col lg:flex-row items-center gap-3 text-2xl md:text-4xl"
-			>
+			<div class="flex flex-col lg:flex-row items-center gap-3 text-2xl md:text-4xl">
 				<FontAwesomeIcon :icon="faClock" />
 				<Duration
 					:start="dayStart"
@@ -39,9 +33,7 @@
 		</div>
 
 		<div class="flex flex-col gap-1">
-			<div
-				class="flex flex-col lg:flex-row items-center gap-3 text-2xl md:text-4xl"
-			>
+			<div class="flex flex-col lg:flex-row items-center gap-3 text-2xl md:text-4xl">
 				<FontAwesomeIcon :icon="faClock" />
 				<Duration
 					:start="totalStart"

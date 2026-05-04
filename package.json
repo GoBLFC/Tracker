@@ -39,7 +39,7 @@
 		"vue-debounce": "^5.0.1"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.2.5",
+		"@biomejs/biome": "2.4.14",
 		"@primevue/auto-import-resolver": "^4.5.5",
 		"@tailwindcss/vite": "^4.2.2",
 		"@tsconfig/node24": "^24.0.4",

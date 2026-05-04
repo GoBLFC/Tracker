@@ -20,13 +20,7 @@
 		@sort="loadPage"
 		@filter="loadPage"
 	>
-		<Column
-			field="badge_id"
-			header="ID"
-			sortable
-			data-type="number"
-			:show-filter-menu="false"
-		>
+		<Column field="badge_id" header="ID" sortable data-type="number" :show-filter-menu="false">
 			<template #filter="{ filterModel, filterCallback }">
 				<div class="flex">
 					<InputText
@@ -39,39 +33,18 @@
 			</template>
 		</Column>
 
-		<Column
-			field="display_name"
-			header="Name"
-			sortable
-			:show-filter-menu="false"
-		>
-			<template #body="{ data: user }: { data: User }">
-				<VolunteerName :volunteer="user" />
-			</template>
+		<Column field="display_name" header="Name" sortable :show-filter-menu="false">
+			<template #body="{ data: user }: { data: User }"><VolunteerName :volunteer="user" /></template>
 
 			<template #filter="{ filterModel, filterCallback }">
 				<div class="flex">
-					<InputText
-						v-model="filterModel.value"
-						v-debounce="filterCallback"
-						type="text"
-						class="grow w-32"
-					/>
+					<InputText v-model="filterModel.value" v-debounce="filterCallback" type="text" class="grow w-32" />
 				</div>
 			</template>
 		</Column>
 
-		<Column
-			field="role"
-			header="Role"
-			sortable
-			data-type="number"
-			:show-filter-menu="false"
-			class="w-76"
-		>
-			<template #body="{ data: user }: { data: User }">
-				<UserRoleSelector :user />
-			</template>
+		<Column field="role" header="Role" sortable data-type="number" :show-filter-menu="false" class="w-76">
+			<template #body="{ data: user }: { data: User }"><UserRoleSelector :user /></template>
 
 			<template #filter="{ filterModel, filterCallback }">
 				<div class="flex">
@@ -95,26 +68,15 @@
 			class="text-end"
 			:pt="{ columnHeaderContent: { class: 'justify-end' } }"
 		>
-			<template #body="{ data: user }: { data: User }">
-				<UserActionButtons :user />
-			</template>
+			<template #body="{ data: user }: { data: User }"><UserActionButtons :user /></template>
 		</Column>
 
 		<template #empty>
-			<slot name="empty">
-				<p>There aren't any matching users.</p>
-			</slot>
+			<slot name="empty"><p>There aren't any matching users.</p></slot>
 		</template>
 	</DataTable>
 
-	<SkeletonTable
-		v-else
-		:columns="
-			actions && isAdmin
-				? ['ID', 'Name', 'Role', 'Actions']
-				: ['ID', 'Name', 'Role']
-		"
-	/>
+	<SkeletonTable v-else :columns="actions && isAdmin ? ['ID', 'Name', 'Role', 'Actions'] : ['ID', 'Name', 'Role']" />
 </template>
 
 <script setup lang="ts">

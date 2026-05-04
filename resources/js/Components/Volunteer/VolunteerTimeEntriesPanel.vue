@@ -16,9 +16,7 @@
 			class="w-full"
 		>
 			<Column field="start" header="In" sortable data-type="date">
-				<template #body="{ data: entry }: { data: TimeEntry }">
-					<DateTime :date="entry.start" />
-				</template>
+				<template #body="{ data: entry }: { data: TimeEntry }"><DateTime :date="entry.start" /></template>
 			</Column>
 
 			<Column field="stop" header="Out" sortable data-type="date">
@@ -29,12 +27,7 @@
 
 			<Column field="department.name" header="Department" sortable />
 
-			<Column
-				field="duration"
-				header="Worked"
-				sortable
-				data-type="number"
-			>
+			<Column field="duration" header="Worked" sortable data-type="number">
 				<template #body="{ data: entry }: { data: TimeEntry }">
 					<Duration :start="entry.start" :stop="entry.stop" :now />
 				</template>
@@ -76,17 +69,11 @@
 				:pt="{ columnHeaderContent: { class: 'justify-end' } }"
 			>
 				<template #body="{ data: entry }: { data: TimeEntry }">
-					<TimeEntryActionButtons
-						:entry
-						@checkout="updateEntry"
-						@delete="deleteEntry(entry.id)"
-					/>
+					<TimeEntryActionButtons :entry @checkout="updateEntry" @delete="deleteEntry(entry.id)" />
 				</template>
 			</Column>
 
-			<template #empty>
-				<p>This volunteer doesn't have any time entries.</p>
-			</template>
+			<template #empty><p>This volunteer doesn't have any time entries.</p></template>
 		</DataTable>
 	</Panel>
 </template>
