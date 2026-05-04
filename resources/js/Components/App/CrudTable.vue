@@ -15,36 +15,25 @@
 			:field="String(field.key)"
 			:header="field.label"
 			sortable
-			:data-type="
-				field.type === 'number'
-					? 'number'
-					: field.type === 'date'
-					? 'date'
-					: field.type ?? undefined
-			"
+			:data-type="field.type === 'number' ? 'number' : field.type === 'date' ? 'date' : (field.type ?? undefined)"
 			:class="field.class"
 		>
 			<template #body="{ data: item }: { data: T }">
 				<slot :name="`col-${String(field.key)}`" :item>
 					<template v-if="!!readonly || !editing[item.id as T['id']]">
-						<template v-if="field.display">
-							{{ field.display(item[field.key]) }}
-						</template>
+						<template v-if="field.display">{{ field.display(item[field.key]) }}</template>
 						<template v-else-if="field.type === 'number'">
-							{{ field.prefix ?? '' }}{{
-								field.format?.format?.(item[field.key])
-								?? item[field.key].toLocaleString(undefined, {
+							{{ field.prefix ?? "" }}
+							{{ field.format?.format?.(item[field.key]) ??
+								item[field.key].toLocaleString(undefined, {
 									minimumFractionDigits: field.fractionDigits,
 									maximumFractionDigits: field.fractionDigits,
-								})
-							}}{{ field.suffix ?? '' }}
+								}) }}{{ field.suffix ?? "" }}
 						</template>
 						<template v-else-if="field.type === 'datetime'">
 							<DateTime :date="item[field.key]" />
 						</template>
-						<template v-else>
-							{{ item[field.key] }}
-						</template>
+						<template v-else>{{ item[field.key] }}</template>
 					</template>
 
 					<InputNumber
@@ -131,7 +120,7 @@
 						severity="error"
 						variant="simple"
 					>
-						{{ editErrors[item.id as T['id']][field.key] }}
+						{{ editErrors[item.id as T["id"]][field.key] }}
 					</Message>
 				</slot>
 			</template>
@@ -221,12 +210,7 @@
 					@input="createForm.clearErrors(field.key)"
 				/>
 
-				<Message
-					v-if="createForm.errors[field.key]"
-					size="small"
-					severity="error"
-					variant="simple"
-				>
+				<Message v-if="createForm.errors[field.key]" size="small" severity="error" variant="simple">
 					{{ createForm.errors[field.key] }}
 				</Message>
 			</template>
@@ -306,16 +290,11 @@
 		</Column>
 
 		<template #empty>
-			<slot name="empty">
-				<p>There aren't any {{ entityPlural ?? `${entityName}s` }}.</p>
-			</slot>
+			<slot name="empty"><p>There aren't any {{ entityPlural ?? `${entityName}s` }}.</p></slot>
 		</template>
 	</DataTable>
 
-	<SkeletonTable
-		v-else
-		:columns="[...fields.map(f => f.label), ...(!readonly ? ['Actions'] : [])]"
-	/>
+	<SkeletonTable v-else :columns="[...fields.map((f) => f.label), ...(!readonly ? ['Actions'] : [])]" />
 </template>
 
 <script setup lang="ts" generic="T extends { id: string }, EntityName extends string">

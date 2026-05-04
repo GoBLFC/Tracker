@@ -67,7 +67,8 @@
 		<p class="text-lg">
 			<span class="font-semibold">There aren't any events yet.</span>
 			You'll need to
-			<Button variant="link" @click="showCreateModal = true">create one</Button> to manage.
+			<Button variant="link" @click="showCreateModal = true">create one</Button>
+			to manage.
 		</p>
 	</Message>
 

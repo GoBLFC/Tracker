@@ -1,10 +1,5 @@
 <template>
-	<Dialog
-		modal
-		header="Create new event"
-		class="w-full sm:w-[28rem] mx-2"
-		v-model:visible="visibleModel"
-	>
+	<Dialog modal header="Create new event" class="w-full sm:w-[28rem] mx-2" v-model:visible="visibleModel">
 		<form :id="formId" class="mt-1" @submit.prevent="create()">
 			<FloatLabel variant="on">
 				<InputText

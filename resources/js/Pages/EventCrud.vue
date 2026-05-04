@@ -1,10 +1,5 @@
 <template>
-	<EventDataPage
-		title="Event Setup"
-		:event
-		:events
-		:resolver="eventRequestResolver"
-	>
+	<EventDataPage title="Event Setup" :event :events :resolver="eventRequestResolver">
 		<Panel header="Rewards">
 			<CrudTable
 				v-if="rewards"
