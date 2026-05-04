@@ -5,7 +5,7 @@
 				:users
 				:total-records="total"
 				:rows="perPage"
-				:first="first - 1"
+				:first="(first ?? 1) - 1"
 				:sort-field="sortBy"
 				:sort-order="sortDir === 'asc' ? 1 : -1"
 				:filter-values="filters"
@@ -24,7 +24,7 @@ defineProps<{
 	users: User[];
 	total: number;
 	perPage: number;
-	first: number;
+	first: number | null;
 	sortBy: string;
 	sortDir: string;
 	filters: {
