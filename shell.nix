@@ -7,7 +7,7 @@ pkgs.mkShellNoCC {
 	packages = with pkgs; [
 		git
 		php85
-		phpPackages.composer
+		php85Packages.composer
 		nodejs_24
 		
 		(pkgs.writeShellScriptBin "sail" ''
