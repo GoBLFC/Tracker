@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Event;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class EventStoreRequest extends FormRequest {
 	/**
@@ -20,7 +21,12 @@ class EventStoreRequest extends FormRequest {
 	 */
 	public function rules(): array {
 		return [
-			'name' => 'required|string|max:64',
+			'name' => [
+				'required',
+				'string',
+				'max:64',
+				Rule::unique(Event::class)->withoutTrashed(),
+			],
 		];
 	}
 }
