@@ -77,48 +77,6 @@ class ManagementController extends Controller {
 	}
 
 	/**
-	 * Render the events admin page
-	 */
-	public function getAdminEvents(): View {
-		return view('admin.events', ['events' => Event::all()]);
-	}
-
-	/**
-	 * Render the rewards admin page
-	 */
-	public function getAdminRewards(?Event $event = null): View|RedirectResponse {
-		// Get the event and redirect to the page for the active event, if applicable
-		if (!$event) {
-			$event = Setting::activeEvent();
-			if ($event) return redirect()->route('admin.event.rewards', $event);
-		}
-
-		return view('admin.rewards', [
-			'event' => $event,
-			'events' => Event::all(),
-			'rewards' => $event?->rewards,
-		]);
-	}
-
-	/**
-	 * Render the bonuses admin page
-	 */
-	public function getAdminBonuses(?Event $event = null): View|RedirectResponse {
-		// Get the event and redirect to the page for the active event, if applicable
-		if (!$event) {
-			$event = Setting::activeEvent();
-			if ($event) return redirect()->route('admin.event.bonuses', $event);
-		}
-
-		return view('admin.bonuses', [
-			'event' => $event,
-			'events' => Event::all(),
-			'departments' => Department::all()->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE),
-			'bonuses' => $event?->timeBonuses()?->with('departments')?->get(),
-		]);
-	}
-
-	/**
 	 * Render the reports list admin page
 	 */
 	public function getAdminReportList(?Event $event = null): View|RedirectResponse {
