@@ -146,10 +146,10 @@ const mainMenuItems = computed(() => {
 				legacy: false,
 			},
 			{
-				to: 'admin.events',
+				to: 'events.index',
 				label: 'Events',
 				icon: faCalendarDay,
-				legacy: true,
+				legacy: false,
 			},
 			{
 				to: 'admin.reports',
