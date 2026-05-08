@@ -7,6 +7,7 @@ use App\Http\Requests\EventUpdateRequest;
 use App\Models\Department;
 use App\Models\Event;
 use App\Models\Reward;
+use App\Models\Setting;
 use App\Models\TimeBonus;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -18,9 +19,24 @@ class EventController extends Controller {
 	/**
 	 * Display a listing of the resource.
 	 */
-	public function index(): JsonResponse {
+	public function index(Request $request): JsonResponse|InertiaResponse|RedirectResponse {
 		$this->authorize('viewAny', Event::class);
-		return response()->json(['events' => Event::all()]);
+
+		if ($request->expectsJson()) return response()->json(['events' => Event::all()]);
+
+		$event = Setting::activeEvent();
+		if ($event) {
+			$request->session()->reflash();
+			return redirect()->route('events.show', [$event->id]);
+		}
+
+		return Inertia::render('EventCrud', [
+			'event' => null,
+			'events' => Event::orderBy('name')->get(),
+			'departments' => Department::all(),
+			'rewards' => null,
+			'bonuses' => null,
+		]);
 	}
 
 	/**
@@ -61,22 +77,30 @@ class EventController extends Controller {
 	/**
 	 * Update the specified resource in storage.
 	 */
-	public function update(EventUpdateRequest $request, Event $event): JsonResponse {
+	public function update(EventUpdateRequest $request, Event $event): JsonResponse|RedirectResponse {
 		$event->update($request->validated());
-		return response()->json(['event' => $event]);
+		return $request->expectsJson()
+			? response()->json(['event' => $event])
+			: redirect()->back()->withSuccess('Renamed event.');
 	}
 
 	/**
 	 * Remove the specified resource from storage.
 	 */
-	public function destroy(Event $event): JsonResponse {
+	public function destroy(Request $request, Event $event): JsonResponse|RedirectResponse {
 		$this->authorize('delete', $event);
+
+		$isActive = $event->isActive();
 
 		// TODO: Once determination is made on what to do with soft-deletables, we may want to ensure relations get
 		// deleted or soft-deleted along with the parent. At the moment, we just try to gracefully handle the parent,
 		// Event in this case, being soft-deleted.
 		$event->delete();
 
-		return response()->json(null, 205);
+		if ($isActive) Setting::set('active-event', null);
+
+		return $request->expectsJson()
+			? response()->json(null, 205)
+			: redirect()->route('events.index')->withSuccess("Deleted event {$event->name}.");
 	}
 }

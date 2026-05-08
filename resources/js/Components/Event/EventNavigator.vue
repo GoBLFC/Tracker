@@ -9,7 +9,7 @@
 			ref="select"
 			v-model="selectedEvent"
 			option-label="name"
-			:options
+			:options="events"
 			:placeholder="`Select an event to ${actionWord}`"
 			:loading
 			:aria-labelledby="labelId"
@@ -40,25 +40,25 @@
 				<div v-else>{{ placeholder }}</div>
 			</template>
 
-			<template #option="{ option: event }: { option: TrackerEvent|'new' }">
-				<div v-if="event !== 'new'" class="flex grow gap-6 justify-between items-center">
+			<template #option="{ option: event }: { option: TrackerEvent }">
+				<div class="flex grow gap-6 justify-between items-center">
 					<span class="truncate">{{ event.name }}</span>
 					<Tag
-						:value="
-							event.id === activeEvent?.id ? 'Active' : 'Inactive'
-						"
-						:severity="
-							event.id === activeEvent?.id
-								? 'success'
-								: 'secondary'
-						"
+						:value="event.id === activeEvent?.id ? 'Active' : 'Inactive'"
+						:severity="event.id === activeEvent?.id ? 'success' : 'secondary'"
 					/>
 				</div>
+			</template>
 
-				<div v-else>
-					<FontAwesomeIcon :icon="faPlus" />
-					Create new event
-				</div>
+			<template v-if="isAdmin" #footer>
+				<IconButton
+					label="Create new event"
+					:icon="faCalendarPlus"
+					variant="text"
+					size="small"
+					fluid
+					@click="showCreateModal = true"
+				/>
 			</template>
 		</Select>
 	</InputGroup>
@@ -80,7 +80,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, useId, useTemplateRef, watch } from 'vue';
+import { ref, useId, useTemplateRef, watch } from 'vue';
 import { router } from '@inertiajs/vue3';
 import type { RequestPayload, Errors } from '@inertiajs/core';
 import { useAppSettings } from '@/lib/settings';
@@ -89,7 +89,8 @@ import type TrackerEvent from '@/data/Event';
 import type { EventId } from '@/data/Event';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faCalendarDay, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faCalendarDay, faCalendarPlus } from '@fortawesome/free-solid-svg-icons';
+import IconButton from '../Common/IconButton.vue';
 import EventCreateModal from '../Dialogs/EventCreateModal.vue';
 
 const {
@@ -112,23 +113,23 @@ const emit = defineEmits<{
 const { activeEvent } = useAppSettings();
 const { isAdmin } = useUser();
 
-const selectedEvent = ref<TrackerEvent | 'new' | null>(event);
+const selectedEvent = ref<TrackerEvent | null>(event);
 const loading = ref(false);
 const select = useTemplateRef('select');
 const labelId = useId();
 const showCreateModal = ref(false);
-const options = computed<(TrackerEvent | 'new')[]>(() => ['new', ...events]);
+
+watch(
+	() => event,
+	(newEvent) => {
+		if (event?.id !== selectedEvent.value?.id || event?.name !== selectedEvent.value?.name)
+			selectedEvent.value = newEvent;
+	},
+);
 
 // Navigate to the appropriate URL when switching events
 watch(selectedEvent, (newEvent, oldEvent) => {
-	console.log('ev switch', newEvent, oldEvent);
 	if (!newEvent) return;
-
-	if (newEvent === 'new') {
-		showCreateModal.value = true;
-		selectedEvent.value = oldEvent;
-		return;
-	}
 
 	// Resolve the router properties to use
 	const { url, data = {}, only, ...options } = resolver(newEvent.id);

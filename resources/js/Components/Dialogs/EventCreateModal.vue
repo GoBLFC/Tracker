@@ -1,5 +1,5 @@
 <template>
-	<Dialog modal header="Create new event" class="w-full sm:w-[28rem] mx-2" v-model:visible="visibleModel">
+	<Dialog modal header="Create new event" class="w-full sm:w-md mx-2" v-model:visible="visibleModel">
 		<form :id="formId" class="mt-1" @submit.prevent="create()">
 			<FloatLabel variant="on">
 				<InputText
@@ -7,6 +7,7 @@
 					name="name"
 					:id="nameId"
 					:invalid="Boolean(form.errors.name)"
+					maxlength="64"
 					required
 					autofocus
 					fluid
@@ -14,6 +15,10 @@
 				/>
 				<label :for="nameId">Name</label>
 			</FloatLabel>
+
+			<Message v-if="form.errors.name" size="small" severity="error" variant="simple" class="mt-1">
+				{{ form.errors.name }}
+			</Message>
 		</form>
 
 		<template #footer>
@@ -31,14 +36,13 @@
 </template>
 
 <script setup lang="ts">
-import { useId, useModel } from 'vue';
+import { useId } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 
 import { faCalendarPlus } from '@fortawesome/free-solid-svg-icons';
 import IconButton from '../Common/IconButton.vue';
 
-const { visible = true } = defineProps<{ visible: boolean }>();
-const visibleModel = useModel({ visible: true }, 'visible');
+const visibleModel = defineModel<boolean>('visible', { default: true });
 
 const form = useForm({ name: '' });
 const formId = useId();

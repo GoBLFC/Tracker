@@ -1,11 +1,13 @@
 <template>
 	<EventDataPage title="Event Setup" :event :events :resolver="eventRequestResolver">
+		<EventManagementPanel :event="event!" />
+
 		<Panel header="Rewards">
 			<CrudTable
 				v-if="rewards"
 				entity-name="reward"
 				route-slug="rewards"
-				:create-route="['events.rewards.store', event.id]"
+				:create-route="['events.rewards.store', event!.id]"
 				:fields="[
 					{ key: 'name', label: 'Name' },
 					{ key: 'description', label: 'Description', type: 'textarea' },
@@ -23,7 +25,7 @@
 				entity-name="bonus"
 				entity-plural="bonuses"
 				route-slug="bonuses"
-				:create-route="['events.bonuses.store', event.id]"
+				:create-route="['events.bonuses.store', event!.id]"
 				:fields="[
 					{ key: 'start', label: 'Start', type: 'datetime' },
 					{ key: 'stop', label: 'Stop', type: 'datetime' },
@@ -66,10 +68,11 @@ import type Reward from '@/data/Reward';
 import type TimeBonus from '@/data/TimeBonus';
 
 import EventDataPage from '@/Components/App/EventDataPage.vue';
+import EventManagementPanel from '@/Components/Event/EventManagementPanel.vue';
 import CrudTable from '@/Components/App/CrudTable.vue';
 
 defineProps<{
-	event: Event;
+	event: Event | null;
 	events?: Event[] | null;
 	departments: Department[];
 	rewards: Reward[] | null;
