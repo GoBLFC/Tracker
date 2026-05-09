@@ -6,6 +6,8 @@
 			content: { class: 'h-full' },
 		}"
 	>
+		<template #icons v-if="$slots.icons"><slot name="icons" /></template>
+
 		<slot />
 	</Panel>
 </template>
