@@ -10,7 +10,14 @@
 				'justify-between': events.length > 0,
 			}"
 		>
-			<EventNavigator :event :events :resolver :action-word />
+			<EventNavigator
+				:event
+				:events
+				:resolver
+				:action-word
+				@changing="loading = true"
+				@finish="loading = false"
+			/>
 
 			<div v-if="readOnly" class="text-2xl text-muted-color" v-tooltip.left="'Read-only'">
 				<FontAwesomeIcon :icon="faEye" />
@@ -18,7 +25,7 @@
 			</div>
 		</div>
 
-		<div v-if="event" class="grow flex flex-col gap-4"><slot :event :read-only /></div>
+		<div v-if="event" class="grow flex flex-col gap-4"><slot :event :read-only :loading /></div>
 
 		<template v-else>
 			<slot name="placeholder">
@@ -31,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { toRef } from 'vue';
+import { ref, toRef } from 'vue';
 import { useReadOnly } from '@/lib/readonly';
 import type Event from '@/data/Event';
 
@@ -51,4 +58,5 @@ const { event, actionWord = 'manage' } = defineProps<{
 const isEventReadOnly = useReadOnly();
 
 const readOnly = toRef(() => Boolean(event && isEventReadOnly(event)));
+const loading = ref(false);
 </script>

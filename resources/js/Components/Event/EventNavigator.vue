@@ -108,6 +108,7 @@ const emit = defineEmits<{
 	(e: 'changing', eventId: EventId): void;
 	(e: 'change', eventId: EventId): void;
 	(e: 'error', errors: Errors): void;
+	(e: 'finish'): void;
 }>();
 
 const { activeEvent } = useAppSettings();
@@ -155,6 +156,7 @@ watch(selectedEvent, (newEvent, oldEvent) => {
 		},
 		onFinish() {
 			loading.value = false;
+			emit('finish');
 		},
 	});
 });
