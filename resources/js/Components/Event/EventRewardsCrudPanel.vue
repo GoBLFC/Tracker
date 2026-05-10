@@ -15,9 +15,9 @@
 			route-slug="rewards"
 			:create-route="['events.rewards.store', event!.id]"
 			:fields="[
-				{ key: 'name', label: 'Name' },
-				{ key: 'description', label: 'Description', type: 'textarea' },
-				{ key: 'hours', label: 'Hours', type: 'number', min: 1, max: 168, class: 'w-32' },
+				{ key: 'name', label: 'Name', required: true },
+				{ key: 'description', label: 'Description', type: 'textarea', required: true },
+				{ key: 'hours', label: 'Hours', type: 'number', required: true, min: 1, max: 168, class: 'w-32' },
 			]"
 			:readonly
 			:items="rewards ?? []"
