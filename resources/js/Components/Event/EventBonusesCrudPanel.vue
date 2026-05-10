@@ -37,7 +37,9 @@
 						required: true,
 						multiple: true,
 						options: departments?.map(dept => ({ label: dept.name, value: dept.id })) ?? [],
-						display: data => (data as string[]).map(id => departments!.find(dept => dept.id === id)!.name).join(', '),
+						display: data => (data as string[])
+							.map(id => departments?.find(dept => dept.id === id)?.name ?? id)
+							.join(', '),
 					},
 				]"
 			:readonly
