@@ -1,6 +1,6 @@
 <template>
 	<EventDataPage title="Event Setup" :event :events :resolver="eventRequestResolver">
-		<EventManagementPanel :event="event!" />
+		<EventManagementPanel :event="event!" :readonly="!isAdmin" />
 		<EventDepartmentsCrudPanel :event :departments :readonly="!isAdmin" />
 		<EventRewardsCrudPanel :event :rewards :readonly="!isAdmin" />
 		<EventBonusesCrudPanel :event :bonuses :departments :readonly="!isAdmin" />

@@ -10,11 +10,13 @@
 							:invalid="Boolean(renameForm.errors.name)"
 							required
 							maxlength="64"
+							:readonly
 							@input="renameForm.clearErrors()"
 						/>
 						<label :for="nameId">Name</label>
 					</FloatLabel>
 					<IconButton
+						v-if="!readonly"
 						label="Rename"
 						type="submit"
 						:icon="faSave"
@@ -32,7 +34,7 @@
 				>
 			</form>
 
-			<ButtonGroup aria-label="Event actions">
+			<ButtonGroup v-if="!readonly" aria-label="Event actions">
 				<IconButton
 					:icon="faCalendarCheck"
 					variant="text"
@@ -67,7 +69,7 @@ import type TrackerEvent from '@/data/Event';
 import { faCalendarCheck, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
 import IconButton from '../Common/IconButton.vue';
 
-const { event } = defineProps<{ event: TrackerEvent }>();
+const { event, readonly = false } = defineProps<{ event: TrackerEvent; readonly?: boolean }>();
 
 const route = useRoute();
 const { confirm } = useConfirm();
