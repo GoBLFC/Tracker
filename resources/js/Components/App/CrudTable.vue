@@ -25,7 +25,7 @@
 		>
 			<template #body="{ data: item }: { data: T }">
 				<slot :name="`col-${String(field.key)}`" :item>
-					<template v-if="!!readonly || !editing[item.id as T['id']]">
+					<template v-if="readonly || !editing[item.id as T['id']]">
 						<template v-if="field.display">{{ field.display(item[field.key]) }}</template>
 						<template v-else-if="field.type === 'number'">
 							{{ field.prefix ?? "" }}
@@ -348,7 +348,7 @@ const {
 	routeSlug,
 	createRoute,
 	fields,
-	readonly = true,
+	readonly = false,
 	skeleton = false,
 } = defineProps<{
 	entityName: EntityName;
