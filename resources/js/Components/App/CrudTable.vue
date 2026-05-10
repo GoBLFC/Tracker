@@ -15,7 +15,12 @@
 			:field="String(field.key)"
 			:header="field.label"
 			sortable
-			:data-type="field.type === 'number' ? 'number' : field.type === 'date' ? 'date' : (field.type ?? undefined)"
+			:data-type="
+				field.type === 'number' ? 'number'
+					: field.type === 'date' ? 'date'
+					: field.type === 'switch' ? 'boolean'
+					: (field.type ?? undefined)
+			"
 			:class="field.class"
 		>
 			<template #body="{ data: item }: { data: T }">
@@ -32,6 +37,9 @@
 						</template>
 						<template v-else-if="field.type === 'datetime'">
 							<DateTime :date="item[field.key]" />
+						</template>
+						<template v-else-if="field.type === 'switch'">
+							<ToggleSwitch :modelValue="item[field.key]" readonly />
 						</template>
 						<template v-else>{{ item[field.key] }}</template>
 					</template>
@@ -93,11 +101,20 @@
 						fluid
 						@change="clearEditError(item.id as T['id'], field.key)"
 					/>
+					<ToggleSwitch
+						v-else-if="field.type === 'switch'"
+						v-model="editing[item.id as T['id']][field.key]"
+						:form="editFormId(item.id as T['id'])"
+						:disabled="Boolean(updating[item.id as T['id']])"
+						@change="clearEditError(item.id as T['id'], field.key)"
+					/>
 					<Textarea
 						v-else-if="field.type === 'textarea'"
 						v-model="editing[item.id as T['id']][field.key]"
 						:form="editFormId(item.id as T['id'])"
 						:required="field.required"
+						:minlength="field.min"
+						:maxlength="field.max"
 						:disabled="Boolean(updating[item.id as T['id']])"
 						:rows="1"
 						auto-resize
@@ -109,6 +126,8 @@
 						v-model="editing[item.id as T['id']][field.key]"
 						:form="editFormId(item.id as T['id'])"
 						:required="field.required"
+						:minlength="field.min"
+						:maxlength="field.max"
 						:disabled="Boolean(updating[item.id as T['id']])"
 						fluid
 						@input="clearEditError(item.id as T['id'], field.key)"
@@ -166,6 +185,8 @@
 					v-model="createForm[field.key]"
 					:form="createFormId"
 					:required="field.required"
+					:minlength="field.min"
+					:maxlength="field.max"
 					:rows="1"
 					:disabled="createForm.processing"
 					:invalid="Boolean(createForm.errors[field.key])"
@@ -199,11 +220,21 @@
 					fluid
 					@change="createForm.clearErrors(field.key)"
 				/>
+				<ToggleSwitch
+					v-else-if="field.type === 'switch'"
+					v-model="createForm[field.key]"
+					:form="createFormId"
+					:disabled="createForm.processing"
+					:invalid="Boolean(createForm.errors[field.key])"
+					@change="createForm.clearErrors(field.key)"
+				/>
 				<InputText
 					v-else
 					v-model="createForm[field.key]"
 					:form="createFormId"
 					:required="field.required"
+					:minlength="field.min"
+					:maxlength="field.max"
 					:disabled="createForm.processing"
 					:invalid="Boolean(createForm.errors[field.key])"
 					fluid
@@ -386,6 +417,7 @@ function editFormId(id: T['id']) {
  */
 function cancel(id: T['id']) {
 	editing[id] = undefined;
+	editErrors[id] = undefined;
 }
 
 const updating: Partial<Record<T['id'], boolean>> = reactive({});
@@ -494,8 +526,8 @@ type Field<T, V> = {
 	default?: V;
 	display?: (data: V) => string;
 } & (
-	| { type?: 'text' }
-	| { type: 'textarea' }
+	| { type?: 'text'; min?: number; max?: number }
+	| { type: 'textarea'; min?: number; max?: number }
 	| {
 			type: 'number';
 			min?: number;
@@ -512,5 +544,6 @@ type Field<T, V> = {
 			options: { label: string; value: string | number }[];
 			multiple?: boolean;
 	  }
+	| { type: 'switch' }
 );
 </script>
