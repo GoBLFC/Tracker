@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder {
 
 			TimeBonus::factory(5)
 				->for($event)
-				->recycle($departments)
+				->hasAttached($departments)
 				->create();
 
 			TimeEntry::factory(1000)
