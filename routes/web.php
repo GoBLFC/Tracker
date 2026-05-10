@@ -50,6 +50,7 @@ Route::middleware(['auth', 'not-banned', 'lockdown'])->group(function () {
 		->only(['index', 'update', 'destroy'])
 		->parameter('settings', 'setting:name');
 	Route::apiResource('events', \App\Http\Controllers\EventController::class);
+	Route::apiResource('events.departments', \App\Http\Controllers\DepartmentController::class)->shallow();
 	Route::apiResource('events.bonuses', \App\Http\Controllers\TimeBonusController::class)->shallow();
 	Route::apiResource('events.rewards', \App\Http\Controllers\RewardController::class)->shallow();
 	Route::apiResource('events.attendee-logs', \App\Http\Controllers\AttendeeLogController::class)->shallow();
@@ -67,7 +68,6 @@ Route::middleware(['auth', 'not-banned', 'lockdown'])->group(function () {
 		});
 
 		Route::middleware('role:admin')->group(function () {
-			Route::get('/admin/departments', 'getAdminDepartments')->name('admin.departments');
 			Route::get('/admin/reports', 'getAdminReportList')->name('admin.reports');
 			Route::get('/admin/event/{event}/reports', 'getAdminReportList')->name('admin.event.reports');
 			Route::get('/admin/reports/{reportType}', 'getAdminReport')->name('admin.reports.view');

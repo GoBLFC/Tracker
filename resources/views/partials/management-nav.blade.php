@@ -19,7 +19,6 @@
 						<ul class="dropdown-menu dropdown-menu-end">
 							<li><a class="dropdown-item" href="{!! route('settings.index') !!}">Site</a></li>
 							<li><a class="dropdown-item" href="{!! route('users.index') !!}">Users</a></li>
-							<li><a class="dropdown-item" href="{!! route('admin.departments') !!}">Departments</a></li>
 							<li><a class="dropdown-item" href="{!! route('events.index') !!}">Events</a></li>
 							<li><a class="dropdown-item" href="{!! route('admin.reports') !!}">Reports</a></li>
 						</ul>

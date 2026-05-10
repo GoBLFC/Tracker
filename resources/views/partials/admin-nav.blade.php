@@ -6,9 +6,6 @@
 		<a @class(['nav-link', 'active' => Route::is('users.index')]) href="{!! route('users.index') !!}">Users</a>
 	</li>
 	<li class="nav-item">
-		<a @class(['nav-link', 'active' => Route::is('admin.departments')]) href="{!! route('admin.departments') !!}">Departments</a>
-	</li>
-	<li class="nav-item">
 		<a @class(['nav-link', 'active' => Route::is('events.index')]) href="{!! route('events.index') !!}">Events</a>
 	</li>
 	<li class="nav-item">

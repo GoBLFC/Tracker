@@ -19,8 +19,6 @@ export default defineConfig({
 				'resources/js/legacy/app.js',
 				'resources/js/legacy/auto-logout.js',
 				'resources/js/legacy/event-selector.js',
-				'resources/js/legacy/seamless-forms.js',
-				'resources/js/legacy/admin/departments.js',
 				'resources/js/legacy/admin/report.js',
 			],
 			refresh: true,
