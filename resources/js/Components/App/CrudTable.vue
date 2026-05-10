@@ -38,6 +38,9 @@
 						<template v-else-if="field.type === 'datetime'">
 							<DateTime :date="item[field.key]" />
 						</template>
+						<template v-else-if="field.type === 'select' && field.multiple">
+							{{ (item[field.key] as unknown[])?.join?.(', ') ?? '' }}
+						</template>
 						<template v-else-if="field.type === 'switch'">
 							<ToggleSwitch :modelValue="item[field.key]" readonly />
 						</template>
