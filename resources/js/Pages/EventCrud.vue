@@ -1,6 +1,7 @@
 <template>
 	<EventDataPage title="Event Setup" :event :events :resolver="eventRequestResolver">
 		<EventManagementPanel :event="event!" />
+		<EventDepartmentsCrudPanel :event :departments :readonly="!isAdmin" />
 		<EventRewardsCrudPanel :event :rewards :readonly="!isAdmin" />
 		<EventBonusesCrudPanel :event :bonuses :departments :readonly="!isAdmin" />
 	</EventDataPage>
@@ -17,13 +18,14 @@ import type TimeBonus from '@/data/TimeBonus';
 
 import EventDataPage from '@/Components/App/EventDataPage.vue';
 import EventManagementPanel from '@/Components/Event/EventManagementPanel.vue';
+import EventDepartmentsCrudPanel from '@/Components/Event/EventDepartmentsCrudPanel.vue';
 import EventRewardsCrudPanel from '@/Components/Event/EventRewardsCrudPanel.vue';
 import EventBonusesCrudPanel from '@/Components/Event/EventBonusesCrudPanel.vue';
 
 defineProps<{
 	event: Event | null;
 	events?: Event[] | null;
-	departments: Department[];
+	departments: Department[] | null;
 	rewards: Reward[] | null;
 	bonuses: TimeBonus[] | null;
 }>();
@@ -37,7 +39,7 @@ const { isAdmin } = useUser();
 function eventRequestResolver(eventId: EventId) {
 	return {
 		url: route('events.show', eventId),
-		only: ['event', 'rewards', 'bonuses'],
+		only: ['event', 'departments', 'rewards', 'bonuses'],
 	};
 }
 </script>

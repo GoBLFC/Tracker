@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Department;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class DepartmentUpdateRequest extends FormRequest {
 	/**
@@ -20,7 +23,15 @@ class DepartmentUpdateRequest extends FormRequest {
 	public function rules(): array {
 		$requiredOrSometimes = $this->isMethod('PUT') ? 'required' : 'sometimes';
 		return [
-			'name' => "{$requiredOrSometimes}|string|max:64",
+			'name' => [
+				$requiredOrSometimes,
+				'string',
+				'max:64',
+				Rule::unique(Department::class)
+					->where(fn (Builder $query) => $query->where('event_id', $this->route('department')->event_id))
+					->ignore($this->route('department'))
+					->withoutTrashed(),
+			],
 			'hidden' => "{$requiredOrSometimes}|boolean",
 		];
 	}

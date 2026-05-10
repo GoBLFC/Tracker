@@ -33,7 +33,7 @@ class EventController extends Controller {
 		return Inertia::render('EventCrud', [
 			'event' => null,
 			'events' => Event::orderBy('name')->get(),
-			'departments' => Department::all(),
+			'departments' => null,
 			'rewards' => null,
 			'bonuses' => null,
 		]);
@@ -63,7 +63,7 @@ class EventController extends Controller {
 			: Inertia::render('EventCrud', [
 				'event' => $event,
 				'events' => fn () => $user->can('viewAny', Event::class) ? Event::orderBy('name')->get() : null,
-				'departments' => fn () => Department::all(),
+				'departments' => fn () => $user->can('viewForEvent', [Department::class, $event]) ? $event->departments : null,
 				'rewards' => fn () => $user->can('viewForEvent', [Reward::class, $event]) ? $event->rewards : null,
 				'bonuses' => fn () => $user->can('viewForEvent', [TimeBonus::class, $event])
 					? $event->timeBonuses()

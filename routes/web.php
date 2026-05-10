@@ -49,7 +49,6 @@ Route::middleware(['auth', 'not-banned', 'lockdown'])->group(function () {
 	Route::apiResource('settings', \App\Http\Controllers\SettingController::class)
 		->only(['index', 'update', 'destroy'])
 		->parameter('settings', 'setting:name');
-	Route::apiResource('departments', \App\Http\Controllers\DepartmentController::class);
 	Route::apiResource('events', \App\Http\Controllers\EventController::class);
 	Route::apiResource('events.bonuses', \App\Http\Controllers\TimeBonusController::class)->shallow();
 	Route::apiResource('events.rewards', \App\Http\Controllers\RewardController::class)->shallow();

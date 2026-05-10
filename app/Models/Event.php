@@ -18,6 +18,8 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read string $display_name
+ * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\Department>|\App\Models\Department[] $departments
+ * @property-read int|null $departments_count
  * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\TimeEntry>|\App\Models\TimeEntry[] $timeEntries
  * @property-read int|null $time_entries_count
  * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\TimeBonus>|\App\Models\TimeBonus[] $timeBonuses
@@ -76,6 +78,13 @@ class Event extends Model implements HasDisplayName {
 
 	public function getDisplayNameAttribute(): string {
 		return !$this->deleted_at ? $this->name : "{$this->name} (del)";
+	}
+
+	/**
+	 * Get the departments associated with this event
+	 */
+	public function departments(): HasMany {
+		return $this->hasMany(Department::class);
 	}
 
 	/**

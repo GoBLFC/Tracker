@@ -3,7 +3,9 @@
 namespace App\Http\Requests;
 
 use App\Models\Department;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class DepartmentStoreRequest extends FormRequest {
 	/**
@@ -20,7 +22,14 @@ class DepartmentStoreRequest extends FormRequest {
 	 */
 	public function rules(): array {
 		return [
-			'name' => 'required|string|max:64',
+			'name' => [
+				'required',
+				'string',
+				'max:64',
+				Rule::unique(Department::class)
+					->where(fn (Builder $query) => $query->where('event_id', $this->route('event')->id))
+					->withoutTrashed(),
+			],
 			'hidden' => 'required|boolean',
 		];
 	}
