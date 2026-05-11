@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Activity;
-use App\Models\Department;
 use App\Models\Event;
 use App\Models\Reward;
 use App\Models\Setting;
@@ -48,7 +47,9 @@ class ManagementController extends Controller {
 			'event' => $event,
 			'events' => fn () => Event::orderBy('name')->get(),
 			'rewards' => fn () => Reward::forEvent($event)->orderBy('hours')->get(),
-			'departments' => fn () => Department::orderBy('hidden')->orderBy('name')->get(),
+			'departments' => fn () => $event
+				? $event->departments()->orderBy('hidden')->orderBy('name')->get()
+				: null,
 			'ongoingEntries' => Inertia::defer(
 				fn () => TimeEntry::with(['user', 'department'])
 					->forEvent($event)
@@ -67,13 +68,6 @@ class ManagementController extends Controller {
 			),
 			'volunteer' => fn () => $user?->getVolunteerInfo($event),
 		]);
-	}
-
-	/**
-	 * Render the departments admin page
-	 */
-	public function getAdminDepartments(): View {
-		return view('admin.departments', ['departments' => Department::all()]);
 	}
 
 	/**

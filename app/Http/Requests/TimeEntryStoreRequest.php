@@ -2,7 +2,12 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Department;
+use App\Models\Event;
+use App\Models\TimeEntry;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class TimeEntryStoreRequest extends FormRequest {
 	/**
@@ -22,8 +27,18 @@ class TimeEntryStoreRequest extends FormRequest {
 		$start = $this->input('start');
 		$startRestriction = !$this->has('stop') ? '|before:now' : '';
 		return [
-			'event_id' => 'sometimes|nullable|uuid|exists:App\Models\Event,id',
-			'department_id' => 'required|uuid|exists:App\Models\Department,id',
+			'event_id' => [
+				'required',
+				'uuid',
+				Rule::exists(Event::class, 'id')->withoutTrashed(),
+			],
+			'department_id' => [
+				'required',
+				'uuid',
+				Rule::exists(Department::class, 'id')
+					->where(fn (Builder $query) => $query->where('event_id', $this->input('event_id')))
+					->withoutTrashed(),
+			],
 			'start' => "sometimes|nullable|required_with:stop|date{$startRestriction}",
 			'stop' => "sometimes|nullable|date|after:{$start}",
 			'notes' => 'sometimes|nullable|string|max:255',

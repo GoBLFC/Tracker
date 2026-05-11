@@ -1,5 +1,5 @@
 <template>
-	<Panel header="Edit event">
+	<Panel header="Event">
 		<div class="mt-1 flex gap-2 md:gap-4 items-center">
 			<form class="w-full" @submit.prevent="rename()">
 				<InputGroup>

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CheckInRequest;
 use App\Http\Requests\TimeEntryStoreRequest;
-use App\Models\Department;
 use App\Models\Event;
 use App\Models\Setting;
 use App\Models\TimeEntry;
@@ -30,7 +29,9 @@ class TrackerController extends Controller {
 
 		return Inertia::render('VolunteerHome', [
 			'volunteer' => fn () => $user->getVolunteerInfo(),
-			'departments' => fn () => $user->isManager() ? Department::all() : Department::whereHidden(false)->get(),
+			'departments' => fn () => $user->isManager()
+				? Setting::activeEvent()?->departments()?->orderBy('name')?->get()
+				: Setting::activeEvent()?->departments()?->orderBy('name')?->whereHidden(false)?->get(),
 			'rewards' => fn () => Setting::activeEvent()?->rewards,
 			'telegramSetupUrl' => fn () => $user->getTelegramSetupUrl(),
 			'hasTelegram' => fn () => !empty($user->tg_chat_id),
@@ -43,18 +44,10 @@ class TrackerController extends Controller {
 	public function postCheckIn(CheckInRequest $request): JsonResponse|RedirectResponse {
 		/** @var User */
 		$user = Auth::user();
-
-		// Make sure there's an active event
 		$event = Setting::activeEvent();
-		if (!$event) {
-			$error = 'There is no active event to check in to.';
-			return $request->expectsJson()
-				? response()->json(['error' => $error], 409)
-				: redirect()->back()->withError($error)->withInput();
-		}
 
 		// Ensure there isn't already an ongoing time entry
-		if ($user->timeEntries()->forEvent()->ongoing()->exists()) {
+		if ($user->timeEntries()->forEvent($event)->ongoing()->exists()) {
 			$error = 'Cannot check in with an already-ongoing time entry.';
 			return $request->expectsJson()
 				? response()->json(['error' => $error], 409)
@@ -87,16 +80,16 @@ class TrackerController extends Controller {
 			// Make sure there's an active event
 			$event = Setting::activeEvent();
 			if (!$event) {
-				$error = 'There is no active event to check in to.';
+				$error = 'There is no active event to check out from.';
 				return $request->expectsJson()
 					? response()->json(['error' => $error], 409)
 					: redirect()->back()->withError($error)->withInput();
 			}
 
 			// Get the ongoing time entry
-			$timeEntry = $user->timeEntries()->forEvent()->ongoing()->first();
+			$timeEntry = $user->timeEntries()->forEvent($event)->ongoing()->first();
 			if (!$timeEntry) {
-				$error = 'There is no ongoing time entry to check out for.';
+				$error = 'There is no ongoing time entry to check out on.';
 				return $request->expectsJson()
 					? response()->json(['error' => $error], 409)
 					: redirect()->back()->withError($error)->withInput();
@@ -125,18 +118,14 @@ class TrackerController extends Controller {
 	 * Create a time entry for a user
 	 */
 	public function storeTimeEntry(TimeEntryStoreRequest $request, User $user): JsonResponse {
-		// Make sure we have an event
-		$input = $request->safe();
-		if (!isset($input['event_id'])) $input['event_id'] = Setting::activeEvent()?->id;
-		if (!$input['event_id']) return response()->json(['error' => 'No event to create time entry for.'], 409);
-
 		// Authorize the creation based on the target event
+		$input = $request->safe();
 		$event = Event::findOrFail($input['event_id']);
 		$this->authorize('create', [TimeEntry::class, $user, $event]);
 
 		// Don't allow an ongoing entry to be created if there already is one
 		if (!isset($input['stop'])) {
-			if ($user->timeEntries()->ongoing()->forEvent($input['event_id'])->exists()) {
+			if ($user->timeEntries()->ongoing()->forEvent($event)->exists()) {
 				return response()->json(['error' => 'User already has an ongoing time entry.'], 409);
 			}
 		}
@@ -146,7 +135,7 @@ class TrackerController extends Controller {
 		$entry->start = isset($input['start']) ? Carbon::parse($input['start'])->timezone(config('app.timezone')) : now();
 		$entry->stop = isset($input['stop']) ? Carbon::parse($input['stop'])->timezone(config('app.timezone')) : null;
 		$entry->notes = $input['notes'] ?? null;
-		$entry->event_id = $input['event_id'];
+		$entry->event_id = $event->id;
 		$entry->department_id = $input['department_id'];
 		$entry->user_id = $user->id;
 		$entry->creator_user_id = $request->user()->id;
@@ -158,7 +147,7 @@ class TrackerController extends Controller {
 	/**
 	 * Delete a time entry
 	 */
-	public function destroyTimeEntry(TimeEntry $timeEntry) {
+	public function destroyTimeEntry(TimeEntry $timeEntry): JsonResponse {
 		$this->authorize('delete', $timeEntry);
 		$timeEntry->delete();
 		return response()->json(null, 205);

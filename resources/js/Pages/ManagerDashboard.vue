@@ -43,7 +43,7 @@
 					:model-value="volunteer"
 					:event="event!"
 					:rewards
-					:departments
+					:departments="departments!"
 					:now
 					:read-only
 					@close="resetVolunteer"
@@ -87,7 +87,7 @@ import EventDataPage from '@/Components/App/EventDataPage.vue';
 const { event, volunteer } = defineProps<{
 	event: Event | null;
 	events: Event[];
-	departments: Department[];
+	departments: Department[] | null;
 	rewards: Reward[];
 	recentTimeActivities?: TimeEntryActivity[];
 	ongoingEntries?: TimeEntry[];
@@ -106,7 +106,7 @@ usePoll(15000, {
 function eventRequestResolver(eventId: EventId) {
 	return {
 		url: route('management.manage', eventId),
-		only: ['ongoingEntries', 'recentTimeActivities', 'volunteer', 'rewards'],
+		only: ['departments', 'ongoingEntries', 'recentTimeActivities', 'volunteer', 'rewards'],
 	};
 }
 
