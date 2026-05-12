@@ -112,7 +112,7 @@ const expandedMenuHeight = toRef(() => `${(mainMenuItems.value.length + 3) * 3 +
 const mainMenuItems = computed(() => {
 	const items = [
 		{
-			to: 'tracker.index',
+			to: 'volunteer.index',
 			label: 'Home',
 			icon: faHouseCircleCheck,
 			legacy: false,

@@ -7,6 +7,6 @@ return [
 		'telegram.*',
 		'auth.callback',
 		'auth.banned',
-		'tracker.lockdown',
+		'volunteer.lockdown',
 	],
 ];

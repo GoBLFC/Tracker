@@ -27,8 +27,8 @@ class TimeBonusController extends Controller {
 	 */
 	public function store(TimeBonusStoreRequest $request, Event $event): JsonResponse|RedirectResponse {
 		$bonus = new TimeBonus;
-		$bonus->start = Carbon::parse($request->input('start'))->timezone(config('app.timezone'));
-		$bonus->stop = Carbon::parse($request->input('stop'))->timezone(config('app.timezone'));
+		$bonus->start = $request->date('start')->timezone(config('app.timezone'));
+		$bonus->stop = $request->date('stop')->timezone(config('app.timezone'));
 		$bonus->modifier = $request->float('modifier');
 		$bonus->event_id = $event->id;
 		$bonus->save();

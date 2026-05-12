@@ -109,14 +109,14 @@ class AuthController extends Controller {
 
 		return $request->expectsJson()
 			? response()->json(null, 205)
-			: redirect()->route('tracker.index');
+			: redirect()->route('volunteer.index');
 	}
 
 	/**
 	 * Display the banned notice
 	 */
 	public function getBanned(): InertiaResponse|RedirectResponse {
-		if (!Auth::user()?->isBanned()) return redirect()->route('tracker.index');
+		if (!Auth::user()?->isBanned()) return redirect()->route('volunteer.index');
 		return Inertia::render('Suspended');
 	}
 

@@ -15,7 +15,7 @@ class RedirectDuringLockdown {
 	 * @param \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response) $next
 	 */
 	public function handle(Request $request, Closure $next): Response {
-		if (Setting::isLockedDown() && !Auth::user()?->isManager()) return redirect()->route('tracker.lockdown');
+		if (Setting::isLockedDown() && !Auth::user()?->isManager()) return redirect()->route('volunteer.lockdown');
 		return $next($request);
 	}
 }

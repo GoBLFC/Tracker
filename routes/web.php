@@ -14,16 +14,13 @@ Route::controller(\App\Http\Controllers\AuthController::class)->group(function (
 });
 
 Route::middleware(['auth', 'not-banned', 'lockdown'])->group(function () {
-	Route::controller(\App\Http\Controllers\TrackerController::class)->group(function () {
-		Route::get('/', 'getIndex')->name('tracker.index');
-		Route::get('/disabled/site', 'getLockdown')->name('tracker.lockdown')->withoutMiddleware('lockdown');
-		Route::post('/time/checkin', 'postCheckIn')->name('tracker.checkin.post');
-		Route::post('/time/checkout', 'postCheckOut')->name('tracker.checkout.post');
-		Route::post('/time/{timeEntry}/checkout', 'postCheckOut')->name('tracker.time.checkout.post');
-		Route::delete('/time/{timeEntry}', 'destroyTimeEntry')->name('tracker.time.destroy');
-		Route::get('/users/{user}/stats', 'getStats')->name('tracker.user.stats');
-		Route::put('/users/{user}/time', 'storeTimeEntry')->name('tracker.time.store');
-		Route::get('/users/{user}/time/event/{event}', 'getStats')->name('tracker.user.stats.event');
+	Route::controller(\App\Http\Controllers\VolunteerController::class)->group(function () {
+		Route::get('/', 'index')->name('volunteer.index');
+		Route::get('/disabled/site', 'lockdown')->name('volunteer.lockdown')->withoutMiddleware('lockdown');
+		Route::post('/events/{event}/checkin', 'checkIn')->name('volunteer.time.checkin');
+		Route::post('/time/{timeEntry}/checkout', 'checkOut')->name('volunteer.time.checkout');
+		Route::put('/events/{event}/users/{user}/time', 'storeTimeEntry')->name('volunteer.time.store');
+		Route::delete('/time/{timeEntry}', 'destroyTimeEntry')->name('volunteer.time.destroy');
 	});
 
 	Route::get('/users/search', [\App\Http\Controllers\UserController::class, 'getSearch'])->name('users.search');

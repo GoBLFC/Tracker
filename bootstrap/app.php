@@ -32,7 +32,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
 		$middleware->redirectTo(
 			guests: fn (Request $request) => route('auth.login'),
-			users: fn (Request $request) => route('tracker.index'),
+			users: fn (Request $request) => route('volunteer.index'),
 		);
 
 		$middleware->throttleApi();

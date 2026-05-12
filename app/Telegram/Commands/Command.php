@@ -94,6 +94,6 @@ abstract class Command extends BaseCommand {
 	protected static function trackerLink($text = null): string {
 		if (!$text) $text = config('app.name');
 		$escaped = htmlspecialchars($text);
-		return '<a href="' . route('tracker.index') . "\">{$escaped}</a>";
+		return '<a href="' . route('volunteer.index') . "\">{$escaped}</a>";
 	}
 }

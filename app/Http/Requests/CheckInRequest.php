@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use App\Models\Department;
-use App\Models\Setting;
 use App\Models\TimeEntry;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
@@ -16,10 +15,7 @@ class CheckInRequest extends FormRequest {
 	 * Determine if the user is authorized to make this request.
 	 */
 	public function authorize(): bool|RedirectResponse|JsonResponse {
-		$event = Setting::activeEvent();
-		if (!$event) return false;
-
-		return $this->user()->can('create', [TimeEntry::class, $this->user(), $event]);
+		return $this->user()->can('create', [TimeEntry::class, $this->user(), $this->route('event')]);
 	}
 
 	/**
@@ -33,7 +29,7 @@ class CheckInRequest extends FormRequest {
 				'required',
 				'uuid',
 				Rule::exists(Department::class, 'id')
-					->where(fn (Builder $query) => $query->where('event_id', Setting::activeEvent()->id))
+					->where(fn (Builder $query) => $query->where('event_id', $this->route('event')->id))
 					->withoutTrashed(),
 			],
 		];

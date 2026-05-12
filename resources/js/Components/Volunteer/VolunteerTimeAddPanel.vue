@@ -96,8 +96,7 @@ async function store() {
 	// Send the request
 	const { time_entry: newEntry } = await request.put<{
 		time_entry: TimeEntry;
-	}>(['tracker.time.store', volunteer.value!.user.id], {
-		event_id: event.id,
+	}>(['volunteer.time.store', [event.id, volunteer.value!.user.id]], {
 		department_id: dept.id,
 		start: dateToTrackerTime(start.value!).toISO(),
 		stop: !isOngoing ? dateToTrackerTime(stop.value!).toISO() : undefined,

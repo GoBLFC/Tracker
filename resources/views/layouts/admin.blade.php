@@ -8,7 +8,7 @@
 
 			@yield('admin-content')
 
-			<a class="btn btn-primary float-end" href="{!! route('tracker.index') !!}" role="button">Back</a>
+			<a class="btn btn-primary float-end" href="{!! route('volunteer.index') !!}" role="button">Back</a>
 		</div>
 	</div>
 

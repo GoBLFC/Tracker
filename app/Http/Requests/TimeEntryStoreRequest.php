@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use App\Models\Department;
-use App\Models\Event;
 use App\Models\TimeEntry;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
@@ -14,8 +13,7 @@ class TimeEntryStoreRequest extends FormRequest {
 	 * Determine if the user is authorized to make this request.
 	 */
 	public function authorize(): bool {
-		return $this->user()->can('create', [TimeEntry::class, $this->route('user')])
-			&& $this->user()->isManager();
+		return $this->user()->can('create', [TimeEntry::class, $this->route('user'), $this->route('event')]);
 	}
 
 	/**
@@ -27,21 +25,26 @@ class TimeEntryStoreRequest extends FormRequest {
 		$start = $this->input('start');
 		$startRestriction = !$this->has('stop') ? '|before:now' : '';
 		return [
-			'event_id' => [
-				'required',
-				'uuid',
-				Rule::exists(Event::class, 'id')->withoutTrashed(),
-			],
 			'department_id' => [
 				'required',
 				'uuid',
 				Rule::exists(Department::class, 'id')
-					->where(fn (Builder $query) => $query->where('event_id', $this->input('event_id')))
+					->where(fn (Builder $query) => $query->where('event_id', $this->route('event')->id))
 					->withoutTrashed(),
 			],
 			'start' => "sometimes|nullable|required_with:stop|date{$startRestriction}",
 			'stop' => "sometimes|nullable|date|after:{$start}",
 			'notes' => 'sometimes|nullable|string|max:255',
 		];
+	}
+
+	/**
+	 * Handle a passed validation attempt.
+	 */
+	public function passedValidation(): void {
+		$this->merge([
+			'start' => $this->date('start')?->timezone(config('app.timezone')) ?? now(),
+			'stop' => $this->date('stop')?->timezone(config('app.timezone')),
+		]);
 	}
 }

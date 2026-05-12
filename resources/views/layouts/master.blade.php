@@ -27,7 +27,7 @@
 <body>
 	<div class="container my-4 my-md-5 {!! config('debugbar.enabled') ?? config('app.debug') ? 'mb-5 pb-5' : '' !!}">
 		<header class="mb-3 mb-md-4 text-center">
-			<a href="{!! route('tracker.index') !!}" title="{{ config('app.name') }}">
+			<a href="{!! route('volunteer.index') !!}" title="{{ config('app.name') }}">
 				<img src="{!! Vite::asset('resources/img/event-logo.png') !!}" width="128" height="146" alt="Event Logo" class="img-fluid mw-25" />
 			</a>
 		</header>

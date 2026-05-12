@@ -69,14 +69,10 @@ class TimeEntry extends Model {
 		'auto' => 'boolean',
 	];
 	protected $fillable = [
-		'user_id',
 		'start',
 		'stop',
-		'department_id',
 		'notes',
-		'creator_user_id',
-		'auto',
-		'event_id',
+		'department_id',
 	];
 
 	public function getActivitylogOptions(): LogOptions {
