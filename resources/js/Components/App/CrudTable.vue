@@ -10,6 +10,7 @@
 		scroll-height="flex"
 		v-bind="tableProps"
 	>
+		<!-- Entity field columns -->
 		<Column
 			v-for="field of fields"
 			:field="String(field.key)"
@@ -17,7 +18,7 @@
 			sortable
 			:data-type="
 				field.type === 'number' ? 'number'
-					: field.type === 'date' ? 'date'
+					: field.type === 'datetime' ? 'date'
 					: field.type === 'switch' ? 'boolean'
 					: (field.type ?? undefined)
 			"
@@ -25,6 +26,7 @@
 		>
 			<template #body="{ data: item }: { data: T }">
 				<slot :name="`col-${String(field.key)}`" :item>
+					<!-- Viewing - Field text -->
 					<template v-if="readonly || !editing[item.id as T['id']]">
 						<template v-if="field.display">{{ field.display(item[field.key]) }}</template>
 						<template v-else-if="field.type === 'number'">
@@ -42,11 +44,12 @@
 							{{ (item[field.key] as unknown[])?.join?.(', ') ?? '' }}
 						</template>
 						<template v-else-if="field.type === 'switch'">
-							<ToggleSwitch :modelValue="item[field.key]" readonly />
+							<ToggleSwitch :model-value="item[field.key]" readonly />
 						</template>
 						<template v-else>{{ item[field.key] }}</template>
 					</template>
 
+					<!-- Editing - Field inputs -->
 					<InputNumber
 						v-else-if="field.type === 'number'"
 						v-model="editing[item.id as T['id']][field.key]"
@@ -136,6 +139,7 @@
 						@input="clearEditError(item.id as T['id'], field.key)"
 					/>
 
+					<!-- Editing - Field errors -->
 					<Message
 						v-if="editErrors[item.id as T['id']]?.[field.key]"
 						size="small"
@@ -147,6 +151,7 @@
 				</slot>
 			</template>
 
+			<!-- Creation - Field inputs -->
 			<template #footer v-if="!readonly">
 				<InputNumber
 					v-if="field.type === 'number'"
@@ -244,12 +249,14 @@
 					@input="createForm.clearErrors(field.key)"
 				/>
 
+				<!-- Creation - Field errors -->
 				<Message v-if="createForm.errors[field.key]" size="small" severity="error" variant="simple">
 					{{ createForm.errors[field.key] }}
 				</Message>
 			</template>
 		</Column>
 
+		<!-- Actions column -->
 		<Column
 			v-if="!readonly"
 			header="Actions"
@@ -258,6 +265,7 @@
 		>
 			<template #body="{ data: item }: { data: T }">
 				<ButtonGroup :aria-label="`${entityLabel} actions`">
+					<!-- Edit/delete buttons -->
 					<template v-if="!editing[item.id as T['id']]">
 						<IconButton
 							variant="text"
@@ -280,6 +288,7 @@
 						/>
 					</template>
 
+					<!-- Cancel/save editing buttons -->
 					<template v-else>
 						<form
 							:id="editFormId(item.id as T['id'])"
@@ -309,6 +318,7 @@
 				</ButtonGroup>
 			</template>
 
+			<!-- Create button -->
 			<template #footer v-if="!readonly">
 				<form :id="createFormId" @submit.prevent="create()">
 					<ResponsiveButton
@@ -323,6 +333,7 @@
 			</template>
 		</Column>
 
+		<!-- Empty table placeholder -->
 		<template #empty>
 			<slot name="empty"><p>There aren't any {{ entityPlural ?? `${entityName}s` }}.</p></slot>
 		</template>
@@ -334,6 +345,7 @@
 <script setup lang="ts" generic="T extends { id: string }, EntityName extends string">
 import { reactive, toRef, useId } from 'vue';
 import { router, useForm } from '@inertiajs/vue3';
+import type { ErrorValue } from '@inertiajs/core';
 import { useTime } from '@/lib/time';
 import { useConfirm } from '@/lib/confirm';
 import type { Route } from '@/lib/route';
@@ -365,14 +377,47 @@ const {
 	skeleton?: boolean;
 }>();
 
-const { confirm } = useConfirm();
-const { dateToTrackerTime, isoToPreferredLocalAdjustedTime } = useTime();
-
 const entityLabel = toRef(() => {
 	const first = entityName[0]!.toLocaleUpperCase();
 	const rest = entityName.substring(1);
 	return first + rest;
 });
+
+/**
+ * Entity field definition
+ */
+type Field<T, V> = {
+	key: keyof T;
+	label: string;
+	class?: string;
+	required?: boolean;
+	default?: V;
+	display?: (data: V) => string;
+} & (
+	| { type?: 'text'; min?: number; max?: number }
+	| { type: 'textarea'; min?: number; max?: number }
+	| {
+			type: 'number';
+			min?: number;
+			max?: number;
+			step?: number;
+			format?: Intl.NumberFormat;
+			fractionDigits?: number;
+			prefix?: string;
+			suffix?: string;
+	  }
+	| { type: 'datetime'; min?: Date; max?: Date }
+	| {
+			type: 'select';
+			options: { label: string; value: string | number }[];
+			multiple?: boolean;
+	  }
+	| { type: 'switch' }
+);
+
+//
+// Entity creation
+//
 
 const createFormId = useId();
 const createForm = useForm(
@@ -386,6 +431,8 @@ const createForm = useForm(
  * Creates a new entity with the entered values
  */
 async function create() {
+	if (createForm.processing) return;
+
 	createForm.post(route(...(createRoute ?? [`${routeSlug}.store`])), {
 		replace: true,
 		preserveState: true,
@@ -397,8 +444,14 @@ async function create() {
 	});
 }
 
+//
+// Entity editing
+//
+
+const { dateToTrackerTime, isoToPreferredLocalAdjustedTime } = useTime();
 const editing: Partial<Record<T['id'], T>> = reactive({});
-const editErrors: Partial<Record<T['id'], Record<keyof T, string>>> = reactive({});
+const updating: Partial<Record<T['id'], boolean>> = reactive({});
+const editErrors: Partial<Record<T['id'], Record<keyof T, Record<string, ErrorValue>>>> = reactive({});
 const editFormIdBase = useId();
 
 /**
@@ -422,8 +475,6 @@ function cancel(id: T['id']) {
 	editing[id] = undefined;
 	editErrors[id] = undefined;
 }
-
-const updating: Partial<Record<T['id'], boolean>> = reactive({});
 
 /**
  * Saves an edited entity
@@ -492,6 +543,11 @@ function toRaw(entity: T) {
 	return mapped;
 }
 
+//
+// Entity deletion
+//
+
+const { confirm } = useConfirm();
 const deleting: Partial<Record<T['id'], boolean>> = reactive({});
 
 /**
@@ -510,43 +566,14 @@ async function del(id: T['id']) {
 		only: [entityPlural ?? `${entityName}s`, 'flash'],
 
 		onStart() {
-			deleting[id as T['id']] = true;
+			deleting[id] = true;
 		},
 		onFinish() {
-			deleting[id as T['id']] = false;
+			deleting[id] = false;
 		},
 		onError(err) {
 			console.error(`Error deleting ${entityName} ${id}`, err);
 		},
 	});
 }
-
-type Field<T, V> = {
-	key: keyof T;
-	label: string;
-	class?: string;
-	required?: boolean;
-	default?: V;
-	display?: (data: V) => string;
-} & (
-	| { type?: 'text'; min?: number; max?: number }
-	| { type: 'textarea'; min?: number; max?: number }
-	| {
-			type: 'number';
-			min?: number;
-			max?: number;
-			step?: number;
-			format?: Intl.NumberFormat;
-			fractionDigits?: number;
-			prefix?: string;
-			suffix?: string;
-	  }
-	| { type: 'datetime'; min?: Date; max?: Date }
-	| {
-			type: 'select';
-			options: { label: string; value: string | number }[];
-			multiple?: boolean;
-	  }
-	| { type: 'switch' }
-);
 </script>
