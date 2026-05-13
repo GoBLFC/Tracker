@@ -53,6 +53,7 @@
 					<InputNumber
 						v-else-if="field.type === 'number'"
 						v-model="editing[item.id as T['id']][field.key]"
+						:form="editFormId(item.id as T['id'])"
 						:min="field.min"
 						:max="field.max"
 						:step="field.step"
@@ -70,6 +71,7 @@
 					<DatePicker
 						v-else-if="field.type === 'datetime'"
 						v-model="editing[item.id as T['id']][field.key]"
+						:form="editFormId(item.id as T['id'])"
 						:min-date="field.min"
 						:max-date="field.max"
 						:required="field.required"
@@ -156,6 +158,7 @@
 				<InputNumber
 					v-if="field.type === 'number'"
 					v-model="createForm[field.key]"
+					ref="createField"
 					:form="createFormId"
 					:min="field.min"
 					:max="field.max"
@@ -174,6 +177,7 @@
 				<DatePicker
 					v-else-if="field.type === 'datetime'"
 					v-model="createForm[field.key]"
+					ref="createField"
 					:form="createFormId"
 					:min-date="field.min"
 					:max-date="field.max"
@@ -191,6 +195,7 @@
 				<Textarea
 					v-else-if="field.type === 'textarea'"
 					v-model="createForm[field.key]"
+					ref="createField"
 					:form="createFormId"
 					:required="field.required"
 					:minlength="field.min"
@@ -205,6 +210,7 @@
 				<Select
 					v-else-if="field.type === 'select' && !field.multiple"
 					v-model="createForm[field.key]"
+					ref="createField"
 					:form="createFormId"
 					option-label="label"
 					option-value="value"
@@ -217,6 +223,7 @@
 				<MultiSelect
 					v-else-if="field.type === 'select' && field.multiple"
 					v-model="createForm[field.key]"
+					ref="createField"
 					:form="createFormId"
 					option-label="label"
 					option-value="value"
@@ -231,6 +238,7 @@
 				<ToggleSwitch
 					v-else-if="field.type === 'switch'"
 					v-model="createForm[field.key]"
+					ref="createField"
 					:form="createFormId"
 					:disabled="createForm.processing"
 					:invalid="Boolean(createForm.errors[field.key])"
@@ -239,6 +247,7 @@
 				<InputText
 					v-else
 					v-model="createForm[field.key]"
+					ref="createField"
 					:form="createFormId"
 					:required="field.required"
 					:minlength="field.min"
@@ -343,7 +352,7 @@
 </template>
 
 <script setup lang="ts" generic="T extends { id: string }, EntityName extends string">
-import { reactive, toRef, useId } from 'vue';
+import { reactive, toRef, useId, useTemplateRef } from 'vue';
 import { router, useForm } from '@inertiajs/vue3';
 import type { ErrorValue } from '@inertiajs/core';
 import { useTime } from '@/lib/time';
@@ -420,6 +429,7 @@ type Field<T, V> = {
 //
 
 const createFormId = useId();
+const createFields = useTemplateRef('createField');
 const createForm = useForm(
 	fields.reduce((prev, field) => {
 		prev[field.key] = field.default ?? '';
@@ -440,6 +450,7 @@ async function create() {
 		only: [entityPlural ?? `${entityName}s`, 'flash'],
 		onSuccess() {
 			createForm.resetAndClearErrors();
+			setTimeout(() => createFields.value[0].$el.focus(), 0);
 		},
 	});
 }
@@ -459,6 +470,13 @@ const editFormIdBase = useId();
  */
 function edit(entity: T) {
 	editing[entity.id as T['id']] = toEditable(entity);
+
+	const formId = editFormId(entity.id as T['id']);
+	setTimeout(() => {
+		document
+			.querySelector(`input[form="${formId}"], textarea[form="${formId}"], [form="${formId}"] input`)
+			?.focus?.();
+	}, 0);
 }
 
 /**
