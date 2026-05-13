@@ -27,6 +27,12 @@ class EventStoreRequest extends FormRequest {
 				'max:64',
 				Rule::unique(Event::class)->withoutTrashed(),
 			],
+			'cloneEvent' => [
+				'sometimes',
+				'nullable',
+				'uuid',
+				Rule::exists(Event::class, 'id')->withoutTrashed(),
+			],
 		];
 	}
 }

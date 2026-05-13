@@ -76,7 +76,7 @@
 		<p class="text-lg font-semibold">There aren't any events to manage yet.</p>
 	</Message>
 
-	<EventCreateModal v-if="isAdmin" v-model:visible="showCreateModal" />
+	<EventCreateModal v-if="isAdmin" v-model:visible="showCreateModal" :events />
 </template>
 
 <script setup lang="ts">
@@ -90,8 +90,8 @@ import type { EventId } from '@/data/Event';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faCalendarDay, faCalendarPlus } from '@fortawesome/free-solid-svg-icons';
-import IconButton from '../Common/IconButton.vue';
-import EventCreateModal from '../Dialogs/EventCreateModal.vue';
+import IconButton from '@/Components/Common/IconButton.vue';
+import EventCreateModal from '@/Components/Dialogs/EventCreateModal.vue';
 
 const {
 	event,

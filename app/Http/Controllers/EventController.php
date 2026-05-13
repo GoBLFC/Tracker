@@ -12,6 +12,7 @@ use App\Models\TimeBonus;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 
@@ -44,7 +45,23 @@ class EventController extends Controller {
 	 */
 	public function store(EventStoreRequest $request): JsonResponse|RedirectResponse {
 		$event = new Event($request->validated());
-		$event->save();
+		$event->id = $event->newUniqueId();
+
+		// Clone departments from another event and use a transaction to store them and the event itself together
+		if ($request->has('cloneEvent')) {
+			$newDepartments = [];
+			$sourceDepartments = Department::forEvent($request->input('cloneEvent'))->get(['name', 'hidden']);
+			foreach ($sourceDepartments as $source) {
+				$newDepartments[] = ['name' => $source->name, 'hidden' => $source->hidden, 'event_id' => $event->id];
+			}
+
+			DB::transaction(function () use ($event, $newDepartments) {
+				$event->save();
+				Department::fillAndInsert($newDepartments);
+			});
+		} else {
+			$event->save();
+		}
 
 		return $request->expectsJson()
 			? response()->json(['event' => $event])
