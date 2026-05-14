@@ -91,10 +91,11 @@ function create() {
 }
 
 /**
- * Resets the form (since `form.reset()` doesn't seem to work properly here)
+ * Resets the form
  */
 function resetIfSuccessful() {
 	if (!form.wasSuccessful) return;
+	form.resetAndClearErrors();
 	form.name = '';
 	form.cloneEvent = null;
 }
