@@ -48,7 +48,6 @@ export interface Tab {
  * Navigates to a tab
  */
 function nav(tab: Tab) {
-	console.log('navigating the fun way', nav);
 	router.get(Array.isArray(tab.route) ? route(...tab.route) : route(tab.route), undefined, { only: tab.only });
 }
 </script>
