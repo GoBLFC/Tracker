@@ -6,19 +6,31 @@ use App\Http\Requests\DepartmentStoreRequest;
 use App\Http\Requests\DepartmentUpdateRequest;
 use App\Models\Department;
 use App\Models\Event;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
 
 class DepartmentController extends Controller {
 	/**
 	 * Display a listing of the resource.
 	 */
-	public function index(Request $request, Event $event): JsonResponse|RedirectResponse {
+	public function index(Request $request, Event $event): JsonResponse|InertiaResponse {
 		$this->authorize('viewForEvent', [Department::class, $event]);
-		return $request->expectsJson()
-			? response()->json(['departments' => $event->departments])
-			: redirect()->route('events.show', $event);
+
+		if ($request->expectsJson()) return response()->json(['departments' => $event->departments]);
+
+		/** @var User */
+		$user = $request->user();
+		return Inertia::render('EventCrud', [
+			'event' => fn () => $event->toResource(),
+			'events' => fn () => $user->can('viewAny', Event::class)
+				? Event::orderBy('name')->get(['id', 'name'])->toResourceCollection()
+				: null,
+			'departments' => $event->departments()->get(['id', 'name', 'hidden'])->toResourceCollection(),
+		]);
 	}
 
 	/**

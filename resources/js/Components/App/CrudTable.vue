@@ -340,6 +340,12 @@
 					/>
 				</form>
 			</template>
+
+			<template v-if="$slots.help" #header>
+				<HelpDialogButton :header="helpTitle" class="mt-[-100%] mb-[-100%]">
+					<slot name="help" />
+				</HelpDialogButton>
+			</template>
 		</Column>
 
 		<!-- Empty table placeholder -->
@@ -359,11 +365,12 @@ import { useTime } from '@/lib/time';
 import { useConfirm } from '@/lib/confirm';
 import type { Route } from '@/lib/route';
 
+import { faSave, faCancel, faPencil, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
 import SkeletonTable from '../Common/SkeletonTable.vue';
 import ResponsiveButton from '../Common/ResponsiveButton.vue';
 import IconButton from '../Common/IconButton.vue';
 import DateTime from '../Common/DateTime.vue';
-import { faSave, faCancel, faPencil, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
+import HelpDialogButton from '../Common/HelpDialogButton.vue';
 
 const {
 	items,
@@ -383,6 +390,7 @@ const {
 	readonly?: boolean;
 	items?: T[];
 	tableProps?: Record<string, unknown>;
+	helpTitle?: string;
 	skeleton?: boolean;
 }>();
 

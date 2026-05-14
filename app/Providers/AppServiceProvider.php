@@ -7,6 +7,7 @@ use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
@@ -25,6 +26,8 @@ class AppServiceProvider extends ServiceProvider {
 	 * Bootstrap any application services.
 	 */
 	public function boot(): void {
+		JsonResource::withoutWrapping();
+
 		// Define the API rate limits
 		RateLimiter::for('api', function (Request $request) {
 			return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());

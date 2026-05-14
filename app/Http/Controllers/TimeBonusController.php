@@ -10,16 +10,31 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
 
 class TimeBonusController extends Controller {
 	/**
 	 * Display a listing of the resource.
 	 */
-	public function index(Request $request, Event $event): JsonResponse|RedirectResponse {
+	public function index(Request $request, Event $event): JsonResponse|InertiaResponse {
 		$this->authorize('viewForEvent', [TimeBonus::class, $event]);
-		return $request->expectsJson()
-			? response()->json(['bonuses' => $event->timeBonuses()->with('departments')->get()])
-			: redirect()->route('events.show', $event);
+
+		if ($request->expectsJson()) return response()->json(['bonuses' => $event->timeBonuses()->with('departments')->get()]);
+
+		/** @var User */
+		$user = $request->user();
+		return Inertia::render('EventCrud', [
+			'event' => fn () => $event->toResource(),
+			'events' => fn () => $user->can('viewAny', Event::class)
+				? Event::orderBy('name')->get(['id', 'name'])->toResourceCollection()
+				: null,
+			'bonuses' => $event->timeBonuses()
+				->with('departments', fn ($query) => $query->select('id'))
+				->get(['time_bonuses.id', 'start', 'stop', 'modifier'])
+				->toResourceCollection(),
+			'departments' => fn () => $event->departments()->get(['id', 'name', 'hidden'])->toResourceCollection(),
+		]);
 	}
 
 	/**

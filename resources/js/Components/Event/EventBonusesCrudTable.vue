@@ -1,20 +1,10 @@
 <template>
-	<FullContentHeightPanel header="Bonuses">
-		<template #icons>
-			<HelpDialogButton header="Bonuses">
-				<p>
-					Time Bonuses are periods of time during an event when volunteers working for a specific department
-					get a multiplier applied to their time worked.
-				</p>
-			</HelpDialogButton>
-		</template>
-
-		<CrudTable
-			entity-name="bonus"
-			entity-plural="bonuses"
-			route-slug="bonuses"
-			:create-route="['events.bonuses.store', event!.id]"
-			:fields="[
+	<CrudTable
+		entity-name="bonus"
+		entity-plural="bonuses"
+		route-slug="bonuses"
+		:create-route="['events.bonuses.store', event!.id]"
+		:fields="[
 					{ key: 'start', label: 'Start', type: 'datetime', required: true },
 					{ key: 'stop', label: 'Stop', type: 'datetime', required: true },
 					{
@@ -42,12 +32,19 @@
 							.join(', '),
 					},
 				]"
-			:readonly
-			:items="bonuses ?? []"
-			:table-props="{ sortField: 'start' }"
-			:skeleton="!bonuses"
-		/>
-	</FullContentHeightPanel>
+		:readonly
+		:items="bonuses ?? []"
+		:table-props="{ sortField: 'start' }"
+		:skeleton="!bonuses"
+		help-title="Bonuses"
+	>
+		<template #help>
+			<p>
+				Time Bonuses are periods of time during an event when volunteers working for a specific department get a
+				multiplier applied to their time worked.
+			</p>
+		</template>
+	</CrudTable>
 </template>
 
 <script setup lang="ts">
@@ -55,8 +52,6 @@ import type TrackerEvent from '@/data/Event';
 import type TimeBonus from '@/data/TimeBonus';
 import type Department from '@/data/Department';
 
-import FullContentHeightPanel from '@/Components/Common/FullContentHeightPanel.vue';
-import HelpDialogButton from '@/Components/Common/HelpDialogButton.vue';
 import CrudTable from '@/Components/App/CrudTable.vue';
 
 const { readonly = false } = defineProps<{

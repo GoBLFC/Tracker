@@ -6,9 +6,7 @@ use App\Http\Requests\EventStoreRequest;
 use App\Http\Requests\EventUpdateRequest;
 use App\Models\Department;
 use App\Models\Event;
-use App\Models\Reward;
 use App\Models\Setting;
-use App\Models\TimeBonus;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -28,15 +26,12 @@ class EventController extends Controller {
 		$event = Setting::activeEvent();
 		if ($event) {
 			$request->session()->reflash();
-			return redirect()->route('events.show', [$event->id]);
+			return redirect()->route('events.departments.index', [$event->id]);
 		}
 
 		return Inertia::render('EventCrud', [
 			'event' => null,
-			'events' => Event::orderBy('name')->get(),
-			'departments' => null,
-			'rewards' => null,
-			'bonuses' => null,
+			'events' => Event::orderBy('name')->get(['id', 'name']),
 		]);
 	}
 
@@ -71,24 +66,13 @@ class EventController extends Controller {
 	/**
 	 * Display the specified resource.
 	 */
-	public function show(Request $request, Event $event): JsonResponse|InertiaResponse {
+	public function show(Request $request, Event $event): JsonResponse|RedirectResponse {
 		$this->authorize('view', $event);
 		$user = $request->user();
 
 		return $request->expectsJson()
 			? response()->json(['event' => $event])
-			: Inertia::render('EventCrud', [
-				'event' => $event,
-				'events' => fn () => $user->can('viewAny', Event::class) ? Event::orderBy('name')->get() : null,
-				'departments' => fn () => $user->can('viewForEvent', [Department::class, $event]) ? $event->departments : null,
-				'rewards' => fn () => $user->can('viewForEvent', [Reward::class, $event]) ? $event->rewards : null,
-				'bonuses' => fn () => $user->can('viewForEvent', [TimeBonus::class, $event])
-					? $event->timeBonuses()
-						->with('departments', fn ($query) => $query->select('id'))
-						->get()
-						->map(fn ($bonus) => $bonus->toArrayWithDepartmentIds())
-					: null,
-			]);
+			: redirect()->route('events.departments.index', [$event->id]);
 	}
 
 	/**

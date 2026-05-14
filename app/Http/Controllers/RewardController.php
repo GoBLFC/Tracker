@@ -9,16 +9,27 @@ use App\Models\Reward;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
 
 class RewardController extends Controller {
 	/**
 	 * Display a listing of the resource.
 	 */
-	public function index(Request $request, Event $event): JsonResponse|RedirectResponse {
+	public function index(Request $request, Event $event): JsonResponse|InertiaResponse {
 		$this->authorize('viewForEvent', [Reward::class, $event]);
-		return $request->expectsJson()
-			? response()->json(['rewards' => $event->rewards])
-			: redirect()->route('events.show', $event);
+
+		if ($request->expectsJson()) return response()->json(['rewards' => $event->rewards]);
+
+		/** @var User */
+		$user = $request->user();
+		return Inertia::render('EventCrud', [
+			'event' => fn () => $event->toResource(),
+			'events' => fn () => $user->can('viewAny', Event::class)
+				? Event::orderBy('name')->get(['id', 'name'])->toResourceCollection()
+				: null,
+			'rewards' => $event->rewards()->get(['id', 'name', 'description', 'hours'])->toResourceCollection(),
+		]);
 	}
 
 	/**
