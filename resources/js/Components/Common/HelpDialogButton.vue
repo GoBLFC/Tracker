@@ -4,7 +4,7 @@
 		variant="text"
 		severity="secondary"
 		v-tooltip.bottom="tooltip ?? 'Help'"
-		v-bind="$props"
+		v-bind="$attrs"
 		@click="dialogVisible = true"
 	/>
 
