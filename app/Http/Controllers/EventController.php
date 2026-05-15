@@ -39,7 +39,7 @@ class EventController extends Controller {
 	 * Store a newly created resource in storage.
 	 */
 	public function store(EventStoreRequest $request): JsonResponse|RedirectResponse {
-		$event = new Event($request->validated());
+		$event = new Event($request->safe()->except('cloneEvent'));
 		$event->id = $event->newUniqueId();
 
 		// Clone departments from another event and use a transaction to store them and the event itself together
@@ -60,7 +60,7 @@ class EventController extends Controller {
 
 		return $request->expectsJson()
 			? response()->json(['event' => $event])
-			: redirect()->route('events.show', [$event->id])->withSuccess("Created event {$event->name}.");
+			: redirect()->route('events.departments.index', [$event->id])->withSuccess("Created event {$event->name}.");
 	}
 
 	/**
