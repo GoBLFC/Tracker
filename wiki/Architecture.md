@@ -5,7 +5,7 @@ Since Laravel is an MVC (Model, View, Controller) framework, that structure is g
 For the frontend, things are a little more complicated since a significant rewrite is underway.
 The modern frontend uses [Vue](https://vuejs.org/) & TypeScript, and is connected to the backend with [Inertia](https://inertiajs.com/).
 The legacy frontend just uses plain Laravel Blade templates and JavaScript.
-At this point, only the admin pages are left on the legacy design.
+At this point, only the reports pages are left on the legacy design.
 
 ## Frequently Used Directories
 
@@ -47,7 +47,7 @@ All models and their relationships are listed below, alongside a brief descripti
 | ----------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Activity    | activities    | Used for tracking events and changes to models for audit logging purposes. Belongs to a User via both subject and causer.                                                                    |
 | AttendeeLog | attendee_logs | A log to enter users into. Used for tracking attendance to a panel or other type of event. Has many Users, with `type` (`attendee` or `gatekeeper`) on the pivot table. Belongs to an Event. |
-| Department  | departments   | An organizational unit for staff/volunteers of a convention.                                                                                                                                 |
+| Department  | departments   | An organizational unit for staff/volunteers of a convention. Belongs to an Event.                                                                                                            |
 | Event       | events        | A single convention/other type of event that time is tracked for.                                                                                                                            |
 | Kiosk       | kiosks        | A device that has been authorized to allow volunteers to enter time on. These devices keep a cookie with the session key to identify themselves.                                             |
 | QuickCode   | quick_codes   | One-time-use sign-in codes for users. Expires 30 seconds after creation. Belongs to a User.                                                                                                  |
