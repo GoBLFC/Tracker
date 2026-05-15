@@ -1,6 +1,6 @@
 <template>
-	<FullContentHeightPanel :header="gatekeeper ? 'Add Gatekeeper' : 'Log Attendee'">
-		<div class="h-full flex flex-col gap-6">
+	<Panel :header="gatekeeper ? 'Add Gatekeeper' : 'Log Attendee'">
+		<div class="flex flex-col gap-6">
 			<p v-if="gatekeeper" class="grow">
 				Gatekeepers can view, add, and delete attendees in the log, but cannot manage gatekeepers themselves.
 				Any volunteer, not just staff, can be added as a gatekeeper.
@@ -51,7 +51,7 @@
 				</Message>
 			</form>
 		</div>
-	</FullContentHeightPanel>
+	</Panel>
 </template>
 
 <script setup lang="ts">
