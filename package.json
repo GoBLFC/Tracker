@@ -13,7 +13,6 @@
 		"lint:fix-unsafe": "biome lint --write --unsafe"
 	},
 	"dependencies": {
-		"@eonasdan/tempus-dominus": "^6.9.10",
 		"@fortawesome/fontawesome-svg-core": "^7.2.0",
 		"@fortawesome/free-brands-svg-icons": "^7.2.0",
 		"@fortawesome/free-regular-svg-icons": "^7.2.0",

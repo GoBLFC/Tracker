@@ -139,7 +139,9 @@ function checkInOrOut() {
 
 	const checkingIn = !ongoing.value;
 	router.post(
-		route(`tracker.check${checkingIn ? 'in' : 'out'}.post`),
+		checkingIn
+			? route('volunteer.time.checkin', activeEvent.value?.id)
+			: route('volunteer.time.checkout', ongoing.value?.id),
 		{
 			department_id: department.value!.id,
 		},

@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Models\AttendeeLog;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class AttendeeLogUpdateRequest extends FormRequest {
 	/**
@@ -18,9 +21,16 @@ class AttendeeLogUpdateRequest extends FormRequest {
 	 * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
 	 */
 	public function rules(): array {
-		$requiredOrSometimes = $this->isMethod('PUT') ? 'required' : 'sometimes';
 		return [
-			'name' => "{$requiredOrSometimes}|string|max:64",
+			'name' => [
+				$this->isMethod('PUT') ? 'required' : 'sometimes',
+				'string',
+				'max:64',
+				Rule::unique(AttendeeLog::class)
+					->where(fn (Builder $query) => $query->where('event_id', $this->route('attendeeLog')->event_id))
+					->ignore($this->route('attendeeLog'))
+					->withoutTrashed(),
+			],
 		];
 	}
 }

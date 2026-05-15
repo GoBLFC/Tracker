@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Department;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class TimeBonusUpdateRequest extends FormRequest {
 	/**
@@ -25,7 +28,14 @@ class TimeBonusUpdateRequest extends FormRequest {
 			'start' => "{$requiredOrSometimes}|date",
 			'stop' => "{$requiredOrSometimes}|date{$afterStartRule}",
 			'modifier' => "{$requiredOrSometimes}|decimal:0,2|min:1|max:10",
-			'departments' => "{$requiredOrSometimes}|array|exists:App\Models\Department,id",
+			'departments' => [
+				$requiredOrSometimes,
+				'list',
+				'min:1',
+				Rule::exists(Department::class, 'id')
+					->where(fn (Builder $query) => $query->where('event_id', $this->route('bonus')->event_id))
+					->withoutTrashed(),
+			],
 		];
 	}
 }

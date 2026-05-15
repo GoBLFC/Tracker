@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Activity;
-use App\Models\Department;
 use App\Models\Event;
 use App\Models\Reward;
 use App\Models\Setting;
@@ -48,7 +47,9 @@ class ManagementController extends Controller {
 			'event' => $event,
 			'events' => fn () => Event::orderBy('name')->get(),
 			'rewards' => fn () => Reward::forEvent($event)->orderBy('hours')->get(),
-			'departments' => fn () => Department::orderBy('hidden')->orderBy('name')->get(),
+			'departments' => fn () => $event
+				? $event->departments()->orderBy('hidden')->orderBy('name')->get()
+				: null,
 			'ongoingEntries' => Inertia::defer(
 				fn () => TimeEntry::with(['user', 'department'])
 					->forEvent($event)
@@ -66,55 +67,6 @@ class ManagementController extends Controller {
 					->get()
 			),
 			'volunteer' => fn () => $user?->getVolunteerInfo($event),
-		]);
-	}
-
-	/**
-	 * Render the departments admin page
-	 */
-	public function getAdminDepartments(): View {
-		return view('admin.departments', ['departments' => Department::all()]);
-	}
-
-	/**
-	 * Render the events admin page
-	 */
-	public function getAdminEvents(): View {
-		return view('admin.events', ['events' => Event::all()]);
-	}
-
-	/**
-	 * Render the rewards admin page
-	 */
-	public function getAdminRewards(?Event $event = null): View|RedirectResponse {
-		// Get the event and redirect to the page for the active event, if applicable
-		if (!$event) {
-			$event = Setting::activeEvent();
-			if ($event) return redirect()->route('admin.event.rewards', $event);
-		}
-
-		return view('admin.rewards', [
-			'event' => $event,
-			'events' => Event::all(),
-			'rewards' => $event?->rewards,
-		]);
-	}
-
-	/**
-	 * Render the bonuses admin page
-	 */
-	public function getAdminBonuses(?Event $event = null): View|RedirectResponse {
-		// Get the event and redirect to the page for the active event, if applicable
-		if (!$event) {
-			$event = Setting::activeEvent();
-			if ($event) return redirect()->route('admin.event.bonuses', $event);
-		}
-
-		return view('admin.bonuses', [
-			'event' => $event,
-			'events' => Event::all(),
-			'departments' => Department::all()->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE),
-			'bonuses' => $event?->timeBonuses()?->with('departments')?->get(),
 		]);
 	}
 

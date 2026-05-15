@@ -248,12 +248,13 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
 	/**
 	 * Gets information about the user's volunteer entities for an event
+	 *
+	 * @return array{user: static, time: array{total: int, bonus: float, day: int, entries: Collection<TimeEntry>, bonuses: Collection<TimeBonus>}, reward_claims: Collection<RewardClaim>}
 	 */
 	public function getVolunteerInfo(?Event $event = null): array {
-		$time = $this->getTimeStats($event);
 		return [
 			'user' => $this,
-			'time' => $time,
+			'time' => $this->getTimeStats($event),
 			'reward_claims' => $this->rewardClaims,
 		];
 	}
@@ -262,7 +263,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 	 * Get the total earned time (in seconds) for an event
 	 *
 	 * @param ?Event $event Event to get the earned time for - if null, then the active event will be used
-	 * @param ?Collection $timeEntries Time entries to look through (to avoid extra queries if already retrieved)
+	 * @param ?Collection<TimeEntry> $timeEntries Time entries to look through (to avoid extra queries if already retrieved)
 	 */
 	public function getEarnedTime(?Event $event = null, ?Collection $timeEntries = null): int {
 		if (!$event) $event = Setting::activeEvent();
@@ -366,7 +367,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 	 *
 	 * @param ?Event $event Event to get the reward info for - if null, then the active event will be used
 	 * @param ?float $earnedHours Number of earned hours (to avoid calculating it if it's already known)
-	 * @param ?Collection $timeEntries Time entries to look through (to avoid extra queries if already retrieved)
+	 * @param ?Collection<TimeEntry> $timeEntries Time entries to look through (to avoid extra queries if already retrieved)
 	 * @return array{rewards: Collection<Reward>, eligible: Collection<Reward>, claimed: Collection<Reward>, claims: Collection<RewardClaim>, earnedHours: float}
 	 */
 	public function getRewardInfo(?Event $event = null, ?float $earnedHours = null, ?Collection $timeEntries = null): array {
@@ -465,6 +466,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
 	/**
 	 * Retrieves both the volunteer and registration information for a given user from ConCat and logs any failed requests
+	 *
+	 * @return array{volunteer: stdClass, registration: stdClass}
 	 */
 	private static function fetchAvailableDetails(int $badgeId): array {
 		$volunteer = null;

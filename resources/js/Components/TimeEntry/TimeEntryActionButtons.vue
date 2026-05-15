@@ -63,7 +63,7 @@ async function checkout() {
 
 	const { time_entry: newEntry } = await request.post<{
 		time_entry: RawTimeEntry;
-	}>(['tracker.time.checkout.post', entry.id]);
+	}>(['volunteer.time.checkout', entry.id]);
 	emit('checkout', newEntry);
 }
 
@@ -76,7 +76,7 @@ async function del() {
 	});
 	if (!confirmed) return;
 
-	await request.del(['tracker.time.destroy', entry.id]);
+	await request.del(['volunteer.time.destroy', entry.id]);
 	deleted.value = true;
 	emit('delete');
 }

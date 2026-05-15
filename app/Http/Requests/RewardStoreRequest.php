@@ -3,7 +3,9 @@
 namespace App\Http\Requests;
 
 use App\Models\Reward;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class RewardStoreRequest extends FormRequest {
 	/**
@@ -20,7 +22,14 @@ class RewardStoreRequest extends FormRequest {
 	 */
 	public function rules(): array {
 		return [
-			'name' => 'required|string|max:64',
+			'name' => [
+				'required',
+				'string',
+				'max:64',
+				Rule::unique(Reward::class)
+					->where(fn (Builder $query) => $query->where('event_id', $this->route('event')->id))
+					->withoutTrashed(),
+			],
 			'description' => 'required|string|max:1000',
 			'hours' => 'required|integer|min:0|max:168',
 		];

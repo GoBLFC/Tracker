@@ -16,7 +16,7 @@
 		@else
 			<p class="mb-0">
 				@admin
-					There aren't any events yet - you'll need to <a href="{!! route('admin.events') !!}">create one</a> to manage.
+					There aren't any events yet - you'll need to <a href="{!! route('events.index') !!}">create one</a> to manage.
 				@else
 					There aren't any events yet.
 				@endif

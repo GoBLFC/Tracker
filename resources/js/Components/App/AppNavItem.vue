@@ -48,6 +48,8 @@ const {
 	method = 'get',
 	legacy = false,
 	active = false,
+	activeStems,
+	activeExcludeStems,
 	color = 'text-muted-color',
 	activeColor = 'text-primary-contrast',
 	showText = false,
@@ -61,6 +63,8 @@ const {
 	method?: Method;
 	legacy?: boolean;
 	active?: boolean;
+	activeStems?: string[];
+	activeExcludeStems?: string[];
 	color?: string;
 	activeColor?: string;
 	showText?: boolean;
@@ -72,23 +76,43 @@ const {
 const route = useRoute();
 const page = usePage();
 
-const isActive = computed(
-	() =>
-		active ||
-		Boolean(
-			page.url &&
-				to &&
-				route()
-					.current()
-					?.includes(to.replace(/\.index$/, '')),
-		),
-);
 const isButton = toRef(() => !to || method !== 'get');
+const isActive = computed(() => {
+	if (active) return true;
+	if (!page.url || !to) return;
+	if (!activeStems && !to) return false;
+
+	// Make sure we match to a route name
+	const current = route().current();
+	if (!current) return false;
+
+	// Don't be active for excluded route stems
+	if (activeExcludeStems) {
+		for (const stem of activeExcludeStems) {
+			if (current.startsWith(stem)) return false;
+		}
+	}
+
+	// Be active for included route stems
+	for (const stem of activeStems ?? [getStem(to)]) {
+		if (current.startsWith(stem)) return true;
+	}
+
+	return false;
+});
 
 /**
  * Navigates to the given route
  */
 function navigate() {
 	router.visit(route(to!), { method });
+}
+
+/**
+ * Gets the stem (first word before a `.`) of a route name
+ */
+function getStem(route: RouteName): string {
+	const dotIdx = route.indexOf('.');
+	return dotIdx !== -1 ? route.substring(0, dotIdx) : route;
 }
 </script>

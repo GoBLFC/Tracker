@@ -4,54 +4,104 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\EventStoreRequest;
 use App\Http\Requests\EventUpdateRequest;
+use App\Models\Department;
 use App\Models\Event;
+use App\Models\Setting;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
 
 class EventController extends Controller {
 	/**
 	 * Display a listing of the resource.
 	 */
-	public function index(): JsonResponse {
+	public function index(Request $request): JsonResponse|InertiaResponse|RedirectResponse {
 		$this->authorize('viewAny', Event::class);
-		return response()->json(['events' => Event::all()]);
+
+		if ($request->expectsJson()) return response()->json(['events' => Event::all()]);
+
+		$event = Setting::activeEvent();
+		if ($event) {
+			$request->session()->reflash();
+			return redirect()->route('events.departments.index', [$event->id]);
+		}
+
+		return Inertia::render('EventCrud', [
+			'event' => null,
+			'events' => Event::orderBy('name')->get(['id', 'name']),
+		]);
 	}
 
 	/**
 	 * Store a newly created resource in storage.
 	 */
-	public function store(EventStoreRequest $request): JsonResponse {
-		$event = new Event($request->validated());
-		$event->save();
-		session()->flash('success', 'Event created.');
-		return response()->json(['event' => $event]);
+	public function store(EventStoreRequest $request): JsonResponse|RedirectResponse {
+		$event = new Event($request->safe()->except('cloneEvent'));
+		$event->id = $event->newUniqueId();
+
+		// Clone departments from another event and use a transaction to store them and the event itself together
+		if ($request->has('cloneEvent')) {
+			$newDepartments = [];
+			$sourceDepartments = Department::forEvent($request->input('cloneEvent'))->get(['name', 'hidden']);
+			foreach ($sourceDepartments as $source) {
+				$newDepartments[] = ['name' => $source->name, 'hidden' => $source->hidden, 'event_id' => $event->id];
+			}
+
+			DB::transaction(function () use ($event, $newDepartments) {
+				$event->save();
+				Department::fillAndInsert($newDepartments);
+			});
+		} else {
+			$event->save();
+		}
+
+		return $request->expectsJson()
+			? response()->json(['event' => $event])
+			: redirect()->route('events.departments.index', [$event->id])->withSuccess("Created event {$event->name}.");
 	}
 
 	/**
 	 * Display the specified resource.
 	 */
-	public function show(Event $event): JsonResponse {
+	public function show(Request $request, Event $event): JsonResponse|RedirectResponse {
 		$this->authorize('view', $event);
-		return response()->json(['event' => $event]);
+		$user = $request->user();
+
+		return $request->expectsJson()
+			? response()->json(['event' => $event])
+			: redirect()->route('events.departments.index', [$event->id]);
 	}
 
 	/**
 	 * Update the specified resource in storage.
 	 */
-	public function update(EventUpdateRequest $request, Event $event): JsonResponse {
+	public function update(EventUpdateRequest $request, Event $event): JsonResponse|RedirectResponse {
 		$event->update($request->validated());
-		return response()->json(['event' => $event]);
+		return $request->expectsJson()
+			? response()->json(['event' => $event])
+			: redirect()->back()->withSuccess('Renamed event.');
 	}
 
 	/**
 	 * Remove the specified resource from storage.
 	 */
-	public function destroy(Event $event): JsonResponse {
+	public function destroy(Request $request, Event $event): JsonResponse|RedirectResponse {
 		$this->authorize('delete', $event);
+
+		$isActive = $event->isActive();
 
 		// TODO: Once determination is made on what to do with soft-deletables, we may want to ensure relations get
 		// deleted or soft-deleted along with the parent. At the moment, we just try to gracefully handle the parent,
 		// Event in this case, being soft-deleted.
 		$event->delete();
-		return response()->json(null, 205);
+
+		if ($isActive) Setting::set('active-event', null);
+
+		return $request->expectsJson()
+			? response()->json(null, 205)
+			: redirect()->route('events.index')->withSuccess("Deleted event {$event->name}.");
 	}
 }

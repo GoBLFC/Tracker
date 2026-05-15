@@ -42,6 +42,6 @@ class NotificationController extends Controller {
 		$user->unreadNotifications()->update(['read_at' => now()]);
 		return $request->expectsJson()
 			? response()->json(null, 205)
-			: redirect()->route('tracker.index');
+			: redirect()->route('volunteer.index');
 	}
 }

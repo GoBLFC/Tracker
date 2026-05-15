@@ -79,6 +79,7 @@
 import { computed, ref, toRef, useId } from 'vue';
 import { useBreakpoints } from '@/lib/media-query';
 import { useUser } from '@/lib/user';
+import type { RouteName } from '@/lib/route';
 
 import {
 	faHouseCircleCheck,
@@ -93,6 +94,7 @@ import {
 	faClose,
 	faCog,
 	faArrowRightToBracket,
+	type IconDefinition,
 } from '@fortawesome/free-solid-svg-icons';
 import AppNavItem from './AppNavItem.vue';
 import AppNavLogoutItem from './AppNavLogoutItem.vue';
@@ -110,12 +112,18 @@ const showHamburger = toRef(() => isNotSm.value);
 const expandedMenuHeight = toRef(() => `${(mainMenuItems.value.length + 3) * 3 + 4}rem`);
 
 const mainMenuItems = computed(() => {
-	const items = [
+	const items: {
+		to: RouteName;
+		label: string;
+		icon: IconDefinition;
+		legacy?: boolean;
+		activeStems?: string[];
+		activeExcludeStems?: string[];
+	}[] = [
 		{
-			to: 'tracker.index',
+			to: 'volunteer.index',
 			label: 'Home',
 			icon: faHouseCircleCheck,
-			legacy: false,
 		},
 	];
 
@@ -124,7 +132,6 @@ const mainMenuItems = computed(() => {
 			to: 'management.manage',
 			label: 'Manager Dashboard',
 			icon: faBusinessTime,
-			legacy: false,
 		});
 	}
 
@@ -133,7 +140,7 @@ const mainMenuItems = computed(() => {
 			to: 'attendee-logs.index',
 			label: 'Attendee Logs',
 			icon: faBookOpen,
-			legacy: false,
+			activeStems: ['attendee-logs', 'events.attendee-logs'],
 		});
 	}
 
@@ -143,13 +150,12 @@ const mainMenuItems = computed(() => {
 				to: 'users.index',
 				label: 'Users',
 				icon: faUsers,
-				legacy: false,
 			},
 			{
-				to: 'admin.events',
+				to: 'events.index',
 				label: 'Events',
 				icon: faCalendarDay,
-				legacy: true,
+				activeExcludeStems: ['events.attendee-logs'],
 			},
 			{
 				to: 'admin.reports',
@@ -161,7 +167,6 @@ const mainMenuItems = computed(() => {
 				to: 'settings.index',
 				label: 'Configuration',
 				icon: faScrewdriverWrench,
-				legacy: false,
 			},
 		);
 	}

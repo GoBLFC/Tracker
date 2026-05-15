@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Event;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class EventUpdateRequest extends FormRequest {
 	/**
@@ -18,9 +20,13 @@ class EventUpdateRequest extends FormRequest {
 	 * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
 	 */
 	public function rules(): array {
-		$requiredOrSometimes = $this->isMethod('PUT') ? 'required' : 'sometimes';
 		return [
-			'name' => "{$requiredOrSometimes}|string|max:64",
+			'name' => [
+				$this->isMethod('PUT') ? 'required' : 'sometimes',
+				'string',
+				'max:64',
+				Rule::unique(Event::class)->ignore($this->route('event'))->withoutTrashed(),
+			],
 		];
 	}
 }

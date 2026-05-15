@@ -25,8 +25,8 @@ class TimeEntryPolicy {
 	/**
 	 * Determine whether the user can create models.
 	 */
-	public function create(User $creator, User $target, ?Event $event = null): bool {
-		$validEvent = !$event || $event->isActive();
+	public function create(User $creator, User $target, Event $event): bool {
+		$validEvent = $event->isActive();
 		return ($creator->id === $target->id && $validEvent && (Kiosk::isSessionAuthorized() || $creator->isStaff()))
 			|| ($creator->isManager() && $validEvent)
 			|| $creator->isAdmin();

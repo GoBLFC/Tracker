@@ -44,16 +44,21 @@
 				<div class="flex grow gap-6 justify-between items-center">
 					<span class="truncate">{{ event.name }}</span>
 					<Tag
-						:value="
-							event.id === activeEvent?.id ? 'Active' : 'Inactive'
-						"
-						:severity="
-							event.id === activeEvent?.id
-								? 'success'
-								: 'secondary'
-						"
+						:value="event.id === activeEvent?.id ? 'Active' : 'Inactive'"
+						:severity="event.id === activeEvent?.id ? 'success' : 'secondary'"
 					/>
 				</div>
+			</template>
+
+			<template v-if="isAdmin" #footer>
+				<IconButton
+					label="Create new event"
+					:icon="faCalendarPlus"
+					variant="text"
+					size="small"
+					fluid
+					@click="showCreateModal = true"
+				/>
 			</template>
 		</Select>
 	</InputGroup>
@@ -62,7 +67,7 @@
 		<p class="text-lg">
 			<span class="font-semibold">There aren't any events yet.</span>
 			You'll need to
-			<LegacyLink to="admin.events">create one</LegacyLink>
+			<Button variant="link" @click="showCreateModal = true">create one</Button>
 			to manage.
 		</p>
 	</Message>
@@ -70,6 +75,8 @@
 	<Message v-else class="w-full">
 		<p class="text-lg font-semibold">There aren't any events to manage yet.</p>
 	</Message>
+
+	<EventCreateModal v-if="isAdmin" v-model:visible="showCreateModal" :events />
 </template>
 
 <script setup lang="ts">
@@ -82,11 +89,13 @@ import type TrackerEvent from '@/data/Event';
 import type { EventId } from '@/data/Event';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faCalendarDay } from '@fortawesome/free-solid-svg-icons';
-import LegacyLink from '../Common/LegacyLink.vue';
+import { faCalendarDay, faCalendarPlus } from '@fortawesome/free-solid-svg-icons';
+import IconButton from '@/Components/Common/IconButton.vue';
+import EventCreateModal from '@/Components/Dialogs/EventCreateModal.vue';
 
 const {
 	event,
+	events,
 	resolver,
 	actionWord = 'edit',
 } = defineProps<{
@@ -99,15 +108,25 @@ const emit = defineEmits<{
 	(e: 'changing', eventId: EventId): void;
 	(e: 'change', eventId: EventId): void;
 	(e: 'error', errors: Errors): void;
+	(e: 'finish'): void;
 }>();
 
 const { activeEvent } = useAppSettings();
 const { isAdmin } = useUser();
 
-const selectedEvent = ref(event);
+const selectedEvent = ref<TrackerEvent | null>(event);
 const loading = ref(false);
 const select = useTemplateRef('select');
 const labelId = useId();
+const showCreateModal = ref(false);
+
+watch(
+	() => event,
+	(newEvent) => {
+		if (event?.id !== selectedEvent.value?.id || event?.name !== selectedEvent.value?.name)
+			selectedEvent.value = newEvent;
+	},
+);
 
 // Navigate to the appropriate URL when switching events
 watch(selectedEvent, (newEvent, oldEvent) => {
@@ -137,6 +156,7 @@ watch(selectedEvent, (newEvent, oldEvent) => {
 		},
 		onFinish() {
 			loading.value = false;
+			emit('finish');
 		},
 	});
 });

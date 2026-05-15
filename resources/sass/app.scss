@@ -1,7 +1,6 @@
 @import "custom-bootstrap";
 @import "custom-datatables";
 @import "sweetalert2/src/sweetalert2.scss";
-@import "@eonasdan/tempus-dominus/src/scss/tempus-dominus";
 @import "animate.css";
 
 .info-badge {
@@ -47,11 +46,6 @@
 			}
 		}
 	}
-}
-
-.tempus-dominus-widget svg {
-	width: 1em;
-	height: 1em;
 }
 
 #telegramQrCanvas {

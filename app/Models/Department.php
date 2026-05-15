@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use App\Models\Contracts\HasDisplayName;
+use App\Models\Traits\ChecksActiveEvent;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,10 +18,12 @@ use Spatie\Activitylog\Traits\LogsActivity;
 /**
  * @property string $name
  * @property bool $hidden
+ * @property string $event_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read string $display_name
+ * @property-read \App\Models\Event $event
  * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\TimeBonus>|\App\Models\TimeBonus[] $timeBonuses
  * @property-read int|null $time_bonuses_count
  * @property-read \Illuminate\Database\Eloquent\Collection<\App\Models\TimeEntry>|\App\Models\TimeEntry[] $timeEntries
@@ -47,7 +52,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  */
 class Department extends Model implements HasDisplayName {
 	/** @use HasFactory<\Database\Factories\DepartmentFactory> */
-	use HasFactory, HasUuids, LogsActivity, SoftDeletes;
+	use ChecksActiveEvent, HasFactory, HasUuids, LogsActivity, SoftDeletes;
 
 	protected $casts = [
 		'hidden' => 'boolean',
@@ -69,6 +74,13 @@ class Department extends Model implements HasDisplayName {
 	}
 
 	/**
+	 * Get the event the department is a part of
+	 */
+	public function event(): BelongsTo {
+		return $this->belongsTo(Event::class)->withTrashed();
+	}
+
+	/**
 	 * Get the time bonuses associated with this department
 	 */
 	public function timeBonuses(): BelongsToMany {
@@ -80,5 +92,13 @@ class Department extends Model implements HasDisplayName {
 	 */
 	public function timeEntries(): HasMany {
 		return $this->hasMany(TimeEntry::class);
+	}
+
+	/**
+	 * Scope a query to only include departments for an event.
+	 * If the event is not specified, then the active event will be used.
+	 */
+	public function scopeForEvent(Builder $query, Event|string|null $event = null): void {
+		$query->where('event_id', $event->id ?? $event ?? Setting::activeEvent()?->id);
 	}
 }

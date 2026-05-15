@@ -14,16 +14,13 @@ Route::controller(\App\Http\Controllers\AuthController::class)->group(function (
 });
 
 Route::middleware(['auth', 'not-banned', 'lockdown'])->group(function () {
-	Route::controller(\App\Http\Controllers\TrackerController::class)->group(function () {
-		Route::get('/', 'getIndex')->name('tracker.index');
-		Route::get('/disabled/site', 'getLockdown')->name('tracker.lockdown')->withoutMiddleware('lockdown');
-		Route::post('/time/checkin', 'postCheckIn')->name('tracker.checkin.post');
-		Route::post('/time/checkout', 'postCheckOut')->name('tracker.checkout.post');
-		Route::post('/time/{timeEntry}/checkout', 'postCheckOut')->name('tracker.time.checkout.post');
-		Route::delete('/time/{timeEntry}', 'destroyTimeEntry')->name('tracker.time.destroy');
-		Route::get('/users/{user}/stats', 'getStats')->name('tracker.user.stats');
-		Route::put('/users/{user}/time', 'storeTimeEntry')->name('tracker.time.store');
-		Route::get('/users/{user}/time/event/{event}', 'getStats')->name('tracker.user.stats.event');
+	Route::controller(\App\Http\Controllers\VolunteerController::class)->group(function () {
+		Route::get('/', 'index')->name('volunteer.index');
+		Route::get('/disabled/site', 'lockdown')->name('volunteer.lockdown')->withoutMiddleware('lockdown');
+		Route::post('/events/{event}/checkin', 'checkIn')->name('volunteer.time.checkin');
+		Route::post('/time/{timeEntry}/checkout', 'checkOut')->name('volunteer.time.checkout');
+		Route::put('/events/{event}/users/{user}/time', 'storeTimeEntry')->name('volunteer.time.store');
+		Route::delete('/time/{timeEntry}', 'destroyTimeEntry')->name('volunteer.time.destroy');
 	});
 
 	Route::get('/users/search', [\App\Http\Controllers\UserController::class, 'getSearch'])->name('users.search');
@@ -49,8 +46,8 @@ Route::middleware(['auth', 'not-banned', 'lockdown'])->group(function () {
 	Route::apiResource('settings', \App\Http\Controllers\SettingController::class)
 		->only(['index', 'update', 'destroy'])
 		->parameter('settings', 'setting:name');
-	Route::apiResource('departments', \App\Http\Controllers\DepartmentController::class);
 	Route::apiResource('events', \App\Http\Controllers\EventController::class);
+	Route::apiResource('events.departments', \App\Http\Controllers\DepartmentController::class)->shallow();
 	Route::apiResource('events.bonuses', \App\Http\Controllers\TimeBonusController::class)->shallow();
 	Route::apiResource('events.rewards', \App\Http\Controllers\RewardController::class)->shallow();
 	Route::apiResource('events.attendee-logs', \App\Http\Controllers\AttendeeLogController::class)->shallow();
@@ -68,12 +65,6 @@ Route::middleware(['auth', 'not-banned', 'lockdown'])->group(function () {
 		});
 
 		Route::middleware('role:admin')->group(function () {
-			Route::get('/admin/departments', 'getAdminDepartments')->name('admin.departments');
-			Route::get('/admin/events', 'getAdminEvents')->name('admin.events');
-			Route::get('/admin/rewards', 'getAdminRewards')->name('admin.rewards');
-			Route::get('/admin/event/{event}/rewards', 'getAdminRewards')->name('admin.event.rewards');
-			Route::get('/admin/bonuses', 'getAdminBonuses')->name('admin.bonuses');
-			Route::get('/admin/event/{event}/bonuses', 'getAdminBonuses')->name('admin.event.bonuses');
 			Route::get('/admin/reports', 'getAdminReportList')->name('admin.reports');
 			Route::get('/admin/event/{event}/reports', 'getAdminReportList')->name('admin.event.reports');
 			Route::get('/admin/reports/{reportType}', 'getAdminReport')->name('admin.reports.view');

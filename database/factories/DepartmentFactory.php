@@ -16,9 +16,19 @@ class DepartmentFactory extends Factory {
 	 */
 	public function definition(): array {
 		return [
-			'name' => Str::limit(fake()->jobTitle(), 63),
-			'hidden' => false,
+			'name' => Str::limit(fake()->jobTitle(), 61),
+			'hidden' => fake()->boolean(20),
+			'event_id' => \App\Models\Event::factory(),
 		];
+	}
+
+	/**
+	 * Indicate that the model's hidden flag should not be set
+	 */
+	public function visible(): static {
+		return $this->state(fn () => [
+			'hidden' => false,
+		]);
 	}
 
 	/**

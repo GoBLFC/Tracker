@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Reward;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class RewardUpdateRequest extends FormRequest {
 	/**
@@ -20,6 +23,15 @@ class RewardUpdateRequest extends FormRequest {
 	public function rules(): array {
 		$requiredOrSometimes = $this->isMethod('PUT') ? 'required' : 'sometimes';
 		return [
+			'name' => [
+				$requiredOrSometimes,
+				'string',
+				'max:64',
+				Rule::unique(Reward::class)
+					->where(fn (Builder $query) => $query->where('event_id', $this->route('reward')->event_id))
+					->ignore($this->route('reward'))
+					->withoutTrashed(),
+			],
 			'name' => "{$requiredOrSometimes}|string|max:64",
 			'description' => "{$requiredOrSometimes}|string|max:1000",
 			'hours' => "{$requiredOrSometimes}|integer|min:0|max:168",
