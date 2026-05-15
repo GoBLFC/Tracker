@@ -48,6 +48,9 @@ export interface Tab {
  * Navigates to a tab
  */
 function nav(tab: Tab) {
-	router.get(Array.isArray(tab.route) ? route(...tab.route) : route(tab.route), undefined, { only: tab.only });
+	router.get(Array.isArray(tab.route) ? route(...tab.route) : route(tab.route), undefined, {
+		preserveState: true,
+		only: tab.only,
+	});
 }
 </script>

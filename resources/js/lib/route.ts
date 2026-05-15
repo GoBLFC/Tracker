@@ -1,5 +1,5 @@
-import { inject } from 'vue';
-import type { InjectionKey } from 'vue';
+import { inject, onMounted, onUnmounted, ref, type InjectionKey } from 'vue';
+import { router } from '@inertiajs/vue3';
 import type { route as routeFn } from 'vendor/tightenco/ziggy';
 
 /**
@@ -32,6 +32,27 @@ export const injectKey = Symbol() as InjectionKey<ZiggyFn>;
  */
 export function useRoute() {
 	return inject(injectKey)!;
+}
+
+/**
+ * Composable to access the current route name
+ */
+export function useCurrentRoute() {
+	const route = useRoute();
+
+	const currentRoute = ref<RouteName | null>(route().current() ?? null);
+	let removeNavigateListener: VoidFunction | null = null;
+
+	onMounted(() => {
+		removeNavigateListener = router.on('navigate', () => {
+			currentRoute.value = route().current() ?? null;
+		});
+	});
+	onUnmounted(() => {
+		if (removeNavigateListener) removeNavigateListener();
+	});
+
+	return currentRoute;
 }
 
 /**

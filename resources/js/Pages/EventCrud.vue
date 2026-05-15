@@ -45,7 +45,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useRoute } from '@/lib/route';
+import { useCurrentRoute, useRoute } from '@/lib/route';
 import { useUser } from '@/lib/user';
 import type Event from '@/data/Event';
 import type { EventId } from '@/data/Event';
@@ -70,13 +70,13 @@ const { event, departments, rewards, bonuses } = defineProps<{
 }>();
 
 const route = useRoute();
+const currentRoute = useCurrentRoute();
 const { isAdmin } = useUser();
 
 const tab = computed(() => {
-	const current = route().current();
-	if (current === 'events.departments.index') return 'departments';
-	if (current === 'events.rewards.index') return 'rewards';
-	if (current === 'events.bonuses.index') return 'bonuses';
+	if (currentRoute.value === 'events.departments.index') return 'departments';
+	if (currentRoute.value === 'events.rewards.index') return 'rewards';
+	if (currentRoute.value === 'events.bonuses.index') return 'bonuses';
 	return null;
 });
 
@@ -92,7 +92,7 @@ const title = computed(() => {
  */
 function eventRequestResolver(eventId: EventId) {
 	return {
-		url: route(`events.${tab.value}.index`, eventId),
+		url: route(`events.${tab.value ?? 'departments'}.index`, eventId),
 		only: ['event', 'departments', 'rewards', 'bonuses'],
 	};
 }
