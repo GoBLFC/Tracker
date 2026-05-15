@@ -6,6 +6,7 @@ use App\Models\Kiosk;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
@@ -27,6 +28,7 @@ class AppServiceProvider extends ServiceProvider {
 	 */
 	public function boot(): void {
 		JsonResource::withoutWrapping();
+		Model::preventSilentlyDiscardingAttributes($this->app->isLocal());
 
 		// Define the API rate limits
 		RateLimiter::for('api', function (Request $request) {
