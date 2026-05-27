@@ -41,7 +41,7 @@ class ConCatApiClient {
 				'client_id' => $this->config['client_id'],
 				'client_secret' => $this->config['client_secret'],
 				'grant_type' => 'client_credentials',
-				'scope' => 'volunteer:read registration:read',
+				'scope' => 'user:read volunteer:read registration:read',
 			],
 		]);
 

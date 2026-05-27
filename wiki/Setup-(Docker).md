@@ -9,7 +9,7 @@ This removes/simplifies a lot of effort, both when setting everything up initial
     -   You will need Developer access to your event's ConCat instance to create the OAuth app.
         Specifically, you will need the `oauth:manage` permission to set everything up.
         Alternatively, have someone else create an OAuth app in ConCat for you and have them provide you with the client ID and secret.
-    -   The OAuth app will require the `volunteer:read` and `registration:read` application permissions for OAuth Bearer tokens, which are used for generating the Volunteer Applications reports and retrieving badge details inside Tracker.
+    -   The OAuth app will require the `user:read`, `registration:read`, and `volunteer:read` application permissions for OAuth Bearer tokens, which are used for generating the Volunteer Applications reports and retrieving badge details inside Tracker.
 
 ## Installation
 
@@ -195,7 +195,7 @@ The resulting value should look something like `base64:QSiqblPkv+xnBBhP4Y3rvC4gt
 1. Log in to a ConCat account that has developer authorization
 1. Add a new OAuth App at **Housekeeping** -> **Developers** -> **OAuth Applications** -> **Create New**
     - Use `https://your-tracker.domain` for the callback URL
-    - Select the `registration:read` and `volunteer:read` application permissions
+    - Select the `user:read`, `registration:read`, and `volunteer:read` application permissions
 1. Use the provided client ID and secret for the `CONCAT_CLIENT_SECRET` and `CONCAT_CLIENT_ID` environment variables
 
 ### Telegram setup

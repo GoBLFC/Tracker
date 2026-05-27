@@ -21,7 +21,7 @@ The important ones that will most likely need to be filled in are the ConCat and
 1. Create a ConCat account on your ConCat instance for OAuth and ensure it has developer authorization.
 1. Add a new OAuth App at **Housekeeping** -> **Developers** -> **OAuth Applications** -> **Create New**
     - Use `http://localhost` for the callback URL
-    - Select the `registration:read` and `volunteer:read` application permissions
+    - Select the `user:read`, `registration:read`, and `volunteer:read` application permissions
 1. Update `CONCAT_CLIENT_SECRET` and `CONCAT_CLIENT_ID` in `.env`
 
 ### Telegram Bot
