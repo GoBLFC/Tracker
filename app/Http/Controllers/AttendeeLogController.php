@@ -9,6 +9,7 @@ use App\Http\Requests\AttendeeLogUserStoreRequest;
 use App\Models\AttendeeLog;
 use App\Models\AttendeeType;
 use App\Models\Event;
+use App\Models\Role;
 use App\Models\Setting;
 use App\Models\User;
 use App\Reports\Report;
@@ -125,7 +126,7 @@ class AttendeeLogController extends Controller {
 					: redirect()->back()->withErrors(['badge_id' => "Unable to find user with badge #{$badgeId}."]);
 			}
 
-			$user = User::createFromConCatRegistration($registration, 'Attendee');
+			$user = User::createFromConCatRegistration($registration, Role::Attendee);
 		}
 
 		// Make sure the user isn't already present in the log

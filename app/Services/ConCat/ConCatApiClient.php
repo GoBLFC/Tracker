@@ -35,7 +35,7 @@ class ConCatApiClient {
 	/**
 	 * Obtains authorization from the API
 	 */
-	public function authorize(): void {
+	public function authorize(): static {
 		$response = $this->buildHttpClient(false)->post('/api/oauth/token', [
 			'form_params' => [
 				'client_id' => $this->config['client_id'],
@@ -47,6 +47,15 @@ class ConCatApiClient {
 
 		$this->accessToken = json_decode($response->getBody())->access_token;
 		$this->httpClient = $this->buildHttpClient();
+
+		return $this;
+	}
+
+	/**
+	 * Obtains authorization from the API if it hasn't already been obtained
+	 */
+	public function authorizeIfNeeded(): static {
+		return !$this->isAuthorized() ? $this->authorize() : $this;
 	}
 
 	/**

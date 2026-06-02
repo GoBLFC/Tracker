@@ -420,6 +420,28 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 	}
 
 	/**
+	 * Fills the username, first name, and last name from a ConCat user entity
+	 */
+	public function fillFromConCatUser(\stdClass $user): static {
+		$this->username = $user->username;
+		$this->first_name = $user->firstName;
+		$this->last_name = $user->lastName;
+
+		return $this;
+	}
+
+	/**
+	 * Fills the username, first name, last name, and badge name from a ConCat registration entity
+	 */
+	public function fillFromConCatRegistration(\stdClass $registration): static {
+		$this->badge_name = $registration->badgeName;
+
+		if (isset($registration->user)) $this->fillFromConCatUser($registration->user);
+
+		return $this;
+	}
+
+	/**
 	 * Finds an existing user record and updates it with the latest information from an OAuth user, or creates a new
 	 * record for it entirely.
 	 */
@@ -433,78 +455,110 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 	}
 
 	/**
-	 * Creates a user from a ConCat registration object.
+	 * Creates a user from a ConCat registration object. The first & last name are intentionally omitted for the
+	 * Attendee role in order to avoid storing PII for ordinary attendees.
 	 */
-	public static function createFromConCatRegistration(object $registration, string $userType): static {
+	public static function createFromConCatRegistration(\stdClass $registration, Role $role): static {
+		$storePii = $role->value >= Role::Volunteer->value;
 		return static::create([
 			'username' => $registration->user->username,
-			'first_name' => 'Unidentified',
-			'last_name' => Str::title($userType),
+			'first_name' => ($storePii ? $registration->user?->firstName : null) ?? 'Unidentified',
+			'last_name' => ($storePii ? $registration->user?->lastName : null) ?? Str::title($role->name),
 			'badge_id' => $registration->user->id,
 			'badge_name' => $registration->badgeName,
+			'role' => $role,
 		]);
 	}
 
 	/**
-	 * Retrieve user and registration details for a badge ID and create a user with the information available from them.
+	 * Retrieve ConCat user and registration details for a badge ID and create a user with the information available.
 	 * If all information fails to be retrieved, then a placeholder user with just the badge ID is created.
+	 * The first & last name are intentionally omitted for the Attendee role in order to avoid storing PII for
+	 * ordinary attendees.
 	 */
-	public static function createWithAvailableDetails(int $badgeId, string $userType): static {
-		$info = static::fetchAvailableDetails($badgeId);
+	public static function createWithAvailableConCatDetails(int $badgeId, Role $role): static {
+		// Fetch all available info
+		$info = static::fetchAllConCatDetails($badgeId);
 		$user = $info['user'];
 		$registration = $info['registration'];
 
-		// Create the user with all available info
+		// Create the user
+		$storePii = $role->value >= Role::Volunteer->value;
 		return static::create([
 			'username' => $user?->username ?? 'unknown',
-			'first_name' => $user?->firstName ?? 'Unidentified',
-			'last_name' => $user?->lastName ?? Str::title($userType),
+			'first_name' => ($storePii ? $user?->firstName : null) ?? 'Unidentified',
+			'last_name' => ($storePii ? $user?->lastName : null) ?? Str::title($role->name),
 			'badge_id' => $user?->id ?? $badgeId,
 			'badge_name' => $registration?->badgeName,
+			'role' => $role,
 		]);
 	}
 
 	/**
-	 * Retrieves both the volunteer and registration information for a given user from ConCat
-	 * and logs any failed requests
-	 *
-	 * @return array{user: ?stdClass, registration: ?stdClass}
+	 * Retrieves a ConCat user entity, logging any failed requests
 	 */
-	private static function fetchAvailableDetails(int $badgeId): array {
-		$user = null;
-		$registration = null;
+	private static function fetchConCatUser(int $badgeId): ?\stdClass {
+		if (!static::authorizeConCat()) return null;
 
 		try {
-			ConCat::authorize();
-
-		// Try looking up a registration from the badge ID in ConCat so we get the registration's badge name
-		// and all of the user's details
-		try {
-			$registration = ConCat::getRegistration($badgeId);
-			$user = $registration?->user;
+			return ConCat::getUser($badgeId);
 		} catch (\Throwable $err) {
-			Log::warning('Failed to look up ConCat registration for manual user creation', [
+			Log::warning('Failed to look up ConCat user entity for user information retrieval', [
 				'badge_id' => $badgeId,
 				'error' => $err,
 			]);
 		}
 
-		// If we don't already have the user info, try looking up the user directly so we at least get
-		// their username and legal name
-		if (!$user) {
-			try {
-				$user = ConCat::getUser($badgeId);
-			} catch (\Throwable $err) {
-				Log::warning('Failed to look up ConCat user for manual user creation', [
-					'badge_id' => $badgeId,
-					'error' => $err,
-				]);
-			}
+		return null;
+	}
+
+	/**
+	 * Retrieves a ConCat registration entity for a user, logging any failed requests
+	 */
+	private static function fetchConCatRegistration(int $badgeId): ?\stdClass {
+		if (!static::authorizeConCat()) return null;
+
+		// Try looking up a registration from the badge ID in ConCat so we get the registration's badge name
+		// and all of the user's details
+		try {
+			return ConCat::getRegistration($badgeId);
+		} catch (\Throwable $err) {
+			Log::warning('Failed to look up ConCat user entity for user information retrieval', [
+				'badge_id' => $badgeId,
+				'error' => $err,
+			]);
 		}
 
+		return null;
+	}
+
+	/**
+	 * Retrieves all available ConCat information for a user, logging any failed requests
+	 *
+	 * @return array{user: ?stdClass, registration: ?stdClass}
+	 */
+	private static function fetchAllConCatDetails(int $badgeId): array {
+		if (!static::authorizeConCat()) return ['user' => null, 'registration' => null];
+
+		$registration = static::fetchConCatRegistration($badgeId);
 		return [
-			'user' => $user,
+			'user' => $registration?->user ?? static::fetchConCatUser($badgeId),
 			'registration' => $registration,
 		];
+	}
+
+	/**
+	 * Authorizes with the ConCat API if necessary and logs any failed attempts
+	 *
+	 * @return bool Whether authorization was successful
+	 */
+	private static function authorizeConCat(): bool {
+		try {
+			ConCat::authorizeIfNeeded();
+			return true;
+		} catch (\Throwable $err) {
+			Log::error('Failed to authorize with ConCat for user information retrieval', ['error' => $err]);
+			return false;
+		}
 	}
 }

@@ -70,7 +70,7 @@ class UserController extends Controller {
 	 * Create a user with just a badge ID
 	 */
 	public function store(UserStoreRequest $request): JsonResponse|RedirectResponse {
-		$user = User::createWithAvailableDetails($request->integer('badge_id'), 'Volunteer');
+		$user = User::createWithAvailableConCatDetails($request->integer('badge_id'), Role::Volunteer);
 
 		return $request->expectsJson()
 			? response()->json(['user' => $user])
