@@ -57,30 +57,28 @@ class FetchUnknownUserDetailsCommand extends Command implements Isolatable {
 	}
 
 	/**
-	 * Retrieves a volunteer entity for a user and updates it with information from that and a registration entity
+	 * Updates a user using information from a ConCat registration. If a registration isn't available, the ConCat user
+	 * entity is retrieved to get the basic information necessary for them.
 	 */
 	private function updateUser(User $user, ?\stdClass $registration): bool {
-		// Fetch the volunteer information for the user.
-		// Sadly, ConCat does not currently allow  bulk-retrieval of volunteer entities.
-		$this->info("Fetching volunteer information for {$user->audit_name}...");
-		try {
-			$volunteer = ConCat::getVolunteer($user->badge_id);
-		} catch (\Throwable $_err) {
-			$volunteer = null;
-			$this->warn("Failed to retrieve volunteer information for {$user->audit_name}.");
-
-			// If a registration wasn't provided either, then there's nothing to do for this user
-			if (!$registration) {
-				$this->warn("{$user->audit_name} doesn't have volunteer or registration information available. Skipping.");
-				return false;
+		// Retrieve & fill with the ConCat user entity if we don't already have it from the registration
+		if (!$registration?->user) {
+			$this->info("Fetching user information for {$user->audit_name}...");
+			try {
+				$conCatUser = ConCat::getUser($user->badge_id);
+				$user->fillFromConCatUser($conCatUser);
+			} catch (\Throwable $_err) {
+				if ($registration) {
+					$this->warn("Failed to retrieve user information for {$user->audit_name}. Proceeding with partial registration information.");
+				} else {
+					$this->warn("Failed to retrieve user information for {$user->audit_name}, and no registration information was found. Skipping.");
+					return false;
+				}
 			}
 		}
 
 		// Update the user
-		$user->username = $volunteer?->user?->username ?? $registration?->user?->username ?? $user->username;
-		$user->first_name = $volunteer?->user?->firstName ?? $registration?->user?->firstName ?? $user->first_name;
-		$user->last_name = $volunteer?->user?->lastName ?? $registration?->user?->lastName ?? $user->last_name;
-		$user->badge_name = $registration?->badgeName ?? $user->badge_name;
+		if ($registration) $user->fillFromConCatRegistration($registration);
 		$user->save();
 		$this->info("Updated {$user->audit_name}.");
 		return true;
