@@ -518,8 +518,6 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 	private static function fetchConCatRegistration(int $badgeId): ?\stdClass {
 		if (!static::authorizeConCat()) return null;
 
-		// Try looking up a registration from the badge ID in ConCat so we get the registration's badge name
-		// and all of the user's details
 		try {
 			return ConCat::getRegistration($badgeId);
 		} catch (\Throwable $err) {
