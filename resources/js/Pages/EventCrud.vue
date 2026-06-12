@@ -81,9 +81,9 @@ const tab = computed(() => {
 });
 
 const title = computed(() => {
-	if (tab.value === 'departments') return `Departments | ${event?.name ?? 'Unknown'}`;
-	if (tab.value === 'rewards') return `Rewards | ${event?.name ?? 'Unknown'}`;
-	if (tab.value === 'bonuses') return `Bonuses | ${event?.name ?? 'Unknown'}`;
+	if (tab.value === 'departments') return 'Departments';
+	if (tab.value === 'rewards') return 'Rewards';
+	if (tab.value === 'bonuses') return 'Bonuses';
 	return 'Event Setup';
 });
 
