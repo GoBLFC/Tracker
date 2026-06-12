@@ -16,14 +16,15 @@ class TimeEntryFactory extends Factory {
 	 */
 	public function definition(): array {
 		$times = static::randomTimes(fake()->boolean(5));
+		$auto = $times['stop'] ? fake()->boolean(5) : false;
 		return [
 			'user_id' => \App\Models\User::factory(),
 			'start' => $times['start'],
-			'stop' => $times['stop'],
+			'stop' => !$auto ? $times['stop'] : $times['start']->avoidMutation()->addHours(1),
 			'department_id' => \App\Models\Department::factory(),
-			'notes' => fake()->boolean(25) ? fake()->paragraph() : null,
+			'notes' => fake()->boolean(25) ? fake()->sentence() : null,
 			'creator_user_id' => fn (array $attributes) => $attributes['user_id'],
-			'auto' => fake()->boolean(5),
+			'auto' => $auto,
 			'event_id' => \App\Models\Event::factory(),
 			'created_at' => $times['start'],
 			'updated_at' => $times['stop'] ?? $times['start'],
