@@ -27,24 +27,24 @@
 			<template #body="{ data: item }: { data: T }">
 				<slot :name="`col-${String(field.key)}`" :item>
 					<!-- Viewing - Field text -->
-					<template v-if="readonly || !editing[item.id as T['id']]">
+					<template v-if="readonly || !editing.get(item.id)">
 						<template v-if="field.display">{{ field.display(item[field.key]) }}</template>
 						<template v-else-if="field.type === 'number'">
 							{{ field.prefix ?? "" }}
-							{{ field.format?.format?.(item[field.key]) ??
-								item[field.key].toLocaleString(undefined, {
+							{{ field.format?.format?.(item[field.key] as number) ??
+								(item[field.key] as number).toLocaleString(undefined, {
 									minimumFractionDigits: field.fractionDigits,
 									maximumFractionDigits: field.fractionDigits,
 								}) }}{{ field.suffix ?? "" }}
 						</template>
 						<template v-else-if="field.type === 'datetime'">
-							<DateTime :date="item[field.key]" />
+							<DateTime :date="item[field.key] as Date | string" />
 						</template>
 						<template v-else-if="field.type === 'select' && field.multiple">
-							{{ (item[field.key] as unknown[])?.join?.(', ') ?? '' }}
+							{{ (item[field.key] as string[] | number[])?.join?.(', ') ?? '' }}
 						</template>
 						<template v-else-if="field.type === 'switch'">
-							<ToggleSwitch :model-value="item[field.key]" readonly />
+							<ToggleSwitch :model-value="item[field.key] as boolean" readonly />
 						</template>
 						<template v-else>{{ item[field.key] }}</template>
 					</template>
@@ -52,8 +52,8 @@
 					<!-- Editing - Field inputs -->
 					<InputNumber
 						v-else-if="field.type === 'number'"
-						v-model="editing[item.id as T['id']][field.key]"
-						:form="editFormId(item.id as T['id'])"
+						v-model="editing.get(item.id)![field.key]"
+						:form="editFormId(item.id)"
 						:min="field.min"
 						:max="field.max"
 						:step="field.step"
@@ -62,93 +62,88 @@
 						:min-fraction-digits="field.fractionDigits"
 						:max-fraction-digits="field.fractionDigits"
 						:required="field.required"
-						:disabled="Boolean(updating[item.id as T['id']])"
+						:disabled="Boolean(updating.get(item.id))"
 						show-buttons
 						fluid
-						:pt="{ pcInputText: { props: { form: editFormId(item.id as T['id']) } } }"
-						@input="clearEditError(item.id as T['id'], field.key)"
+						:pt="{ pcInputText: { props: { form: editFormId(item.id) } } }"
+						@input="clearEditError(item.id, field.key)"
 					/>
 					<DatePicker
 						v-else-if="field.type === 'datetime'"
-						v-model="editing[item.id as T['id']][field.key]"
-						:form="editFormId(item.id as T['id'])"
+						v-model="editing.get(item.id)![field.key]"
+						:form="editFormId(item.id)"
 						:min-date="field.min"
 						:max-date="field.max"
 						:required="field.required"
-						:disabled="Boolean(updating[item.id as T['id']])"
+						:disabled="Boolean(updating.get(item.id))"
 						show-time
 						date-format="yy-mm-dd"
 						hour-format="12"
 						show-icon
 						icon-display="input"
 						fluid
-						:pt="{ pcInputText: { props: { form: editFormId(item.id as T['id']) } } }"
-						@value-change="clearEditError(item.id as T['id'], field.key)"
+						:pt="{ pcInputText: { props: { form: editFormId(item.id) } } }"
+						@value-change="clearEditError(item.id, field.key)"
 					/>
 					<Select
 						v-else-if="field.type === 'select' && !field.multiple"
-						v-model="editing[item.id as T['id']][field.key]"
-						:form="editFormId(item.id as T['id'])"
+						v-model="editing.get(item.id)![field.key]"
+						:form="editFormId(item.id)"
 						option-label="label"
 						option-value="value"
 						:options="field.options"
-						:disabled="Boolean(updating[item.id as T['id']])"
+						:disabled="Boolean(updating.get(item.id))"
 						fluid
-						@change="clearEditError(item.id as T['id'], field.key)"
+						@change="clearEditError(item.id, field.key)"
 					/>
 					<MultiSelect
 						v-else-if="field.type === 'select' && field.multiple"
-						v-model="editing[item.id as T['id']][field.key]"
-						:form="editFormId(item.id as T['id'])"
+						v-model="editing.get(item.id)![field.key]"
+						:form="editFormId(item.id)"
 						option-label="label"
 						option-value="value"
 						:options="field.options"
 						:max-selected-labels="3"
-						:disabled="Boolean(updating[item.id as T['id']])"
+						:disabled="Boolean(updating.get(item.id))"
 						display="chip"
 						fluid
-						@change="clearEditError(item.id as T['id'], field.key)"
+						@change="clearEditError(item.id, field.key)"
 					/>
 					<ToggleSwitch
 						v-else-if="field.type === 'switch'"
-						v-model="editing[item.id as T['id']][field.key]"
-						:form="editFormId(item.id as T['id'])"
-						:disabled="Boolean(updating[item.id as T['id']])"
-						@change="clearEditError(item.id as T['id'], field.key)"
+						v-model="editing.get(item.id)![field.key]"
+						:form="editFormId(item.id)"
+						:disabled="Boolean(updating.get(item.id))"
+						@change="clearEditError(item.id, field.key)"
 					/>
 					<Textarea
 						v-else-if="field.type === 'textarea'"
-						v-model="editing[item.id as T['id']][field.key]"
-						:form="editFormId(item.id as T['id'])"
+						v-model="editing.get(item.id)![field.key]"
+						:form="editFormId(item.id)"
 						:required="field.required"
 						:minlength="field.min"
 						:maxlength="field.max"
-						:disabled="Boolean(updating[item.id as T['id']])"
+						:disabled="Boolean(updating.get(item.id))"
 						:rows="1"
 						auto-resize
 						fluid
-						@input="clearEditError(item.id as T['id'], field.key)"
+						@input="clearEditError(item.id, field.key)"
 					/>
 					<InputText
 						v-else
-						v-model="editing[item.id as T['id']][field.key]"
-						:form="editFormId(item.id as T['id'])"
+						v-model="editing.get(item.id)![field.key]"
+						:form="editFormId(item.id)"
 						:required="field.required"
 						:minlength="field.min"
 						:maxlength="field.max"
-						:disabled="Boolean(updating[item.id as T['id']])"
+						:disabled="Boolean(updating.get(item.id))"
 						fluid
-						@input="clearEditError(item.id as T['id'], field.key)"
+						@input="clearEditError(item.id, field.key)"
 					/>
 
 					<!-- Editing - Field errors -->
-					<Message
-						v-if="editErrors[item.id as T['id']]?.[field.key]"
-						size="small"
-						severity="error"
-						variant="simple"
-					>
-						{{ editErrors[item.id as T["id"]][field.key] }}
+					<Message v-if="editErrors.get(item.id)?.[field.key]" size="small" severity="error" variant="simple">
+						{{ editErrors.get(item.id)![field.key] }}
 					</Message>
 				</slot>
 			</template>
@@ -172,7 +167,10 @@
 					:invalid="Boolean(createForm.errors[field.key])"
 					show-buttons
 					fluid
-					@input="createForm.clearErrors(field.key)"
+					@input="
+						// @ts-expect-error
+						createForm.clearErrors(field.key)
+					"
 				/>
 				<DatePicker
 					v-else-if="field.type === 'datetime'"
@@ -190,7 +188,10 @@
 					show-icon
 					icon-display="input"
 					fluid
-					@value-change="createForm.clearErrors(field.key)"
+					@value-change="
+						// @ts-expect-error
+						createForm.clearErrors(field.key)
+					"
 				/>
 				<Textarea
 					v-else-if="field.type === 'textarea'"
@@ -205,7 +206,10 @@
 					:invalid="Boolean(createForm.errors[field.key])"
 					auto-resize
 					fluid
-					@input="createForm.clearErrors(field.key)"
+					@input="
+						// @ts-expect-error
+						createForm.clearErrors(field.key)
+					"
 				/>
 				<Select
 					v-else-if="field.type === 'select' && !field.multiple"
@@ -218,7 +222,10 @@
 					:disabled="createForm.processing"
 					:invalid="Boolean(createForm.errors[field.key])"
 					fluid
-					@change="createForm.clearErrors(field.key)"
+					@change="
+						// @ts-expect-error
+						createForm.clearErrors(field.key)
+					"
 				/>
 				<MultiSelect
 					v-else-if="field.type === 'select' && field.multiple"
@@ -233,7 +240,10 @@
 					:invalid="Boolean(createForm.errors[field.key])"
 					display="chip"
 					fluid
-					@change="createForm.clearErrors(field.key)"
+					@change="
+						// @ts-expect-error
+						createForm.clearErrors(field.key)
+					"
 				/>
 				<ToggleSwitch
 					v-else-if="field.type === 'switch'"
@@ -242,7 +252,10 @@
 					:form="createFormId"
 					:disabled="createForm.processing"
 					:invalid="Boolean(createForm.errors[field.key])"
-					@change="createForm.clearErrors(field.key)"
+					@change="
+						// @ts-expect-error
+						createForm.clearErrors(field.key)
+					"
 				/>
 				<InputText
 					v-else
@@ -255,7 +268,10 @@
 					:disabled="createForm.processing"
 					:invalid="Boolean(createForm.errors[field.key])"
 					fluid
-					@input="createForm.clearErrors(field.key)"
+					@input="
+						// @ts-expect-error
+						createForm.clearErrors(field.key)
+					"
 				/>
 
 				<!-- Creation - Field errors -->
@@ -275,13 +291,13 @@
 			<template #body="{ data: item }: { data: T }">
 				<ButtonGroup :aria-label="`${entityLabel} actions`">
 					<!-- Edit/delete buttons -->
-					<template v-if="!editing[item.id as T['id']]">
+					<template v-if="!editing.get(item.id)">
 						<IconButton
 							variant="text"
 							size="small"
 							severity="primary"
 							:icon="faPencil"
-							:disabled="Boolean(deleting[item.id as T['id']])"
+							:disabled="Boolean(deleting.get(item.id))"
 							v-tooltip.bottom="'Edit'"
 							@click="edit(item)"
 						/>
@@ -290,8 +306,8 @@
 							size="small"
 							severity="danger"
 							:icon="faTrash"
-							:loading="Boolean(deleting[item.id as T['id']])"
-							:disabled="Boolean(deleting[item.id as T['id']])"
+							:loading="Boolean(deleting.get(item.id))"
+							:disabled="Boolean(deleting.get(item.id))"
 							v-tooltip.bottom="'Delete'"
 							@click="del(item.id)"
 						/>
@@ -299,18 +315,15 @@
 
 					<!-- Cancel/save editing buttons -->
 					<template v-else>
-						<form
-							:id="editFormId(item.id as T['id'])"
-							@submit.prevent="update(editing[item.id as T['id']])"
-						>
+						<form :id="editFormId(item.id)" @submit.prevent="update(editing.get(item.id)!)">
 							<IconButton
 								type="submit"
 								variant="text"
 								size="small"
 								severity="primary"
 								:icon="faSave"
-								:loading="Boolean(updating[item.id as T['id']])"
-								:disabled="Boolean(updating[item.id as T['id']])"
+								:loading="Boolean(updating.get(item.id))"
+								:disabled="Boolean(updating.get(item.id))"
 								v-tooltip.bottom="'Save'"
 							/>
 						</form>
@@ -319,7 +332,7 @@
 							size="small"
 							severity="secondary"
 							:icon="faCancel"
-							:disabled="Boolean(updating[item.id as T['id']])"
+							:disabled="Boolean(updating.get(item.id))"
 							v-tooltip.bottom="'Cancel'"
 							@click="cancel(item.id)"
 						/>
@@ -357,13 +370,12 @@
 	<SkeletonTable v-else :columns="[...fields.map((f) => f.label), ...(!readonly ? ['Actions'] : [])]" />
 </template>
 
-<script setup lang="ts" generic="T extends { id: string }, EntityName extends string">
-import { reactive, toRef, useId, useTemplateRef } from 'vue';
+<script setup lang="ts" generic="T extends { id: string, [key: string]: any }">
+import { reactive, shallowReactive, toRef, useId, useTemplateRef } from 'vue';
 import { router, useForm } from '@inertiajs/vue3';
-import type { ErrorValue } from '@inertiajs/core';
+import type { Errors } from '@inertiajs/core';
 import { useTime } from '@/lib/time';
 import { useConfirm } from '@/lib/confirm';
-import type { Route } from '@/lib/route';
 
 import { faSave, faCancel, faPencil, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
 import SkeletonTable from '../Common/SkeletonTable.vue';
@@ -382,11 +394,11 @@ const {
 	readonly = false,
 	skeleton = false,
 } = defineProps<{
-	entityName: EntityName;
+	entityName: string;
 	entityPlural?: string;
 	routeSlug: string;
-	createRoute?: Route;
-	fields: Field<T, unknown>[];
+	createRoute?: string | Parameters<typeof route>;
+	fields: Field<T>[];
 	readonly?: boolean;
 	items?: T[];
 	tableProps?: Record<string, unknown>;
@@ -403,34 +415,67 @@ const entityLabel = toRef(() => {
 /**
  * Entity field definition
  */
-type Field<T, V> = {
-	key: keyof T;
+type Field<T> = { [K in keyof T & string]: FieldConfig<T, K> }[keyof T & string];
+
+/**
+ * Configuration for a single field of an entity
+ */
+type FieldConfig<T, K extends keyof T & string> = {
+	key: K;
 	label: string;
 	class?: string;
 	required?: boolean;
-	default?: V;
-	display?: (data: V) => string;
+	default?: T[K];
+	display?: (data: T[K]) => string;
 } & (
-	| { type?: 'text'; min?: number; max?: number }
-	| { type: 'textarea'; min?: number; max?: number }
 	| {
-			type: 'number';
+			type?: 'text';
 			min?: number;
 			max?: number;
-			step?: number;
-			format?: Intl.NumberFormat;
-			fractionDigits?: number;
-			prefix?: string;
-			suffix?: string;
 	  }
-	| { type: 'datetime'; min?: Date; max?: Date }
+	| {
+			type: 'textarea';
+			min?: number;
+			max?: number;
+	  }
 	| {
 			type: 'select';
-			options: { label: string; value: string | number }[];
-			multiple?: boolean;
+			options: { label: string; value: T[K] }[];
+			multiple: false;
 	  }
-	| { type: 'switch' }
+	| (NonNullable<T[K]> extends string[] | number[]
+			? {
+					type: 'select';
+					options: { label: string; value: NonNullable<T[K]> extends (infer I)[] ? I : never }[];
+					multiple: true;
+				}
+			: never)
+	| (NonNullable<T[K]> extends number
+			? {
+					type: 'number';
+					min?: number;
+					max?: number;
+					step?: number;
+					format?: Intl.NumberFormat;
+					fractionDigits?: number;
+					prefix?: string;
+					suffix?: string;
+				}
+			: never)
+	| (NonNullable<T[K]> extends Date | string
+			? {
+					type: 'datetime';
+					min?: Date;
+					max?: Date;
+				}
+			: never)
+	| (NonNullable<T[K]> extends boolean ? { type: 'switch' } : never)
 );
+
+/**
+ * Key for an entity field
+ */
+type Key = keyof T & string;
 
 //
 // Entity creation
@@ -438,11 +483,12 @@ type Field<T, V> = {
 
 const createFormId = useId();
 const createFields = useTemplateRef('createField');
-const createForm = useForm(
+const createForm = useForm<T & { [key: string]: unknown }>(
 	fields.reduce((prev, field) => {
-		prev[field.key] = field.default ?? '';
+		// @ts-expect-error
+		prev[field.key] = field.default ?? null;
 		return prev;
-	}, {}),
+	}, {} as T),
 );
 
 /**
@@ -451,14 +497,15 @@ const createForm = useForm(
 async function create() {
 	if (createForm.processing) return;
 
-	createForm.post(route(...(createRoute ?? [`${routeSlug}.store`])), {
+	createForm.post(Array.isArray(createRoute) ? route(...createRoute) : route(createRoute ?? `${routeSlug}.store`), {
 		replace: true,
 		preserveState: true,
 		preserveScroll: true,
 		only: [entityPlural ?? `${entityName}s`, 'flash'],
 		onSuccess() {
 			createForm.resetAndClearErrors();
-			setTimeout(() => createFields.value[0].$el.focus(), 0);
+			// @ts-expect-error
+			setTimeout(() => createFields.value![0]!.$el.focus(), 0);
 		},
 	});
 }
@@ -468,22 +515,24 @@ async function create() {
 //
 
 const { dateToTrackerTime, isoToPreferredLocalAdjustedTime } = useTime();
-const editing: Partial<Record<T['id'], T>> = reactive({});
-const updating: Partial<Record<T['id'], boolean>> = reactive({});
-const editErrors: Partial<Record<T['id'], Record<keyof T, Record<string, ErrorValue>>>> = reactive({});
+const editing = reactive(new Map<T['id'], T>()) as Map<T['id'], T>;
+const updating = shallowReactive(new Map<T['id'], boolean>()) as Map<T['id'], boolean>;
+const editErrors = reactive(new Map<T['id'], Errors>()) as Map<T['id'], Errors>;
 const editFormIdBase = useId();
 
 /**
  * Starts editing an entity
  */
 function edit(entity: T) {
-	editing[entity.id as T['id']] = toEditable(entity);
+	editing.set(entity.id, toEditable(entity));
 
-	const formId = editFormId(entity.id as T['id']);
+	const formId = editFormId(entity.id);
 	setTimeout(() => {
-		document
-			.querySelector(`input[form="${formId}"], textarea[form="${formId}"], [form="${formId}"] input`)
-			?.focus?.();
+		(
+			document.querySelector(`input[form="${formId}"], textarea[form="${formId}"], [form="${formId}"] input`) as
+				| HTMLInputElement
+				| HTMLTextAreaElement
+		)?.focus?.();
 	}, 0);
 }
 
@@ -498,8 +547,8 @@ function editFormId(id: T['id']) {
  * Cancels editing of an entity
  */
 function cancel(id: T['id']) {
-	editing[id] = undefined;
-	editErrors[id] = undefined;
+	editing.delete(id);
+	editErrors.delete(id);
 }
 
 /**
@@ -516,18 +565,17 @@ function update(edited: T) {
 			only: [entityPlural ?? `${entityName}s`, 'flash'],
 
 			onStart() {
-				updating[edited.id as T['id']] = true;
+				updating.set(edited.id, true);
 			},
 			onFinish() {
-				updating[edited.id as T['id']] = false;
+				updating.set(edited.id, false);
 			},
 			onSuccess() {
-				editing[edited.id as T['id']] = undefined;
-				editErrors[edited.id as T['id']] = undefined;
+				cancel(edited.id);
 			},
 			onError(err) {
 				console.error(`Error updating ${entityName} ${edited.id}`, err, edited);
-				editErrors[edited.id as T['id']] = err;
+				editErrors.set(edited.id, err);
 			},
 		},
 	);
@@ -536,9 +584,10 @@ function update(edited: T) {
 /**
  * Clears any errors for an entity's edit field
  */
-function clearEditError(id: T['id'], field: keyof T) {
-	if (!editErrors[id]) return;
-	editErrors[id][field] = undefined;
+function clearEditError(id: T['id'], field: Key) {
+	const errors = editErrors.get(id);
+	if (!errors) return;
+	delete errors[field];
 }
 
 /**
@@ -549,7 +598,10 @@ function toEditable(entity: T) {
 
 	for (const field of fields) {
 		if (field.type !== 'datetime') continue;
-		mapped[field.key] = isoToPreferredLocalAdjustedTime(entity[field.key] as string).toJSDate();
+		if (typeof entity[field.key] === 'object') continue;
+
+		// @ts-expect-error
+		mapped[field.key] = isoToPreferredLocalAdjustedTime(entity[field.key]).toJSDate();
 	}
 
 	return mapped;
@@ -563,6 +615,8 @@ function toRaw(entity: T) {
 
 	for (const field of fields) {
 		if (field.type !== 'datetime') continue;
+
+		// @ts-expect-error
 		mapped[field.key] = dateToTrackerTime(entity[field.key] as Date).toISO();
 	}
 
@@ -574,7 +628,7 @@ function toRaw(entity: T) {
 //
 
 const { confirm } = useConfirm();
-const deleting: Partial<Record<T['id'], boolean>> = reactive({});
+const deleting = shallowReactive(new Map<T['id'], boolean>());
 
 /**
  * Deletes an entity
@@ -592,10 +646,10 @@ async function del(id: T['id']) {
 		only: [entityPlural ?? `${entityName}s`, 'flash'],
 
 		onStart() {
-			deleting[id] = true;
+			deleting.set(id, true);
 		},
 		onFinish() {
-			deleting[id] = false;
+			deleting.delete(id);
 		},
 		onError(err) {
 			console.error(`Error deleting ${entityName} ${id}`, err);
