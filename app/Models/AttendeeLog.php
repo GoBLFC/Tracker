@@ -68,6 +68,8 @@ class AttendeeLog extends Model implements HasDisplayName {
 
 	/**
 	 * Get the event this attendee log is for
+	 *
+	 * @return BelongsTo<Event, AttendeeLog>
 	 */
 	public function event(): BelongsTo {
 		return $this->belongsTo(Event::class)->withTrashed();
@@ -75,6 +77,8 @@ class AttendeeLog extends Model implements HasDisplayName {
 
 	/**
 	 * Get all of the users entered into this attendee log (attendees and gatekeepers alike)
+	 *
+	 * @return BelongsToMany<User, AttendeeLog>
 	 */
 	public function users(): BelongsToMany {
 		return $this->belongsToMany(User::class)
@@ -85,6 +89,8 @@ class AttendeeLog extends Model implements HasDisplayName {
 
 	/**
 	 * Get the attendees entered into this attendee log
+	 *
+	 * @return BelongsToMany<User, AttendeeLog>
 	 */
 	public function attendees(): BelongsToMany {
 		return $this->users()->wherePivot('type', 'attendee');
@@ -92,6 +98,8 @@ class AttendeeLog extends Model implements HasDisplayName {
 
 	/**
 	 * Get the gatekeepers assigned to this attendee log
+	 *
+	 * @return BelongsToMany<User, AttendeeLog>
 	 */
 	public function gatekeepers(): BelongsToMany {
 		return $this->users()->wherePivot('type', 'gatekeeper');
@@ -100,6 +108,8 @@ class AttendeeLog extends Model implements HasDisplayName {
 	/**
 	 * Scope a query to only include attendee logs for an event.
 	 * If the event is not specified, then the active event will be used.
+	 *
+	 * @param Builder<AttendeeLog> $query
 	 */
 	public function scopeForEvent(Builder $query, Event|string|null $event = null): void {
 		$query->where('event_id', $event->id ?? $event ?? Setting::activeEvent()?->id);

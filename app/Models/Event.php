@@ -60,7 +60,7 @@ class Event extends Model implements HasDisplayName {
 		'name',
 	];
 
-	protected static function boot() {
+	protected static function boot(): void {
 		parent::boot();
 
 		// Add a listener for the model being deleted to clear the active event if it's this one
@@ -82,6 +82,8 @@ class Event extends Model implements HasDisplayName {
 
 	/**
 	 * Get the departments associated with this event
+	 *
+	 * @return HasMany<Department, Event>
 	 */
 	public function departments(): HasMany {
 		return $this->hasMany(Department::class);
@@ -89,6 +91,8 @@ class Event extends Model implements HasDisplayName {
 
 	/**
 	 * Get the time entries associated with this event
+	 *
+	 * @return HasMany<TimeEntry, Event>
 	 */
 	public function timeEntries(): HasMany {
 		return $this->hasMany(TimeEntry::class);
@@ -96,6 +100,8 @@ class Event extends Model implements HasDisplayName {
 
 	/**
 	 * Get the time bonuses associated with this event
+	 *
+	 * @return HasMany<TimeBonus, Event>
 	 */
 	public function timeBonuses(): HasMany {
 		return $this->hasMany(TimeBonus::class);
@@ -103,6 +109,8 @@ class Event extends Model implements HasDisplayName {
 
 	/**
 	 * Get the rewards that are available for this event
+	 *
+	 * @return HasMany<Reward, Event>
 	 */
 	public function rewards(): HasMany {
 		return $this->hasMany(Reward::class);
@@ -110,6 +118,8 @@ class Event extends Model implements HasDisplayName {
 
 	/**
 	 * Get the reward claims that have been made for this event
+	 *
+	 * @return HasManyThrough<RewardClaim, Reward, Event>
 	 */
 	public function rewardClaims(): HasManyThrough {
 		return $this->hasManyThrough(RewardClaim::class, Reward::class);
@@ -117,6 +127,8 @@ class Event extends Model implements HasDisplayName {
 
 	/**
 	 * Get the attendee logs for this event
+	 *
+	 * @return HasMany<AttendeeLog, Event>
 	 */
 	public function attendeeLogs(): HasMany {
 		return $this->hasMany(AttendeeLog::class);

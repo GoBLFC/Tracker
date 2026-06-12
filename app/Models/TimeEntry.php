@@ -84,6 +84,8 @@ class TimeEntry extends Model {
 
 	/**
 	 * Get the user this time entry is for
+	 *
+	 * @return BelongsTo<User, TimeEntry>
 	 */
 	public function user(): BelongsTo {
 		return $this->belongsTo(User::class)->withTrashed();
@@ -91,6 +93,8 @@ class TimeEntry extends Model {
 
 	/**
 	 * Get the department this timem entry is for
+	 *
+	 * @return BelongsTo<Department, TimeEntry>
 	 */
 	public function department(): BelongsTo {
 		return $this->belongsTo(Department::class)->withTrashed();
@@ -98,6 +102,8 @@ class TimeEntry extends Model {
 
 	/**
 	 * Get the user that created this time entry
+	 *
+	 * @return BelongsTo<User, TimeEntry>
 	 */
 	public function creator(): BelongsTo {
 		return $this->belongsTo(User::class, null, 'creator_user_id')->withTrashed();
@@ -105,6 +111,8 @@ class TimeEntry extends Model {
 
 	/**
 	 * Get the event this time entry is for
+	 *
+	 * @return BelongsTo<Event, TimeEntry>
 	 */
 	public function event(): BelongsTo {
 		return $this->belongsTo(Event::class)->withTrashed();
@@ -112,6 +120,8 @@ class TimeEntry extends Model {
 
 	/**
 	 * Scope a query to only include ongoing entries
+	 *
+	 * @param Builder<TimeEntry> $query
 	 */
 	public function scopeOngoing(Builder $query): void {
 		$query->whereNull('stop');
@@ -120,6 +130,8 @@ class TimeEntry extends Model {
 	/**
 	 * Scope a query to only include entries for an event.
 	 * If the event is not specified, then the active event will be used.
+	 *
+	 * @param Builder<TimeEntry> $query
 	 */
 	public function scopeForEvent(Builder $query, Event|string|null $event = null): void {
 		$query->where('event_id', $event->id ?? $event ?? Setting::activeEvent()?->id);
@@ -128,7 +140,7 @@ class TimeEntry extends Model {
 	/**
 	 * Check whether this time entry is still ongoing (has no stop time)
 	 */
-	public function isOngoing() {
+	public function isOngoing(): bool {
 		return !$this->stop;
 	}
 

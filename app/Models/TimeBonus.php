@@ -69,6 +69,8 @@ class TimeBonus extends Model {
 
 	/**
 	 * Get the event this time bonus is for
+	 *
+	 * @return BelongsTo<Event, TimeBonus>
 	 */
 	public function event(): BelongsTo {
 		return $this->belongsTo(Event::class)->withTrashed();
@@ -76,6 +78,8 @@ class TimeBonus extends Model {
 
 	/**
 	 * Get the departments this time bonus affects
+	 *
+	 * @return BelongsToMany<Department, TimeBonus>
 	 */
 	public function departments(): BelongsToMany {
 		return $this->belongsToMany(Department::class)->withTrashed();
@@ -84,6 +88,8 @@ class TimeBonus extends Model {
 	/**
 	 * Scope a query to only include bonuses for an event.
 	 * If the event is not specified, then the active event will be used.
+	 *
+	 * @param Builder<TimeBonus> $query
 	 */
 	public function scopeForEvent(Builder $query, Event|string|null $event = null): void {
 		$query->where('event_id', $event->id ?? $event ?? Setting::activeEvent()?->id);

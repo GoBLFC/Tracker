@@ -99,7 +99,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 	];
 	private ?bool $isGatekeeperCache = null;
 
-	protected static function boot() {
+	protected static function boot(): void {
 		parent::boot();
 
 		// Add a listener for the model being created to add a random tg_setup_key if one hasn't already been specified
@@ -133,6 +133,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
 	/**
 	 * Get the time entries associated with the user
+	 *
+	 * @return HasMany<TimeEntry, User>
 	 */
 	public function timeEntries(): HasMany {
 		return $this->hasMany(TimeEntry::class);
@@ -140,6 +142,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
 	/**
 	 * Get the reward claims the user has made
+	 *
+	 * @return HasMany<RewardClaim, User>
 	 */
 	public function rewardClaims(): HasMany {
 		return $this->hasMany(RewardClaim::class);
@@ -147,6 +151,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
 	/**
 	 * Get the quick codes the user can log in with
+	 *
+	 * @return HasMany<QuickCode, User>
 	 */
 	public function quickCodes(): HasMany {
 		return $this->hasMany(QuickCode::class);
@@ -154,6 +160,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
 	/**
 	 * Get all the departments the user has entered time for
+	 *
+	 * @return HasManyThrough<Department, Model, User>
 	 */
 	public function departments(): HasManyThrough {
 		return $this->hasManyThrough(Department::class, TimeEntry::class);
@@ -161,6 +169,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
 	/**
 	 * Get all attendee logs this user was entered into
+	 *
+	 * @return BelongsToMany<AttendeeLog, User>
 	 */
 	public function attendeeLogs(): BelongsToMany {
 		return $this->belongsToMany(AttendeeLog::class)
@@ -171,6 +181,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
 	/**
 	 * Scope a query to only include users of a given role
+	 *
+	 * @param Builder<User> $query
 	 */
 	public function scopeOfRole(Builder $query, Role $role): void {
 		$query->where('role', $role->value);
@@ -191,7 +203,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 	 *
 	 * @param bool [$strict=false] Whether to check specifically for the admin role
 	 */
-	public function isAdmin($strict = false): bool {
+	public function isAdmin(bool $strict = false): bool {
 		return $this->isRole(Role::Admin, $strict);
 	}
 
@@ -200,7 +212,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 	 *
 	 * @param bool [$strict=false] Whether to check specifically for the manager role
 	 */
-	public function isManager($strict = false): bool {
+	public function isManager(bool $strict = false): bool {
 		return $this->isRole(Role::Manager, $strict);
 	}
 
@@ -209,7 +221,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 	 *
 	 * @param bool [$strict=false] Whether to check specifically for the lead role
 	 */
-	public function isLead($strict = false): bool {
+	public function isLead(bool $strict = false): bool {
 		return $this->isRole(Role::Lead, $strict);
 	}
 
@@ -218,7 +230,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 	 *
 	 * @param bool [$strict=false] Whether to check specifically for the staff role
 	 */
-	public function isStaff($strict = false): bool {
+	public function isStaff(bool $strict = false): bool {
 		return $this->isRole(Role::Staff, $strict);
 	}
 

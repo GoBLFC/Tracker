@@ -70,6 +70,8 @@ class Reward extends Model implements HasDisplayName {
 
 	/**
 	 * Get the event the reward is a part of
+	 *
+	 * @return BelongsTo<Event, Reward>
 	 */
 	public function event(): BelongsTo {
 		return $this->belongsTo(Event::class)->withTrashed();
@@ -78,6 +80,8 @@ class Reward extends Model implements HasDisplayName {
 	/**
 	 * Scope a query to only include rewards for an event.
 	 * If the event is not specified, then the active event will be used.
+	 *
+	 * @param Builder<Reward> $query
 	 */
 	public function scopeForEvent(Builder $query, Event|string|null $event = null): void {
 		$query->where('event_id', $event->id ?? $event ?? Setting::activeEvent()?->id);

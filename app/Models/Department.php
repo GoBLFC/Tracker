@@ -75,6 +75,8 @@ class Department extends Model implements HasDisplayName {
 
 	/**
 	 * Get the event the department is a part of
+	 *
+	 * @return BelongsTo<Event, Department>
 	 */
 	public function event(): BelongsTo {
 		return $this->belongsTo(Event::class)->withTrashed();
@@ -82,6 +84,8 @@ class Department extends Model implements HasDisplayName {
 
 	/**
 	 * Get the time bonuses associated with this department
+	 *
+	 * @return BelongsToMany<TimeBonus, Department>
 	 */
 	public function timeBonuses(): BelongsToMany {
 		return $this->belongsToMany(TimeBonus::class);
@@ -89,6 +93,8 @@ class Department extends Model implements HasDisplayName {
 
 	/**
 	 * Get the time entries associated with this department
+	 *
+	 * @return HasMany<TimeEntry, Department>
 	 */
 	public function timeEntries(): HasMany {
 		return $this->hasMany(TimeEntry::class);
@@ -97,6 +103,8 @@ class Department extends Model implements HasDisplayName {
 	/**
 	 * Scope a query to only include departments for an event.
 	 * If the event is not specified, then the active event will be used.
+	 *
+	 * @param Builder<Department> $query
 	 */
 	public function scopeForEvent(Builder $query, Event|string|null $event = null): void {
 		$query->where('event_id', $event->id ?? $event ?? Setting::activeEvent()?->id);

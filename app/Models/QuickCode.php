@@ -40,7 +40,7 @@ use Illuminate\Support\Str;
 class QuickCode extends Model {
 	use HasUuids, MassPrunable;
 
-	protected static function boot() {
+	protected static function boot(): void {
 		parent::boot();
 
 		// Add a listener for the model being created to add a random code if one hasn't already been specified
@@ -51,6 +51,8 @@ class QuickCode extends Model {
 
 	/**
 	 * Get the user this quick code is for
+	 *
+	 * @return BelongsTo<User, QuickCode>
 	 */
 	public function user(): BelongsTo {
 		return $this->belongsTo(User::class)->withTrashed();
@@ -58,6 +60,8 @@ class QuickCode extends Model {
 
 	/**
 	 * Get the prunable model query.
+	 *
+	 * @return Builder<QuickCode>
 	 */
 	public function prunable(): Builder {
 		return static::expired();
@@ -65,6 +69,8 @@ class QuickCode extends Model {
 
 	/**
 	 * Scope a query to only include unexpired codes
+	 *
+	 * @param Builder<QuickCode> $query
 	 */
 	public function scopeUnexpired(Builder $query): void {
 		$query->where('updated_at', '>', now()->subSeconds(30));
@@ -72,6 +78,8 @@ class QuickCode extends Model {
 
 	/**
 	 * Scope a query to only include expired codes
+	 *
+	 * @param Builder<QuickCode> $query
 	 */
 	public function scopeExpired(Builder $query): void {
 		$query->where('updated_at', '<=', now()->subSeconds(30));

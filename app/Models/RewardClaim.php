@@ -51,6 +51,8 @@ class RewardClaim extends Model {
 
 	/**
 	 * Get the user that made this reward claim
+	 *
+	 * @return BelongsTo<User, RewardClaim>
 	 */
 	public function user(): BelongsTo {
 		return $this->belongsTo(User::class)->withTrashed();
@@ -58,6 +60,8 @@ class RewardClaim extends Model {
 
 	/**
 	 * Get the reward this claim is for
+	 *
+	 * @return BelongsTo<Reward, RewardClaim>
 	 */
 	public function reward(): BelongsTo {
 		return $this->belongsTo(Reward::class)->withTrashed();
@@ -66,6 +70,8 @@ class RewardClaim extends Model {
 	/**
 	 * Scope a query to only include reward claims for an event.
 	 * If the event is not specified, then the active event will be used.
+	 *
+	 * @param Builder<RewardClaim> $query
 	 */
 	public function scopeForEvent(Builder $query, Event|string|null $event = null): void {
 		$query->whereRelation('reward', 'event_id', $event->id ?? $event ?? Setting::activeEvent()?->id);

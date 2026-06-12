@@ -46,7 +46,7 @@ class Kiosk extends Model {
 	 */
 	private static ?bool $authorizedCache = null;
 
-	protected static function boot() {
+	protected static function boot(): void {
 		parent::boot();
 
 		// Add a listener for the model being created to add a random session_key if one hasn't already been specified
@@ -62,6 +62,8 @@ class Kiosk extends Model {
 
 	/**
 	 * Get the prunable model query.
+	 *
+	 * @param Builder<Kiosk> $query
 	 */
 	public function prunable(): Builder {
 		return static::expired();
@@ -69,6 +71,8 @@ class Kiosk extends Model {
 
 	/**
 	 * Scope a query to only include unexpired kiosks
+	 *
+	 * @param Builder<Kiosk> $query
 	 */
 	public function scopeUnexpired(Builder $query): void {
 		$query->where('updated_at', '>', now()->subMinutes(config('tracker.kiosk_lifetime')));
@@ -76,6 +80,8 @@ class Kiosk extends Model {
 
 	/**
 	 * Scope a query to only include expired kiosks
+	 *
+	 * @param Builder<Kiosk> $query
 	 */
 	public function scopeExpired(Builder $query): void {
 		$query->where('updated_at', '<=', now()->subMinutes(config('tracker.kiosk_lifetime')));
