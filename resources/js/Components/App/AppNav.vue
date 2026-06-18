@@ -40,7 +40,13 @@
 			:aria-hidden="showHamburger && !hamburgerOpen"
 		>
 			<ul class="grow flex flex-col sm:max-lg:flex-row gap-2">
-				<AppNavItem v-for="item of mainMenuItems" :show-text="showHamburger" :tooltip-position v-bind="item" />
+				<AppNavItem
+					v-for="item of mainMenuItems"
+					:key="item.label"
+					:show-text="showHamburger"
+					:tooltip-position
+					v-bind="item"
+				/>
 			</ul>
 
 			<ul class="flex flex-col sm:max-lg:flex-row gap-1">
