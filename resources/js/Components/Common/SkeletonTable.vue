@@ -8,7 +8,7 @@
 		scroll-height="flex"
 		:dt="{ paginator: { bottom: { border: { width: 0 } } } }"
 	>
-		<Column v-for="col of columns" :header="col">
+		<Column v-for="col of columns" :key="col" :header="col">
 			<template #body><Skeleton /></template>
 		</Column>
 

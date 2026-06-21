@@ -13,6 +13,7 @@
 		<!-- Entity field columns -->
 		<Column
 			v-for="field of fields"
+			:key="field.key"
 			:field="String(field.key)"
 			:header="field.label"
 			sortable
