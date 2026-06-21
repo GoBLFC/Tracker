@@ -73,23 +73,22 @@ function attention() {
 	// @ts-expect-error
 	const el = panel.value!.$el;
 
-	// Pulse the panel border
 	setTimeout(() => {
+		// Pulse the panel border
 		el.classList.add('border-primary');
-
 		if (attnTimeout) clearTimeout(attnTimeout);
-
 		attnTimeout = setTimeout(() => {
 			el.classList.remove('border-primary');
 			attnTimeout = null;
 		}, 500);
-	}, 0);
 
-	// Scroll to the panel if the header isn't in view
-	if (!isElementInView(closeBtn.value!.$el)) {
-		el.scrollIntoView({
-			block: el.clientHeight < window.innerHeight ? 'center' : 'start',
-		});
-	}
+		// Scroll to the panel if the header isn't in view
+		if (!isElementInView(closeBtn.value!.$el)) {
+			el.scrollIntoView({
+				block: el.clientHeight < window.innerHeight ? 'center' : 'start',
+				container: 'nearest',
+			});
+		}
+	}, 0);
 }
 </script>
