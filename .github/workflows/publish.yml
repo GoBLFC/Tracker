@@ -96,6 +96,7 @@ jobs:
   merge:
     name: "Merge: ${{ matrix.image.name }}"
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
     needs:
       - build
     strategy:
