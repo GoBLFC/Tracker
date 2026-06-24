@@ -52,7 +52,7 @@
 		"concurrently": "^10.0.3",
 		"laravel-vite-plugin": "^3.0.1",
 		"tailwindcss": "^4.2.2",
-		"tsx": "^4.21.0",
+		"tsx": "^4.22.4",
 		"typescript": "^6.0.2",
 		"unplugin-vue-components": "^32.0.0",
 		"vite": "^8.0.9",
