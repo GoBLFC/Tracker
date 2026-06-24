@@ -20,6 +20,9 @@
 		"enabled": true,
 		"rules": {
 			"preset": "recommended",
+			"correctness": {
+				"useVueValidVBind": "off"
+			},
 			"style": {
 				"noNonNullAssertion": "off",
 				"noParameterAssign": "error",
