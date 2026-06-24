@@ -1,5 +1,5 @@
 <template>
-	<Panel header="Shift Log">
+	<Panel header="Shift Log" :pt="{ contentWrapper: { class: 'min-w-0' } }">
 		<DataTable
 			:value="values"
 			data-key="id"

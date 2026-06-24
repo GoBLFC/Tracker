@@ -1,6 +1,6 @@
 <template>
-	<div class="grow flex flex-col gap-4">
-		<FullContentHeightPanel header="Users" class="grow">
+	<div class="grow flex flex-col gap-4 min-h-0">
+		<FullContentHeightPanel header="Users" class="grow min-h-0">
 			<UsersTable
 				:users
 				:total-records="total"
