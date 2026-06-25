@@ -5,6 +5,7 @@
 		class="transition-colors duration-400"
 		:pt="{
 			header: { class: 'items-start' },
+			contentWrapper: { class: 'min-w-0' },
 		}"
 	>
 		<template #header>

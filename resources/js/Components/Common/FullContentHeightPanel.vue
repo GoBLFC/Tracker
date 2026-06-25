@@ -2,7 +2,8 @@
 	<Panel
 		class="flex flex-col"
 		:pt="{
-			contentContainer: { class: 'grow' },
+			contentContainer: { class: 'grow min-h-0' },
+			contentWrapper: { class: 'min-w-0' },
 			content: { class: 'h-full p-0' },
 			...pt,
 		}"
