@@ -23,11 +23,9 @@ class DepartmentSummaryReport extends EventReport implements FromQuery, ShouldAu
 	use FormatsAsTable, RegistersEventListeners;
 
 	public function query(): Builder {
-		return Department::with([
-			'timeEntries' => function ($query) {
-				$query->forEvent($this->event);
-			},
-		])->orderBy('name');
+		return Department::with('timeEntries')
+			->forEvent($this->event)
+			->orderBy('name');
 	}
 
 	/** @param Department $department */
