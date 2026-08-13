@@ -10,6 +10,7 @@ Route::controller(\App\Http\Controllers\AuthController::class)->group(function (
 	Route::get('/auth/redirect', 'getRedirect')->name('auth.redirect');
 	Route::get('/auth/callback', 'getCallback')->name('auth.callback');
 	Route::post('/auth/quickcode', 'postQuickcode')->name('auth.quickcode.post');
+	Route::post('/auth/nfc', 'postNfc')->name('auth.nfc.post');
 	Route::get('/disabled/account', 'getBanned')->name('auth.banned');
 });
 

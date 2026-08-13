@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\QuickCodeLogin;
+use App\Http\Requests\NfcLoginRequest;
 use App\Http\Requests\QuickCodeRequest;
 use App\Models\Kiosk;
 use App\Models\QuickCode;
@@ -106,6 +107,45 @@ class AuthController extends Controller {
 		QuickCodeLogin::dispatch($quickcode);
 		Auth::login($quickcode->user);
 		$quickcode->delete();
+
+		return $request->expectsJson()
+			? response()->json(null, 205)
+			: redirect()->route('volunteer.index');
+	}
+
+	/**
+	 * Logs the user in via an NFC badge tap, relayed from a workstation-local ConcatNFCValidator instance. Only usable
+	 * from sessions already authorized as a Kiosk - trusting a client-submitted attendeeId for login is only
+	 * reasonable in that physically-trusted context.
+	 */
+	public function postNfc(NfcLoginRequest $request): JsonResponse|RedirectResponse {
+		if (!Kiosk::isSessionAuthorized(true)) {
+			$error = 'NFC login is only available on authorized kiosks.';
+			return $request->expectsJson()
+				? response()->json(['error' => $error], 403)
+				: redirect()->back()->withErrors(['attendeeId' => $error]);
+		}
+
+		// Prevent too many rapid failed attempts
+		$rateLimitKey = "nfc:{$request->ip()}";
+		if (RateLimiter::tooManyAttempts($rateLimitKey, $perMinute = 5)) {
+			$error = 'Too many failed NFC login attempts have been made from this location. Try again in a minute.';
+			return $request->expectsJson()
+				? response()->json(['error' => $error], 429)
+				: redirect()->back()->withErrors(['attendeeId' => $error]);
+		}
+
+		$user = User::whereBadgeId($request->attendeeId)->first();
+
+		if (!$user) {
+			RateLimiter::hit($rateLimitKey);
+			$error = 'No Tracker account is linked to this badge.';
+			return $request->expectsJson()
+				? response()->json(['errors' => $error], 401)
+				: redirect()->back()->withErrors(['attendeeId' => $error]);
+		}
+
+		Auth::login($user);
 
 		return $request->expectsJson()
 			? response()->json(null, 205)
