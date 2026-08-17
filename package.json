@@ -30,6 +30,7 @@
 		"mitt": "^3.0.1",
 		"primevue": "^4.5.5",
 		"qrcode": "^1.5.4",
+		"qs": "^6.15.2",
 		"sass": "^1.99.0",
 		"simple-datatables": "^10.2.0",
 		"sweetalert2": "^11.26.24",
