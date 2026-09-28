@@ -80,12 +80,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watch, onMounted, onUnmounted } from 'vue';
 import vueDebounce from 'vue-debounce';
 import { FilterMatchMode } from '@primevue/core/api';
 import type { DataTableFilterEvent, DataTablePageEvent, DataTableSortEvent } from 'primevue/datatable';
 
 import { useInertiaRequest } from '@/lib/request';
+import { useNfcTap, type NfcTap } from '@/lib/nfcTap';
 import { roleNames, useUser } from '@/lib/user';
 import User from '@/data/impl/User';
 import type RawUser from '@/data/User';
@@ -168,4 +169,13 @@ async function loadPage(evt: DataTablePageEvent | DataTableSortEvent | DataTable
 		role: filters.value.role.value ?? undefined,
 	});
 }
+
+// Autofill the ID filter with a tapped badge's ID, for lookups on a workstation with an NFC reader attached.
+// Silent/best-effort - if no workstation-local ConcatNFCValidator is reachable this just quietly never fires.
+const { start: startNfcTap, stop: stopNfcTap } = useNfcTap((tap: NfcTap) => {
+	filters.value.badge_id.value = tap.attendeeId;
+	return request.get('users.index', { badge_id: tap.attendeeId });
+});
+onMounted(() => startNfcTap());
+onUnmounted(() => stopNfcTap());
 </script>
