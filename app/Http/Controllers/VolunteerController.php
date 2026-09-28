@@ -93,8 +93,7 @@ class VolunteerController extends Controller {
 	 */
 	public function storeTimeEntry(TimeEntryStoreRequest $request, Event $event, User $user): JsonResponse {
 		// Don't allow an ongoing entry to be created if there already is one
-		$input = $request->safe();
-		if (!isset($input['stop'])) {
+		if (!$request->filled('stop')) {
 			if ($user->timeEntries()->ongoing()->forEvent($event)->exists()) {
 				return response()->json(['error' => 'User already has an ongoing time entry.'], 409);
 			}
