@@ -21,7 +21,12 @@
 		</template>
 
 		<div v-if="!readOnly" class="flex flex-col lg:flex-row lg:flex-wrap gap-4">
-			<AttendeeCreatePanel :attendee-log :read-only class="grow basis-1" />
+			<AttendeeCreatePanel
+				:attendee-log
+				:read-only
+				:can-override="canOverrideRequirements"
+				class="grow basis-1"
+			/>
 
 			<AttendeeCreatePanel v-if="isManager" :attendee-log :read-only gatekeeper class="grow basis-1" />
 
@@ -30,7 +35,13 @@
 
 		<div class="grow flex flex-col xl:flex-row xl:flex-wrap gap-4">
 			<FullContentHeightPanel header="Attendees" class="flex-auto min-w-[30%]">
-				<AttendeesTable :attendees="attendees" :attendee-log :rows="readOnly ? 15 : 10" :read-only />
+				<AttendeesTable
+					:attendees="attendees"
+					:attendee-log
+					:overriders
+					:rows="readOnly ? 15 : 10"
+					:read-only
+				/>
 			</FullContentHeightPanel>
 
 			<FullContentHeightPanel v-if="isManager" header="Gatekeepers" class="flex-auto min-w-[30%]">
@@ -48,6 +59,7 @@ import { useUser } from '@/lib/user';
 import { useReadOnly } from '@/lib/readonly';
 import type AttendeeLog from '@/data/AttendeeLog';
 import type Event from '@/data/Event';
+import type { Overriders } from '@/data/Attendee';
 import type RegistrationLevel from '@/data/RegistrationLevel';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -58,11 +70,13 @@ import AttendeeLogRequirementsPanel from '@/Components/AttendeeLog/AttendeeLogRe
 import FullContentHeightPanel from '@/Components/Common/FullContentHeightPanel.vue';
 import BreadcrumbsPage from '@/Components/App/BreadcrumbsPage.vue';
 
-const { attendeeLog, event, registrationLevels } = defineProps<{
+const { attendeeLog, event, registrationLevels, overriders, canOverrideRequirements } = defineProps<{
 	attendeeLog: AttendeeLog;
 	event: Event;
 	exportTypes?: Record<string, string>;
 	registrationLevels?: RegistrationLevel[] | null;
+	overriders?: Overriders;
+	canOverrideRequirements?: boolean;
 }>();
 
 const { isAdmin, isManager } = useUser();

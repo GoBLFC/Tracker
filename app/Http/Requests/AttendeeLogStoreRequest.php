@@ -34,6 +34,7 @@ class AttendeeLogStoreRequest extends FormRequest {
 			'allowed_registration_levels.*' => 'required|string|max:128|distinct:ignore_case',
 			'allow_staff' => 'sometimes|boolean',
 			'min_volunteer_hours' => 'sometimes|nullable|numeric|decimal:0,2|min:1|max:999',
+			'gatekeepers_can_override' => 'sometimes|boolean',
 		];
 	}
 }

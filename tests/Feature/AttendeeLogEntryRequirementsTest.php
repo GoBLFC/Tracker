@@ -7,11 +7,15 @@ use App\Models\Event;
 use App\Models\Role;
 use App\Models\TimeEntry;
 use App\Models\User;
+use App\Reports\AttendeeLogReport;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Request as GuzzleRequest;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
+use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 uses(RefreshDatabase::class);
 
@@ -285,6 +289,134 @@ it('allows volunteers without enough hours through an allowed registration level
 		->assertOk();
 });
 
+it('lets admins override entry requirements and records who did it', function () {
+	$volunteer = volunteerWithHours($this->log->event_id, 11.5);
+	$this->log->update(['min_volunteer_hours' => 12]);
+
+	$this->actingAs($this->admin)
+		->putJson(route('attendee-logs.users.store', $this->log), ['badge_id' => $volunteer->badge_id])
+		->assertForbidden()
+		->assertJsonPath('can_override', true);
+
+	$this->actingAs($this->admin)
+		->putJson(route('attendee-logs.users.store', $this->log), ['badge_id' => $volunteer->badge_id, 'override' => true])
+		->assertOk()
+		->assertJsonPath('overridden', true);
+
+	expect($this->log->attendees()->first()->pivot->overridden_by_id)->toBe($this->admin->id);
+});
+
+it('records an optional reason with overrides', function () {
+	$withReason = volunteerWithHours($this->log->event_id, 11.5);
+	$withoutReason = volunteerWithHours($this->log->event_id, 11.5);
+	$this->log->update(['min_volunteer_hours' => 12]);
+
+	$this->actingAs($this->admin)
+		->putJson(route('attendee-logs.users.store', $this->log), [
+			'badge_id' => $withReason->badge_id,
+			'override' => true,
+			'override_reason' => '  Worked setup before clocking in  ',
+		])
+		->assertOk();
+	$this->actingAs($this->admin)
+		->putJson(route('attendee-logs.users.store', $this->log), [
+			'badge_id' => $withoutReason->badge_id,
+			'override' => true,
+			'override_reason' => '   ',
+		])
+		->assertOk();
+
+	$reasons = $this->log->attendees()->get()->mapWithKeys(fn ($user) => [$user->id => $user->pivot->override_reason]);
+	expect($reasons[$withReason->id])->toBe('Worked setup before clocking in')
+		->and($reasons[$withoutReason->id])->toBeNull();
+});
+
+it('ignores override reasons when the attendee meets the requirements', function () {
+	$volunteer = volunteerWithHours($this->log->event_id, 13);
+	$this->log->update(['min_volunteer_hours' => 12]);
+
+	$this->actingAs($this->admin)
+		->putJson(route('attendee-logs.users.store', $this->log), [
+			'badge_id' => $volunteer->badge_id,
+			'override' => true,
+			'override_reason' => 'Not needed',
+		])
+		->assertOk();
+
+	expect($this->log->attendees()->first()->pivot->override_reason)->toBeNull();
+});
+
+it('does not mark entries as overridden when the attendee meets the requirements', function () {
+	$volunteer = volunteerWithHours($this->log->event_id, 13);
+	$this->log->update(['min_volunteer_hours' => 12]);
+
+	$this->actingAs($this->admin)
+		->putJson(route('attendee-logs.users.store', $this->log), ['badge_id' => $volunteer->badge_id, 'override' => true])
+		->assertOk()
+		->assertJsonPath('overridden', false);
+
+	expect($this->log->attendees()->first()->pivot->overridden_by_id)->toBeNull();
+});
+
+it('does not let gatekeepers override entry requirements', function () {
+	$gatekeeper = User::factory()->create(['role' => Role::Volunteer]);
+	$this->log->users()->attach($gatekeeper, ['type' => 'gatekeeper']);
+	\App\Models\Setting::set('active-event', $this->log->event_id);
+	\App\Models\Setting::set('lockdown', false);
+	$volunteer = volunteerWithHours($this->log->event_id, 11.5);
+	$this->log->update(['min_volunteer_hours' => 12]);
+
+	$this->actingAs($gatekeeper)
+		->putJson(route('attendee-logs.users.store', $this->log), ['badge_id' => $volunteer->badge_id])
+		->assertForbidden()
+		->assertJsonPath('can_override', false);
+
+	$this->actingAs($gatekeeper)
+		->putJson(route('attendee-logs.users.store', $this->log), ['badge_id' => $volunteer->badge_id, 'override' => true])
+		->assertForbidden()
+		->assertJsonPath('error', 'Only managers and admins can let attendees into this log anyway.');
+
+	// The page gets an inline error rather than an authorization error page
+	$this->actingAs($gatekeeper)
+		->from(route('attendee-logs.show', $this->log))
+		->put(route('attendee-logs.users.store', $this->log), ['badge_id' => $volunteer->badge_id, 'override' => true])
+		->assertRedirect(route('attendee-logs.show', $this->log))
+		->assertSessionHasErrors(['requirements' => 'Only managers and admins can let attendees into this log anyway.']);
+
+	expect($this->log->hasAttendee($volunteer))->toBeFalse();
+});
+
+it('lets gatekeepers override entry requirements when the log allows it', function () {
+	$gatekeeper = User::factory()->create(['role' => Role::Volunteer]);
+	$this->log->users()->attach($gatekeeper, ['type' => 'gatekeeper']);
+	\App\Models\Setting::set('active-event', $this->log->event_id);
+	\App\Models\Setting::set('lockdown', false);
+	$volunteer = volunteerWithHours($this->log->event_id, 11.5);
+	$this->log->update(['min_volunteer_hours' => 12, 'gatekeepers_can_override' => true]);
+
+	$this->actingAs($gatekeeper)
+		->putJson(route('attendee-logs.users.store', $this->log), ['badge_id' => $volunteer->badge_id])
+		->assertForbidden()
+		->assertJsonPath('can_override', true);
+
+	$this->actingAs($gatekeeper)
+		->putJson(route('attendee-logs.users.store', $this->log), ['badge_id' => $volunteer->badge_id, 'override' => true])
+		->assertOk();
+
+	expect($this->log->attendees()->first()->pivot->overridden_by_id)->toBe($gatekeeper->id);
+});
+
+it('reports overridden attendees as already present instead of denying them again', function () {
+	$volunteer = volunteerWithHours($this->log->event_id, 2);
+	$this->log->update(['min_volunteer_hours' => 12]);
+	$this->log->users()->attach($volunteer, ['type' => 'attendee', 'overridden_by_id' => $this->admin->id]);
+
+	$this->actingAs($this->admin)
+		->putJson(route('attendee-logs.users.store', $this->log), ['badge_id' => $volunteer->badge_id])
+		->assertUnprocessable()
+		->assertJsonPath('error', fn (string $error) => str_contains($error, 'already present'));
+});
+
 it('puts denials under their own error key for the frontend', function () {
 	$volunteer = volunteerWithHours($this->log->event_id, 2);
 	$this->log->update(['min_volunteer_hours' => 12]);
@@ -297,11 +429,11 @@ it('puts denials under their own error key for the frontend', function () {
 		->assertSessionDoesntHaveErrors('badge_id');
 });
 
-it('denies existing users whose registration level cannot be checked', function () {
+it('denies existing users whose level cannot be checked, allowing an override', function () {
 	$volunteer = User::factory()->create(['role' => Role::Volunteer, 'badge_name' => 'Foxy']);
 	$this->log->update(['allowed_registration_levels' => ['Sponsor']]);
-	ConCat::shouldReceive('authorize')->once();
-	ConCat::shouldReceive('getRegistration')->once()->andThrow(new RuntimeException('ConCat is down'));
+	ConCat::shouldReceive('authorize')->twice();
+	ConCat::shouldReceive('getRegistration')->twice()->andThrow(new RuntimeException('ConCat is down'));
 
 	$this->actingAs($this->admin)
 		->putJson(route('attendee-logs.users.store', $this->log), ['badge_id' => $volunteer->badge_id])
@@ -310,18 +442,11 @@ it('denies existing users whose registration level cannot be checked', function 
 			'error',
 			"Denied: Foxy (#{$volunteer->badge_id}) couldn't have their registration level checked with ConCat.",
 		);
-});
-
-it('reports unknown badges as not found when ConCat cannot be reached', function () {
-	$this->log->update(['allowed_registration_levels' => ['Sponsor']]);
-	ConCat::shouldReceive('authorize')->once();
-	ConCat::shouldReceive('getRegistration')->once()->andThrow(new RuntimeException('ConCat is down'));
 
 	$this->actingAs($this->admin)
-		->putJson(route('attendee-logs.users.store', $this->log), ['badge_id' => 1234])
-		->assertNotFound();
-
-	expect(User::whereBadgeId(1234)->exists())->toBeFalse();
+		->putJson(route('attendee-logs.users.store', $this->log), ['badge_id' => $volunteer->badge_id, 'override' => true])
+		->assertOk();
+	expect($this->log->attendees()->first()->pivot->overridden_by_id)->toBe($this->admin->id);
 });
 
 it('tells existing users without a ConCat registration apart from ConCat being unreachable', function () {
@@ -338,6 +463,33 @@ it('tells existing users without a ConCat registration apart from ConCat being u
 		->putJson(route('attendee-logs.users.store', $this->log), ['badge_id' => $volunteer->badge_id])
 		->assertForbidden()
 		->assertJsonPath('error', "Denied: Foxy (#{$volunteer->badge_id}) doesn't have a ConCat registration.");
+});
+
+it('reports unknown badges as not found when ConCat cannot be reached, even with an override', function () {
+	$this->log->update(['allowed_registration_levels' => ['Sponsor']]);
+	ConCat::shouldReceive('authorize')->once();
+	ConCat::shouldReceive('getRegistration')->once()->andThrow(new RuntimeException('ConCat is down'));
+
+	$this->actingAs($this->admin)
+		->putJson(route('attendee-logs.users.store', $this->log), ['badge_id' => 1234, 'override' => true])
+		->assertNotFound();
+
+	expect(User::whereBadgeId(1234)->exists())->toBeFalse();
+});
+
+it('creates users from ConCat when overriding entry requirements for unknown badges', function () {
+	$this->log->update(['min_volunteer_hours' => 12]);
+	ConCat::shouldReceive('authorize')->once();
+	ConCat::shouldReceive('getRegistration')->once()->andReturn(fakeRegistration(1234, 'Attendee'));
+
+	$this->actingAs($this->admin)
+		->putJson(route('attendee-logs.users.store', $this->log), ['badge_id' => 1234, 'override' => true])
+		->assertOk()
+		->assertJsonPath('overridden', true);
+
+	$user = User::whereBadgeId(1234)->firstOrFail();
+	expect($user->role)->toBe(Role::Attendee)
+		->and($this->log->attendees()->first()->pivot->overridden_by_id)->toBe($this->admin->id);
 });
 
 it('rejects a minimum of less than 1 volunteer hour or more than 2 decimal places', function (float $hours) {
@@ -365,9 +517,82 @@ it('only lets admins change entry requirements', function () {
 	expect($this->log->fresh()->allow_staff)->toBeFalse();
 });
 
+it('exports who overrode entry requirements and why, without evaluating formulas', function (string $writerType) {
+	// The overrider's account is deleted afterwards, and should still be named
+	$overrider = User::factory()->create(['role' => Role::Manager]);
+	$volunteer = volunteerWithHours($this->log->event_id, 2, ['badge_name' => '@Foxy']);
+	$this->log->users()->attach($volunteer, [
+		'type' => 'attendee',
+		'overridden_by_id' => $overrider->id,
+		'override_reason' => '=1+1',
+	]);
+	$overrider->delete();
+
+	$report = new AttendeeLogReport($this->log->event, $this->log->id);
+	$path = tempnam(sys_get_temp_dir(), 'report') . '.' . strtolower($writerType);
+	file_put_contents($path, Excel::raw($report, $writerType));
+	$sheet = IOFactory::load($path)->getActiveSheet();
+	unlink($path);
+
+	expect($sheet->getCell('D1')->getValue())->toBe('Overridden By')
+		->and($sheet->getCell('E1')->getValue())->toBe('Override Reason')
+		->and($sheet->getCell('D2')->getValue())->toBe($overrider->display_name)
+		->and($sheet->getCell('E2')->getValue())->toBe("'=1+1")
+		->and($sheet->getCell('E2')->getDataType())->toBe(DataType::TYPE_STRING);
+})->with([\Maatwebsite\Excel\Excel::XLSX, \Maatwebsite\Excel\Excel::CSV]);
+
+it('escapes names that a spreadsheet would treat as formulas', function () {
+	$volunteer = volunteerWithHours($this->log->event_id, 2);
+	$this->log->users()->attach($volunteer, ['type' => 'attendee']);
+	$report = new AttendeeLogReport($this->log->event, $this->log->id);
+
+	foreach (['=SUM(A1)', '+1', '-1', '@Foxy', "\tTab"] as $name) {
+		$volunteer->forceFill(['badge_name' => $name])->save();
+		$row = $report->map($this->log->attendees()->first());
+		expect($row[1])->toStartWith("'");
+	}
+
+	$volunteer->forceFill(['badge_name' => 'Foxy'])->save();
+	expect($report->map($this->log->attendees()->first())[3])->toBeNull();
+});
+
 /**
  * Creates a gatekeeper for the test log and makes its event active so the gatekeeper can use it
  */
+function makeGatekeeper(AttendeeLog $log): User {
+	$gatekeeper = User::factory()->create(['role' => Role::Volunteer]);
+	$log->users()->attach($gatekeeper, ['type' => 'gatekeeper']);
+	\App\Models\Setting::set('active-event', $log->event_id);
+	\App\Models\Setting::set('lockdown', false);
+	return $gatekeeper;
+}
+
+it('gives the page the viewer\'s override permissions and the overriders, including deleted ones', function () {
+	$gatekeeper = makeGatekeeper($this->log);
+	$overrider = User::factory()->create(['role' => Role::Manager, 'badge_name' => 'Former Manager']);
+	$this->log->users()->attach(volunteerWithHours($this->log->event_id, 2), [
+		'type' => 'attendee',
+		'overridden_by_id' => $overrider->id,
+	]);
+	$overrider->delete();
+	$headers = ['X-Inertia' => 'true', 'X-Inertia-Version' => inertiaVersion()];
+
+	$this->actingAs($gatekeeper)
+		->get(route('attendee-logs.show', $this->log), $headers)
+		->assertOk()
+		->assertJsonPath('props.canOverrideRequirements', false)
+		->assertJsonPath("props.overriders.{$overrider->id}.badge_name", 'Former Manager');
+
+	$this->log->update(['gatekeepers_can_override' => true]);
+	$this->actingAs($gatekeeper)
+		->get(route('attendee-logs.show', $this->log), $headers)
+		->assertJsonPath('props.canOverrideRequirements', true);
+
+	$this->actingAs($this->admin)
+		->get(route('attendee-logs.show', $this->log), $headers)
+		->assertJsonPath('props.canOverrideRequirements', true);
+});
+
 it('lets admins set and clear the allowed levels', function () {
 	$this->actingAs($this->admin)
 		->patchJson(route('attendee-logs.update', $this->log), ['allowed_registration_levels' => ['Sponsor']])

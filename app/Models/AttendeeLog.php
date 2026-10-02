@@ -19,6 +19,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @property string[]|null $allowed_registration_levels
  * @property bool $allow_staff
  * @property float|null $min_volunteer_hours
+ * @property bool $gatekeepers_can_override
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Event|null $event
@@ -59,11 +60,13 @@ class AttendeeLog extends Model implements HasDisplayName {
 		'allowed_registration_levels',
 		'allow_staff',
 		'min_volunteer_hours',
+		'gatekeepers_can_override',
 	];
 	protected $casts = [
 		'allowed_registration_levels' => 'array',
 		'allow_staff' => 'boolean',
 		'min_volunteer_hours' => 'float',
+		'gatekeepers_can_override' => 'boolean',
 	];
 
 	public function getActivitylogOptions(): LogOptions {
@@ -74,6 +77,7 @@ class AttendeeLog extends Model implements HasDisplayName {
 				'allowed_registration_levels',
 				'allow_staff',
 				'min_volunteer_hours',
+				'gatekeepers_can_override',
 			])
 			->logOnlyDirty()
 			->submitEmptyLogs();
@@ -99,7 +103,7 @@ class AttendeeLog extends Model implements HasDisplayName {
 	 */
 	public function users(): BelongsToMany {
 		return $this->belongsToMany(User::class)
-			->withPivot('type')
+			->withPivot('type', 'overridden_by_id', 'override_reason')
 			->withTimestamps()
 			->withTrashed();
 	}

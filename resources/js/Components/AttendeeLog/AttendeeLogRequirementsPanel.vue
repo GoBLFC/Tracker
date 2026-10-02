@@ -106,6 +106,27 @@
 				</div>
 			</div>
 
+			<!-- Who can override denials -->
+			<template v-if="hasAnyRule">
+				<Divider class="my-0" />
+
+				<div class="flex flex-col gap-2">
+					<span :id="overrideLabelId" class="font-semibold">Who can let in denied attendees anyway</span>
+					<SelectButton
+						v-model="gatekeepersCanOverride"
+						:options="overrideOptions"
+						option-label="label"
+						option-value="value"
+						:allow-empty="false"
+						:aria-labelledby="overrideLabelId"
+						size="small"
+					/>
+					<small class="text-muted-color">
+						Overrides are recorded with who approved them and shown in the attendee list and export.
+					</small>
+				</div>
+			</template>
+
 			<div class="flex justify-end">
 				<ResponsiveButton
 					label="Save Requirements"
@@ -147,19 +168,32 @@ const staffId = useId();
 const hoursToggleId = useId();
 const hoursId = useId();
 const levelsToggleId = useId();
+const overrideLabelId = useId();
+
+const overrideOptions = [
+	{ label: 'Managers & admins', value: false },
+	{ label: 'Gatekeepers too', value: true },
+];
 
 const staffOn = ref(false);
 const hoursOn = ref(false);
 const hours = ref<number | null>(null);
 const levelsOn = ref(false);
 const levels = ref<string[]>([]);
+const gatekeepersCanOverride = ref(false);
 resetFromLog();
 
 const form = useForm<{
 	allowed_registration_levels: string[] | null;
 	allow_staff: boolean;
 	min_volunteer_hours: number | null;
-}>({ allowed_registration_levels: null, allow_staff: false, min_volunteer_hours: null });
+	gatekeepers_can_override: boolean;
+}>({
+	allowed_registration_levels: null,
+	allow_staff: false,
+	min_volunteer_hours: null,
+	gatekeepers_can_override: false,
+});
 
 const levelsError = computed(
 	() =>
@@ -197,6 +231,7 @@ const payload = computed(() => ({
 	allowed_registration_levels: levelsOn.value && levels.value.length ? levels.value : null,
 	allow_staff: staffOn.value,
 	min_volunteer_hours: hoursOn.value ? hours.value : null,
+	gatekeepers_can_override: gatekeepersCanOverride.value,
 }));
 
 const hoursValid = computed(() => hours.value !== null && hours.value >= 1);
@@ -208,7 +243,8 @@ const isDirty = computed(() => {
 	return (
 		current !== saved ||
 		payload.value.allow_staff !== attendeeLog.allow_staff ||
-		payload.value.min_volunteer_hours !== attendeeLog.min_volunteer_hours
+		payload.value.min_volunteer_hours !== attendeeLog.min_volunteer_hours ||
+		payload.value.gatekeepers_can_override !== attendeeLog.gatekeepers_can_override
 	);
 });
 
@@ -220,6 +256,7 @@ watch(
 			attendeeLog.allowed_registration_levels,
 			attendeeLog.allow_staff,
 			attendeeLog.min_volunteer_hours,
+			attendeeLog.gatekeepers_can_override,
 		]),
 	resetFromLog,
 );
@@ -233,6 +270,7 @@ function resetFromLog() {
 	hours.value = attendeeLog.min_volunteer_hours;
 	levelsOn.value = Boolean(attendeeLog.allowed_registration_levels?.length);
 	levels.value = [...(attendeeLog.allowed_registration_levels ?? [])];
+	gatekeepersCanOverride.value = attendeeLog.gatekeepers_can_override;
 }
 
 /**

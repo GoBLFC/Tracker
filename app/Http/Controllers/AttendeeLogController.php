@@ -58,8 +58,15 @@ class AttendeeLogController extends Controller {
 
 		$props = [
 			'attendeeLog' => $attendeeLog->load(['users' => function ($query) {
-				$query->select('id', 'badge_id', 'badge_name')->withPivot('type', 'created_at');
+				$query->select('id', 'badge_id', 'badge_name')
+					->withPivot('type', 'created_at', 'overridden_by_id', 'override_reason');
 			}]),
+			// Overriders whose accounts were deleted are still named on the entries they approved
+			'overriders' => fn () => User::withTrashed()->whereIn(
+				'id',
+				$attendeeLog->users->pluck('pivot.overridden_by_id')->filter()->unique(),
+			)->get(['id', 'badge_id', 'badge_name'])->keyBy('id'),
+			'canOverrideRequirements' => fn () => $request->user()->can('overrideRequirements', $attendeeLog),
 			'event' => fn () => $attendeeLog->event,
 			'exportTypes' => fn () => Report::EXPORT_FILE_TYPES,
 		];
@@ -135,7 +142,7 @@ class AttendeeLogController extends Controller {
 		$badgeId = $request->validated('badge_id');
 		$user = User::whereBadgeId($badgeId)->first();
 
-		// Check for an existing entry first so that attendees already in the log aren't checked again
+		// Check for an existing entry first so that attendees let in by an override aren't denied when scanned again
 		if ($user && $attendeeLog->users()->whereUserId($user->id)->wherePivot('type', $type)->exists()) {
 			return $this->alreadyPresentResponse($request, $type, $user);
 		}
@@ -165,7 +172,7 @@ class AttendeeLogController extends Controller {
 				}
 
 				// Without a registration, a badge that isn't in the DB can't be logged at all. An existing user only
-				// needed it for the level check, so they're denied below instead.
+				// needed it for the level check, so they're denied below instead, where an override can still apply.
 				if (!$user) {
 					return $request->expectsJson()
 						? response()->json(['error' => "No registered attendee found with badge #{$badgeId}."], 404)
@@ -182,11 +189,25 @@ class AttendeeLogController extends Controller {
 				&& $attendeeLog->isRestrictedByRegistrationLevel()
 				&& $attendeeLog->allowsRegistration($registration));
 
+		$overriddenBy = null;
 		if ($failsRequirements) {
-			$error = $this->buildEntryDeniedMessage($attendeeLog, $badgeId, $user, $registration, $registrationMissing);
-			return $request->expectsJson()
-				? response()->json(['error' => $error], 403)
-				: redirect()->back()->withErrors(['requirements' => $error]);
+			// Managers and admins can let the attendee in anyway, as can gatekeepers if the log allows it
+			$canOverride = $request->user()->can('overrideRequirements', $attendeeLog);
+
+			if ($request->boolean('override') && $canOverride) {
+				$overriddenBy = $request->user();
+			} else {
+				// A disallowed override is reported as a denial rather than an authorization error so that the
+				// scanning page can show it inline. This happens when the page still shows an override button
+				// after the log's override setting changes.
+				$error = $request->boolean('override')
+					? 'Only managers and admins can let attendees into this log anyway.'
+					: $this->buildEntryDeniedMessage($attendeeLog, $badgeId, $user, $registration, $registrationMissing);
+
+				return $request->expectsJson()
+					? response()->json(['error' => $error, 'can_override' => $canOverride], 403)
+					: redirect()->back()->withErrors(['requirements' => $error]);
+			}
 		}
 
 		if (!$user) {
@@ -196,15 +217,31 @@ class AttendeeLogController extends Controller {
 			return $this->alreadyPresentResponse($request, $type, $user);
 		}
 
-		$attendeeLog->users()->attach($user, ['type' => $type]);
+		$overrideReason = $overriddenBy ? (trim($request->validated('override_reason') ?? '') ?: null) : null;
+		$attendeeLog->users()->attach($user, [
+			'type' => $type,
+			'overridden_by_id' => $overriddenBy?->id,
+			'override_reason' => $overrideReason,
+		]);
 
+		if ($overriddenBy) {
+			Log::info('Attendee log entry requirements overridden', [
+				'attendee_log' => $attendeeLog->id,
+				'user' => $user->id,
+				'overridden_by' => $overriddenBy->id,
+				'reason' => $overrideReason,
+			]);
+		}
+
+		$overrideNote = $overriddenBy ? ' by override' : '';
 		return $request->expectsJson()
 			? response()->json([
 				'user' => $user->setVisible(['id', 'badge_id', 'badge_name']),
 				'type' => $type,
+				'overridden' => (bool) $overriddenBy,
 				'logged_at' => now()->timezone(config('tracker.timezone'))->toDayDateTimeString(),
 			])
-			: redirect()->back()->withSuccess("Added {$type} {$user->audit_name} to the log.");
+			: redirect()->back()->withSuccess("Added {$type} {$user->audit_name} to the log{$overrideNote}.");
 	}
 
 	/**
