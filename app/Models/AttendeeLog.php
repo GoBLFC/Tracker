@@ -16,6 +16,9 @@ use Spatie\Activitylog\Traits\LogsActivity;
 /**
  * @property string $name
  * @property string $event_id
+ * @property string[]|null $allowed_registration_levels
+ * @property bool $allow_staff
+ * @property float|null $min_volunteer_hours
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Event|null $event
@@ -53,11 +56,25 @@ class AttendeeLog extends Model implements HasDisplayName {
 
 	protected $fillable = [
 		'name',
+		'allowed_registration_levels',
+		'allow_staff',
+		'min_volunteer_hours',
+	];
+	protected $casts = [
+		'allowed_registration_levels' => 'array',
+		'allow_staff' => 'boolean',
+		'min_volunteer_hours' => 'float',
 	];
 
 	public function getActivitylogOptions(): LogOptions {
 		return LogOptions::defaults()
-			->logOnly(['name', 'event_id'])
+			->logOnly([
+				'name',
+				'event_id',
+				'allowed_registration_levels',
+				'allow_staff',
+				'min_volunteer_hours',
+			])
 			->logOnlyDirty()
 			->submitEmptyLogs();
 	}
@@ -120,6 +137,59 @@ class AttendeeLog extends Model implements HasDisplayName {
 	 */
 	public function hasAttendee(User|string $user): bool {
 		return $this->attendees()->whereUserId($user->id ?? $user)->exists();
+	}
+
+	/**
+	 * Checks whether this attendee log has any entry requirements for attendees.
+	 * Attendees pass if they meet any one of the requirements that are set.
+	 */
+	public function hasEntryRequirements(): bool {
+		return $this->isRestrictedByRegistrationLevel() || $this->allow_staff || $this->min_volunteer_hours !== null;
+	}
+
+	/**
+	 * Checks whether a user meets any of the entry requirements that only rely on Tracker data (staff role and
+	 * volunteer hours), so their ConCat registration doesn't need to be retrieved to check them
+	 */
+	public function allowsUserByTrackerData(User $user): bool {
+		if ($this->allow_staff && $user->isStaff()) return true;
+		if ($this->min_volunteer_hours !== null && $this->getVolunteerHours($user) >= $this->min_volunteer_hours) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Gets the volunteer hours a user has earned (including bonuses) for this attendee log's event
+	 */
+	public function getVolunteerHours(User $user): float {
+		return $user->getEarnedTime($this->event) / 3600;
+	}
+
+	/**
+	 * Checks whether this attendee log only accepts attendees with specific registration levels
+	 */
+	public function isRestrictedByRegistrationLevel(): bool {
+		return !empty($this->allowed_registration_levels);
+	}
+
+	/**
+	 * Checks whether a ConCat registration is allowed into this attendee log.
+	 * A registration is allowed if its product ID or product name matches an allowed level (case-insensitive).
+	 * Unrestricted logs allow every registration.
+	 */
+	public function allowsRegistration(\stdClass $registration): bool {
+		if (!$this->isRestrictedByRegistrationLevel()) return true;
+
+		$candidates = array_map(
+			fn ($value) => mb_strtolower(trim((string) $value)),
+			array_filter([$registration->productId ?? null, $registration->productName ?? null]),
+		);
+		foreach ($this->allowed_registration_levels as $level) {
+			if (in_array(mb_strtolower(trim($level)), $candidates, true)) return true;
+		}
+
+		return false;
 	}
 
 	/**

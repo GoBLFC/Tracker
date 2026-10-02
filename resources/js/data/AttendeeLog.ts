@@ -5,6 +5,9 @@ export default interface AttendeeLog {
 	id: AttendeeLogId;
 	name: string;
 	event_id: EventId;
+	allowed_registration_levels: string[] | null;
+	allow_staff: boolean;
+	min_volunteer_hours: number | null;
 	users?: Attendee[];
 	users_count?: number;
 	attendees_count?: number;

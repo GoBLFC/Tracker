@@ -16,6 +16,13 @@
 				key press after the badge number.
 			</p>
 
+			<Message v-if="!gatekeeper && requirements.length" severity="info">
+				Only allows attendees that meet any of:
+				<ul class="list-disc ms-5">
+					<li v-for="requirement in requirements" :key="requirement">{{ requirement }}</li>
+				</ul>
+			</Message>
+
 			<form @submit.prevent="create" @input="form.clearErrors()">
 				<InputGroup>
 					<FloatLabel variant="on">
@@ -24,7 +31,7 @@
 							ref="input"
 							name="badge_id"
 							:id="badgeNumberId"
-							:invalid="Boolean(form.errors.badge_id)"
+							:invalid="form.hasErrors"
 							inputmode="numeric"
 							required
 							:autofocus="!gatekeeper"
@@ -34,9 +41,7 @@
 					</FloatLabel>
 
 					<ResponsiveButton
-						:label="
-							gatekeeper ? 'Empower Gatekeeper' : 'Log Attendee'
-						"
+						:label="gatekeeper ? 'Empower Gatekeeper' : 'Log Attendee'"
 						:icon="faUserPlus"
 						type="submit"
 						:severity="gatekeeper ? 'warn' : 'success'"
@@ -47,7 +52,7 @@
 				</InputGroup>
 
 				<Message v-if="form.hasErrors" size="small" severity="error" variant="simple">
-					{{ form.errors.badge_id }}
+					{{ form.errors.badge_id ?? form.errors.requirements }}
 				</Message>
 			</form>
 		</div>
@@ -55,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { useId, useTemplateRef } from 'vue';
+import { computed, useId, useTemplateRef } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import { useRoute } from '@/lib/route';
 import type AttendeeLog from '@/data/AttendeeLog';
@@ -74,6 +79,17 @@ const { attendeeLog, gatekeeper = false } = defineProps<{
 }>();
 
 const route = useRoute();
+
+// Human-readable list of the log's entry requirements
+const requirements = computed(() => {
+	const list: string[] = [];
+	if (attendeeLog.allowed_registration_levels?.length) {
+		list.push(`Registration level: ${attendeeLog.allowed_registration_levels.join(', ')}`);
+	}
+	if (attendeeLog.allow_staff) list.push('Staff or above');
+	if (attendeeLog.min_volunteer_hours !== null) list.push(`${attendeeLog.min_volunteer_hours}+ volunteer hours`);
+	return list;
+});
 const form = useForm({
 	badge_id: '',
 	type: gatekeeper ? 'gatekeeper' : 'attendee',

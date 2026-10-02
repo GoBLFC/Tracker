@@ -24,6 +24,8 @@
 			<AttendeeCreatePanel :attendee-log :read-only class="grow basis-1" />
 
 			<AttendeeCreatePanel v-if="isManager" :attendee-log :read-only gatekeeper class="grow basis-1" />
+
+			<AttendeeLogRequirementsPanel v-if="isAdmin" :attendee-log :registration-levels class="grow basis-1" />
 		</div>
 
 		<div class="grow flex flex-col xl:flex-row xl:flex-wrap gap-4">
@@ -46,21 +48,24 @@ import { useUser } from '@/lib/user';
 import { useReadOnly } from '@/lib/readonly';
 import type AttendeeLog from '@/data/AttendeeLog';
 import type Event from '@/data/Event';
+import type RegistrationLevel from '@/data/RegistrationLevel';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import AttendeesTable from '@/Components/AttendeeLog/AttendeesTable.vue';
 import AttendeeCreatePanel from '@/Components/AttendeeLog/AttendeeCreatePanel.vue';
+import AttendeeLogRequirementsPanel from '@/Components/AttendeeLog/AttendeeLogRequirementsPanel.vue';
 import FullContentHeightPanel from '@/Components/Common/FullContentHeightPanel.vue';
 import BreadcrumbsPage from '@/Components/App/BreadcrumbsPage.vue';
 
-const { attendeeLog, event } = defineProps<{
+const { attendeeLog, event, registrationLevels } = defineProps<{
 	attendeeLog: AttendeeLog;
 	event: Event;
 	exportTypes?: Record<string, string>;
+	registrationLevels?: RegistrationLevel[] | null;
 }>();
 
-const { isManager } = useUser();
+const { isAdmin, isManager } = useUser();
 const isEventReadOnly = useReadOnly();
 
 const attendees = computed(() => attendeeLog.users!.filter((u) => u.pivot.type === 'attendee'));
