@@ -46,7 +46,7 @@ All models and their relationships are listed below, alongside a brief descripti
 | Name        | Table         | Description                                                                                                                                                                                  |
 | ----------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Activity    | activities    | Used for tracking events and changes to models for audit logging purposes. Belongs to a User via both subject and causer.                                                                    |
-| AttendeeLog | attendee_logs | A log to enter users into. Used for tracking attendance to a panel or other type of event. Has many Users, with `type` (`attendee` or `gatekeeper`) on the pivot table. Belongs to an Event. |
+| AttendeeLog | attendee_logs | A log to enter users into. Used for tracking attendance to a panel or other type of event. Has optional entry requirements. Has many Users, with `type` (`attendee` or `gatekeeper`) and override details on the pivot table. Belongs to an Event. |
 | Department  | departments   | An organizational unit for staff/volunteers of a convention. Belongs to an Event.                                                                                                            |
 | Event       | events        | A single convention/other type of event that time is tracked for.                                                                                                                            |
 | Kiosk       | kiosks        | A device that has been authorized to allow volunteers to enter time on. These devices keep a cookie with the session key to identify themselves.                                             |
@@ -68,7 +68,7 @@ Users have a single assigned Role value, which is just an enum (Banned, Attendee
 -   Managers can authorize/deauthorize Kiosks, view and manage volunteers' time entries, manage attendee log attendees and gatekeepers, and create users with a badge ID.
 -   Admins can do anything, but especially are responsible for general entity CRUD operations.
 -   Attendees are just users created for the purpose of being an entry in an attendee log. They are automatically "promoted" to Volunteer if they ever log in.
--   Banned users are prevented from interacting with the application entirely beyond signing in.
+-   Banned users are prevented from interacting with the application entirely beyond signing in. They're also denied entry to attendee logs unless a manager or admin overrides it.
 
 ## Time Tracking Details
 
@@ -108,6 +108,36 @@ A notification is sent that they're forced to acknowledge on the web page the ne
 Attendee logs are an entity used to track attendees for a scheduled event such as a panel or meetup.
 They can have any number of users entered into them by badge ID, and they don't even require the users entered to be valid volunteers or staff.
 Any number of Gatekeepers can also be added to them, who will all be able to view and manage the attendees that are logged, regardless of their own role.
+
+### Entry Requirements
+
+Admins can restrict who can be logged as an attendee.
+Each requirement is optional, and an attendee is allowed in if they meet **any** of the requirements that are set:
+
+-   **Registration level:** the attendee's ConCat registration product matches one of the selected levels (by product name or ID, case-insensitive).
+    The list of levels to choose from is built from all ConCat registrations and cached for six hours; admins can reload it from the log page.
+-   **Staff or above:** the attendee's Tracker role is Staff, Lead, Manager, or Admin.
+-   **Minimum volunteer hours:** the attendee has earned at least the set number of hours (including bonuses) for the log's event.
+    The minimum is 1 hour or more, with up to two decimal places.
+
+A log without any requirements allows everyone.
+Banned users are always denied, regardless of the log's requirements.
+Gatekeepers aren't subject to entry requirements.
+
+Requirements based on Tracker data (role and hours) are checked first, so ConCat is only contacted when a registration level must be checked or when the badge doesn't belong to a known user yet.
+If ConCat can't be reached or has no registration for a badge, unknown badges can't be logged.
+Known users are denied on logs that check registration levels, with a message that says whether they have no registration or ConCat couldn't be reached.
+
+### Overrides
+
+A denied attendee can be let in anyway with an override, which records the user that approved it and an optional reason.
+Overrides are shown in the attendee list and included in the attendee log export.
+
+-   Managers and admins can always override denials.
+-   Gatekeepers can override denials if the log is configured to allow it.
+-   Only managers and admins can override the denial of a banned user.
+
+Denial messages include exact volunteer hours only for users that can override them.
 
 ## Telegram Bot
 
