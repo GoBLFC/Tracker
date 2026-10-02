@@ -567,6 +567,78 @@ function makeGatekeeper(AttendeeLog $log): User {
 	return $gatekeeper;
 }
 
+it('denies banned users from logs without entry requirements', function () {
+	$banned = User::factory()->create(['role' => Role::Banned, 'badge_name' => 'Trouble']);
+
+	$this->actingAs($this->admin)
+		->putJson(route('attendee-logs.users.store', $this->log), ['badge_id' => $banned->badge_id])
+		->assertForbidden()
+		->assertJsonPath('banned', true)
+		->assertJsonPath('can_override', true)
+		->assertJsonPath(
+			'error',
+			"Denied: Trouble (#{$banned->badge_id}) is banned. A manager or admin must approve banned attendees.",
+		);
+
+	expect($this->log->hasAttendee($banned))->toBeFalse();
+});
+
+it('lists the ban alongside any requirements the banned user also fails', function () {
+	$banned = volunteerWithHours($this->log->event_id, 2, ['role' => Role::Banned, 'badge_name' => 'Trouble']);
+	$this->log->update(['allow_staff' => true, 'min_volunteer_hours' => 12]);
+
+	$this->actingAs($this->admin)
+		->putJson(route('attendee-logs.users.store', $this->log), ['badge_id' => $banned->badge_id])
+		->assertForbidden()
+		->assertJsonPath(
+			'error',
+			"Denied: Trouble (#{$banned->badge_id}) is banned, isn't staff, and has 2 of 12 required volunteer hours. "
+				. 'A manager or admin must approve banned attendees.',
+		);
+});
+
+it('denies banned users even when they meet the entry requirements', function () {
+	$banned = volunteerWithHours($this->log->event_id, 13, ['role' => Role::Banned, 'badge_name' => 'Trouble']);
+	$this->log->update(['min_volunteer_hours' => 12]);
+
+	$this->actingAs($this->admin)
+		->putJson(route('attendee-logs.users.store', $this->log), ['badge_id' => $banned->badge_id])
+		->assertForbidden()
+		->assertJsonPath(
+			'error',
+			"Denied: Trouble (#{$banned->badge_id}) is banned. A manager or admin must approve banned attendees.",
+		);
+});
+
+it('lets admins override bans', function () {
+	$banned = User::factory()->create(['role' => Role::Banned]);
+
+	$this->actingAs($this->admin)
+		->putJson(route('attendee-logs.users.store', $this->log), [
+			'badge_id' => $banned->badge_id,
+			'override' => true,
+			'override_reason' => 'Ban lifted at the door',
+		])
+		->assertOk()
+		->assertJsonPath('overridden', true);
+
+	expect($this->log->attendees()->first()->pivot->override_reason)->toBe('Ban lifted at the door');
+});
+
+it('lets managers override bans on logs for the active event', function () {
+	$manager = User::factory()->create(['role' => Role::Manager]);
+	\App\Models\Setting::set('active-event', $this->log->event_id);
+	\App\Models\Setting::set('lockdown', false);
+	$banned = User::factory()->create(['role' => Role::Banned]);
+
+	$this->actingAs($manager)
+		->putJson(route('attendee-logs.users.store', $this->log), ['badge_id' => $banned->badge_id, 'override' => true])
+		->assertOk()
+		->assertJsonPath('overridden', true);
+
+	expect($this->log->attendees()->first()->pivot->overridden_by_id)->toBe($manager->id);
+});
+
 it('gives the page the viewer\'s override permissions and the overriders, including deleted ones', function () {
 	$gatekeeper = makeGatekeeper($this->log);
 	$overrider = User::factory()->create(['role' => Role::Manager, 'badge_name' => 'Former Manager']);
@@ -581,16 +653,60 @@ it('gives the page the viewer\'s override permissions and the overriders, includ
 		->get(route('attendee-logs.show', $this->log), $headers)
 		->assertOk()
 		->assertJsonPath('props.canOverrideRequirements', false)
+		->assertJsonPath('props.canOverrideBanned', false)
 		->assertJsonPath("props.overriders.{$overrider->id}.badge_name", 'Former Manager');
 
 	$this->log->update(['gatekeepers_can_override' => true]);
 	$this->actingAs($gatekeeper)
 		->get(route('attendee-logs.show', $this->log), $headers)
-		->assertJsonPath('props.canOverrideRequirements', true);
+		->assertJsonPath('props.canOverrideRequirements', true)
+		->assertJsonPath('props.canOverrideBanned', false);
 
 	$this->actingAs($this->admin)
 		->get(route('attendee-logs.show', $this->log), $headers)
-		->assertJsonPath('props.canOverrideRequirements', true);
+		->assertJsonPath('props.canOverrideRequirements', true)
+		->assertJsonPath('props.canOverrideBanned', true);
+});
+
+it('does not let gatekeepers override bans even when they can override requirements', function () {
+	$gatekeeper = makeGatekeeper($this->log);
+	$banned = User::factory()->create(['role' => Role::Banned]);
+	$this->log->update(['min_volunteer_hours' => 12, 'gatekeepers_can_override' => true]);
+
+	$this->actingAs($gatekeeper)
+		->putJson(route('attendee-logs.users.store', $this->log), ['badge_id' => $banned->badge_id])
+		->assertForbidden()
+		->assertJsonPath('banned', true)
+		->assertJsonPath('can_override', false);
+
+	$this->actingAs($gatekeeper)
+		->from(route('attendee-logs.show', $this->log))
+		->put(route('attendee-logs.users.store', $this->log), ['badge_id' => $banned->badge_id, 'override' => true])
+		->assertSessionHasErrors(['banned' => 'Only managers and admins can let banned attendees in.'])
+		->assertSessionDoesntHaveErrors('requirements');
+
+	expect($this->log->hasAttendee($banned))->toBeFalse();
+});
+
+it('hides exact volunteer hours from gatekeepers that cannot override', function () {
+	$gatekeeper = makeGatekeeper($this->log);
+	$volunteer = volunteerWithHours($this->log->event_id, 9.5, ['badge_name' => 'Foxy']);
+	$this->log->update(['min_volunteer_hours' => 12]);
+
+	$this->actingAs($gatekeeper)
+		->putJson(route('attendee-logs.users.store', $this->log), ['badge_id' => $volunteer->badge_id])
+		->assertForbidden()
+		->assertJsonPath(
+			'error',
+			"Denied: Foxy (#{$volunteer->badge_id}) hasn't reached the required 12 volunteer hours.",
+		);
+
+	$this->log->update(['gatekeepers_can_override' => true]);
+
+	$this->actingAs($gatekeeper)
+		->putJson(route('attendee-logs.users.store', $this->log), ['badge_id' => $volunteer->badge_id])
+		->assertForbidden()
+		->assertJsonPath('error', "Denied: Foxy (#{$volunteer->badge_id}) has 9.5 of 12 required volunteer hours.");
 });
 
 it('lets admins set and clear the allowed levels', function () {
