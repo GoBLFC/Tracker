@@ -13,10 +13,13 @@ use App\Models\Role;
 use App\Models\Setting;
 use App\Models\User;
 use App\Reports\Report;
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -24,6 +27,8 @@ use Inertia\Response as InertiaResponse;
 use Throwable;
 
 class AttendeeLogController extends Controller {
+	protected const REGISTRATION_LEVELS_CACHE_KEY = 'concat:registration-levels';
+
 	/**
 	 * List all attendee logs
 	 */
@@ -49,15 +54,42 @@ class AttendeeLogController extends Controller {
 	public function show(Request $request, AttendeeLog $attendeeLog): JsonResponse|InertiaResponse {
 		$this->authorize('view', $attendeeLog);
 
+		if ($request->expectsJson()) return response()->json(['attendee_log' => $attendeeLog]);
+
+		$props = [
+			'attendeeLog' => $attendeeLog->load(['users' => function ($query) {
+				$query->select('id', 'badge_id', 'badge_name')
+					->withPivot('type', 'created_at', 'overridden_by_id', 'override_reason');
+			}]),
+			// Overriders whose accounts were deleted are still named on the entries they approved
+			'overriders' => fn () => User::withTrashed()->whereIn(
+				'id',
+				$attendeeLog->users->pluck('pivot.overridden_by_id')->filter()->unique(),
+			)->get(['id', 'badge_id', 'badge_name'])->keyBy('id'),
+			'canOverrideRequirements' => fn () => $request->user()->can('overrideRequirements', $attendeeLog),
+			'event' => fn () => $attendeeLog->event,
+			'exportTypes' => fn () => Report::EXPORT_FILE_TYPES,
+		];
+
+		// Only users that can change the allowed registration levels need the list of levels to pick from
+		if ($request->user()->can('update', $attendeeLog)) {
+			$props['registrationLevels'] = Inertia::defer(fn () => $this->getRegistrationLevels());
+		}
+
+		return Inertia::render('AttendeeLogDetails', $props);
+	}
+
+	/**
+	 * Clear the cached list of registration levels so the next request retrieves it from ConCat
+	 */
+	public function refreshRegistrationLevels(Request $request): JsonResponse|RedirectResponse {
+		$this->authorize('create', AttendeeLog::class);
+
+		Cache::forget(static::REGISTRATION_LEVELS_CACHE_KEY);
+
 		return $request->expectsJson()
-			? response()->json(['attendee_log' => $attendeeLog])
-			: Inertia::render('AttendeeLogDetails', [
-				'attendeeLog' => $attendeeLog->load(['users' => function ($query) {
-					$query->select('id', 'badge_id', 'badge_name')->withPivot('type', 'created_at');
-				}]),
-				'event' => fn () => $attendeeLog->event,
-				'exportTypes' => fn () => Report::EXPORT_FILE_TYPES,
-			]);
+			? response()->json(['registration_levels' => $this->getRegistrationLevels()])
+			: redirect()->back();
 	}
 
 	/**
@@ -110,42 +142,123 @@ class AttendeeLogController extends Controller {
 		$badgeId = $request->validated('badge_id');
 		$user = User::whereBadgeId($badgeId)->first();
 
-		// If there isn't a user in the DB, then we retrieve registration details for the badge ID from ConCat
-		// and create a user with that information.
-		if (!$user) {
+		// Check for an existing entry first so that attendees let in by an override aren't denied when scanned again
+		if ($user && $attendeeLog->users()->whereUserId($user->id)->wherePivot('type', $type)->exists()) {
+			return $this->alreadyPresentResponse($request, $type, $user);
+		}
+
+		// Attendees must meet at least one of the log's entry requirements. The requirements based on Tracker data
+		// (staff role and volunteer hours) are checked first so that ConCat is only contacted when necessary.
+		$checkRequirements = $type === 'attendee' && $attendeeLog->hasEntryRequirements();
+		$allowedByTrackerData = $checkRequirements && $user && $attendeeLog->allowsUserByTrackerData($user);
+		$needsRegistration = !$user
+			|| ($checkRequirements && !$allowedByTrackerData && $attendeeLog->isRestrictedByRegistrationLevel());
+
+		// The ConCat registration is needed to create a user that isn't in the DB yet, or to check a registration level
+		$registration = null;
+		$registrationMissing = false;
+		if ($needsRegistration) {
 			try {
 				ConCat::authorize();
 				$registration = ConCat::getRegistration($badgeId);
 			} catch (Throwable $err) {
-				Log::warning('Failed to look up ConCat registration for attendee log entry', [
-					'badge_id' => $badgeId,
-					'error' => $err,
-				]);
-				return $request->expectsJson()
-					? response()->json(['error' => "No registered attendee found with badge #{$badgeId}."], 404)
-					: redirect()->back()->withErrors(['badge_id' => "No registered attendee found with badge #{$badgeId}."]);
+				// A 404 means the badge has no registration, as opposed to ConCat being unreachable
+				$registrationMissing = $err instanceof ClientException && $err->getResponse()->getStatusCode() === 404;
+				if (!$registrationMissing) {
+					Log::warning('Failed to look up ConCat registration for attendee log entry', [
+						'badge_id' => $badgeId,
+						'error' => $err,
+					]);
+				}
+
+				// Without a registration, a badge that isn't in the DB can't be logged at all. An existing user only
+				// needed it for the level check, so they're denied below instead, where an override can still apply.
+				if (!$user) {
+					return $request->expectsJson()
+						? response()->json(['error' => "No registered attendee found with badge #{$badgeId}."], 404)
+						: redirect()->back()->withErrors(['badge_id' => "No registered attendee found with badge #{$badgeId}."]);
+				}
 			}
+		}
 
+		// Users that are about to be created can't have any volunteer hours or a staff role yet, so the registration
+		// level is the only requirement left that could let them in
+		$failsRequirements = $checkRequirements
+			&& !$allowedByTrackerData
+			&& !($registration
+				&& $attendeeLog->isRestrictedByRegistrationLevel()
+				&& $attendeeLog->allowsRegistration($registration));
+
+		$overriddenBy = null;
+		if ($failsRequirements) {
+			// Managers and admins can let the attendee in anyway, as can gatekeepers if the log allows it
+			$canOverride = $request->user()->can('overrideRequirements', $attendeeLog);
+
+			if ($request->boolean('override') && $canOverride) {
+				$overriddenBy = $request->user();
+			} else {
+				// A disallowed override is reported as a denial rather than an authorization error so that the
+				// scanning page can show it inline. This happens when the page still shows an override button
+				// after the log's override setting changes.
+				$error = $request->boolean('override')
+					? 'Only managers and admins can let attendees into this log anyway.'
+					: $this->buildEntryDeniedMessage(
+						$attendeeLog,
+						$badgeId,
+						$user,
+						$registration,
+						$registrationMissing,
+						$canOverride,
+					);
+
+				return $request->expectsJson()
+					? response()->json(['error' => $error, 'can_override' => $canOverride], 403)
+					: redirect()->back()->withErrors(['requirements' => $error]);
+			}
+		}
+
+		if (!$user) {
 			$user = User::createFromConCatRegistration($registration, Role::Attendee);
+		} elseif ($attendeeLog->users()->whereUserId($user->id)->wherePivot('type', $type)->exists()) {
+			// Check again in case the user was added to the log while the requirements were being checked
+			return $this->alreadyPresentResponse($request, $type, $user);
 		}
 
-		// Make sure the user isn't already present in the log
-		if ($attendeeLog->users()->whereUserId($user->id)->wherePivot('type', $type)->exists()) {
-			$typeName = Str::title($type);
-			return $request->expectsJson()
-				? response()->json(['error' => "{$typeName} {$user->audit_name} is already present in the log."], 422)
-				: redirect()->back()->withErrors(['badge_id' => "{$typeName} {$user->audit_name} is already present in the log."]);
+		$overrideReason = $overriddenBy ? (trim($request->validated('override_reason') ?? '') ?: null) : null;
+		$attendeeLog->users()->attach($user, [
+			'type' => $type,
+			'overridden_by_id' => $overriddenBy?->id,
+			'override_reason' => $overrideReason,
+		]);
+
+		if ($overriddenBy) {
+			Log::info('Attendee log entry requirements overridden', [
+				'attendee_log' => $attendeeLog->id,
+				'user' => $user->id,
+				'overridden_by' => $overriddenBy->id,
+				'reason' => $overrideReason,
+			]);
 		}
 
-		$attendeeLog->users()->attach($user, ['type' => $type]);
-
+		$overrideNote = $overriddenBy ? ' by override' : '';
 		return $request->expectsJson()
 			? response()->json([
 				'user' => $user->setVisible(['id', 'badge_id', 'badge_name']),
 				'type' => $type,
+				'overridden' => (bool) $overriddenBy,
 				'logged_at' => now()->timezone(config('tracker.timezone'))->toDayDateTimeString(),
 			])
-			: redirect()->back()->withSuccess("Added {$type} {$user->audit_name} to the log.");
+			: redirect()->back()->withSuccess("Added {$type} {$user->audit_name} to the log{$overrideNote}.");
+	}
+
+	/**
+	 * Builds the response for a user that's already present in an attendee log
+	 */
+	protected function alreadyPresentResponse(Request $request, string $type, User $user): JsonResponse|RedirectResponse {
+		$error = Str::title($type) . " {$user->audit_name} is already present in the log.";
+		return $request->expectsJson()
+			? response()->json(['error' => $error], 422)
+			: redirect()->back()->withErrors(['badge_id' => $error]);
 	}
 
 	/**
@@ -165,6 +278,91 @@ class AttendeeLogController extends Controller {
 		return $request->expectsJson()
 			? response()->json(null, 205)
 			: redirect()->back()->withSuccess("Removed {$type->value} {$user->audit_name} from the log.");
+	}
+
+	/**
+	 * Builds a message explaining which of an attendee log's entry requirements an attendee failed to meet
+	 */
+	protected function buildEntryDeniedMessage(
+		AttendeeLog $attendeeLog,
+		int $badgeId,
+		?User $user,
+		?\stdClass $registration,
+		bool $registrationMissing,
+		bool $showExactHours,
+	): string {
+		$badgeName = $registration?->badgeName ?? $user?->badge_name;
+		$who = $badgeName ? "{$badgeName} (#{$badgeId})" : "Badge #{$badgeId}";
+
+		$reasons = [];
+		$levelUnknown = $attendeeLog->isRestrictedByRegistrationLevel() && !$registration;
+		if ($levelUnknown && $registrationMissing) {
+			$reasons[] = "doesn't have a ConCat registration";
+		} elseif ($levelUnknown) {
+			$reasons[] = "couldn't have their registration level checked with ConCat";
+		} elseif ($attendeeLog->isRestrictedByRegistrationLevel()) {
+			$level = $registration->productDisplayName ?? $registration->productName ?? 'unknown';
+			$reasons[] = "is registered as {$level}";
+		}
+		if ($attendeeLog->allow_staff) $reasons[] = "isn't staff";
+		if ($attendeeLog->min_volunteer_hours !== null) {
+			// Exact hours are only shown to users that can act on them with an override
+			$required = static::formatHours($attendeeLog->min_volunteer_hours);
+			if ($showExactHours) {
+				$hours = $user ? $attendeeLog->getVolunteerHours($user) : 0;
+				$reasons[] = sprintf(
+					'has %s of %s required volunteer hours',
+					static::formatHours(floor($hours * 10) / 10),
+					$required,
+				);
+			} else {
+				$reasons[] = "hasn't reached the required {$required} volunteer hours";
+			}
+		}
+
+		// A registration level on its own doesn't explain the denial, so state that the level isn't allowed
+		$onlyLevel = count($reasons) === 1 && $attendeeLog->isRestrictedByRegistrationLevel() && !$levelUnknown;
+		$joined = $onlyLevel
+			? "{$reasons[0]}, which isn't allowed in this log"
+			: Arr::join($reasons, ', ', count($reasons) > 2 ? ', and ' : ' and ');
+
+		return "Denied: {$who} {$joined}.";
+	}
+
+	/**
+	 * Formats an amount of hours without unnecessary trailing zeroes (12, 9.5, 11.25)
+	 */
+	protected static function formatHours(float $hours): string {
+		return rtrim(rtrim(number_format($hours, 2, '.', ''), '0'), '.');
+	}
+
+	/**
+	 * Gets the distinct registration levels (products) from all ConCat registrations.
+	 * The list is cached because building it requires paging through every registration.
+	 * Returns null if ConCat can't be reached. Failures aren't cached.
+	 *
+	 * @return array<array{id: string, name: string, display_name: string|null}>|null
+	 */
+	protected function getRegistrationLevels(): ?array {
+		try {
+			return Cache::remember(static::REGISTRATION_LEVELS_CACHE_KEY, now()->addHours(6), function () {
+				ConCat::authorize();
+				return collect(ConCat::searchRegistrations(['limit' => 100]))
+					->filter(fn ($registration) => isset($registration->productId, $registration->productName))
+					->unique('productId')
+					->map(fn ($registration) => [
+						'id' => (string) $registration->productId,
+						'name' => $registration->productName,
+						'display_name' => $registration->productDisplayName ?? null,
+					])
+					->sortBy(fn ($level) => mb_strtolower($level['display_name'] ?? $level['name']))
+					->values()
+					->all();
+			});
+		} catch (Throwable $err) {
+			Log::warning('Failed to retrieve registration levels from ConCat', ['error' => $err]);
+			return null;
+		}
 	}
 
 	/**

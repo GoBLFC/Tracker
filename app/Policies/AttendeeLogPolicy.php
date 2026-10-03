@@ -82,4 +82,13 @@ class AttendeeLogPolicy {
 		return $user->isAdmin()
 			|| ($isActive && ($user->isManager() || $attendeeLog->hasGatekeeper($user)));
 	}
+
+	/**
+	 * Determine whether the user can let attendees into the log that don't meet its entry requirements.
+	 * Anyone that can manage the log's gatekeepers can always do so, and gatekeepers can if the log allows it.
+	 */
+	public function overrideRequirements(User $user, AttendeeLog $attendeeLog): bool {
+		return $this->manageGatekeepers($user, $attendeeLog)
+			|| ($attendeeLog->gatekeepers_can_override && $this->manageAttendees($user, $attendeeLog));
+	}
 }

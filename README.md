@@ -25,6 +25,8 @@ semi-comprehensive list of the current features implemented.
 	* Appoint any volunteer to be a gatekeeper (able to log attendees)
 	* Quick & painless logging of attendees as they enter the door
 	* Basic support for barcode scanners (for scanning badges)
+	* Optional entry requirements (registration level, staff role, or minimum volunteer hours)
+	* Overrides with an audit trail of who approved them and why
 - Reporting
 	* Volunteer hours
 	* Department summary (hours, volunteer count, shifts)
