@@ -25,7 +25,6 @@
 				:attendee-log
 				:read-only
 				:can-override="canOverrideRequirements"
-				:can-override-banned="canOverrideBanned"
 				class="grow basis-1"
 			/>
 
@@ -71,14 +70,13 @@ import AttendeeLogRequirementsPanel from '@/Components/AttendeeLog/AttendeeLogRe
 import FullContentHeightPanel from '@/Components/Common/FullContentHeightPanel.vue';
 import BreadcrumbsPage from '@/Components/App/BreadcrumbsPage.vue';
 
-const { attendeeLog, event, registrationLevels, overriders, canOverrideRequirements, canOverrideBanned } = defineProps<{
+const { attendeeLog, event, registrationLevels, overriders, canOverrideRequirements } = defineProps<{
 	attendeeLog: AttendeeLog;
 	event: Event;
 	exportTypes?: Record<string, string>;
 	registrationLevels?: RegistrationLevel[] | null;
 	overriders?: Overriders;
 	canOverrideRequirements?: boolean;
-	canOverrideBanned?: boolean;
 }>();
 
 const { isAdmin, isManager } = useUser();

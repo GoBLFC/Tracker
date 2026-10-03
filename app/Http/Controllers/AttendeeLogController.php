@@ -67,7 +67,6 @@ class AttendeeLogController extends Controller {
 				$attendeeLog->users->pluck('pivot.overridden_by_id')->filter()->unique(),
 			)->get(['id', 'badge_id', 'badge_name'])->keyBy('id'),
 			'canOverrideRequirements' => fn () => $request->user()->can('overrideRequirements', $attendeeLog),
-			'canOverrideBanned' => fn () => $request->user()->can('manageGatekeepers', $attendeeLog),
 			'event' => fn () => $attendeeLog->event,
 			'exportTypes' => fn () => Report::EXPORT_FILE_TYPES,
 		];
@@ -190,17 +189,10 @@ class AttendeeLogController extends Controller {
 				&& $attendeeLog->isRestrictedByRegistrationLevel()
 				&& $attendeeLog->allowsRegistration($registration));
 
-		// Banned users are denied from every log, whether or not they meet its requirements
-		$isBanned = $type === 'attendee' && $user?->isBanned();
-
 		$overriddenBy = null;
-		if ($isBanned || $failsRequirements) {
-			// Managers and admins can let the attendee in anyway, as can gatekeepers if the log allows it. Only
-			// managers and admins can let banned users in.
-			$canOverrideRequirements = $request->user()->can('overrideRequirements', $attendeeLog);
-			$canOverride = $isBanned
-				? $request->user()->can('manageGatekeepers', $attendeeLog)
-				: $canOverrideRequirements;
+		if ($failsRequirements) {
+			// Managers and admins can let the attendee in anyway, as can gatekeepers if the log allows it
+			$canOverride = $request->user()->can('overrideRequirements', $attendeeLog);
 
 			if ($request->boolean('override') && $canOverride) {
 				$overriddenBy = $request->user();
@@ -208,27 +200,20 @@ class AttendeeLogController extends Controller {
 				// A disallowed override is reported as a denial rather than an authorization error so that the
 				// scanning page can show it inline. This happens when the page still shows an override button
 				// after the log's override setting changes.
-				if ($request->boolean('override')) {
-					$error = $isBanned
-						? 'Only managers and admins can let banned attendees in.'
-						: 'Only managers and admins can let attendees into this log anyway.';
-				} else {
-					$error = $this->buildEntryDeniedMessage(
+				$error = $request->boolean('override')
+					? 'Only managers and admins can let attendees into this log anyway.'
+					: $this->buildEntryDeniedMessage(
 						$attendeeLog,
 						$badgeId,
 						$user,
 						$registration,
 						$registrationMissing,
-						$isBanned,
-						$failsRequirements,
-						$canOverrideRequirements,
+						$canOverride,
 					);
-				}
 
-				// Banned denials use their own error key since fewer people can override them
 				return $request->expectsJson()
-					? response()->json(['error' => $error, 'banned' => $isBanned, 'can_override' => $canOverride], 403)
-					: redirect()->back()->withErrors([$isBanned ? 'banned' : 'requirements' => $error]);
+					? response()->json(['error' => $error, 'can_override' => $canOverride], 403)
+					: redirect()->back()->withErrors(['requirements' => $error]);
 			}
 		}
 
@@ -304,56 +289,44 @@ class AttendeeLogController extends Controller {
 		?User $user,
 		?\stdClass $registration,
 		bool $registrationMissing,
-		bool $isBanned,
-		bool $failsRequirements,
 		bool $showExactHours,
 	): string {
 		$badgeName = $registration?->badgeName ?? $user?->badge_name;
 		$who = $badgeName ? "{$badgeName} (#{$badgeId})" : "Badge #{$badgeId}";
 
 		$reasons = [];
-		if ($isBanned) $reasons[] = 'is banned';
-
-		$levelUnknown = false;
-		if ($failsRequirements) {
-			$levelUnknown = $attendeeLog->isRestrictedByRegistrationLevel() && !$registration;
-			if ($levelUnknown && $registrationMissing) {
-				$reasons[] = "doesn't have a ConCat registration";
-			} elseif ($levelUnknown) {
-				$reasons[] = "couldn't have their registration level checked with ConCat";
-			} elseif ($attendeeLog->isRestrictedByRegistrationLevel()) {
-				$level = $registration->productDisplayName ?? $registration->productName ?? 'unknown';
-				$reasons[] = "is registered as {$level}";
-			}
-			if ($attendeeLog->allow_staff) $reasons[] = "isn't staff";
-			if ($attendeeLog->min_volunteer_hours !== null) {
-				// Exact hours are only shown to users that can act on them with an override
-				$required = static::formatHours($attendeeLog->min_volunteer_hours);
-				if ($showExactHours) {
-					$hours = $user ? $attendeeLog->getVolunteerHours($user) : 0;
-					$reasons[] = sprintf(
-						'has %s of %s required volunteer hours',
-						static::formatHours(floor($hours * 10) / 10),
-						$required,
-					);
-				} else {
-					$reasons[] = "hasn't reached the required {$required} volunteer hours";
-				}
+		$levelUnknown = $attendeeLog->isRestrictedByRegistrationLevel() && !$registration;
+		if ($levelUnknown && $registrationMissing) {
+			$reasons[] = "doesn't have a ConCat registration";
+		} elseif ($levelUnknown) {
+			$reasons[] = "couldn't have their registration level checked with ConCat";
+		} elseif ($attendeeLog->isRestrictedByRegistrationLevel()) {
+			$level = $registration->productDisplayName ?? $registration->productName ?? 'unknown';
+			$reasons[] = "is registered as {$level}";
+		}
+		if ($attendeeLog->allow_staff) $reasons[] = "isn't staff";
+		if ($attendeeLog->min_volunteer_hours !== null) {
+			// Exact hours are only shown to users that can act on them with an override
+			$required = static::formatHours($attendeeLog->min_volunteer_hours);
+			if ($showExactHours) {
+				$hours = $user ? $attendeeLog->getVolunteerHours($user) : 0;
+				$reasons[] = sprintf(
+					'has %s of %s required volunteer hours',
+					static::formatHours(floor($hours * 10) / 10),
+					$required,
+				);
+			} else {
+				$reasons[] = "hasn't reached the required {$required} volunteer hours";
 			}
 		}
 
 		// A registration level on its own doesn't explain the denial, so state that the level isn't allowed
-		$onlyLevel = count($reasons) === 1
-			&& $failsRequirements
-			&& $attendeeLog->isRestrictedByRegistrationLevel()
-			&& !$levelUnknown;
+		$onlyLevel = count($reasons) === 1 && $attendeeLog->isRestrictedByRegistrationLevel() && !$levelUnknown;
 		$joined = $onlyLevel
 			? "{$reasons[0]}, which isn't allowed in this log"
 			: Arr::join($reasons, ', ', count($reasons) > 2 ? ', and ' : ' and ');
 
-		$message = "Denied: {$who} {$joined}.";
-		if ($isBanned) $message .= ' A manager or admin must approve banned attendees.';
-		return $message;
+		return "Denied: {$who} {$joined}.";
 	}
 
 	/**

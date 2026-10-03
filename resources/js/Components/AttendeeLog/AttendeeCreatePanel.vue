@@ -68,7 +68,7 @@
 						{{ denial }}
 					</Message>
 
-					<template v-if="canOverrideDenial">
+					<template v-if="canOverride">
 						<InputGroup>
 							<InputText
 								v-model="overrideForm.override_reason"
@@ -120,14 +120,11 @@ const {
 	attendeeLog,
 	gatekeeper = false,
 	canOverride = false,
-	canOverrideBanned = false,
 } = defineProps<{
 	attendeeLog: AttendeeLog;
 	gatekeeper?: boolean;
 	/** Whether the user can let attendees in that don't meet the log's entry requirements */
 	canOverride?: boolean;
-	/** Whether the user can let banned attendees in */
-	canOverrideBanned?: boolean;
 }>();
 
 const route = useRoute();
@@ -162,13 +159,11 @@ const successSound = new Audio(successSoundFile);
 const success2Sound = new Audio(success2SoundFile);
 const alertSound = new Audio(alertSoundFile);
 
-// Denials of banned attendees use their own error key, since only managers and admins can override them
-const denial = computed(() => form.errors.banned ?? form.errors.requirements);
-const canOverrideDenial = computed(() => (form.errors.banned ? canOverrideBanned : canOverride));
+const denial = computed(() => form.errors.requirements);
 
 // The override permission is reloaded with every scan so that changes to the log's settings made while someone is
 // scanning are picked up without refreshing the page
-const reloadProps = ['attendeeLog', 'overriders', 'canOverrideRequirements', 'canOverrideBanned', 'flash'];
+const reloadProps = ['attendeeLog', 'overriders', 'canOverrideRequirements', 'flash'];
 
 function create() {
 	const badgeId = form.badge_id;
@@ -220,11 +215,7 @@ function override() {
 			successSound.play();
 		},
 		onError() {
-			// Keep the failure under the same key as the denial so the right override permission still applies
-			form.setError(
-				form.errors.banned ? 'banned' : 'requirements',
-				Object.values(overrideForm.errors)[0] ?? 'Override failed.',
-			);
+			form.setError('requirements', Object.values(overrideForm.errors)[0] ?? 'Override failed.');
 		},
 		onFinish() {
 			// @ts-expect-error

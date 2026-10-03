@@ -68,7 +68,7 @@ Users have a single assigned Role value, which is just an enum (Banned, Attendee
 -   Managers can authorize/deauthorize Kiosks, view and manage volunteers' time entries, manage attendee log attendees and gatekeepers, and create users with a badge ID.
 -   Admins can do anything, but especially are responsible for general entity CRUD operations.
 -   Attendees are just users created for the purpose of being an entry in an attendee log. They are automatically "promoted" to Volunteer if they ever log in.
--   Banned users are prevented from interacting with the application entirely beyond signing in. They're also denied entry to attendee logs unless a manager or admin overrides it.
+-   Banned users are prevented from interacting with the application entirely beyond signing in.
 
 ## Time Tracking Details
 
@@ -121,7 +121,6 @@ Each requirement is optional, and an attendee is allowed in if they meet **any**
     The minimum is 1 hour or more, with up to two decimal places.
 
 A log without any requirements allows everyone.
-Banned users are always denied, regardless of the log's requirements.
 Gatekeepers aren't subject to entry requirements.
 
 Requirements based on Tracker data (role and hours) are checked first, so ConCat is only contacted when a registration level must be checked or when the badge doesn't belong to a known user yet.
@@ -135,7 +134,6 @@ Overrides are shown in the attendee list and included in the attendee log export
 
 -   Managers and admins can always override denials.
 -   Gatekeepers can override denials if the log is configured to allow it.
--   Only managers and admins can override the denial of a banned user.
 
 Denial messages include exact volunteer hours only for users that can override them.
 
