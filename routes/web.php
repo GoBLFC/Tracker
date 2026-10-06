@@ -54,6 +54,8 @@ Route::middleware(['auth', 'not-banned', 'lockdown'])->group(function () {
 
 	Route::controller(\App\Http\Controllers\AttendeeLogController::class)->group(function () {
 		Route::get('/attendee-logs', 'index')->name('attendee-logs.index');
+		Route::post('/attendee-logs/registration-levels/refresh', 'refreshRegistrationLevels')
+			->name('attendee-logs.registration-levels.refresh');
 		Route::put('/attendee-logs/{attendeeLog}/users', 'storeUser')->name('attendee-logs.users.store');
 		Route::delete('/attendee-logs/{attendeeLog}/{type}/{user}', 'destroyUser')->name('attendee-logs.users.destroy');
 	});

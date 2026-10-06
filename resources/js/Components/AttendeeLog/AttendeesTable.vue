@@ -15,7 +15,15 @@
 	>
 		<Column field="badge_id" header="ID" sortable data-type="number" />
 
-		<Column field="badge_name" header="Badge Name" sortable />
+		<Column field="badge_name" header="Badge Name" sortable>
+			<template #body="{ data: attendee }: { data: Attendee }">
+				{{ attendee.badge_name }}
+				<template v-if="attendee.pivot.overridden_by_id">
+					<Tag value="Override" severity="warn" class="text-xs ms-1" />
+					<div class="text-xs text-muted-color">{{ overrideSummary(attendee) }}</div>
+				</template>
+			</template>
+		</Column>
 
 		<Column v-if="!gatekeeper" field="pivot.created_at" header="Logged" sortable data-type="date">
 			<template #body="{ data: attendee }: { data: Attendee }">
@@ -60,6 +68,7 @@ import { toRef } from 'vue';
 import { useUser } from '@/lib/user';
 import type AttendeeLog from '@/data/AttendeeLog';
 import type Attendee from '@/data/Attendee';
+import type { Overriders } from '@/data/Attendee';
 
 import AttendeeActionButtons from './AttendeeActionButtons.vue';
 import SkeletonTable from '../Common/SkeletonTable.vue';
@@ -70,15 +79,29 @@ const {
 	gatekeeper = false,
 	readOnly = false,
 	skeleton = false,
+	overriders,
 } = defineProps<{
 	attendeeLog: AttendeeLog;
 	attendees?: Attendee[];
 	gatekeeper?: boolean;
 	readOnly?: boolean;
 	skeleton?: boolean;
+	overriders?: Overriders;
 }>();
 
 const { isManager } = useUser();
+
+/**
+ * Describes who let an attendee in despite the log's entry requirements, and why. It's shown as text rather than a
+ * tooltip so that it's available to keyboard, screen reader, and touch users.
+ */
+function overrideSummary(attendee: Attendee): string {
+	const overrider = overriders?.[attendee.pivot.overridden_by_id!];
+	const by = overrider
+		? `Allowed by ${overrider.badge_name ?? 'Unknown'} (#${overrider.badge_id})`
+		: 'Allowed by override';
+	return attendee.pivot.override_reason ? `${by}: ${attendee.pivot.override_reason}` : by;
+}
 
 const hasActions = toRef(() => !readOnly && (!gatekeeper || isManager.value));
 </script>

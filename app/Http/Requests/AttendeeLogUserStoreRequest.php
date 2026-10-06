@@ -28,6 +28,8 @@ class AttendeeLogUserStoreRequest extends FormRequest {
 				'nullable',
 				Rule::enum(AttendeeType::class),
 			],
+			'override' => 'sometimes|boolean',
+			'override_reason' => 'sometimes|nullable|string|max:255',
 		];
 	}
 }
