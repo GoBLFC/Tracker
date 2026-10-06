@@ -43,8 +43,13 @@ class TimeEntryStoreRequest extends FormRequest {
 	 */
 	public function passedValidation(): void {
 		$this->merge([
-			'start' => $this->date('start')?->timezone(config('app.timezone')) ?? now(),
-			'stop' => $this->date('stop')?->timezone(config('app.timezone')),
+			'start' => ($this->date('start')?->timezone(config('app.timezone')) ?? now())->toISOString(true),
+			'stop' => $this->date('stop')?->timezone(config('app.timezone'))?->toISOString(true),
 		]);
+
+		$this->validator->setData(array_merge($this->validator->getData(), [
+			'start' => $this->input('start'),
+			'stop' => $this->input('stop'),
+		]));
 	}
 }
