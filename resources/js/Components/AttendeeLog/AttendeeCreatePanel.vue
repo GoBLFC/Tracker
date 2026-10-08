@@ -14,6 +14,7 @@
 					Return &#9166;
 				</kbd>
 				key press after the badge number.
+				<template v-if="nfcReady">NFC badge taps on a workstation-local reader are submitted the same way.</template>
 			</p>
 
 			<form @submit.prevent="create" @input="form.clearErrors()">
@@ -55,9 +56,10 @@
 </template>
 
 <script setup lang="ts">
-import { useId, useTemplateRef } from 'vue';
+import { useId, useTemplateRef, onMounted, onUnmounted, computed } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import { useRoute } from '@/lib/route';
+import { useNfcTap, type NfcTap } from '@/lib/nfcTap';
 import type AttendeeLog from '@/data/AttendeeLog';
 
 import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
@@ -111,4 +113,17 @@ function create() {
 		},
 	});
 }
+
+// Submits like a badge scanner's Return keypress would, for stations with an NFC reader attached. Silent/
+// best-effort - if no workstation-local ConcatNFCValidator is reachable this just quietly never fires. Not wired up
+// for "Empower Gatekeeper" - that shouldn't happen from a stray tap with no separate confirmation.
+const { stage: nfcStage, start: startNfcTap, stop: stopNfcTap } = useNfcTap((tap: NfcTap) => {
+	form.badge_id = String(tap.attendeeId);
+	create();
+});
+const nfcReady = computed(() => nfcStage.value !== 'idle' && nfcStage.value !== 'searching');
+onMounted(() => {
+	if (!gatekeeper) startNfcTap();
+});
+onUnmounted(() => stopNfcTap());
 </script>

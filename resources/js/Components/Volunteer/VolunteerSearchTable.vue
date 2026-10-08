@@ -87,9 +87,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import vueDebounce from 'vue-debounce';
 import { useRequest } from '@/lib/request';
+import { useNfcTap, type NfcTap } from '@/lib/nfcTap';
 import User from '@/data/impl/User';
 import type RawUser from '@/data/User';
 import type { UserId } from '@/data/User';
@@ -140,4 +141,13 @@ async function searchUsers() {
 function getDepartment(user: User): Department | undefined {
 	return user.time_entries?.[0]?.department;
 }
+
+// Autofill the search field with a tapped badge's ID, for lookups on a workstation with an NFC reader attached.
+// Silent/best-effort - if no workstation-local ConcatNFCValidator is reachable this just quietly never fires.
+const { start: startNfcTap, stop: stopNfcTap } = useNfcTap((tap: NfcTap) => {
+	query.value = String(tap.attendeeId);
+	return searchUsers();
+});
+onMounted(() => startNfcTap());
+onUnmounted(() => stopNfcTap());
 </script>
