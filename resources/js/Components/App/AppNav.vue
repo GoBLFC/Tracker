@@ -161,13 +161,13 @@ const mainMenuItems = computed(() => {
 				to: 'events.index',
 				label: 'Events',
 				icon: faCalendarDay,
-				activeExcludeStems: ['events.attendee-logs'],
+				activeExcludeStems: ['events.attendee-logs', 'events.reports'],
 			},
 			{
-				to: 'admin.reports',
+				to: 'reports.index',
 				label: 'Reports',
 				icon: faFileLines,
-				legacy: true,
+				activeStems: ['reports', 'events.reports'],
 			},
 			{
 				to: 'settings.index',

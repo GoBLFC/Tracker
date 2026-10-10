@@ -13,13 +13,12 @@ use Maatwebsite\Excel\Concerns\RegistersEventListeners;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class VolunteerTimeReport extends EventReport implements FromCollection, ShouldAutoSize, WithColumnFormatting, WithEvents, WithExtraParam, WithHeadings, WithMapping, WithStrictNullComparison, WithTotals {
+class VolunteerTimeReport extends EventReport implements FromCollection, ShouldAutoSize, WithColumnFormatting, WithEvents, WithExtraParam, WithMapping, WithStrictNullComparison, WithTotals {
 	use FormatsAsTable, RegistersEventListeners;
 
 	public function __construct(Event $event, public int $hours) {
@@ -55,7 +54,7 @@ class VolunteerTimeReport extends EventReport implements FromCollection, ShouldA
 		];
 	}
 
-	public function headings(): array {
+	public static function standardColumns(): array {
 		return [
 			'Badge Number',
 			'Username',

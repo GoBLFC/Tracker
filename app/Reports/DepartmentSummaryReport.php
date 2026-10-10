@@ -13,13 +13,12 @@ use Maatwebsite\Excel\Concerns\RegistersEventListeners;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class DepartmentSummaryReport extends EventReport implements FromQuery, ShouldAutoSize, WithColumnFormatting, WithEvents, WithHeadings, WithMapping, WithStrictNullComparison, WithTotals {
+class DepartmentSummaryReport extends EventReport implements FromQuery, ShouldAutoSize, WithColumnFormatting, WithEvents, WithMapping, WithStrictNullComparison, WithTotals {
 	use FormatsAsTable, RegistersEventListeners;
 
 	public function query(): Builder {
@@ -38,7 +37,7 @@ class DepartmentSummaryReport extends EventReport implements FromQuery, ShouldAu
 		];
 	}
 
-	public function headings(): array {
+	public static function standardColumns(): array {
 		return [
 			'Department',
 			'Hours',

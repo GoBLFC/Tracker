@@ -58,19 +58,17 @@ Route::middleware(['auth', 'not-banned', 'lockdown'])->group(function () {
 		Route::delete('/attendee-logs/{attendeeLog}/{type}/{user}', 'destroyUser')->name('attendee-logs.users.destroy');
 	});
 
-	Route::controller(\App\Http\Controllers\ManagementController::class)->group(function () {
-		Route::middleware('role:manager')->group(function () {
-			Route::get('/manage/{event?}', 'getManageIndex')->name('management.manage');
-			Route::get('/manage/{event}/volunteer/{user}', 'getManageIndex')->name('management.manage.volunteer');
-		});
+	Route::controller(\App\Http\Controllers\ReportController::class)->middleware('role:admin')->group(function () {
+		Route::get('/reports', 'index')->name('reports.index');
+		Route::get('/reports/{report}', 'show')->name('reports.show');
+		Route::get('/reports/{report}/{fileType}', 'export')->name('reports.export');
+		Route::get('/events/{event}/reports', 'index')->name('events.reports.index');
+		Route::get('/events/{event}/reports/{report}', 'show')->name('events.reports.show');
+		Route::get('/events/{event}/reports/{report}/{fileType}', 'export')->name('events.reports.export');
+	});
 
-		Route::middleware('role:admin')->group(function () {
-			Route::get('/admin/reports', 'getAdminReportList')->name('admin.reports');
-			Route::get('/admin/event/{event}/reports', 'getAdminReportList')->name('admin.event.reports');
-			Route::get('/admin/reports/{reportType}', 'getAdminReport')->name('admin.reports.view');
-			Route::get('/admin/event/{event}/reports/{reportType}', 'getAdminReport')->name('admin.event.reports.view');
-			Route::get('/admin/reports/{reportType}/{fileType}', 'getAdminReportExport')->name('admin.reports.export');
-			Route::get('/admin/event/{event}/reports/{reportType}/{fileType}', 'getAdminReportExport')->name('admin.event.reports.export');
-		});
+	Route::controller(\App\Http\Controllers\ManagementController::class)->middleware('role:manager')->group(function () {
+		Route::get('/manage/{event?}', 'getManageIndex')->name('management.manage');
+		Route::get('/manage/{event}/volunteer/{user}', 'getManageIndex')->name('management.manage.volunteer');
 	});
 });

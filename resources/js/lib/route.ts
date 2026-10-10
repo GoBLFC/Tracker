@@ -56,6 +56,27 @@ export function useCurrentRoute() {
 }
 
 /**
+ * Composable to access the current route parameters
+ */
+export function useRouteParams() {
+	const route = useRoute();
+
+	const routeParams = ref(route().params);
+	let removeNavigateListener: VoidFunction | null = null;
+
+	onMounted(() => {
+		removeNavigateListener = router.on('navigate', () => {
+			routeParams.value = route().params;
+		});
+	});
+	onUnmounted(() => {
+		if (removeNavigateListener) removeNavigateListener();
+	});
+
+	return routeParams;
+}
+
+/**
  * Resolves a route parameter to a URL using a given Ziggy function
  */
 export function resolveRoute(route: Route, routeFn: ZiggyFn): string {

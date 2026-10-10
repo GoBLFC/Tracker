@@ -10,14 +10,13 @@ use Maatwebsite\Excel\Concerns\RegistersEventListeners;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class AutoClosedTimeEntriesReport extends EventReport implements FromQuery, ShouldAutoSize, WithColumnFormatting, WithEvents, WithHeadings, WithMapping, WithStrictNullComparison {
+class AutoClosedTimeEntriesReport extends EventReport implements FromQuery, ShouldAutoSize, WithColumnFormatting, WithEvents, WithMapping, WithStrictNullComparison {
 	use FormatsAsTable, RegistersEventListeners;
 
 	public function query(): Builder {
@@ -40,7 +39,7 @@ class AutoClosedTimeEntriesReport extends EventReport implements FromQuery, Shou
 		];
 	}
 
-	public function headings(): array {
+	public static function standardColumns(): array {
 		return [
 			'Badge Number',
 			'Username',

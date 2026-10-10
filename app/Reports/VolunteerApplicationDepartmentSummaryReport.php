@@ -11,13 +11,12 @@ use Maatwebsite\Excel\Concerns\RegistersEventListeners;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class VolunteerApplicationDepartmentSummaryReport extends Report implements FromCollection, ShouldAutoSize, WithColumnFormatting, WithEvents, WithHeadings, WithMapping, WithStrictNullComparison, WithTotals {
+class VolunteerApplicationDepartmentSummaryReport extends Report implements FromCollection, ShouldAutoSize, WithColumnFormatting, WithEvents, WithMapping, WithStrictNullComparison, WithTotals {
 	use FormatsAsTable, RegistersEventListeners;
 
 	public const AVAILABLE_HOURS_OPTION = 'Roughly, how many hours would you want to volunteer in total?';
@@ -118,8 +117,8 @@ class VolunteerApplicationDepartmentSummaryReport extends Report implements From
 		];
 	}
 
-	public function headings(): array {
-		$headings = [
+	public static function standardColumns(): array {
+		return [
 			'Department',
 			'Volunteers (assigned)',
 			'Desired Hours (assigned)',
@@ -128,8 +127,6 @@ class VolunteerApplicationDepartmentSummaryReport extends Report implements From
 			'Volunteers (total)',
 			'Desired Hours (total)',
 		];
-
-		return $headings;
 	}
 
 	public function columnFormats(): array {

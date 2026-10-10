@@ -3,6 +3,7 @@
 namespace App\Reports;
 
 use App\Models\Activity;
+use App\Models\Department;
 use App\Models\Reward;
 use App\Models\RewardClaim;
 use App\Models\TimeBonus;
@@ -19,14 +20,13 @@ use Maatwebsite\Excel\Concerns\RegistersEventListeners;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class AuditLogReport extends Report implements FromQuery, ShouldAutoSize, WithColumnFormatting, WithEvents, WithExtraParam, WithHeadings, WithMapping, WithStrictNullComparison {
+class AuditLogReport extends Report implements FromQuery, ShouldAutoSize, WithColumnFormatting, WithEvents, WithExtraParam, WithMapping, WithStrictNullComparison {
 	use FormatsAsTable, RegistersEventListeners;
 
 	public function __construct(public int $days) {
@@ -40,6 +40,7 @@ class AuditLogReport extends Report implements FromQuery, ShouldAutoSize, WithCo
 				'causer',
 				'subject' => function (MorphTo $morphTo) {
 					$morphTo->morphWith([
+						Department::class => ['event:id,name'],
 						Reward::class => ['event:id,name'],
 						RewardClaim::class => ['reward:id,name', 'user:id,username,badge_id,badge_name'],
 						TimeBonus::class => ['event:id,name'],
@@ -72,7 +73,7 @@ class AuditLogReport extends Report implements FromQuery, ShouldAutoSize, WithCo
 		];
 	}
 
-	public function headings(): array {
+	public static function standardColumns(): array {
 		return [
 			'Time',
 			'Causer',

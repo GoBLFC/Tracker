@@ -12,14 +12,13 @@ use Maatwebsite\Excel\Concerns\RegistersEventListeners;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class VolunteerApplicationsReport extends EventReport implements FromCollection, ShouldAutoSize, WithColumnFormatting, WithEvents, WithHeadings, WithMapping, WithStrictNullComparison {
+class VolunteerApplicationsReport extends EventReport implements FromCollection, ShouldAutoSize, WithColumnFormatting, WithEvents, WithMapping, WithStrictNullComparison {
 	use FormatsAsTable, RegistersEventListeners;
 
 	private Collection $departments;
@@ -151,8 +150,8 @@ class VolunteerApplicationsReport extends EventReport implements FromCollection,
 		return $values;
 	}
 
-	public function headings(): array {
-		$headings = [
+	public static function standardColumns(): array {
+		return [
 			// General information
 			'#',
 			'Badge Name',
@@ -186,6 +185,10 @@ class VolunteerApplicationsReport extends EventReport implements FromCollection,
 			'Other Con Experience',
 			'Comments',
 		];
+	}
+
+	public function headings(): array {
+		$headings = static::standardColumns();
 
 		// Add department headings
 		array_push($headings, ...$this->departments);

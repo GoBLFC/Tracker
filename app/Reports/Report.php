@@ -4,9 +4,10 @@ namespace App\Reports;
 
 use App\Reports\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\Exportable;
+use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithProperties;
 
-abstract class Report implements WithProperties {
+abstract class Report implements WithHeadings, WithProperties {
 	use Exportable, ToCollection;
 
 	/**
@@ -31,6 +32,13 @@ abstract class Report implements WithProperties {
 	 * Get a URL-friendly slug to represent the report
 	 */
 	abstract public static function slug(): string;
+
+	/**
+	 * Get the typical columns the report will contain
+	 *
+	 * @return string[]
+	 */
+	abstract public static function standardColumns(): array;
 
 	/**
 	 * Determine whether the report should be hidden from the list of possible reports
@@ -67,6 +75,10 @@ abstract class Report implements WithProperties {
 		$slug = static::slug();
 		$date = now();
 		return "{$slug}-{$date}.{$extension}";
+	}
+
+	public function headings(): array {
+		return static::standardColumns();
 	}
 
 	public function properties(): array {
