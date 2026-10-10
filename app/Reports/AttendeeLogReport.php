@@ -26,6 +26,13 @@ class AttendeeLogReport extends EventReport implements FromQuery, ShouldAutoSize
 
 	public AttendeeLog $attendeeLog;
 
+	/**
+	 * Display names of users that overrode entry requirements for attendees in the log, keyed by user ID
+	 *
+	 * @var array<string, string>|null
+	 */
+	protected ?array $overriderNames = null;
+
 	public function __construct(Event $event, string $attendeeLogId) {
 		parent::__construct($event);
 		$this->attendeeLog = AttendeeLog::findOrFail($attendeeLogId);
@@ -41,8 +48,10 @@ class AttendeeLogReport extends EventReport implements FromQuery, ShouldAutoSize
 
 		return [
 			$user->badge_id,
-			$user->display_name,
+			static::escapeFormula($user->display_name),
 			$excelDates ? Date::dateTimeToExcel($arrival) : $arrival,
+			static::escapeFormula($this->getOverriderName($user->pivot->overridden_by_id)),
+			static::escapeFormula($user->pivot->override_reason),
 		];
 	}
 
@@ -51,7 +60,31 @@ class AttendeeLogReport extends EventReport implements FromQuery, ShouldAutoSize
 			'Badge Number',
 			'Name',
 			'Arrival',
+			'Overridden By',
+			'Override Reason',
 		];
+	}
+
+	/**
+	 * Gets the display name of a user that overrode entry requirements for an attendee
+	 */
+	protected function getOverriderName(?string $userId): ?string {
+		if (!$userId) return null;
+		$this->overriderNames ??= User::withTrashed()->whereIn(
+			'id',
+			$this->attendeeLog->attendees()->wherePivotNotNull('overridden_by_id')->pluck('overridden_by_id'),
+		)->get()->mapWithKeys(fn (User $overrider) => [$overrider->id => $overrider->display_name])->all();
+		return $this->overriderNames[$userId] ?? null;
+	}
+
+	/**
+	 * Prefixes text that a spreadsheet would treat as a formula (starting with =, +, -, @, a tab, or a carriage
+	 * return) with an apostrophe, so that names and reasons entered by users are always shown as plain text. This
+	 * applies to every export format, including CSV.
+	 */
+	protected static function escapeFormula(?string $value): ?string {
+		if ($value === null || !preg_match('/^[=+\-@\t\r]/', $value)) return $value;
+		return "'{$value}";
 	}
 
 	public function columnFormats(): array {
