@@ -33,12 +33,14 @@ function fakeConCat(array $volunteers, array $registrations = []): void {
 
 it('changes nothing without --apply', function () {
 	$user = User::factory()->create(['badge_id' => 100, 'username' => 'old']);
+	$gone = User::factory()->create(['badge_id' => 300, 'role' => Role::Volunteer]);
 	fakeConCat([conCatVolunteer(100, 'new'), conCatVolunteer(200, 'brandnew')]);
 
 	$this->artisan('auth:sync-concat')->assertSuccessful();
 
 	expect($user->fresh()->username)->toBe('old');
 	expect(User::whereBadgeId(200)->exists())->toBeFalse();
+	expect($gone->fresh()->role)->toBe(Role::Volunteer);
 });
 
 it('refreshes usernames and badge names, creates missing volunteers, and promotes staff', function () {
@@ -79,17 +81,24 @@ it('never changes banned or higher roles', function () {
 	expect($manager->fresh()->role)->toBe(Role::Manager);
 });
 
-it('only reports users missing from ConCat and skips deleted users', function () {
-	$gone = User::factory()->create(['badge_id' => 100, 'role' => Role::Staff]);
+it('demotes volunteers and staff missing from ConCat and skips deleted users', function () {
+	$goneStaff = User::factory()->create(['badge_id' => 100, 'first_name' => 'Keep', 'role' => Role::Staff]);
+	$goneVolunteer = User::factory()->create(['badge_id' => 101, 'role' => Role::Volunteer]);
+	$goneLead = User::factory()->create(['badge_id' => 102, 'role' => Role::Lead]);
+	$goneBanned = User::factory()->create(['badge_id' => 103, 'role' => Role::Banned]);
 	$deleted = User::factory()->create(['badge_id' => 200, 'username' => 'old']);
 	$deleted->delete();
 	fakeConCat([conCatVolunteer(200, 'new')]);
 
 	$this->artisan('auth:sync-concat --apply')
-		->expectsOutputToContain('not found in ConCat volunteers (1)')
+		->expectsOutputToContain('not found in ConCat volunteers (2)')
 		->assertSuccessful();
 
-	expect($gone->fresh()->role)->toBe(Role::Staff);
+	expect($goneStaff->fresh()->role)->toBe(Role::Attendee)
+		->and($goneStaff->fresh()->first_name)->toBe('Keep');
+	expect($goneVolunteer->fresh()->role)->toBe(Role::Attendee);
+	expect($goneLead->fresh()->role)->toBe(Role::Lead);
+	expect($goneBanned->fresh()->role)->toBe(Role::Banned);
 	expect(User::withTrashed()->whereBadgeId(200)->count())->toBe(1);
 	expect(User::withTrashed()->whereBadgeId(200)->sole()->username)->toBe('old');
 });

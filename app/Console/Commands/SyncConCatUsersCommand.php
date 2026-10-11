@@ -21,7 +21,7 @@ class SyncConCatUsersCommand extends Command implements Isolatable {
 	/**
 	 * The console command description.
 	 */
-	protected $description = 'Syncs users with ConCat volunteers: refreshes names, creates missing volunteers, and promotes staff.';
+	protected $description = 'Syncs users with ConCat volunteers: refreshes usernames and badge names, creates missing volunteers, promotes staff, and demotes users who are no longer volunteers.';
 
 	/**
 	 * Execute the console command.
@@ -58,8 +58,12 @@ class SyncConCatUsersCommand extends Command implements Isolatable {
 			DB::transaction(function () use ($plan) {
 				foreach ($plan['create'] as $user) $user->save();
 				foreach ($plan['update'] as $change) $change['user']->save();
+				foreach ($plan['demote'] as $user) {
+					$user->role = Role::Attendee;
+					$user->save();
+				}
 			});
-			$this->info('Saved ' . count($plan['create']) . ' new and ' . count($plan['update']) . ' updated ' . Str::plural('user', count($plan['create']) + count($plan['update'])) . '.');
+			$this->info('Saved ' . count($plan['create']) . ' new, ' . count($plan['update']) . ' updated, and ' . $plan['demote']->count() . ' demoted ' . Str::plural('user', count($plan['create']) + count($plan['update']) + $plan['demote']->count()) . '.');
 		}
 
 		return self::SUCCESS;
@@ -68,10 +72,10 @@ class SyncConCatUsersCommand extends Command implements Isolatable {
 	/**
 	 * Works out the changes to make without saving anything
 	 *
-	 * @return array{create: User[], update: array<array{user: User, changes: array<string, array{0: mixed, 1: mixed}>}>, skipped: User[], missing: Collection<int, User>}
+	 * @return array{create: User[], update: array<array{user: User, changes: array<string, array{0: mixed, 1: mixed}>}>, skipped: User[], demote: Collection<int, User>}
 	 */
 	private function buildPlan(Collection $volunteers, Collection $registrations, Collection $users): array {
-		$plan = ['create' => [], 'update' => [], 'skipped' => [], 'missing' => collect()];
+		$plan = ['create' => [], 'update' => [], 'skipped' => [], 'demote' => collect()];
 
 		foreach ($volunteers as $badgeId => $volunteer) {
 			$conCatUser = $volunteer->user;
@@ -105,8 +109,9 @@ class SyncConCatUsersCommand extends Command implements Isolatable {
 			}
 		}
 
-		// Volunteer and Staff users that ConCat no longer lists as volunteers are only reported, never changed
-		$plan['missing'] = User::whereIn('role', [Role::Volunteer, Role::Staff])
+		// Volunteer and Staff users that ConCat no longer lists as volunteers get demoted to Attendee. Names are left as-is.
+		// Logging in with ConCat promotes an Attendee back to Volunteer.
+		$plan['demote'] = User::whereIn('role', [Role::Volunteer, Role::Staff])
 			->whereNotIn('badge_id', $volunteers->keys())
 			->orderBy('badge_id')
 			->get();
@@ -169,11 +174,11 @@ class SyncConCatUsersCommand extends Command implements Isolatable {
 		}
 
 		$this->newLine();
-		$this->info("Volunteers/Staff not found in ConCat volunteers ({$plan['missing']->count()}), not changed:");
-		if ($plan['missing']->isNotEmpty()) {
+		$this->info("Demote to Attendee, not found in ConCat volunteers ({$plan['demote']->count()}):");
+		if ($plan['demote']->isNotEmpty()) {
 			$this->table(
-				['Badge ID', 'Username', 'Badge Name', 'Role'],
-				$plan['missing']->map(fn ($user) => [$user->badge_id, $user->username, $user->badge_name, $user->role->name]),
+				['Badge ID', 'Username', 'Badge Name', 'Current Role'],
+				$plan['demote']->map(fn ($user) => [$user->badge_id, $user->username, $user->badge_name, $user->role->name]),
 			);
 		}
 	}
