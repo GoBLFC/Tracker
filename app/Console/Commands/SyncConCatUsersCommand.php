@@ -16,12 +16,12 @@ class SyncConCatUsersCommand extends Command implements Isolatable {
 	 * The name and signature of the console command.
 	 */
 	protected $signature = 'auth:sync-concat
-		{--apply : Write the changes to the database (without this, only a preview is shown)}';
+		{--apply : Save the changes (without this, the changes are only previewed)}';
 
 	/**
 	 * The console command description.
 	 */
-	protected $description = 'Syncs users with ConCat volunteers: refreshes usernames and badge names, creates missing volunteers, promotes staff, and demotes users who are no longer volunteers.';
+	protected $description = 'Syncs users with ConCat volunteers: creates missing volunteers, refreshes usernames and badge names, promotes staff, and demotes users who are no longer volunteers.';
 
 	/**
 	 * Execute the console command.
@@ -30,91 +30,89 @@ class SyncConCatUsersCommand extends Command implements Isolatable {
 		$apply = $this->option('apply');
 		if (!$apply) $this->warn('Dry run: no changes will be saved. Pass --apply to save them.');
 
-		// Pull all volunteers and their registrations (for badge names) from ConCat
 		$this->info('Authorizing with ConCat...');
 		ConCat::authorize();
 
 		$this->info('Fetching volunteers...');
 		$volunteers = collect(ConCat::searchVolunteers())
 			->filter(fn ($volunteer) => isset($volunteer->user->id))
-			->keyBy(fn ($volunteer) => (string) $volunteer->user->id);
+			->keyBy(fn ($volunteer) => (int) $volunteer->user->id);
+
+		// An empty list would demote every volunteer and staff member, so treat it as an error instead
+		if ($volunteers->isEmpty()) {
+			$this->error('ConCat returned no volunteers. Nothing was changed.');
+			return self::FAILURE;
+		}
 		$this->info("Found {$volunteers->count()} " . Str::plural('volunteer', $volunteers->count()) . ' in ConCat.');
 
+		// Badge names are only available on registrations, and ConCat requires the user IDs as strings
 		$this->info('Fetching registrations for badge names...');
-		// PHP turns numeric string keys into ints, but ConCat requires the user IDs as strings
-		$registrations = collect(ConCat::searchRegistrationsByUserIds($volunteers->keys()->map(fn ($id) => (string) $id)->all()))
+		$userIds = $volunteers->keys()->map(fn ($id) => (string) $id)->all();
+		$registrations = collect(ConCat::searchRegistrationsByUserIds($userIds))
 			->filter(fn ($registration) => isset($registration->user->id))
-			->keyBy(fn ($registration) => (string) $registration->user->id);
+			->keyBy(fn ($registration) => (int) $registration->user->id);
 
-		$users = User::withTrashed()
-			->whereIn('badge_id', $volunteers->keys())
-			->get()
-			->keyBy(fn ($user) => (string) $user->badge_id);
-
-		$plan = $this->buildPlan($volunteers, $registrations, $users);
+		$plan = $this->buildPlan($volunteers, $registrations);
 		$this->printPlan($plan);
 
 		if ($apply) {
 			DB::transaction(function () use ($plan) {
-				foreach ($plan['create'] as $user) $user->save();
-				foreach ($plan['update'] as $change) $change['user']->save();
-				foreach ($plan['demote'] as $user) {
-					$user->role = Role::Attendee;
-					$user->save();
-				}
+				foreach ([...$plan['create'], ...$plan['update'], ...$plan['demote']] as $user) $user->save();
 			});
-			$this->info('Saved ' . count($plan['create']) . ' new, ' . count($plan['update']) . ' updated, and ' . $plan['demote']->count() . ' demoted ' . Str::plural('user', count($plan['create']) + count($plan['update']) + $plan['demote']->count()) . '.');
+
+			$this->newLine();
+			$this->info("Saved {$plan['create']->count()} new, {$plan['update']->count()} updated, and {$plan['demote']->count()} demoted users.");
 		}
 
 		return self::SUCCESS;
 	}
 
 	/**
-	 * Works out the changes to make without saving anything
+	 * Works out the changes to make, filling in the user models without saving them
 	 *
-	 * @return array{create: User[], update: array<array{user: User, changes: array<string, array{0: mixed, 1: mixed}>}>, skipped: User[], demote: Collection<int, User>}
+	 * @param Collection<int, \stdClass> $volunteers ConCat volunteers keyed by user ID
+	 * @param Collection<int, \stdClass> $registrations ConCat registrations keyed by user ID
+	 * @return array{create: Collection<int, User>, update: Collection<int, User>, demote: Collection<int, User>, skipped: Collection<int, User>}
 	 */
-	private function buildPlan(Collection $volunteers, Collection $registrations, Collection $users): array {
-		$plan = ['create' => [], 'update' => [], 'skipped' => [], 'demote' => collect()];
+	private function buildPlan(Collection $volunteers, Collection $registrations): array {
+		$plan = ['create' => collect(), 'update' => collect(), 'demote' => collect(), 'skipped' => collect()];
+
+		$users = User::withTrashed()
+			->whereIn('badge_id', $volunteers->keys())
+			->get()
+			->keyBy('badge_id');
 
 		foreach ($volunteers as $badgeId => $volunteer) {
-			$conCatUser = $volunteer->user;
-			$registration = $registrations[$badgeId] ?? null;
 			$user = $users[$badgeId] ?? null;
 
 			// Don't bring back users that were deleted on purpose
 			if ($user?->trashed()) {
-				$plan['skipped'][] = $user;
+				$plan['skipped']->push($user);
 				continue;
 			}
 
 			if (!$user) {
-				$user = new User(['badge_id' => (int) $badgeId, 'role' => Role::Volunteer]);
-				$this->fillUser($user, $conCatUser, $registration);
+				$user = new User(['badge_id' => $badgeId, 'role' => Role::Volunteer]);
+				$this->fillUser($user, $volunteer->user, $registrations[$badgeId] ?? null);
 
 				// Real names are PII, so new users get the same placeholder name used elsewhere
 				$user->first_name = 'Unidentified';
 				$user->last_name = Str::title($user->role->name);
-				$plan['create'][] = $user;
+				$plan['create']->push($user);
 				continue;
 			}
 
-			$this->fillUser($user, $conCatUser, $registration);
-			if ($user->isDirty()) {
-				$changes = [];
-				foreach (array_keys($user->getDirty()) as $field) {
-					$changes[$field] = [$this->displayValue($user->getOriginal($field)), $this->displayValue($user->$field)];
-				}
-				$plan['update'][] = ['user' => $user, 'changes' => $changes];
-			}
+			$this->fillUser($user, $volunteer->user, $registrations[$badgeId] ?? null);
+			if ($user->isDirty()) $plan['update']->push($user);
 		}
 
-		// Volunteer and Staff users that ConCat no longer lists as volunteers get demoted to Attendee. Names are left as-is.
-		// Logging in with ConCat promotes an Attendee back to Volunteer.
+		// Volunteers and staff that ConCat doesn't list as volunteers anymore are demoted to Attendee, keeping their
+		// names. Logging in with ConCat promotes an Attendee back to Volunteer.
 		$plan['demote'] = User::whereIn('role', [Role::Volunteer, Role::Staff])
 			->whereNotIn('badge_id', $volunteers->keys())
 			->orderBy('badge_id')
-			->get();
+			->get()
+			->each(fn ($user) => $user->role = Role::Attendee);
 
 		return $plan;
 	}
@@ -139,46 +137,52 @@ class SyncConCatUsersCommand extends Command implements Isolatable {
 	 */
 	private function printPlan(array $plan): void {
 		$this->newLine();
-		$this->info('New users (' . count($plan['create']) . '):');
-		if (count($plan['create']) > 0) {
+		$this->info("New users ({$plan['create']->count()}):");
+		if ($plan['create']->isNotEmpty()) {
 			$this->table(
 				['Badge ID', 'Username', 'Badge Name', 'Role'],
-				collect($plan['create'])->map(fn ($user) => [
-					$user->badge_id,
-					$user->username,
-					$user->badge_name,
-					$user->role->name,
-				]),
+				$plan['create']->map(fn ($user) => [$user->badge_id, $user->username, $user->badge_name, $user->role->name]),
 			);
 		}
 
 		$this->newLine();
-		$this->info('Updated users (' . count($plan['update']) . '):');
-		if (count($plan['update']) > 0) {
+		$this->info("Updated users ({$plan['update']->count()}):");
+		if ($plan['update']->isNotEmpty()) {
 			$rows = [];
-			foreach ($plan['update'] as $change) {
-				foreach ($change['changes'] as $field => [$old, $new]) {
-					$rows[] = [$change['user']->badge_id, $change['user']->getOriginal('username'), $field, $old, $new];
+			foreach ($plan['update'] as $user) {
+				foreach (array_keys($user->getDirty()) as $field) {
+					$rows[] = [
+						$user->badge_id,
+						$user->getOriginal('username'),
+						$field,
+						$this->displayValue($user->getOriginal($field)),
+						$this->displayValue($user->$field),
+					];
 				}
 			}
 			$this->table(['Badge ID', 'Username', 'Field', 'Old', 'New'], $rows);
 		}
 
-		if (count($plan['skipped']) > 0) {
-			$this->newLine();
-			$this->warn('Skipped deleted users (' . count($plan['skipped']) . '):');
-			$this->table(
-				['Badge ID', 'Username', 'Deleted At'],
-				collect($plan['skipped'])->map(fn ($user) => [$user->badge_id, $user->username, $user->deleted_at]),
-			);
-		}
-
 		$this->newLine();
-		$this->info("Demote to Attendee, not found in ConCat volunteers ({$plan['demote']->count()}):");
+		$this->info("Users to demote to Attendee, not found in ConCat volunteers ({$plan['demote']->count()}):");
 		if ($plan['demote']->isNotEmpty()) {
 			$this->table(
 				['Badge ID', 'Username', 'Badge Name', 'Current Role'],
-				$plan['demote']->map(fn ($user) => [$user->badge_id, $user->username, $user->badge_name, $user->role->name]),
+				$plan['demote']->map(fn ($user) => [
+					$user->badge_id,
+					$user->username,
+					$user->badge_name,
+					$user->getOriginal('role')->name,
+				]),
+			);
+		}
+
+		if ($plan['skipped']->isNotEmpty()) {
+			$this->newLine();
+			$this->warn("Skipped deleted users ({$plan['skipped']->count()}):");
+			$this->table(
+				['Badge ID', 'Username', 'Deleted At'],
+				$plan['skipped']->map(fn ($user) => [$user->badge_id, $user->username, $user->deleted_at]),
 			);
 		}
 	}
@@ -187,7 +191,6 @@ class SyncConCatUsersCommand extends Command implements Isolatable {
 	 * Converts a value into something printable in a table
 	 */
 	private function displayValue(mixed $value): string {
-		if ($value instanceof Role) return $value->name;
-		return (string) $value;
+		return $value instanceof Role ? $value->name : (string) $value;
 	}
 }

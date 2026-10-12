@@ -102,3 +102,14 @@ it('demotes volunteers and staff missing from ConCat and skips deleted users', f
 	expect(User::withTrashed()->whereBadgeId(200)->count())->toBe(1);
 	expect(User::withTrashed()->whereBadgeId(200)->sole()->username)->toBe('old');
 });
+
+it('refuses to change anything when ConCat returns no volunteers', function () {
+	$volunteer = User::factory()->create(['badge_id' => 100, 'role' => Role::Volunteer]);
+	fakeConCat([]);
+
+	$this->artisan('auth:sync-concat --apply')
+		->expectsOutputToContain('ConCat returned no volunteers')
+		->assertFailed();
+
+	expect($volunteer->fresh()->role)->toBe(Role::Volunteer);
+});
