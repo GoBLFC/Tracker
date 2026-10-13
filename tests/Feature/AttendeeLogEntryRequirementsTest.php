@@ -164,7 +164,7 @@ it('does not give registration levels to gatekeepers', function () {
 		->assertJsonPath('deferredProps.default', ['registrationLevels']);
 });
 
-it('only lets admins refresh the registration levels, clearing the cache', function () {
+it('only lets admins refresh the registration levels, replacing the cached list', function () {
 	$manager = User::factory()->create(['role' => Role::Manager]);
 	Cache::put('concat:registration-levels', [['id' => 'old', 'name' => 'Old', 'display_name' => null]]);
 
@@ -180,6 +180,28 @@ it('only lets admins refresh the registration levels, clearing the cache', funct
 		->postJson(route('attendee-logs.registration-levels.refresh'))
 		->assertOk()
 		->assertJsonPath('registration_levels.0.name', 'Sponsor');
+	expect(Cache::get('concat:registration-levels')[0]['name'])->toBe('Sponsor');
+});
+
+it('keeps the cached registration levels when a refresh fails', function () {
+	$old = [['id' => 'old', 'name' => 'Old', 'display_name' => null]];
+	Cache::put('concat:registration-levels', $old);
+	ConCat::shouldReceive('authorize')->twice();
+	ConCat::shouldReceive('searchRegistrations')->twice()->andThrow(new RuntimeException('ConCat is down'));
+
+	$this->actingAs($this->admin)
+		->postJson(route('attendee-logs.registration-levels.refresh'))
+		->assertOk()
+		->assertJsonPath('registration_levels', $old)
+		->assertJsonPath('error', "Couldn't reload registration levels from ConCat.");
+	expect(Cache::get('concat:registration-levels'))->toBe($old);
+
+	$this->actingAs($this->admin)
+		->from(route('attendee-logs.show', $this->log))
+		->post(route('attendee-logs.registration-levels.refresh'))
+		->assertRedirect(route('attendee-logs.show', $this->log))
+		->assertSessionHas('error', "Couldn't reload registration levels from ConCat.");
+	expect(Cache::get('concat:registration-levels'))->toBe($old);
 });
 
 it('does not cache a failure to load the registration levels', function () {

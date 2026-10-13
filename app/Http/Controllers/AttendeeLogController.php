@@ -80,15 +80,29 @@ class AttendeeLogController extends Controller {
 	}
 
 	/**
-	 * Clear the cached list of registration levels so the next request retrieves it from ConCat
+	 * Retrieve the list of registration levels from ConCat again and cache it.
+	 * If ConCat can't be reached, the previously cached list is kept.
 	 */
 	public function refreshRegistrationLevels(Request $request): JsonResponse|RedirectResponse {
 		$this->authorize('create', AttendeeLog::class);
 
-		Cache::forget(static::REGISTRATION_LEVELS_CACHE_KEY);
+		try {
+			$levels = $this->fetchRegistrationLevels();
+			Cache::put(static::REGISTRATION_LEVELS_CACHE_KEY, $levels, now()->addHours(6));
+		} catch (Throwable $err) {
+			Log::warning('Failed to refresh registration levels from ConCat', ['error' => $err]);
+			$error = "Couldn't reload registration levels from ConCat.";
+
+			return $request->expectsJson()
+				? response()->json([
+					'registration_levels' => Cache::get(static::REGISTRATION_LEVELS_CACHE_KEY),
+					'error' => $error,
+				])
+				: redirect()->back()->withError($error);
+		}
 
 		return $request->expectsJson()
-			? response()->json(['registration_levels' => $this->getRegistrationLevels()])
+			? response()->json(['registration_levels' => $levels])
 			: redirect()->back();
 	}
 
@@ -224,7 +238,7 @@ class AttendeeLogController extends Controller {
 			return $this->alreadyPresentResponse($request, $type, $user);
 		}
 
-		$overrideReason = $overriddenBy ? (trim($request->validated('override_reason') ?? '') ?: null) : null;
+		$overrideReason = $overriddenBy ? $request->validated('override_reason') : null;
 		$attendeeLog->users()->attach($user, [
 			'type' => $type,
 			'overridden_by_id' => $overriddenBy?->id,
@@ -345,24 +359,35 @@ class AttendeeLogController extends Controller {
 	 */
 	protected function getRegistrationLevels(): ?array {
 		try {
-			return Cache::remember(static::REGISTRATION_LEVELS_CACHE_KEY, now()->addHours(6), function () {
-				ConCat::authorize();
-				return collect(ConCat::searchRegistrations(['limit' => 100]))
-					->filter(fn ($registration) => isset($registration->productId, $registration->productName))
-					->unique('productId')
-					->map(fn ($registration) => [
-						'id' => (string) $registration->productId,
-						'name' => $registration->productName,
-						'display_name' => $registration->productDisplayName ?? null,
-					])
-					->sortBy(fn ($level) => mb_strtolower($level['display_name'] ?? $level['name']))
-					->values()
-					->all();
-			});
+			return Cache::remember(
+				static::REGISTRATION_LEVELS_CACHE_KEY,
+				now()->addHours(6),
+				fn () => $this->fetchRegistrationLevels(),
+			);
 		} catch (Throwable $err) {
 			Log::warning('Failed to retrieve registration levels from ConCat', ['error' => $err]);
 			return null;
 		}
+	}
+
+	/**
+	 * Retrieves the distinct registration levels (products) from all ConCat registrations, bypassing the cache
+	 *
+	 * @return array<array{id: string, name: string, display_name: string|null}>
+	 */
+	protected function fetchRegistrationLevels(): array {
+		ConCat::authorize();
+		return collect(ConCat::searchRegistrations(['limit' => 100]))
+			->filter(fn ($registration) => isset($registration->productId, $registration->productName))
+			->unique('productId')
+			->map(fn ($registration) => [
+				'id' => (string) $registration->productId,
+				'name' => $registration->productName,
+				'display_name' => $registration->productDisplayName ?? null,
+			])
+			->sortBy(fn ($level) => mb_strtolower($level['display_name'] ?? $level['name']))
+			->values()
+			->all();
 	}
 
 	/**
