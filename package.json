@@ -34,7 +34,7 @@
 		"simple-datatables": "^10.2.0",
 		"sweetalert2": "^11.26.24",
 		"tailwindcss-primeui": "^0.6.1",
-		"vue": "^3.5.32",
+		"vue": "^3.5.44",
 		"vue-debounce": "^5.0.1"
 	},
 	"devDependencies": {
