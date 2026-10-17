@@ -13,11 +13,26 @@
 			},
 		]"
 	>
-		<template #icons v-if="readOnly">
-			<div class="text-2xl text-muted-color" v-tooltip.left="'Read-only'">
+		<template #icons v-if="readOnly || isAdmin">
+			<div v-if="readOnly" class="text-2xl text-muted-color" v-tooltip.left="'Read-only'">
 				<FontAwesomeIcon :icon="faEye" />
 				<span class="sr-only">Read-only</span>
 			</div>
+
+			<template v-else>
+				<ResponsiveButton
+					label="Entry Requirements"
+					:icon="faListCheck"
+					severity="secondary"
+					@click="requirementsVisible = true"
+				/>
+
+				<AttendeeLogRequirementsDialog
+					v-model:visible="requirementsVisible"
+					:attendee-log
+					:registration-levels
+				/>
+			</template>
 		</template>
 
 		<div v-if="!readOnly" class="flex flex-col lg:flex-row lg:flex-wrap gap-4">
@@ -29,8 +44,6 @@
 			/>
 
 			<AttendeeCreatePanel v-if="isManager" :attendee-log :read-only gatekeeper class="grow basis-1" />
-
-			<AttendeeLogRequirementsPanel v-if="isAdmin" :attendee-log :registration-levels class="grow basis-1" />
 		</div>
 
 		<div class="grow flex flex-col xl:flex-row xl:flex-wrap gap-4">
@@ -54,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, toRef } from 'vue';
+import { computed, ref, toRef } from 'vue';
 import { useUser } from '@/lib/user';
 import { useReadOnly } from '@/lib/readonly';
 import type AttendeeLog from '@/data/AttendeeLog';
@@ -63,10 +76,11 @@ import type { Overriders } from '@/data/Attendee';
 import type RegistrationLevel from '@/data/RegistrationLevel';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faEye } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faListCheck } from '@fortawesome/free-solid-svg-icons';
 import AttendeesTable from '@/Components/AttendeeLog/AttendeesTable.vue';
 import AttendeeCreatePanel from '@/Components/AttendeeLog/AttendeeCreatePanel.vue';
-import AttendeeLogRequirementsPanel from '@/Components/AttendeeLog/AttendeeLogRequirementsPanel.vue';
+import AttendeeLogRequirementsDialog from '@/Components/AttendeeLog/AttendeeLogRequirementsDialog.vue';
+import ResponsiveButton from '@/Components/Common/ResponsiveButton.vue';
 import FullContentHeightPanel from '@/Components/Common/FullContentHeightPanel.vue';
 import BreadcrumbsPage from '@/Components/App/BreadcrumbsPage.vue';
 
@@ -85,4 +99,5 @@ const isEventReadOnly = useReadOnly();
 const attendees = computed(() => attendeeLog.users!.filter((u) => u.pivot.type === 'attendee'));
 const gatekeepers = computed(() => attendeeLog.users!.filter((u) => u.pivot.type === 'gatekeeper'));
 const readOnly = toRef(() => isEventReadOnly(event));
+const requirementsVisible = ref(false);
 </script>
