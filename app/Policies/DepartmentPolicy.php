@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Department;
+use App\Models\Event;
 use App\Models\User;
 
 class DepartmentPolicy {
