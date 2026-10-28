@@ -91,7 +91,7 @@ class VolunteerController extends Controller {
 	/**
 	 * Create a time entry for a user
 	 */
-	public function storeTimeEntry(TimeEntryStoreRequest $request, Event $event, User $user): JsonResponse {
+	public function storeTimeEntry(TimeEntryStoreRequest $request, Event $event, User $user): JsonResponse|RedirectResponse {
 		// Don't allow an ongoing entry to be created if there already is one
 		if (!$request->filled('stop')) {
 			if ($user->timeEntries()->ongoing()->forEvent($event)->exists()) {
@@ -114,7 +114,7 @@ class VolunteerController extends Controller {
 	/**
 	 * Delete a time entry
 	 */
-	public function destroyTimeEntry(Request $request, TimeEntry $timeEntry): JsonResponse {
+	public function destroyTimeEntry(Request $request, TimeEntry $timeEntry): JsonResponse|RedirectResponse {
 		$this->authorize('delete', $timeEntry);
 
 		$timeEntry->delete();
