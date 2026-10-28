@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\ChecksActiveEvent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -47,7 +48,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  */
 class TimeBonus extends Model {
 	/** @use HasFactory<\Database\Factories\TimeBonusFactory> */
-	use HasFactory, HasUuids, LogsActivity;
+	use ChecksActiveEvent, HasFactory, HasUuids, LogsActivity;
 
 	protected $casts = [
 		'start' => 'datetime',
