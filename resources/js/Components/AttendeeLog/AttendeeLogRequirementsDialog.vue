@@ -1,5 +1,11 @@
 <template>
-	<Panel header="Entry Requirements">
+	<Dialog
+		modal
+		header="Entry Requirements"
+		class="w-full sm:w-xl mx-2"
+		v-model:visible="visible"
+		@after-hide="onHidden"
+	>
 		<form class="flex flex-col gap-5" @submit.prevent="save" @input="form.clearErrors()">
 			<p>
 				<template v-if="hasAnyRule">
@@ -138,7 +144,7 @@
 				/>
 			</div>
 		</form>
-	</Panel>
+	</Dialog>
 </template>
 
 <script setup lang="ts">
@@ -158,6 +164,8 @@ const { attendeeLog, registrationLevels } = defineProps<{
 	/** Levels from ConCat: undefined while loading, null if they couldn't be retrieved */
 	registrationLevels?: RegistrationLevel[] | null;
 }>();
+
+const visible = defineModel<boolean>('visible', { default: false });
 
 /** Hours suggested when the volunteer hours rule is first turned on */
 const DEFAULT_MIN_HOURS = 12;
@@ -291,15 +299,24 @@ function save() {
 		preserveScroll: true,
 		preserveState: true,
 		only: ['attendeeLog', 'flash'],
+		onSuccess: () => (visible.value = false),
 	});
 }
 
 /**
- * Clears the cached registration levels and loads them from ConCat again
+ * Discards unsaved changes when the dialog is closed
+ */
+function onHidden() {
+	form.clearErrors();
+	resetFromLog();
+}
+
+/**
+ * Loads the registration levels from ConCat again
  */
 function refreshLevels() {
 	refresh.post('attendee-logs.registration-levels.refresh', undefined, {
-		only: ['registrationLevels'],
+		only: ['registrationLevels', 'flash'],
 	});
 }
 </script>

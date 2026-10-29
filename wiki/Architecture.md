@@ -111,11 +111,12 @@ Any number of Gatekeepers can also be added to them, who will all be able to vie
 
 ### Entry Requirements
 
-Admins can restrict who can be logged as an attendee.
+Admins can restrict who can be logged as an attendee, using the Entry Requirements button on the log page.
 Each requirement is optional, and an attendee is allowed in if they meet **any** of the requirements that are set:
 
 -   **Registration level:** the attendee's ConCat registration product matches one of the selected levels (by product name or ID, case-insensitive).
     The list of levels to choose from is built from all ConCat registrations and cached for six hours; admins can reload it from the log page.
+    If ConCat can't be reached during a reload, the previous list is kept.
 -   **Staff or above:** the attendee's Tracker role is Staff, Lead, Manager, or Admin.
 -   **Minimum volunteer hours:** the attendee has earned at least the set number of hours (including bonuses) for the log's event.
     The minimum is 1 hour or more, with up to two decimal places.
