@@ -7,7 +7,7 @@ You'll also be able to run Tracker on a traditional shared web host this way.
 -   A web server, such as Nginx or Apache
 -   PostgreSQL, MariaDB, or MySQL (8.0+) server as a database
 -   _(recommended)_ Redis, Memcached, or another Laravel-compatible key/value store for caching data
--   PHP 8.2+ with the following extensions:
+-   PHP 8.2–8.4 (8.5 also works, but needs an extra Composer flag; see [Installation](#installation)) with the following extensions:
     -   PDO + your database extension of choice
     -   openssl
     -   ctype
@@ -31,6 +31,7 @@ You'll also be able to run Tracker on a traditional shared web host this way.
 
 1. Clone this repository in your web server's document root (or download a tarball and extract it to it).
 1. Run `composer install --no-dev --classmap-authoritative` to download all production backend dependencies and optimize the autoloader automatically.
+    - On PHP 8.5, add `--ignore-platform-req=php+` to the command. This only skips upper PHP version limits, so minimum version requirements are still checked.
 1. Run `npm install` to download all frontend dependencies.
 1. Run `npm run build` to bundle and optimize the frontend assets.
 1. Copy `.env.example` to `.env` and update the values appropriately.
@@ -57,6 +58,7 @@ You'll also be able to run Tracker on a traditional shared web host this way.
 1. Run `php artisan down` to put the application in maintenance mode.
 1. Pull or upload the current version of the code from this repository.
 1. Run `composer install --no-dev --classmap-authoritative` to download any new production backend dependencies and optimize the autoloader automatically.
+    - On PHP 8.5, add `--ignore-platform-req=php+` to the command (see Installation above).
 1. Run `npm install` to download any new frontend dependencies.
 1. Run `npm run build` to bundle and optimize the frontend assets.
 1. Run `php artisan migrate` to run any new migrations on the database.
