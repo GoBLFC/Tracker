@@ -228,12 +228,16 @@ DETAIL:  The data directory was initialized by PostgreSQL version 15, which is n
 ```
 
 Reverting the project (or at least the Compose file) to the previous version should allow the server to start again.
+
+Postgres 18 also moved its data directory. Mount the volume at `/var/lib/postgresql` (as in the example Compose file above), not at `/var/lib/postgresql/data`. With the old mount path, the Postgres 18 container exits at startup with an error about data in `/var/lib/postgresql/data (unused mount/volume)`, even when the volume is empty.
+When you upgrade from an older version, change the image tag and the mount path together, then follow the procedure below.
+
 Follow this procedure to properly upgrade the database (starting with the server running the old version):
 
 1. Run [`.docker/scripts/postgres-dump.sh`](../.docker/scripts/postgres-dump.sh) to dump the contents of the database to `pgdump.sql` in the project directory
-1. Stop the Postgres container (`docker compose stop postgres`)
+1. Stop and remove the Postgres container (`docker compose rm --stop --force postgres`), so that its volume can be deleted
 1. Find the correct volume for the Postgres container in `docker volume ls` - it should be something like `projectname_postgres`
 1. Delete the volume of the Postgres container (`docker volume rm postgres_volume_name`)
-1. Start the Postgres container (`docker compose start postgres`)
+1. Recreate and start the Postgres container (`docker compose up -d postgres`)
 1. Run [`.docker/scripts/postgres-restore.sh`](../.docker/scripts/postgres-restore.sh) to import `pgdump.sql` into the new Postgres version
 1. Verify that the application is running properly and all of the correct data is in place
