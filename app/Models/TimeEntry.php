@@ -239,7 +239,8 @@ class TimeEntry extends Model {
 		// Total up all applicable bonus time
 		$bonusTotal = 0;
 		foreach ($bonuses as $bonus) {
-			if ($bonus->pivot->department_id !== $this->department_id) continue;
+			// Bonuses loaded through a department have a pivot to check, while queried ones are already filtered
+			if ($bonus->pivot && $bonus->pivot->department_id !== $this->department_id) continue;
 			$bonusTime = static::calculateOverlap($this->start, $this->stop ?? now(), $bonus->start, $bonus->stop);
 			$bonusTotal += round($bonusTime * ($bonus->modifier - 1));
 		}
